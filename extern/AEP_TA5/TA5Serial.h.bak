@@ -1,0 +1,23 @@
+//---------------------------------------------------------------------------
+
+#ifndef TA5SerialH
+#define TA5SerialH
+#include <vcl>
+#include "SerialPort.h"
+//---------------------------------------------------------------------------
+class CTA5Serial:private CSerialPort
+{
+public:
+        __fastcall CTA5Serial();
+        __fastcall ~CTA5Serial();       
+
+public:
+        bool __fastcall OpenPort(int nPort);
+
+        AnsiString __fastcall GetID();
+        double __fastcall GetData();	//50 ~ 200000 div
+        bool __fastcall QuickZero();
+        
+};
+
+#endif

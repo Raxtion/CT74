@@ -1,0 +1,39 @@
+//---------------------------------------------------------------------------
+
+#ifndef fmADH
+#define fmADH
+//---------------------------------------------------------------------------
+#include <Classes.hpp>
+#include <Controls.hpp>
+#include <StdCtrls.hpp>
+#include <Forms.hpp>
+#include <Chart.hpp>
+#include <ExtCtrls.hpp>
+#include <Series.hpp>
+#include <TeEngine.hpp>
+#include <TeeProcs.hpp>
+#include <Buttons.hpp>
+//---------------------------------------------------------------------------
+class TfrmAD : public TForm
+{
+__published:	// IDE-managed Components
+        TTimer *Timer1;
+        TGroupBox *GroupBox1;
+        TLabel *Label1;
+        TLabel *Label2;
+        TSpeedButton *SpeedButton1;
+        TSpeedButton *SpeedButton2;
+        TShape *Shape1;
+        TEdit *editWeight;
+        TLabel *Label3;
+        void __fastcall Timer1Timer(TObject *Sender);
+        void __fastcall SpeedButton1Click(TObject *Sender);
+        void __fastcall SpeedButton2Click(TObject *Sender);
+private:	// User declarations
+public:		// User declarations
+        __fastcall TfrmAD(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+//extern PACKAGE TfrmAD *frmAD;
+//---------------------------------------------------------------------------
+#endif

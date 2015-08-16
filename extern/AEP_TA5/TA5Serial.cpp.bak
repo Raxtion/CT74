@@ -1,0 +1,75 @@
+//---------------------------------------------------------------------------
+
+
+#pragma hdrstop
+
+#include "TA5Serial.h"
+
+//---------------------------------------------------------------------------
+
+#pragma package(smart_init)
+
+
+//---------------------------------------------------------------------------
+__fastcall CTA5Serial::CTA5Serial()
+{
+
+}
+//---------------------------------------------------------------------------
+__fastcall CTA5Serial::~CTA5Serial()
+{
+
+}
+//---------------------------------------------------------------------------
+bool __fastcall CTA5Serial::OpenPort(int nPort)
+{
+        return Open(nPort,B9600,BIT_8|STOP_1|P_NONE);
+}
+//---------------------------------------------------------------------------
+AnsiString __fastcall CTA5Serial::GetBalanceID()
+{
+        char strSend[]="$ID?\x0d";
+        WriteData(strSend);
+        char strReceive[100]={0};
+
+        if(ReadData(strReceive,'\x0d'))
+        {
+
+                return strReceive;
+        }
+        else return "Error!!";
+}
+//---------------------------------------------------------------------------
+double __fastcall CTA5Serial::GetData()
+{        
+        char strSend[]="$DA01?\x0d";		//DEFAULT ID 01
+        WriteData(strSend);
+        char strReceive[100]={0};
+        char strValue[15]={0};
+        if(ReadData(strReceive,'\x0d'))
+        {
+                if(strReceive[0]!= '$') return -999.0;
+                strncpy(strValue,strReceive+3,8);
+                return atof(strValue);
+        }
+        else return -1.0;
+
+}
+//---------------------------------------------------------------------------
+bool __fastcall CTA5Serial::QuickZero()
+{
+        char strSend[]="ZI\x0d\x0a";
+        WriteData(strSend);
+        char strReceive[100]={0};
+        char strValue[15]={0};
+        if(ReadData(strReceive,'\x0a'))
+        {
+                if(strReceive[0]!= 'Z') return false;
+                else true;
+        }
+        else return false;
+
+}
+//---------------------------------------------------------------------------
+
+

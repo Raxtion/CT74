@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="exe\CT74.exe"/>
+    <OBJFILES value="temp\CT74.obj temp\fmMain.obj temp\PCIM114.obj temp\MyPISODIO.obj 
+      temp\PISODNM100.obj temp\fmIOCheck.obj temp\fmPassword.obj 
+      temp\FrmProduct.obj temp\IniFile.obj temp\MainThread.obj 
+      temp\fmChoiceMotor.obj temp\fmMachinParam.obj temp\fmMotorCheck.obj 
+      temp\fmAD.obj temp\fmManual.obj temp\C_GetTime.obj temp\GlobalFunction.obj 
+      temp\DeltaPLC.obj temp\TA5Serial.obj temp\SerialPort.obj temp\fmOffset.obj"/>
+    <RESFILES value="CT74.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) fmMain.dfm fmIOCheck.dfm fmPassword.dfm FrmProduct.dfm 
+      fmChoiceMotor.dfm fmMachinParam.dfm fmMotorCheck.dfm fmAD.dfm fmManual.dfm 
+      fmOffset.dfm"/>
+    <LIBFILES value="extern\PISO-DNM100\DNM100_BCB.lib extern\PCIS-DASK\Lib\pdask_bc.lib 
+      extern\PCI_M114\lib\PCI_M114BCB.lib extern\DMT\DMT.lib 
+      extern\PCOMM\Pcommb.lib"/>
+    <LIBRARIES value=""/>
+    <SPARELIBS value="vcl.lib rtl.lib tee.lib"/>
+    <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
+      vcldbx.bpi ibxpress.bpi dsnap.bpi cds.bpi bdecds.bpi qrpt.bpi teeui.bpi 
+      teedb.bpi tee.bpi dss.bpi teeqr.bpi visualclx.bpi visualdbclx.bpi 
+      dsnapcrba.bpi dsnapcon.bpi bcbsmp.bpi vclie.bpi xmlrtl.bpi inet.bpi 
+      inetdbbde.bpi inetdbxpress.bpi inetdb.bpi nmfast.bpi webdsnap.bpi 
+      bcbie.bpi websnap.bpi soaprtl.bpi dclocx.bpi dbexpress.bpi dbxcds.bpi 
+      indy.bpi bcb2kaxserver.bpi"/>
+    <PATHCPP value=".;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100;extern\General;extern\DMT;extern\AEP_TA5;extern\SerialPort"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="_DEBUG"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="CT74.cpp"/>
+    <INCLUDEPATH value="extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
+    <LIBPATH value="extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-Iextern\SerialPort -Iextern\AEP_TA5 -Iextern\DMT -Iextern\General 
+      -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; 
+      -IC:\Work\CLARE_PROGRAM\C74\CT74 -I$(BCB)\include -I$(BCB)\include\vcl 
+      -Iextern\PCIS-DASK\Include -Iextern\PCI_M114\include -Iextern\PISO-DNM100 
+      -Iextern\PCIS-DASK -Iextern\PCI_M114 -Iextern\PComm -src_suffix cpp 
+      -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
+      -tW -tWM"/>
+    <PFLAGS value="-N2temp -N0temp -$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="-Itemp -D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="CT74.res" FORMNAME="" UNITNAME="CT74.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="CT74.cpp" FORMNAME="" UNITNAME="CT74" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmMain.cpp" FORMNAME="frmMain" UNITNAME="fmMain" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PCI_M114\PCIM114.cpp" FORMNAME="" UNITNAME="PCIM114" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PCIS-DASK\MyPISODIO.cpp" FORMNAME="" UNITNAME="MyPISODIO.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PISO-DNM100\PISODNM100.cpp" FORMNAME="" UNITNAME="PISODNM100" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PISO-DNM100\DNM100_BCB.lib" FORMNAME="" UNITNAME="DNM100_BCB.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PCIS-DASK\Lib\pdask_bc.lib" FORMNAME="" UNITNAME="pdask_bc.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PCI_M114\lib\PCI_M114BCB.lib" FORMNAME="" UNITNAME="PCI_M114BCB.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmIOCheck.cpp" FORMNAME="IOCheckDlg" UNITNAME="fmIOCheck" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmPassword.cpp" FORMNAME="frmPassword" UNITNAME="fmPassword" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="FrmProduct.cpp" FORMNAME="fmProduct" UNITNAME="FrmProduct" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="IniFile.cpp" FORMNAME="" UNITNAME="IniFile.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="MainThread.cpp" FORMNAME="" UNITNAME="MainThread.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmChoiceMotor.cpp" FORMNAME="frmChoiceMotor" UNITNAME="fmChoiceMotor" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmMachinParam.cpp" FORMNAME="frmMachineParam" UNITNAME="fmMachinParam" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmMotorCheck.cpp" FORMNAME="frmMotorCheck" UNITNAME="fmMotorCheck" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmAD.cpp" FORMNAME="frmAD" UNITNAME="fmAD" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmManual.cpp" FORMNAME="frmManual" UNITNAME="fmManual" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\General\C_GetTime.cpp" FORMNAME="" UNITNAME="C_GetTime" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="GlobalFunction.cpp" FORMNAME="" UNITNAME="GlobalFunction" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\DMT\DeltaPLC.cpp" FORMNAME="" UNITNAME="DeltaPLC" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\DMT\DMT.lib" FORMNAME="" UNITNAME="DMT.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\AEP_TA5\TA5Serial.cpp" FORMNAME="" UNITNAME="TA5Serial" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PCOMM\Pcommb.lib" FORMNAME="" UNITNAME="Pcommb.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\SerialPort\SerialPort.cpp" FORMNAME="" UNITNAME="SerialPort" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmOffset.cpp" FORMNAME="frmOffser" UNITNAME="fmOffset" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1028
+CodePage=950
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=9
+Item0=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm
+Item1=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
+Item2=extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
+Item3=extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
+Item4=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
+Item5=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include
+Item6=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl
+Item7=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl
+Item8=$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=10
+Item0=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item1=extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item2=extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item3=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item4=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item5=extern\PISO-DNM100;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK
+Item6=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PISO-DNM100;extern\PCI_M114;extern\PCIS-DASK
+Item7=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item8=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item9=$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=2
+Item0=_DEBUG
+Item1=_DEBUG;_WINDOWS;STRICT
+
+[HistoryLists\hlIntOutputDir]
+Count=1
+Item0=temp
+
+[HistoryLists\hlFinalOutputDir]
+Count=4
+Item0=exe\
+Item1=exe
+Item2=\exe\
+Item3=\exe
+
+[HistoryLists\hIBPIOutputDir]
+Count=1
+Item0=lib
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

@@ -1,0 +1,183 @@
+//---------------------------------------------------------------------------
+
+#ifndef FrmProductH
+#define FrmProductH
+//---------------------------------------------------------------------------
+#include <Classes.hpp>
+#include <Controls.hpp>
+#include <StdCtrls.hpp>
+#include <Forms.hpp>
+#include <Buttons.hpp>
+#include <ExtCtrls.hpp>
+#include <Menus.hpp>
+//---------------------------------------------------------------------------
+class TfmProduct : public TForm
+{
+__published:	// IDE-managed Components
+        TBitBtn *BitBtn1;
+        TBitBtn *BitBtn2;
+        TGroupBox *GroupBox1;
+        TLabel *Label1;
+        TLabel *Label2;
+        TEdit *m_nCols;
+        TEdit *m_nRows;
+        TLabel *Label11;
+        TLabel *Label12;
+        TEdit *m_dColPitch;
+        TEdit *m_dRowPitch;
+        TLabel *Label13;
+        TLabel *Label14;
+        TGroupBox *GroupBox3;
+        TLabel *Label3;
+        TLabel *Label4;
+        TLabel *Label16;
+        TLabel *Label17;
+        TEdit *m_dLamHeight0;
+        TEdit *m_dLamStop0;
+        TGroupBox *GroupBox2;
+        TLabel *Label5;
+        TLabel *Label6;
+        TLabel *Label7;
+        TLabel *Label8;
+        TEdit *m_dLamHeight1;
+        TEdit *m_dLamStop1;
+        TLabel *Label9;
+        TEdit *m_dLamVacHeight0;
+        TLabel *Label15;
+        TEdit *m_dLamVacHeight1;
+        TGroupBox *GroupBox4;
+        TLabel *Label19;
+        TEdit *m_dLamTime0;
+        TLabel *Label20;
+        TEdit *m_dLamTemp0;
+        TLabel *Label21;
+        TEdit *m_dLamPress0;
+        TLabel *Label22;
+        TLabel *Label23;
+        TLabel *Label24;
+        TGroupBox *GroupBox5;
+        TLabel *Label25;
+        TLabel *Label26;
+        TLabel *Label27;
+        TLabel *Label28;
+        TLabel *Label29;
+        TLabel *Label30;
+        TEdit *m_dLamTime1;
+        TEdit *m_dLamTemp1;
+        TEdit *m_dLamPress1;
+        TGroupBox *GroupBox6;
+        TLabel *Label31;
+        TEdit *m_dLoadCellPosX0;
+        TEdit *m_dLoadCellPosY0;
+        TLabel *Label34;
+        TGroupBox *GroupBox8;
+        TLabel *Label42;
+        TEdit *m_dLaserDownPosX0;
+        TEdit *m_dLaserDownPosY0;
+        TGroupBox *GroupBox9;
+        TLabel *Label43;
+        TLabel *Label46;
+        TEdit *m_dLoadCellPosX1;
+        TEdit *m_dLoadCellPosY1;
+        TGroupBox *GroupBox10;
+        TLabel *Label47;
+        TLabel *Label50;
+        TEdit *m_dLaserUpPosX10;
+        TEdit *m_dLaserUpPosY10;
+        TGroupBox *GroupBox11;
+        TLabel *Label54;
+        TRadioGroup *m_nRailOption;
+        TCheckBox *m_bNotLam;
+        TGroupBox *GroupBox12;
+        TLabel *Label55;
+        TEdit *m_dPressCalRange;
+        TLabel *Label56;
+        TLabel *Label57;
+        TEdit *m_dPressCalTime;
+        TLabel *Label58;
+        TLabel *Label59;
+        TEdit *m_dLamGetPos1;
+        TLabel *Label60;
+        TLabel *Label61;
+        TEdit *m_dLamGetPos0;
+        TLabel *Label62;
+        TLabel *Label48;
+        TEdit *m_dLaserUpPosX11;
+        TEdit *m_dLaserUpPosY11;
+        TLabel *Label49;
+        TLabel *Label63;
+        TEdit *m_dLaserUpPosX12;
+        TEdit *m_dLaserUpPosY12;
+        TLabel *Label64;
+        TLabel *Label65;
+        TEdit *m_dLaserUpPosX13;
+        TEdit *m_dLaserUpPosY13;
+        TLabel *Label66;
+        TGroupBox *GroupBox13;
+        TLabel *Label67;
+        TLabel *Label68;
+        TLabel *Label69;
+        TLabel *Label70;
+        TLabel *Label71;
+        TLabel *Label72;
+        TLabel *Label73;
+        TLabel *Label74;
+        TEdit *m_dLaserUpPosX01;
+        TEdit *m_dLaserUpPosY01;
+        TEdit *m_dLaserUpPosX02;
+        TEdit *m_dLaserUpPosY02;
+        TEdit *m_dLaserUpPosX03;
+        TEdit *m_dLaserUpPosY03;
+        TEdit *m_dLaserDownPosX1;
+        TEdit *m_dLaserDownPosY1;
+        TEdit *m_dLaserUpPosX00;
+        TEdit *m_dLaserUpPosY00;
+        TLabel *Label32;
+        TLabel *Label33;
+        TLabel *Label35;
+        TEdit *m_dLamSecondHeight0;
+        TLabel *Label36;
+        TLabel *Label37;
+        TLabel *Label38;
+        TEdit *m_dLamSecondTime0;
+        TLabel *Label39;
+        TEdit *m_dLamThirdHeight0;
+        TLabel *Label40;
+        TLabel *Label41;
+        TEdit *m_dLamThirdTime0;
+        TLabel *Label44;
+        TLabel *Label45;
+        TLabel *Label51;
+        TLabel *Label52;
+        TEdit *m_dLamSecondHeight1;
+        TLabel *Label53;
+        TLabel *Label75;
+        TEdit *m_dLamSecondTime1;
+        TLabel *Label76;
+        TEdit *m_dLamThirdHeight1;
+        TLabel *Label77;
+        TLabel *Label78;
+        TEdit *m_dLamThirdTime1;
+        TGroupBox *GroupBox7;
+        TLabel *Label79;
+        TLabel *Label80;
+        TEdit *m_dAutoStopTimes;
+        TLabel *Label81;
+        TLabel *Label82;
+        TLabel *Label83;
+        TEdit *m_dAutoRunTempRange;
+        TLabel *Label84;
+        TLabel *Label85;
+        TLabel *Label86;
+        TEdit *m_nAutoInterval;
+        TLabel *Label87;
+        TEdit *m_dVacDelayTime;
+        TLabel *Label88;
+private:	// User declarations
+public:		// User declarations
+        __fastcall TfmProduct(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TfmProduct *fmProduct;
+//---------------------------------------------------------------------------
+#endif
