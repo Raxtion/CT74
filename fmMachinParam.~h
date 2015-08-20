@@ -79,10 +79,18 @@ __published:	// IDE-managed Components
         TGroupBox *GroupBox3;
         TStaticText *StaticText24;
         TStaticText *StaticText25;
-        TEdit *m_dPLimit;
-        TEdit *m_dNLimit;
+        TEdit *m_dPLimitF;
+        TEdit *m_dNLimitF;
         TStaticText *StaticText28;
         TStaticText *StaticText26;
+        TStaticText *StaticText27;
+        TStaticText *StaticText29;
+        TEdit *m_dPLimitR;
+        TEdit *m_dNLimitR;
+        TStaticText *StaticText30;
+        TStaticText *StaticText31;
+        TComboBox *m_nLanguage;
+        TLabel *Label1;
 private:	// User declarations
 public:		// User declarations
         __fastcall TfrmMachineParam(TComponent* Owner);

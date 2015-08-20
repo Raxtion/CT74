@@ -12,7 +12,7 @@
 
 #define ErrorMessage_Dir "Error Message\\"
 #define ErrorMessageFileName "C74ErrorMessage.ini"
-#define ErrorMessageEngFileName "ErrorMessageEng.ini"
+#define ErrorMessageEngFileName "C74ErrorMessageEng.ini"
 #define UserName "User.sis"
 
 #define IniFile_Dir "C:\\Product Data\\"

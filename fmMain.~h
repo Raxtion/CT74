@@ -154,13 +154,16 @@ public:		// User declarations
         void __fastcall AddList(AnsiString strMessage);
 
         void __fastcall CreateCaptionFile(TForm *pForm);
+        void __fastcall CreateCaptionFileTMainMenu(TMainMenu *pMainMenu);
         void __fastcall ReadCaptionFile(TForm *pForm,int nLanguage=0);
+        void __fastcall ReadCaptionFileTMainMenu(TMainMenu *pMainMenu, int nLanguage=0);
 
         void __fastcall CreateMapArray(TRect &rect,int nPackageX,int nPackageY,int nDeviceGap,int nSectX,int nSectY);
         void __fastcall CreateMapArray2(TRect &rect,int nPackageX,int nPackageY,int nDeviceGap,int nSectX,int nSectY);
 
         void __fastcall RefreshImage();
         void __fastcall SetAllDevice();
+        void __fastcall RenewRadioGroup(bool bInit);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmMain *frmMain;

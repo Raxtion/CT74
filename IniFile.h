@@ -47,6 +47,7 @@ public:
 
   double m_dSafePos;           //Safe Position
   bool m_bForceEject;
+  int m_nLanguage;
 
   double m_dLoadCellX[2];    //For Calibrate Load Cell
   double m_dLoadCellY[2];

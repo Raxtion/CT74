@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 689
-  Top = 40
+  Left = 645
+  Top = 44
   Width = 594
   Height = 548
   Caption = #27231#21488#21443#25976
@@ -14,6 +14,13 @@ object frmMachineParam: TfrmMachineParam
   Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 16
+  object Label1: TLabel
+    Left = 296
+    Top = 232
+    Width = 32
+    Height = 16
+    Caption = #35486#31995
+  end
   object BitBtn1: TBitBtn
     Left = 80
     Top = 440
@@ -527,9 +534,9 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object StaticText16: TStaticText
-    Left = 29
-    Top = 227
-    Width = 148
+    Left = 32
+    Top = 229
+    Width = 105
     Height = 22
     Alignment = taRightJustify
     AutoSize = False
@@ -543,16 +550,16 @@ object frmMachineParam: TfrmMachineParam
     TabOrder = 3
   end
   object m_dSafePos: TEdit
-    Left = 179
-    Top = 227
+    Left = 139
+    Top = 228
     Width = 65
     Height = 24
     TabOrder = 4
     Text = 'm_dSafePos'
   end
   object StaticText17: TStaticText
-    Left = 251
-    Top = 227
+    Left = 211
+    Top = 229
     Width = 65
     Height = 22
     AutoSize = False
@@ -691,9 +698,9 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object m_bForceEject: TCheckBox
-    Left = 344
-    Top = 224
-    Width = 169
+    Left = 464
+    Top = 228
+    Width = 97
     Height = 25
     Caption = #24375#21046#25490#38500
     TabOrder = 7
@@ -861,5 +868,24 @@ object frmMachineParam: TfrmMachineParam
       ParentColor = False
       TabOrder = 11
     end
+  end
+  object m_cmbLanguage: TComboBox
+    Left = 360
+    Top = 230
+    Width = 81
+    Height = 21
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = #26032#32048#26126#39636
+    Font.Style = []
+    ItemHeight = 13
+    ItemIndex = 0
+    ParentFont = False
+    TabOrder = 9
+    Text = #20013#25991
+    Items.Strings = (
+      #20013#25991
+      'English')
   end
 end

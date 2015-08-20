@@ -1,6 +1,6 @@
 object frmAD: TfrmAD
-  Left = 383
-  Top = 228
+  Left = 647
+  Top = 238
   BorderStyle = bsDialog
   Caption = 'Load Cell'
   ClientHeight = 277

@@ -14,21 +14,21 @@ object frmPassword: TfrmPassword
   PixelsPerInch = 96
   TextHeight = 16
   object labelOldPassword: TLabel
-    Left = 40
+    Left = 24
     Top = 32
     Width = 96
     Height = 16
     Caption = #35531#36664#20837#33290#23494#30908
   end
   object labelNewPassword: TLabel
-    Left = 40
+    Left = 24
     Top = 72
     Width = 96
     Height = 16
     Caption = #35531#36664#20837#26032#23494#30908
   end
   object editOldPassword: TMaskEdit
-    Left = 144
+    Left = 168
     Top = 24
     Width = 153
     Height = 24
@@ -37,7 +37,7 @@ object frmPassword: TfrmPassword
     OnClick = editOldPasswordClick
   end
   object editNewPassword: TMaskEdit
-    Left = 144
+    Left = 168
     Top = 64
     Width = 153
     Height = 24

@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 438
-  Top = 62
+  Left = 645
+  Top = 44
   Width = 594
   Height = 548
   Caption = #27231#21488#21443#25976
@@ -14,6 +14,13 @@ object frmMachineParam: TfrmMachineParam
   Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 16
+  object Label1: TLabel
+    Left = 296
+    Top = 232
+    Width = 32
+    Height = 16
+    Caption = #35486#31995
+  end
   object BitBtn1: TBitBtn
     Left = 80
     Top = 440
@@ -527,9 +534,9 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object StaticText16: TStaticText
-    Left = 29
-    Top = 227
-    Width = 148
+    Left = 32
+    Top = 229
+    Width = 105
     Height = 22
     Alignment = taRightJustify
     AutoSize = False
@@ -543,16 +550,16 @@ object frmMachineParam: TfrmMachineParam
     TabOrder = 3
   end
   object m_dSafePos: TEdit
-    Left = 179
-    Top = 227
+    Left = 139
+    Top = 228
     Width = 65
     Height = 24
     TabOrder = 4
     Text = 'm_dSafePos'
   end
   object StaticText17: TStaticText
-    Left = 251
-    Top = 227
+    Left = 211
+    Top = 229
     Width = 65
     Height = 22
     AutoSize = False
@@ -691,9 +698,9 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object m_bForceEject: TCheckBox
-    Left = 344
-    Top = 224
-    Width = 169
+    Left = 464
+    Top = 228
+    Width = 97
     Height = 25
     Caption = #24375#21046#25490#38500
     TabOrder = 7
@@ -706,9 +713,9 @@ object frmMachineParam: TfrmMachineParam
     Caption = 'Lifters Soft Limit'
     TabOrder = 8
     object StaticText24: TStaticText
-      Left = 16
-      Top = 51
-      Width = 57
+      Left = 8
+      Top = 27
+      Width = 73
       Height = 22
       Alignment = taRightJustify
       AutoSize = False
@@ -716,15 +723,15 @@ object frmMachineParam: TfrmMachineParam
       BevelKind = bkSoft
       BevelOuter = bvNone
       BorderStyle = sbsSingle
-      Caption = #27491#26997#38480
+      Caption = #21069#27491#26997#38480
       Color = clSkyBlue
       ParentColor = False
       TabOrder = 0
     end
     object StaticText25: TStaticText
-      Left = 16
-      Top = 83
-      Width = 57
+      Left = 8
+      Top = 56
+      Width = 73
       Height = 22
       Alignment = taRightJustify
       AutoSize = False
@@ -732,30 +739,30 @@ object frmMachineParam: TfrmMachineParam
       BevelKind = bkSoft
       BevelOuter = bvNone
       BorderStyle = sbsSingle
-      Caption = #36000#26997#38480
+      Caption = #21069#36000#26997#38480
       Color = clSkyBlue
       ParentColor = False
       TabOrder = 1
     end
-    object m_dPLimit: TEdit
-      Left = 75
-      Top = 49
+    object m_dPLimitF: TEdit
+      Left = 83
+      Top = 25
       Width = 65
       Height = 24
       TabOrder = 2
-      Text = 'm_dPLimit'
+      Text = 'm_dPLimitF'
     end
-    object m_dNLimit: TEdit
-      Left = 75
-      Top = 81
+    object m_dNLimitF: TEdit
+      Left = 83
+      Top = 54
       Width = 65
       Height = 24
       TabOrder = 3
-      Text = 'm_dNLimit'
+      Text = 'm_dNLimitF'
     end
     object StaticText28: TStaticText
-      Left = 144
-      Top = 51
+      Left = 152
+      Top = 27
       Width = 65
       Height = 22
       AutoSize = False
@@ -769,8 +776,8 @@ object frmMachineParam: TfrmMachineParam
       TabOrder = 4
     end
     object StaticText26: TStaticText
-      Left = 144
-      Top = 83
+      Left = 152
+      Top = 56
       Width = 65
       Height = 22
       AutoSize = False
@@ -783,5 +790,102 @@ object frmMachineParam: TfrmMachineParam
       ParentColor = False
       TabOrder = 5
     end
+    object StaticText27: TStaticText
+      Left = 8
+      Top = 85
+      Width = 73
+      Height = 22
+      Alignment = taRightJustify
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = #24460#27491#26997#38480
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 6
+    end
+    object StaticText29: TStaticText
+      Left = 8
+      Top = 115
+      Width = 73
+      Height = 22
+      Alignment = taRightJustify
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = #24460#36000#26997#38480
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 7
+    end
+    object m_dPLimitR: TEdit
+      Left = 83
+      Top = 83
+      Width = 65
+      Height = 24
+      TabOrder = 8
+      Text = 'm_dPLimit'
+    end
+    object m_dNLimitR: TEdit
+      Left = 83
+      Top = 113
+      Width = 65
+      Height = 24
+      TabOrder = 9
+      Text = 'm_dNLimit'
+    end
+    object StaticText30: TStaticText
+      Left = 152
+      Top = 85
+      Width = 65
+      Height = 22
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = 'mm'
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 10
+    end
+    object StaticText31: TStaticText
+      Left = 152
+      Top = 115
+      Width = 65
+      Height = 22
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = 'mm'
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 11
+    end
+  end
+  object m_nLanguage: TComboBox
+    Left = 360
+    Top = 230
+    Width = 81
+    Height = 21
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = #26032#32048#26126#39636
+    Font.Style = []
+    ItemHeight = 13
+    ItemIndex = 0
+    ParentFont = False
+    TabOrder = 9
+    Text = #20013#25991
+    Items.Strings = (
+      #20013#25991
+      'English')
   end
 end

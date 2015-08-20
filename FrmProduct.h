@@ -173,6 +173,8 @@ __published:	// IDE-managed Components
         TLabel *Label87;
         TEdit *m_dVacDelayTime;
         TLabel *Label88;
+        void __fastcall FormCreate(TObject *Sender);
+        void __fastcall RenewRadioGroup();
 private:	// User declarations
 public:		// User declarations
         __fastcall TfmProduct(TComponent* Owner);

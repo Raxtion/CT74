@@ -1,6 +1,6 @@
 object frmOffser: TfrmOffser
-  Left = 230
-  Top = 245
+  Left = 254
+  Top = 142
   Width = 716
   Height = 524
   Caption = 'frmOffser'
@@ -1311,7 +1311,7 @@ object frmOffser: TfrmOffser
     TabOrder = 131
   end
   object StaticText31: TStaticText
-    Left = 592
+    Left = 584
     Top = 256
     Width = 34
     Height = 41

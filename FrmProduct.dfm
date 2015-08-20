@@ -13,6 +13,7 @@ object fmProduct: TfmProduct
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 16
   object Label83: TLabel
@@ -956,7 +957,7 @@ object fmProduct: TfmProduct
   object m_bNotLam: TCheckBox
     Left = 288
     Top = 552
-    Width = 73
+    Width = 113
     Height = 17
     Caption = #19981#22739#21512
     TabOrder = 13

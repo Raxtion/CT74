@@ -154,7 +154,9 @@ void __fastcall TfrmMain::N3Click(TObject *Sender)
         g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
         g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
 
-	ShowMessage("存檔完畢");
+	if (g_IniFile.m_nLanguageMode>0) ShowMessage("Save Done");
+        else ShowMessage("存檔完畢");
+
         Label22->Caption = g_IniFile.m_dLamTime[0];
         Label25->Caption = g_IniFile.m_dLamTemp[0];
         Label28->Caption = g_IniFile.m_dLamPress[0];
@@ -181,7 +183,8 @@ void __fastcall TfrmMain::N4Click(TObject *Sender)
 
 		SetAllDevice();
 
-		ShowMessage("存檔完畢");
+                if (g_IniFile.m_nLanguageMode>0) ShowMessage("Save Done");
+                else ShowMessage("存檔完畢");
                 Label22->Caption = g_IniFile.m_dLamTime[0];
                 Label25->Caption = g_IniFile.m_dLamTemp[0];
                 Label28->Caption = g_IniFile.m_dLamPress[0];
@@ -197,19 +200,33 @@ void __fastcall TfrmMain::N4Click(TObject *Sender)
 
 void __fastcall TfrmMain::N5Click(TObject *Sender)
 {
-	if (Application->MessageBox("是否要離開?", "注意", MB_OKCANCEL) == IDOK)
-	{
-		if (Application->MessageBox("離開前是否要存檔?", "注意", MB_OKCANCEL) == IDOK)
-			N3Click(Sender);
-
-		exit(0);
-	}
+        if (g_IniFile.m_nLanguageMode>0)
+        {
+                if (Application->MessageBox("Ready To Quit?", "Confirm", MB_OKCANCEL) == IDOK)
+	        {
+		        if (Application->MessageBox("Save File Before Leave?", "Confirm", MB_OKCANCEL) == IDOK)
+			        N3Click(Sender);
+		        exit(0);
+	        }
+        }
+        else
+        {
+	        if (Application->MessageBox("是否要離開?", "注意", MB_OKCANCEL) == IDOK)
+	        {
+		        if (Application->MessageBox("離開前是否要存檔?", "注意", MB_OKCANCEL) == IDOK)
+			        N3Click(Sender);
+		        exit(0);
+	        }
+        }
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TfrmMain::N7Click(TObject *Sender)
 {
 	TfrmMachineParam *pMachineDlg = new TfrmMachineParam(this);
+
+        //CreateCaptionFile(pMachineDlg);
+        ReadCaptionFile(pMachineDlg, g_IniFile.m_nLanguageMode);
 
 	AnsiString strCtl;
 	bool bRead = true;
@@ -226,6 +243,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
 	DDX_Float(bRead, g_IniFile.m_dSafePos, pMachineDlg->m_dSafePos);
         DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
+        DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
 
 	DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 	DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -250,6 +268,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
 		DDX_Float(bRead, g_IniFile.m_dSafePos, pMachineDlg->m_dSafePos);
                 DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
+                DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
 
 		DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 		DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -263,13 +282,25 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
                 g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
                 g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
 
+                //CreateCaptionFile(this);
+                ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
+                //CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
+                ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
+
+                RenewRadioGroup(false);
+                this->Repaint();
 	}
+        delete pMachineDlg;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TfrmMain::N8Click(TObject *Sender)
 {
 	TfmProduct *pWnd = new TfmProduct(this);
+
+        //CreateCaptionFile(pWnd);
+        ReadCaptionFile(pWnd, g_IniFile.m_nLanguageMode);
+
 	AnsiString strCtl;
 	bool bRead = true;
 
@@ -464,6 +495,10 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 void __fastcall TfrmMain::N14Click(TObject *Sender)
 {
 	TfrmOffser *pWnd = new TfrmOffser(this);
+
+        //CreateCaptionFile(pWnd);
+        ReadCaptionFile(pWnd, g_IniFile.m_nLanguageMode);
+
 	AnsiString strCtl;
 	bool bRead = true;
 
@@ -508,12 +543,20 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
 
 	TfrmChoiceMotor *pChoiceMotorDlg = new TfrmChoiceMotor(this);
 	TfrmMotorCheck *pMotorCheckDlg;
+
+        //CreateCaptionFile(pChoiceMotorDlg);
+        ReadCaptionFile(pChoiceMotorDlg, g_IniFile.m_nLanguageMode);
+
         AnsiString sPath = ExtractFilePath(Application->ExeName);
         sPath = StringReplace(sPath, "\\exe\\", "",TReplaceFlags());
 
 	while (pChoiceMotorDlg->ShowModal() != mrCancel)
 	{
 		pMotorCheckDlg = new TfrmMotorCheck(this);
+                
+                //CreateCaptionFile(pMotorCheckDlg);
+                ReadCaptionFile(pMotorCheckDlg, g_IniFile.m_nLanguageMode);
+
                 if (pChoiceMotorDlg->m_nSelectAxis == 0)
                 {
                         pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\right.bmp");
@@ -543,12 +586,17 @@ void __fastcall TfrmMain::N10Click(TObject *Sender)
 {
 	if (!g_pMainThread->m_bIsHomeDone)
 	{
-		ShowMessage("請先執行機台原點復歸");
+                if (g_IniFile.m_nLanguageMode>0) ShowMessage("Please Reset Machine");
+                else ShowMessage("請先執行機台原點復歸");
 		return;             //debug
-	}
+       	}
 	SetManualSpeed(1.0);
 
 	TfrmManual *pWnd = new TfrmManual(this);
+
+        //CreateCaptionFile(pWnd);
+        ReadCaptionFile(pWnd, g_IniFile.m_nLanguageMode);
+
 	pWnd->ShowModal();
 
 	delete pWnd;
@@ -558,6 +606,9 @@ void __fastcall TfrmMain::N10Click(TObject *Sender)
 void __fastcall TfrmMain::N11Click(TObject *Sender)
 {
 	TfrmAD *frmAD = new TfrmAD(this);
+
+        //CreateCaptionFile(frmAD);
+        ReadCaptionFile(frmAD, g_IniFile.m_nLanguageMode);
 
 	frmAD->ShowModal();
 
@@ -575,7 +626,12 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
 {
 	TfrmPassword *pPwdDlg = new TfrmPassword(this);
 
-	pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
+        //CreateCaptionFile(pPwdDlg);
+        ReadCaptionFile(pPwdDlg, g_IniFile.m_nLanguageMode);
+
+        if (g_IniFile.m_nLanguageMode>0) pPwdDlg->labelOldPassword->Caption = "Plase Enter Password";
+        else pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
+
 	pPwdDlg->labelNewPassword->Visible = false;
 	pPwdDlg->editNewPassword->Visible = false;
 	if (pPwdDlg->ShowModal() == mrOk)
@@ -593,13 +649,15 @@ void __fastcall TfrmMain::N13Click(TObject *Sender)
 {
 	TfrmPassword *pPwdDlg = new TfrmPassword(this);
 
+        //CreateCaptionFile(pPwdDlg);
+        ReadCaptionFile(pPwdDlg, g_IniFile.m_nLanguageMode);
+
 	if (pPwdDlg->ShowModal() == mrOk)
 	{
 		if (pPwdDlg->editOldPassword->Text == g_IniFile.m_strENGPassword)
 			g_IniFile.m_strENGPassword = pPwdDlg->editNewPassword->Text;
 	}
-
-
+        
 	delete pPwdDlg;
 }
 //---------------------------------------------------------------------------
@@ -608,7 +666,9 @@ void __fastcall TfrmMain::Admin1Click(TObject *Sender)
 {
 	TfrmPassword *pPwdDlg = new TfrmPassword(this);
 
-	pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
+	if (g_IniFile.m_nLanguageMode>0) pPwdDlg->labelOldPassword->Caption = "Plase Enter Password";
+        else pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
+        
 	pPwdDlg->labelNewPassword->Visible = false;
 	pPwdDlg->editNewPassword->Visible = false;
 	if (pPwdDlg->ShowModal() == mrOk)
@@ -617,8 +677,6 @@ void __fastcall TfrmMain::Admin1Click(TObject *Sender)
 		else { Application->MessageBox("密碼錯誤!!", "錯誤", MB_OK); m_nUserLevel = 0; }
 	}
 	SetPrivilege(m_nUserLevel);
-
-
 
 	delete pPwdDlg;
 }
@@ -655,10 +713,8 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 
 	g_DNPort0.ReadAllData();
 	g_DNPort1.ReadAllData();
-
-
+        
 	RefreshImage();
-
 
 	if (checkMonitor->Checked)
 	{
@@ -666,12 +722,20 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 		//Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
 
 		Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_Balance.GetKg(1));
-		Label8->Caption = "雷射(上):" + FormatFloat("0.00", g_ModBus.GetAnalogData(3, 1)) + "mm";
-		Label9->Caption = "雷射(下):" + FormatFloat("0.00", g_ModBus.GetAnalogData(3, 0)) + "mm";
+		Label8->Caption = "Laser(上):" + FormatFloat("0.00", g_ModBus.GetAnalogData(3, 1)) + "mm";
+		Label9->Caption = "Laser(下):" + FormatFloat("0.00", g_ModBus.GetAnalogData(3, 0)) + "mm";
 	}
 
-	Label2->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
-	Label5->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
+        if (g_IniFile.m_nLanguageMode>0)
+        {
+                Label2->Caption = "Lam.RemainTime:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
+	        Label5->Caption = "Lam.RemainTime:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "Sec";
+        }
+        else
+        {
+	        Label2->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
+	        Label5->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
+        }
 	timerPressure->Enabled = true;
 
 }
@@ -792,8 +856,16 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 	}
 
         //--- real time monitor temperature
-        Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "度";
-        Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
+        if (g_IniFile.m_nLanguageMode>0)
+        {
+                Label1->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "℃ ";
+                Label4->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "℃ ";
+        }
+        else
+        {
+                Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "度";
+                Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
+        }
 
         //--- real time detect servermoter touch the soft limitation
         if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_IniFile.m_nErrorCode = 1010;
@@ -898,7 +970,8 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 
 	if (!g_pMainThread->m_bIsHomeDone)
 	{
-		ShowMessage("請先執行機台原點復歸");
+                if (g_IniFile.m_nLanguageMode>0) ShowMessage("Please Reset Machine");
+                else ShowMessage("請先執行機台原點復歸");
 		return;
 	}
 	else if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[1])
@@ -939,7 +1012,10 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 		{
 			if (radioPosOption->ItemIndex<4)
 			{
-				if (MessageDlg("XY 軸即將 移動至" + IntToStr(nIndex + 1),
+                                AnsiString pString;
+                                if (g_IniFile.m_nLanguageMode>0) pString = "XY Moving To...";
+                                else pString = "XY 軸即將 移動至";
+				if (MessageDlg(pString + IntToStr(nIndex + 1),
 					mtInformation, TMsgDlgButtons() << mbOK << mbCancel, 0) == mrCancel) return;
 
 				int nCol = nIndex % 10;
@@ -1042,6 +1118,57 @@ void __fastcall TfrmMain::SetManualSpeed(double dRatio)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfrmMain::ReadCaptionFileTMainMenu(TMainMenu *pMainMenu, int nLanguage)
+{
+        AnsiString strFile;
+	TIniFile *pIniFile;
+
+        if (nLanguage>0) strFile.sprintf("%s%s", "C:\\", "Caption_C74_ENG.ini");
+	else strFile.sprintf("%s%s", "C:\\", "Caption_C74.ini");
+
+        const char *pSection = pMainMenu->Name.c_str();
+
+        pIniFile = new TIniFile(strFile);
+
+	TStringList *TempList = new TStringList;
+
+	pIniFile->ReadSection(pSection, TempList);
+
+	AnsiString strClass;
+	AnsiString strName;
+	AnsiString strValue;
+
+        for (int nIndex = 0; nIndex<TempList->Count; nIndex++)
+	{
+                strName = TempList->Strings[nIndex];
+		strValue = pIniFile->ReadString(pSection, strName, "NA");
+
+                for (int nIndex2 = 0; nIndex2<((TMenuItem *)pMainMenu->Items)->Count; nIndex2++)
+                {
+                        if (((TMenuItem *)pMainMenu->Items)->Items[nIndex2]->Name == strName)
+                        {
+		                strClass = ((TMenuItem *)pMainMenu->Items)->Items[nIndex2]->ClassName();
+                                if (strClass == "TMenuItem") (((TMenuItem *)pMainMenu->Items)->Items[nIndex2])->Caption = strValue;
+                        }
+
+                        TMenuItem *pTopMenu = (TMenuItem *)pMainMenu->Items;
+
+                        for (int nIndex3 = 0; nIndex3<((TMenuItem *)pTopMenu->Items[nIndex2])->Count; nIndex3++)
+                        {
+                                if (((TMenuItem *)pTopMenu->Items[nIndex2])->Items[nIndex3]->Name == strName)
+                                {
+                                        strClass = ((TMenuItem *)pTopMenu->Items[nIndex2])->Items[nIndex3]->ClassName();
+                                        if (strClass == "TMenuItem") (((TMenuItem *)pTopMenu->Items[nIndex2])->Items[nIndex3])->Caption = strValue;
+                                }
+                        }
+                }
+	}
+
+
+	delete TempList;
+	delete pIniFile;
+}
+//---------------------------------------------------------------------------
 void __fastcall TfrmMain::ReadCaptionFile(TForm *pForm, int nLanguage)
 {
 	AnsiString strFile;
@@ -1080,13 +1207,11 @@ void __fastcall TfrmMain::ReadCaptionFile(TForm *pForm, int nLanguage)
 		else if (strClass == "TButton") ((TButton *)pForm->FindComponent(strName))->Caption = strValue;
 		else if (strClass == "TTabSheet") ((TTabSheet *)pForm->FindComponent(strName))->Caption = strValue;
 		else if (strClass == "TPanel") ((TPanel *)pForm->FindComponent(strName))->Caption = strValue;
+                else if (strClass == "TRadioGroup") ((TRadioGroup *)pForm->FindComponent(strName))->Caption = strValue;
 
 	}
 
-
 	delete TempList;
-
-
 	delete pIniFile;
 }
 //---------------------------------------------------------------------------
@@ -1179,10 +1304,42 @@ void __fastcall TfrmMain::SetAllDevice()
 	g_Balance.SetXY(g_IniFile.m_dLoadCellX[0], g_IniFile.m_dLoadCellX[1],
 		g_IniFile.m_dLoadCellY[0], g_IniFile.m_dLoadCellY[1]);
 }
-
+//---------------------------------------------------------------------------
 
 
 /*
+void __fastcall TfrmMain::CreateCaptionFileTMainMenu(TMainMenu *pMainMenu)
+{
+        AnsiString strFile;
+	TIniFile *pIniFile;
+
+        strFile.sprintf("%s%s", "C:\\", "Caption_C74.ini");
+	pIniFile = new TIniFile(strFile);
+
+        const char *Section = pMainMenu->Name.c_str();
+
+        for (int nIndex = 0; nIndex<pMainMenu->Items->Count; nIndex++)
+	{
+                if (((TMenuItem *)(pMainMenu->Items))->Items[nIndex]->ClassNameIs("TMenuItem"))
+		{
+                        AnsiString strCaption = ((TMenuItem *)(pMainMenu->Items))->Items[nIndex]->Caption;
+                        AnsiString strName = ((TMenuItem *)(pMainMenu->Items))->Items[nIndex]->Name;
+                        DDXFile_String(false, pIniFile, Section, strName, strCaption, "NA");
+
+                        for (int nIndex2 = 0; nIndex2<((TMenuItem *)(pMainMenu->Items))->Items[nIndex]->Count; nIndex2++)
+	                {
+                                if (((TMenuItem *)(pMainMenu->Items))->Items[nIndex]->Items[nIndex2]->ClassNameIs("TMenuItem"))
+		                {
+                                        AnsiString strCaption = ((TMenuItem *)(pMainMenu->Items))->Items[nIndex]->Items[nIndex2]->Caption;
+                                        AnsiString strName = ((TMenuItem *)(pMainMenu->Items))->Items[nIndex]->Items[nIndex2]->Name;
+                                        DDXFile_String(false, pIniFile, Section, strName, strCaption, "NA");
+                                }
+                        }
+		}
+        }
+}
+
+
 void __fastcall TfrmMain::CreateCaptionFile(TForm *pForm)
 {
 	AnsiString strFile;
@@ -1456,6 +1613,14 @@ void __fastcall TfrmMain::CreateCaptionFile(TForm *pForm)
 
 		}
 
+                if (pForm->Controls[nIndex]->ClassNameIs("TRadioGroup"))
+                {
+                        AnsiString strCaption = ((TRadioGroup *)pForm->Controls[nIndex])->Caption;
+			AnsiString strName = ((TRadioGroup *)pForm->Controls[nIndex])->Name;
+
+			DDXFile_String(false, pIniFile, Section, strName, strCaption, "NA");
+                }
+
 	}
 
 	delete pIniFile;
@@ -1470,7 +1635,7 @@ void __fastcall TfrmMain::CreateCaptionFile(TForm *pForm)
 
 void __fastcall TfrmMain::FormCreate(TObject *Sender)
 {
-	g_IniFile.MachineFile(true);
+        g_IniFile.MachineFile(true);
 	Caption = g_IniFile.m_strLastFileName;
 	g_IniFile.ProductFile(g_IniFile.m_strLastFileName.c_str(), true);
 
@@ -1484,16 +1649,14 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 
 	g_pMainThread = new CMainThread(false);
 
-	if (g_ModBus.m_bInitOK) AddList("溫控器通訊埠開啟成功");
-	else AddList("溫控器通訊埠開啟失敗");
-
-	if (g_Balance.m_bInitOK) AddList("荷重元通訊埠開啟成功");
-	else AddList("荷重元通訊埠開啟失敗");
-
 	SetAllDevice();
 
+        RenewRadioGroup(true);
 
-
+        //CreateCaptionFile(this);
+        ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
+        //CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
+        ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
 
 	Timer1->Enabled = true;
 	timerPressure->Enabled = true;
@@ -1525,8 +1688,6 @@ void __fastcall TfrmMain::cmbTimesChange(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-
-
 void __fastcall TfrmMain::checkAutoRetryClick(TObject *Sender)
 {
         g_pMainThread->m_bAutoRetry = checkAutoRetry->Checked;
@@ -1538,14 +1699,15 @@ void __fastcall TfrmMain::btnHomingClick(TObject *Sender)
         g_pMainThread->m_bIsHomingFromBtn = true;
         if (g_IniFile.m_nErrorCode == 0)
         {
-                switch (Application->MessageBoxA("確實全機復歸", "Confirm", MB_YESNOCANCEL))
+                AnsiString pString;
+                if (g_IniFile.m_nLanguageMode>0) pString = "Homing Reset?";
+                else pString = "確實全機復歸";
+                switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
                 {
                         case IDYES: {g_pMainThread->m_nIsFullHoming = 1; break;}
                         case IDNO: {g_pMainThread->m_nIsFullHoming = 0; break;}
                         case IDCANCEL: {g_pMainThread->m_nIsFullHoming = 2; break;}
                 }
-                //if (Application->MessageBoxA("確實全機復歸", "Confirm", MB_YESNOCANCEL) == IDYES) g_pMainThread->m_nIsFullHoming = 1;
-                //else if
         }
 }
 //---------------------------------------------------------------------------
@@ -1556,4 +1718,56 @@ void __fastcall TfrmMain::checkStopLCClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfrmMain::RenewRadioGroup(bool bInit)
+{
+        if (g_IniFile.m_nLanguageMode>0)
+        {
+                //Create radioPosOption
+                radioPosOption->Items->Clear();
+                radioPosOption->Items->Add("None");
+                radioPosOption->Items->Add("MoveTo Load Cell Loc.");
+                radioPosOption->Items->Add("MoveTo Up Laser Loc.");
+                radioPosOption->Items->Add("MoveTo Down Laser Loc.");
+                radioPosOption->Items->Add("Only On Proportional valve");
+                radioPosOption->ItemIndex = 0;
+                //Create cmbRange
+                cmbRange->Items->Clear();
+                cmbRange->Items->Add("ALL");
+                cmbRange->Items->Add("One");
+                cmbRange->ItemIndex = 0;
+                if (bInit)
+                {
+                        //Control Check
+                        if (g_ModBus.m_bInitOK) AddList("Temp Control Start Success");
+	                else AddList("Temp Control Start Failed");
+	                if (g_Balance.m_bInitOK) AddList("LoadCell Control Start Success");
+	                else AddList("LoadCell Control Start Failed");
+                }
+        }
+        else
+        {
+                //Create radioPosOption
+                radioPosOption->Items->Clear();
+                radioPosOption->Items->Add("不動作");
+                radioPosOption->Items->Add("移動至Load Cell 位置");
+                radioPosOption->Items->Add("移動至Laser 上模 位置");
+                radioPosOption->Items->Add("移動至Laser 下模 位置");
+                radioPosOption->Items->Add("僅啟動此比例閥");
+                radioPosOption->ItemIndex = 0;
+                //Create cmbRange
+                cmbRange->Items->Clear();
+                cmbRange->Items->Add("整盤");
+                cmbRange->Items->Add("單顆");
+                cmbRange->ItemIndex = 0;
+                if (bInit)
+                {
+                        //Control Check
+	                if (g_ModBus.m_bInitOK) AddList("溫控器通訊埠開啟成功");
+	                else AddList("溫控器通訊埠開啟失敗");
+	                if (g_Balance.m_bInitOK) AddList("荷重元通訊埠開啟成功");
+	                else AddList("荷重元通訊埠開啟失敗");
+                }
+        }
 
+}
+//---------------------------------------------------------------------------

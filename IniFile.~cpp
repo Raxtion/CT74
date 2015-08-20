@@ -12,7 +12,7 @@
 
 #define ErrorMessage_Dir "Error Message\\"
 #define ErrorMessageFileName "C74ErrorMessage.ini"
-#define ErrorMessageEngFileName "ErrorMessageEng.ini"
+#define ErrorMessageEngFileName "C74ErrorMessageEng.ini"
 #define UserName "User.sis"
 
 #define IniFile_Dir "C:\\Product Data\\"
@@ -86,8 +86,10 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dSafePos",m_dSafePos,0);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bForceEject",m_bForceEject,false);
 
-  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dPLimit",m_dPLimit,0.0);
-  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dNLimit",m_dNLimit,0.0);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dPLimitF",m_dPLimitF,0.0);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dNLimitF",m_dNLimitF,0.0);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dPLimitR",m_dPLimitR,0.0);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dNLimitR",m_dNLimitR,0.0);
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLoadCellX0",m_dLoadCellX[0],0.0);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLoadCellX1",m_dLoadCellX[1],0.0);

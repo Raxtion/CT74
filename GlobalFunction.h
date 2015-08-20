@@ -43,6 +43,7 @@ void DDX_Radio(bool bRead,bool &bParameter,TRadioGroup *pRadio);
 void DDX_Radio(bool bRead,int &nParameter,TRadioGroup *pRadio);
 void DDX_TrackBar(bool bRead,int &nParameter,TTrackBar *pTrackBar);
 void DDX_TrackBarFloat(bool bRead,double &dParameter,TTrackBar *pTrackBar,double dScale);
+void DDX_ComboBox(bool bRead,int &nParameter, TComboBox *pComboBox);
 void DDX_String(bool bRead,AnsiString &strParameter,TEdit *pEdit);
 //DDX File
 void DDXFile_Int(bool bRead,TIniFile *pIniFile,AnsiString strSection,

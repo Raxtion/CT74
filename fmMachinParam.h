@@ -89,6 +89,8 @@ __published:	// IDE-managed Components
         TEdit *m_dNLimitR;
         TStaticText *StaticText30;
         TStaticText *StaticText31;
+        TComboBox *m_cmbLanguage;
+        TLabel *Label1;
 private:	// User declarations
 public:		// User declarations
         __fastcall TfrmMachineParam(TComponent* Owner);
