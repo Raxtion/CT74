@@ -361,8 +361,8 @@ void __fastcall CMainThread::Execute()
 				bAutoMode = true;
 				m_nPassBoatCount0 = m_nPassBoatStart;
 				m_nPassBoatCount1 = m_nPassBoatStart;
-                                CMainThread::tmUPHFront.timeDevStart();                                //start UPH timer
-				CMainThread::tmUPHRear.timeDevStart();                                //start UPH timer
+                                //CMainThread::tmUPHFront.timeDevStart();                                //start UPH timer
+				//CMainThread::tmUPHRear.timeDevStart();                                //start UPH timer
 
 				//g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
 				//g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
@@ -1183,18 +1183,21 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 	case 4:
 		if (g_DIO.ReadDIBit(nReadyOut) || g_IniFile.m_bForceEject)        //bypass
 		{
+
                         if (bFront)
                         {
                                 dPassTimeFront = CMainThread::tmUPHFront.timeDevEnd();
                                 CMainThread::tmUPHFront.timeDevStart();
+                                if (dPassTimeFront != 0.0) m_dUnitPerHour1 = ( (g_IniFile.m_nCols * g_IniFile.m_nRows)/ dPassTimeFront) * 3600 * 1000;
+                                else m_dUnitPerHour1 = 0.0;
                         }
                         else
                         {
                                 dPassTimeRear = CMainThread::tmUPHRear.timeDevEnd();
                                 CMainThread::tmUPHRear.timeDevStart();
+                                if (dPassTimeRear != 0.0) m_dUnitPerHour0 = ( (g_IniFile.m_nCols * g_IniFile.m_nRows)/ dPassTimeRear) * 3600 * 1000;
+                                else m_dUnitPerHour0 = 0.0;
                         }
-                        m_dUnitPerHour1 = ( (g_IniFile.m_nCols * g_IniFile.m_nRows)/ dPassTimeFront) * 3600 * 1000;
-                        m_dUnitPerHour0 = ( (g_IniFile.m_nCols * g_IniFile.m_nRows)/ dPassTimeRear) * 3600 * 1000;
 
 			g_DIO.SetDO(nEjectStop, false);
 			tm1MS->timeStart(3000);
@@ -1490,7 +1493,8 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		{
 			nMoveIndex = 0;
 			nTryTimes = 0;
-			g_IniFile.m_nErrorCode = 72;
+                        if (m_bIsAutoMode && m_bIsHomeDone) {g_IniFile.m_nErrorCode = 1007; m_bStartAutoCal[bFront] = false;}
+                        else g_IniFile.m_nErrorCode = 72;
 		}
 		break;
 	default:
@@ -1801,12 +1805,12 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		else if (tm1MS->timeUp())  bFront ? g_IniFile.m_nErrorCode = 21 : g_IniFile.m_nErrorCode = 21;
 		break;
 	case 2:
-		m_bStartAutoCal[bFront] = true;
+		if (CMainThread::nThreadIndex[6] == 0) m_bStartAutoCal[bFront] = true;
 		m_bAutoRetry = false;
 		if (bFront == true)
 		{
 			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 1, 0, 0);
 			else nThreadIndex++;
 		}
 		else
@@ -1819,7 +1823,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 3:
 		if (m_bStartAutoCal[bFront] == false)
 		{
-			if (g_IniFile.m_nErrorCode == 0)
+			if (g_IniFile.m_nErrorCode == 1007)
 			{
 				nThreadIndex = nTagA;
 			}
@@ -1835,7 +1839,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		if (bFront == true)
 		{
 			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 1, 0, 0);
 			else nThreadIndex++;
 		}
 		else
@@ -1858,7 +1862,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		if (bFront == true)
 		{
 			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 1, 0, 0);
 			else nThreadIndex++;
 		}
 		else
@@ -1891,6 +1895,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		if (g_Motion.IsPosDone(AXIS_Y, g_IniFile.m_dSafePos))
 		{
 			g_IniFile.m_nErrorCode = 1006;
+                        nThreadIndex++;
 		}
 		break;
 

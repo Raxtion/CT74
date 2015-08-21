@@ -829,7 +829,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         }
 
         //---Renew UPH
-        editUnitPerHour->Text = FormatFloat("0.000", g_pMainThread->m_dUnitPerHour1+g_pMainThread->m_dUnitPerHour0);
+        editUnitPerHour->Text = FormatFloat("0.000", float(g_pMainThread->m_dUnitPerHour1)+float(g_pMainThread->m_dUnitPerHour0));
 
         //---Auto active LC no function
         if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55) checkStopLC->Checked = true;
@@ -841,7 +841,10 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 
 void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 {
-        //--- renew paintBox per 1 second
+        Timer2->Enabled = false;
+
+        //--- renew paintBox per 1 second (if not Cal. manuel will show some stiky number, should off it)
+        /*
 	g_pMainThread->m_nPressCalMoveIndex[0]++;
 	g_pMainThread->m_nLaserCalMoveIndex[0]++;
 	g_pMainThread->m_nPressCalMoveIndex[1]++;
@@ -854,6 +857,7 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 		g_pMainThread->m_nPressCalMoveIndex[1] = 0;
 		g_pMainThread->m_nLaserCalMoveIndex[1] = 0;
 	}
+        */
 
         //--- real time monitor temperature
         if (g_IniFile.m_nLanguageMode>0)
@@ -869,9 +873,11 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 
         //--- real time detect servermoter touch the soft limitation
         if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_IniFile.m_nErrorCode = 1010;
-        if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_IniFile.m_nErrorCode = 1010;
-        if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_IniFile.m_nErrorCode = 1010;
+        else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_IniFile.m_nErrorCode = 1010;
+        else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_IniFile.m_nErrorCode = 1010;
+        else {if (g_IniFile.m_nErrorCode == 1010) g_IniFile.m_nErrorCode = 0}
 
+        Timer2->Enabled = true;
 }
 //---------------------------------------------------------------------------
 
@@ -1659,6 +1665,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
         ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
 
 	Timer1->Enabled = true;
+        Timer2->Enabled = true;
 	timerPressure->Enabled = true;
 }
 //---------------------------------------------------------------------------
