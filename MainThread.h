@@ -33,11 +33,11 @@ public:
         int m_nPassBoatStart;                   //Input counted Boats start number.
         int m_nPassBoatCount0;                  //Counted how many Boats are finished (rare).
         int m_nPassBoatCount1;                  //Counted how many Boats are finished (front).
-        bool m_bIsDoAutoCal;                    //Record for get into AutoCal.
+        bool m_bIsDoAutoCal[2];                 //Record for get into AutoCal. ([1]=fornt, [0]=rear)
         bool m_bIsManualFinish;                 //Record for Manual is finished then UP the btn.
-        int m_nIsFullHoming;                   //Record for Homing button should go fullhoming. (-1=normal, 1=true, 0=false, 2=cancel)
-        double m_dUnitPerHour1;                  //The result of UPH Front.
-        double m_dUnitPerHour0;                  //The result of UPH Rear.
+        int m_nIsFullHoming;                    //Record for Homing button should go fullhoming. (-1=normal, 1=true, 0=false, 2=cancel)
+        double m_dUnitPerHour1;                 //The result of UPH Front.
+        double m_dUnitPerHour0;                 //The result of UPH Rear.
 
         int m_nTrayRowIndex;
 

@@ -875,7 +875,7 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
         if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_IniFile.m_nErrorCode = 1010;
         else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_IniFile.m_nErrorCode = 1010;
         else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_IniFile.m_nErrorCode = 1010;
-        else {if (g_IniFile.m_nErrorCode == 1010) g_IniFile.m_nErrorCode = 0}
+        else {if (g_IniFile.m_nErrorCode == 1010) g_IniFile.m_nErrorCode = 0;};
 
         Timer2->Enabled = true;
 }
