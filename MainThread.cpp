@@ -275,6 +275,8 @@ void __fastcall CMainThread::Execute()
 				bStartMachineInit = false;
 				m_nIsFullHoming = -1;
 
+                                g_Motion.SetSoftLimit(0, 293.0, -1.99);
+                                g_Motion.SetSoftLimit(1, 584.0, -8);
 				g_Motion.SetSoftLimit(2, 550.0, -3.0);
 				g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
 				g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
@@ -1408,7 +1410,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 
 
 					nTryTimes++;
-					if (nTryTimes<20)
+					if (nTryTimes<25)
 					{
 						//tm1MS.timeStart(g_IniFile.m_dPressCalTime*1000);     //valve stable time
 						nThreadIndex = nTagA;
@@ -1493,7 +1495,10 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		{
 			nMoveIndex = 0;
 			nTryTimes = 0;
-			if (m_bIsAutoMode && m_bIsHomeDone) {g_IniFile.m_nErrorCode = 1007; m_bStartAutoCal[bFront] = false;}
+			if (m_bIsAutoMode && m_bIsHomeDone)
+            {
+                if (g_IniFile.m_nErrorCode != 1005) g_IniFile.m_nErrorCode = 1007;
+            }
 			else g_IniFile.m_nErrorCode = 72;
 			nThreadIndex++;
 		}
@@ -1817,7 +1822,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		if (bFront == true)
 		{
 			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 1, 0, 0);
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
 			else nThreadIndex++;
 		}
 		else
@@ -1847,7 +1852,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		if (bFront == true)
 		{
 			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 1, 0, 0);
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
 			else nThreadIndex++;
 		}
 		else
@@ -1871,7 +1876,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		if (bFront == true)
 		{
 			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 1, 0, 0);
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
 			else nThreadIndex++;
 		}
 		else
@@ -1907,7 +1912,6 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 			{
 				m_listLog.push_back("自動模式,測量與校正完成,繼續動作");
 				g_IniFile.m_nErrorCode = 0;
-				m_bLamReady[bFront] = true;
 			}
 			nThreadIndex++;
 		}
@@ -1915,12 +1919,16 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 
 	default:
 		m_bIsDoAutoCal[bFront] = false;
+        CMainThread::nThreadIndex[2] = 0;
+        CMainThread::nThreadIndex[4] = 0;
 		nThreadIndex = 0;
 	}
 
 	if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)
 	{	
 		m_bIsDoAutoCal[bFront] = false;
+        CMainThread::nThreadIndex[2] = 0;
+        CMainThread::nThreadIndex[4] = 0;
 		nThreadIndex = 0;
 	}
 }
