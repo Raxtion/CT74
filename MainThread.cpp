@@ -1535,7 +1535,6 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
 	static int nMoveIndex = 0;
 	static int nMoveIndexSub = 0;
-	bool bIsUpLaser = false;
 
 	static int nTimes = 0;                                           //次數
 
@@ -1567,8 +1566,6 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
 			p_dLaserValue = (double *)m_dFrontUpperLaser;
 
-			bIsUpLaser = true;
-
 		}
 		else
 		{
@@ -1596,7 +1593,6 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
 			p_dLaserValue = (double *)m_dRearUpperLaser;
 
-			bIsUpLaser = true;
 		}
 		else
 		{
@@ -1668,26 +1664,25 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	case 3:
 	case nTagA:nThreadIndex = 3;
 		{
-			if (!bIsUpLaser)
-			{
-				if (nManualRange == 0) nMoveIndex++;                                              //0=整盤,1=單顆
-				nMoveIndexSub = 0;
-			}
-			else
-			{
-				nMoveIndexSub++;
-				if (nMoveIndexSub>3)
-				{
-					if (nManualRange == 0) nMoveIndex++;                                      //0=整盤,1=單顆
-					nMoveIndexSub = 0;
-				}
-			}
+			//4 case below.
+			if (nManualRange == 0)                                                           //0=整盤,1=單顆
+			{                                                                                //上模與下模 整盤
+                if (!bUp)                                                                    //deside nMoveIndex, nMoveIndexSub
+			    {
+				    if (nManualRange == 0) nMoveIndex++;
+				    nMoveIndexSub = 0;
+			    }
+    			else
+    			{
+    				nMoveIndexSub++;
+    				if (nMoveIndexSub>3)
+    				{
+    					if (nManualRange == 0) nMoveIndex++;
+    					nMoveIndexSub = 0;
+    				}
+    			}
 
-			//if (nMoveIndex<50) nThreadIndex = 0;
-			//else nThreadIndex++;
-			if (nManualRange == 0)                                                           //0=整盤,1=單顆  
-			{
-				if (nMoveIndex<50)
+				if (nMoveIndex<50)                                                           //deside nTimes, nThreadIndex
 				{
 					nThreadIndex = 0;
 				}
@@ -1696,6 +1691,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 					nTimes++;
 					nThreadIndex = 0;
 					nMoveIndex = 0;
+                    nMoveIndexSub = 0;
 				}
 				else
 				{
@@ -1705,16 +1701,43 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			}
 			else
 			{
-				if (nTimes < nManualTimes)
-				{
-					nTimes++;
-					nThreadIndex = 0;
-				}
-				else
-				{
-					nThreadIndex++;
-					nTimes = 0;
-				}
+                if (!bUp)                                                                    //下模單顆
+			    {                                                                            //deside nMoveIndex, nMoveIndexSub
+                    if (nManualRange == 0) nMoveIndex++;
+                    nMoveIndexSub = 0;
+
+                    if (nTimes < nManualTimes)                                               //deside nTimes, nThreadIndex
+                    {
+    					nTimes++;
+    					nThreadIndex = 0;
+    				}
+    				else
+    				{
+    					nThreadIndex++;
+    					nTimes = 0;
+    				}
+                }
+                else                                                                         //上模單顆
+                {
+                                                                                             //deside nMoveIndex, nMoveIndexSub
+                    if (nMoveIndexSub < 3)
+					{
+						nMoveIndexSub++;
+						nThreadIndex = 0;
+					}
+					else if (nTimes < nManualTimes)                                          //deside nTimes, nThreadIndex
+					{
+						nTimes++;
+						nThreadIndex = 0;
+						nMoveIndexSub = 0;
+					}
+					else
+					{
+						nThreadIndex++;
+						nTimes = 0;
+					}
+
+                }
 			}
 		}
 		break;
@@ -1735,7 +1758,6 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
 	if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)
 	{
-		//nMoveIndex=0;
 		nThreadIndex = 0;
 	}
 }

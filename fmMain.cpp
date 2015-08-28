@@ -855,15 +855,18 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     */
 
     //--- real time monitor temperature
-    if (g_IniFile.m_nLanguageMode>0)
+    if (!g_pMainThread->m_bStartLaserUpCal[1] || !g_pMainThread->m_bStartLaserUpCal[0] || !g_pMainThread->m_bStartLaserDownCal[1] || !g_pMainThread->m_bStartLaserDownCal[0])
     {
-        Label1->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + " ";
-        Label4->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + " ";
-    }
-    else
-    {
-		Label1->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "";
-		Label4->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "";
+        if (g_IniFile.m_nLanguageMode>0)
+        {
+            Label1->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + " ";
+            Label4->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + " ";
+        }
+        else
+        {
+		    Label1->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "";
+		    Label4->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "";
+        }
     }
 
     //--- real time detect servermoter touch the soft limitation

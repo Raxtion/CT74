@@ -855,20 +855,23 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     */
 
     //--- real time monitor temperature
-    if (g_IniFile.m_nLanguageMode>0)
+    if (!m_bStartLaserUpCal[1] || !m_bStartLaserUpCal[0] || !m_bStartLaserDownCal[1] || !m_bStartLaserDownCal[0])
     {
-        Label1->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "℃ ";
-        Label4->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "℃ ";
-    }
-    else
-    {
-		Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "度";
-		Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
+        if (g_IniFile.m_nLanguageMode>0)
+        {
+            Label1->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "℃ ";
+            Label4->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "℃ ";
+        }
+        else
+        {
+		    Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "度";
+		    Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
+        }
     }
 
     //--- real time detect servermoter touch the soft limitation
-    if (g_Motion.GetActualPos(0) < -0.1 || abs(g_Motion.GetActualPos(2) > 292.0)) g_pMainThread->m_listLog.push_back("X 撞軟體極限");
-    else if (g_Motion.GetActualPos(1) < -7.0 || abs(g_Motion.GetActualPos(2) > 583.0)) g_pMainThread->m_listLog.push_back("Y 撞軟體極限");
+    if (g_Motion.GetActualPos(0) < -0.1 || abs(g_Motion.GetActualPos(0) > 292.0)) g_pMainThread->m_listLog.push_back("X 撞軟體極限");
+    else if (g_Motion.GetActualPos(1) < -7.0 || abs(g_Motion.GetActualPos(1) > 583.0)) g_pMainThread->m_listLog.push_back("Y 撞軟體極限");
     else if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_pMainThread->m_listLog.push_back("LC 撞軟體極限");
     else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_pMainThread->m_listLog.push_back("FL 撞軟體極限");
     else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_pMainThread->m_listLog.push_back("RL 撞軟體極限");
