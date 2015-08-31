@@ -1651,6 +1651,15 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 void __fastcall TfrmMain::cmbRangeChange(TObject *Sender)
 {
 	g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
+    if (cmbRange->ItemIndex == 1)
+    {
+        checkAutoRetry->Checked = false;
+        checkAutoRetry->Enabled = false;
+    }
+    else
+    {
+        checkAutoRetry->Enabled = true;
+    }
 }
 //---------------------------------------------------------------------------
 
