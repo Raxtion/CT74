@@ -829,6 +829,10 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //---Auto active LC no function
     if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55) checkStopLC->Checked = true;
 
+    //--Renew PaintBox
+    PaintBox1Paint(this);
+    PaintBox2Paint(this);
+    
 	Timer1->Enabled = true;
 
 }
@@ -855,7 +859,8 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     */
 
     //--- real time monitor temperature
-    if (!g_pMainThread->m_bStartLaserUpCal[1] || !g_pMainThread->m_bStartLaserUpCal[0] || !g_pMainThread->m_bStartLaserDownCal[1] || !g_pMainThread->m_bStartLaserDownCal[0])
+    if (g_pMainThread->m_bIsManualFinish == true || btnLaserUp1->Down == false || btnLaserUp0->Down == false || btnLaserDown1->Down == false || btnLaserDown0->Down == false)
+    // || !g_pMainThread->m_bStartLaserUpCal[1] || !g_pMainThread->m_bStartLaserUpCal[0] || !g_pMainThread->m_bStartLaserDownCal[1] || !g_pMainThread->m_bStartLaserDownCal[0])
     {
         if (g_IniFile.m_nLanguageMode>0)
         {
