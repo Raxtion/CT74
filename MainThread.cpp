@@ -133,9 +133,9 @@ void __fastcall CMainThread::Execute()
 				}
 				else if (m_nIsFullHoming == 0)
 				{
-					// if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
+					if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
 					//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;           //Don't Need
-                    if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
+                    else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 					else if (g_DIO.ReadDIBit(DI::LamInp1) || g_DIO.ReadDIBit(DI::LamEntry1) || g_DIO.ReadDIBit(DI::LamWarp1)) g_IniFile.m_nErrorCode = 11;     //bypass
 					else if (g_DIO.ReadDIBit(DI::LamInp2) || g_DIO.ReadDIBit(DI::LamEntry2) || g_DIO.ReadDIBit(DI::LamWarp2)) g_IniFile.m_nErrorCode = 12;
 					else if (!g_DIO.ReadDIBit(DI::EjectStopUp1)) g_IniFile.m_nErrorCode = 13;
@@ -276,8 +276,8 @@ void __fastcall CMainThread::Execute()
 				bStartMachineInit = false;
 				m_nIsFullHoming = -1;
 
-                                g_Motion.SetSoftLimit(0, 293.0, -1.99);
-                                g_Motion.SetSoftLimit(1, 584.0, -8);
+                g_Motion.SetSoftLimit(0, 293.0, -1.99);
+                g_Motion.SetSoftLimit(1, 584.0, -8.0);
 				g_Motion.SetSoftLimit(2, 550.0, -3.0);
 				g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
 				g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
@@ -447,9 +447,9 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 	case 2:
 		if (tm1MS.timeUp())
 		{
-			//if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
+			if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
 			//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;           //Don't Need
-			 if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
+			else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 			else if (g_DIO.ReadDIBit(DI::LamInp1) || g_DIO.ReadDIBit(DI::LamEntry1) || g_DIO.ReadDIBit(DI::LamWarp1)) g_IniFile.m_nErrorCode = 11;     //bypass
 			else if (g_DIO.ReadDIBit(DI::LamInp2) || g_DIO.ReadDIBit(DI::LamEntry2) || g_DIO.ReadDIBit(DI::LamWarp2)) g_IniFile.m_nErrorCode = 12;
 			else if (!g_DIO.ReadDIBit(DI::EjectStopUp1)) g_IniFile.m_nErrorCode = 13;
@@ -1364,11 +1364,9 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		if (tm1MS.timeUp())
 		{
 			//Get Load Cell Value
-
 			double dLoadCellValue = g_Balance.GetKg(1);       //Kg
 			m_listLog.push_back("重量=" + FormatFloat("0.0000 Kg", dLoadCellValue));
-			
-			
+
 			if (m_bAutoRetry == false)
 			{
 				//--自動情況------------------------------------------------------------------------------------------------------
@@ -1492,7 +1490,6 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					nTimes = 0;
 				}
 			}
-
 		}
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 10;
 		break;

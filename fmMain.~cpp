@@ -711,26 +711,26 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
         
 	RefreshImage();
 
+    Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "度";
+    Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
+
 	if (checkMonitor->Checked)
 	{
-		//Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "度";
-		//Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
-
-		Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_Balance.GetKg(1));
+        Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_Balance.GetKg(1));
 		Label8->Caption = "Laser(上):" + FormatFloat("0.00", g_ModBus.GetAnalogData(3, 1)) + "mm";
 		Label9->Caption = "Laser(下):" + FormatFloat("0.00", g_ModBus.GetAnalogData(3, 0)) + "mm";
 	}
 
-        if (g_IniFile.m_nLanguageMode>0)
-        {
-            Label2->Caption = "Lam.RemainTime:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
-	        Label5->Caption = "Lam.RemainTime:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "Sec";
-        }
-        else
-        {
-	        Label2->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
-	        Label5->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
-        }
+    if (g_IniFile.m_nLanguageMode>0)
+    {
+        Label2->Caption = "Lam.RemainTime:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
+        Label5->Caption = "Lam.RemainTime:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "Sec";
+    }
+    else
+    {
+        Label2->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
+        Label5->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
+    }
 	timerPressure->Enabled = true;
 
 }
@@ -854,8 +854,10 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 	}
     */
 
+    /*
     //--- real time monitor temperature
-    if (!g_pMainThread->m_bStartLaserUpCal[1] || !g_pMainThread->m_bStartLaserUpCal[0] || !g_pMainThread->m_bStartLaserDownCal[1] || !g_pMainThread->m_bStartLaserDownCal[0])
+    if (g_pMainThread->m_bIsManualFinish == true || btnLaserUp1->Down == false || btnLaserUp0->Down == false || btnLaserDown1->Down == false || btnLaserDown0->Down == false)
+    //if (!g_pMainThread->m_bStartLaserUpCal[1] || !g_pMainThread->m_bStartLaserUpCal[0] || !g_pMainThread->m_bStartLaserDownCal[1] || !g_pMainThread->m_bStartLaserDownCal[0])
     {
         if (g_IniFile.m_nLanguageMode>0)
         {
@@ -868,6 +870,7 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 		    Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
         }
     }
+    */
 
     //--- real time detect servermoter touch the soft limitation
     if (g_Motion.GetActualPos(0) < -0.1 || abs(g_Motion.GetActualPos(0) > 292.0)) g_pMainThread->m_listLog.push_back("X 撞軟體極限");
