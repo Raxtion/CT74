@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 146
-  Top = 191
+  Left = 5
+  Top = 10
   Width = 1348
   Height = 623
   Caption = 'frmMain'
@@ -756,7 +756,6 @@ object frmMain: TfrmMain
   end
   object Timer2: TTimer
     Enabled = False
-    Interval = 3000
     OnTimer = Timer2Timer
     Left = 222
     Top = 296

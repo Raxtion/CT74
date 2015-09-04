@@ -65,6 +65,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_nIsFullHoming = -1;
 	m_dUnitPerHour1 = 0.0;
 	m_dUnitPerHour0 = 0.0;
+    m_nPressCalPassCount = 0;
 
 	m_nPassBoatCount0 = 0;
 	m_nPassBoatCount1 = 0;
@@ -132,9 +133,9 @@ void __fastcall CMainThread::Execute()
 				}
 				else if (m_nIsFullHoming == 0)
 				{
-					if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
+					// if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
 					//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;           //Don't Need
-                    else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
+                    if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 					else if (g_DIO.ReadDIBit(DI::LamInp1) || g_DIO.ReadDIBit(DI::LamEntry1) || g_DIO.ReadDIBit(DI::LamWarp1)) g_IniFile.m_nErrorCode = 11;     //bypass
 					else if (g_DIO.ReadDIBit(DI::LamInp2) || g_DIO.ReadDIBit(DI::LamEntry2) || g_DIO.ReadDIBit(DI::LamWarp2)) g_IniFile.m_nErrorCode = 12;
 					else if (!g_DIO.ReadDIBit(DI::EjectStopUp1)) g_IniFile.m_nErrorCode = 13;
@@ -446,9 +447,9 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 	case 2:
 		if (tm1MS.timeUp())
 		{
-			if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
+			//if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
 			//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;           //Don't Need
-			else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
+			 if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 			else if (g_DIO.ReadDIBit(DI::LamInp1) || g_DIO.ReadDIBit(DI::LamEntry1) || g_DIO.ReadDIBit(DI::LamWarp1)) g_IniFile.m_nErrorCode = 11;     //bypass
 			else if (g_DIO.ReadDIBit(DI::LamInp2) || g_DIO.ReadDIBit(DI::LamEntry2) || g_DIO.ReadDIBit(DI::LamWarp2)) g_IniFile.m_nErrorCode = 12;
 			else if (!g_DIO.ReadDIBit(DI::EjectStopUp1)) g_IniFile.m_nErrorCode = 13;
@@ -1396,43 +1397,52 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			}
 			else
 			{
+                //--加入壓力補償---------------------------------------------------------------------------------------------------
 				if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 100.0) ||
 					dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 100.0))
 				{
 					m_listLog.push_back("NG-->Try Again");
-					//dNewValue=dNewValue*dNewValue/dLoadCellValue;            //
+                    //校正補償公式
+					//dNewValue=dNewValue*dNewValue/dLoadCellValue;
 					//dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]);
-                    dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2));
+                    //dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2));
+                    dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]), 0.5));
 					if (dNewValue <= 0)  dNewValue = 0.1;
 					m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
 					pDNPort->SetKg(nMoveIndex, dNewValue);
 					pDNPort->WriteAllData();
 
-
 					nTryTimes++;
+                    m_nPressCalPassCount = 0;
 					if (nTryTimes<25)
 					{
-						//tm1MS.timeStart(g_IniFile.m_dPressCalTime*1000);     //valve stable time
 						nThreadIndex = nTagA;
 					}
 					else g_IniFile.m_nErrorCode = 71;
 				}
 				else
 				{
+                    if (m_nPressCalPassCount < 2)
+                    {
+                        m_listLog.push_back("數值合格,再測一次");
+                        m_nPressCalPassCount++;
+                        nThreadIndex = nTagA;
+                    }
+                    else
+                    {
+					    pOffset[nMoveIndex] = dNewValue - g_IniFile.m_dLamPress[bFront];
 
-					pOffset[nMoveIndex] = dNewValue - g_IniFile.m_dLamPress[bFront];
+					    pLoadCellValue[nMoveIndex] = dLoadCellValue;
+					    m_listLog.push_back("數值合格,OK");
 
-					pLoadCellValue[nMoveIndex] = dLoadCellValue;
-					//dNewValue=g_IniFile.m_dLamPress[bFront];
-					m_listLog.push_back("OK");
-
-					if (nManualRange == 0)                                                                  //0=整盤,1=單顆
-					{                                                                                    //整盤時不引用cmbFirstLoc
-						nMoveIndex++;
-					}
-					nTryTimes = 0;
-					nThreadIndex = nTagA;
-
+					    if (nManualRange == 0)                                                                  //0=整盤,1=單顆
+					    {                                                                                    //整盤時不引用cmbFirstLoc
+						    nMoveIndex++;
+					    }
+					    nTryTimes = 0;
+                        m_nPressCalPassCount = 0;
+					    nThreadIndex = nTagA;
+                    }
 				}
 			}
 		}
@@ -1626,7 +1636,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 				nThreadIndex++;
 			}
 			else nThreadIndex = nTagA;
-            
+
 		}
 		break;
 	case 1:
@@ -1643,6 +1653,12 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	case 2:
 		if (tm1MS.timeUp())
 		{
+            if ((nMoveIndex * 4 + nMoveIndexSub)>200)
+            {
+                g_IniFile.m_nErrorCode = 75;
+            }
+            else
+            {
 			double dLaserData = 0.0;
 			dLaserData = g_ModBus.GetAnalogData(3, bUp);
 			if (g_ModBus.m_bInitOK)
@@ -1657,6 +1673,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = 0.0;
 				m_listLog.push_back("高度=N/A");
 			}
+            }
 
 			nThreadIndex++;
 		}
