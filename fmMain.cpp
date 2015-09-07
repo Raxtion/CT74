@@ -10,7 +10,7 @@
 #include "fmChoiceMotor.h"
 #include "fmMotorCheck.h"
 #include "fmAD.h"
-
+#include "dir.h"
 #include "MyPISODIO.h"
 #include "MainThread.h"
 #include "time.h"
@@ -146,6 +146,7 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 
 void __fastcall TfrmMain::N3Click(TObject *Sender)
 {
+    if (!FileExists("C:\\Product Data\\")) _mkdir("C:\\Product Data\\");
 	g_IniFile.MachineFile(false);
 	g_IniFile.ProductFile(Caption.c_str(), false);
 
@@ -173,7 +174,7 @@ void __fastcall TfrmMain::N4Click(TObject *Sender)
 	SaveDialog1->DefaultExt = "ini";
 	if (SaveDialog1->Execute())
 	{
-
+        if (!FileExists("C:\\Product Data\\")) _mkdir("C:\\Product Data\\");
 		g_IniFile.m_strLastFileName = SaveDialog1->FileName;
 		Caption = SaveDialog1->FileName;
 		g_IniFile.MachineFile(false);
@@ -556,9 +557,7 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
         if (pChoiceMotorDlg->m_nSelectAxis == 0)
         {
                 pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\right.bmp");
-                //pMotorCheckDlg->btnFWD->Left = 217;
                 pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\left.bmp");
-                //pMotorCheckDlg->btnRWD->Left = 78;
         }
         if (pChoiceMotorDlg->m_nSelectAxis == 4 || pChoiceMotorDlg->m_nSelectAxis == 5)
         {
@@ -858,9 +857,9 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 	}
     */
 
-    /*
     //--- real time monitor temperature
-    if (g_pMainThread->m_bIsManualFinish == true || btnLaserUp1->Down == false || btnLaserUp0->Down == false || btnLaserDown1->Down == false || btnLaserDown0->Down == false)
+    if (g_pMainThread->m_bIsManualFinish == true
+        && btnLaserUp1->Down == false && btnLaserUp0->Down == false && btnLaserDown1->Down == false && btnLaserDown0->Down == false)
     //if (!g_pMainThread->m_bStartLaserUpCal[1] || !g_pMainThread->m_bStartLaserUpCal[0] || !g_pMainThread->m_bStartLaserDownCal[1] || !g_pMainThread->m_bStartLaserDownCal[0])
     {
         if (g_IniFile.m_nLanguageMode>0)
@@ -874,14 +873,16 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 		    Label4->Caption = "¥Ø«e·Å«×:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "«×";
         }
     }
-    */
 
     //--- real time detect servermoter touch the soft limitation
-    if (g_Motion.GetActualPos(0) < -0.1 || abs(g_Motion.GetActualPos(0) > 292.0)) g_pMainThread->m_listLog.push_back("X ¼²³nÅé·¥­­");
-    else if (g_Motion.GetActualPos(1) < -7.0 || abs(g_Motion.GetActualPos(1) > 583.0)) g_pMainThread->m_listLog.push_back("Y ¼²³nÅé·¥­­");
-    else if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_pMainThread->m_listLog.push_back("LC ¼²³nÅé·¥­­");
-    else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_pMainThread->m_listLog.push_back("FL ¼²³nÅé·¥­­");
-    else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_pMainThread->m_listLog.push_back("RL ¼²³nÅé·¥­­");
+    if (g_pMainThread->m_bIsHomeDone == true)
+    {
+        if (g_Motion.GetActualPos(0) < -0.1 || abs(g_Motion.GetActualPos(0) > 292.0)) g_pMainThread->m_listLog.push_back("X ¼²³nÅé·¥­­");
+        else if (g_Motion.GetActualPos(1) < -7.0 || abs(g_Motion.GetActualPos(1) > 583.0)) g_pMainThread->m_listLog.push_back("Y ¼²³nÅé·¥­­");
+        else if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_pMainThread->m_listLog.push_back("LC ¼²³nÅé·¥­­");
+        else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_pMainThread->m_listLog.push_back("FL ¼²³nÅé·¥­­");
+        else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_pMainThread->m_listLog.push_back("RL ¼²³nÅé·¥­­");
+    }
 
     Timer2->Enabled = true;
 }
@@ -917,8 +918,6 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 		else PaintBox1->Canvas->Brush->Color = clGray;
 
 		PaintBox1->Canvas->Rectangle(m_vectRect[nIndex]);
-
-		//PaintBox1->Canvas->TextRect(m_rectRectFront[nIndex],1,1,FormatFloat("0",nIndex));
 
 		int nTextHeight = PaintBox1->Canvas->TextHeight("1");
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg ", g_DNPort0.GetSetKg(nIndex)) + FormatFloat("0.00kg", g_DNPort0.GetKg(nIndex)));
@@ -967,9 +966,7 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][3]));
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm", g_pMainThread->m_dRearDownLaser[nIndex][0]));
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.00Kg", g_pMainThread->m_dRearPressCal[nIndex]));
-
-		//PaintBox1->Canvas->TextRect(m_rectRectFront[nIndex],1,1,FormatFloat("0",nIndex));
-	}
+    }
 
 }
 //---------------------------------------------------------------------------

@@ -57,6 +57,8 @@ public:
   double m_dPLimitR;
   double m_dNLimitR;
 
+  double m_dLastLamPress[2];  //Record for LastPressCal. Protect Wrong press Lamination in AutoRun
+
   //-----------------Product-----------------
   int m_nCols;
   int m_nRows;

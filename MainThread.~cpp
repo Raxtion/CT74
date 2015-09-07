@@ -148,7 +148,7 @@ void __fastcall CMainThread::Execute()
 					else CheckAlarm();
 					g_IniFile.m_nErrorCode = 0;
 
-					//nThreadIndex[1] = 0;
+					//nThreadIndex[1] = 0;               //LC動作不被清除(Boat不好拿出來)
 					nThreadIndex[2] = 0;
 					nThreadIndex[3] = 0;
 					nThreadIndex[4] = 0;
@@ -213,7 +213,6 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::EjectMotorStart2, false);
 
 			SetManualSpeed();
-
 		}
 
 		//---Reset Alarm
@@ -247,13 +246,11 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::LamMotorStart2, false);
 			g_DIO.SetDO(DO::EjectMotorStart1, false);
 			g_DIO.SetDO(DO::EjectMotorStart2, false);
-
 		}
 
 		//---Homing Process
 		if (!bHomeDone && !bAutoMode  && bStartMachineInit)
 		{
-
 			bHomeDone = InitialMachine(nThreadIndex[0]);
 			if (bHomeDone)
 			{
@@ -285,7 +282,6 @@ void __fastcall CMainThread::Execute()
 
 			CheckAlarm();
 			m_bIsHomingFromBtn = false;
-
 		}
 		//---AutoMode
 		else if (bAutoMode && bHomeDone)
@@ -313,9 +309,7 @@ void __fastcall CMainThread::Execute()
 				if (nRemainder == 0 && m_bIsDoAutoCal[1] == true && m_bIsDoAutoCal[0] == false && nThreadIndex[2] == 2 && nThreadIndex[4] == 1)
 				{
 					//Do DoPressCal+detect and DoPressCal when get per Boat
-					//g_IniFile.m_nErrorCode = 1002;
 					DoAutoCal(true, nThreadIndex[14]);
-					//m_bIsDoAutoCal = false;
 				}
 				else
 				{         
@@ -332,9 +326,7 @@ void __fastcall CMainThread::Execute()
 				if (nRemainder == 0 && m_bIsDoAutoCal[0] == true && m_bIsDoAutoCal[1] == false && nThreadIndex[3] == 2 && nThreadIndex[5] == 1)
 				{
 					//Do DoPressCal+detect and DoPressCal when get per Boat
-					//g_IniFile.m_nErrorCode = 1002;
 					DoAutoCal(false, nThreadIndex[15]);
-					//m_bIsDoAutoCal = false;
 				}
 				else
 				{
@@ -359,30 +351,36 @@ void __fastcall CMainThread::Execute()
 
 			if (g_DIO.ReadDIBit(DI::StartBtn))                                          //當start綠燈被壓下時
 			{
-				//nThreadIndex[1]=0;       //some thread need to start from zero
+				if (g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0] || g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
+				{
+					g_IniFile.m_nErrorCode = 75;
+				}
+				else
+				{
+					//nThreadIndex[1]=0;       //some thread need to start from zero
+					bAutoMode = true;
+					m_nPassBoatCount0 = m_nPassBoatStart;
+					m_nPassBoatCount1 = m_nPassBoatStart;
+					//CMainThread::tmUPHFront.timeDevStart();                                //start UPH timer
+					//CMainThread::tmUPHRear.timeDevStart();                                //start UPH timer
 
-				bAutoMode = true;
-				m_nPassBoatCount0 = m_nPassBoatStart;
-				m_nPassBoatCount1 = m_nPassBoatStart;
-                                //CMainThread::tmUPHFront.timeDevStart();                                //start UPH timer
-				//CMainThread::tmUPHRear.timeDevStart();                                //start UPH timer
+					//g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
+					//g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
+					g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
+					//g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
+					//g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
+					::Sleep(300);
+					g_Motion.WaitMotionDone(AXIS_X, 30000);
+					g_Motion.WaitMotionDone(AXIS_Y, 30000);
+					g_Motion.WaitMotionDone(AXIS_LC, 30000);
+					g_Motion.WaitMotionDone(AXIS_FL, 30000);
+					g_Motion.WaitMotionDone(AXIS_RL, 30000);
 
-				//g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
-				//g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
-				g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
-				//g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
-				//g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
-				::Sleep(300);
-				g_Motion.WaitMotionDone(AXIS_X, 30000);
-				g_Motion.WaitMotionDone(AXIS_Y, 30000);
-				g_Motion.WaitMotionDone(AXIS_LC, 30000);
-				g_Motion.WaitMotionDone(AXIS_FL, 30000);
-				g_Motion.WaitMotionDone(AXIS_RL, 30000);
+					SetWorkSpeed();
 
-				SetWorkSpeed();
-
-				nThreadIndex[12] = 0;
-				nThreadIndex[13] = 0;
+					nThreadIndex[12] = 0;
+					nThreadIndex[13] = 0;
+				}
 			}
 
 			if (m_bStartPressCal[1]) DoPressCal(true, nThreadIndex[6], m_nManualRange, m_nManualFirstLoc, m_nManualTimes);
@@ -391,7 +389,6 @@ void __fastcall CMainThread::Execute()
 			else if (m_bStartLaserUpCal[0]) DoLaserCal(false, true, nThreadIndex[9], m_nManualRange, m_nManualFirstLoc, m_nManualTimes);
 			else if (m_bStartLaserDownCal[1]) DoLaserCal(true, false, nThreadIndex[10], m_nManualRange, m_nManualFirstLoc, m_nManualTimes);
 			else if (m_bStartLaserDownCal[0]) DoLaserCal(false, false, nThreadIndex[11], m_nManualRange, m_nManualFirstLoc, m_nManualTimes);
-
 		}
 		else
 		{
@@ -409,7 +406,6 @@ void __fastcall CMainThread::Execute()
 		//Non Stop Process when Stop
 		if (m_bStartLamSub[1] && bHomeDone) DoLamSub(true, nThreadIndex[13]);
 		if (m_bStartLamSub[0] && bHomeDone) DoLamSub(false, nThreadIndex[12]);
-
 
 		::Sleep(10);
 	}
@@ -938,9 +934,6 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		tm1MS = &tm1MSRear;
 		tm2MS = &tm2MSRear;
 	}
-	//及時更新畫面時間
-	//if ((g_IniFile.m_dLamTime[bFront] * 1000 - tm1MS->timeStartTime())<0.0) m_dLamTimer[bFront] = 0.0;
-	//else m_dLamTimer[bFront] = g_IniFile.m_dLamTime[bFront] * 1000 - tm1MS->timeStartTime();
 
 	switch (nThreadIndex)
 	{
@@ -1072,7 +1065,6 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		if (g_Motion.GetActualPos(nAxisLifter)<(g_IniFile.m_dLamGetPos[bFront] + 5.0))
 		{
 			g_Motion.ChangeSpeed(nAxisLifter, 10.0);
-			//g_DIO.SetDO(nLifterVac, false);
 			nThreadIndex++;
 		}
 		break;
@@ -1185,7 +1177,6 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 	case 4:
 		if (g_DIO.ReadDIBit(nReadyOut) || g_IniFile.m_bForceEject)        //bypass
 		{
-
 			if (bFront)
 			{
 					dPassTimeFront = CMainThread::tmUPHFront.timeDevEnd();
@@ -1244,15 +1235,18 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 {
 	static C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
 
+	nManualTimes = nManualTimes + 1;                                //跳過第一次測量數據    need debug 
+
 	const int nTagA = 1000;
 
 	double dStartX, dStartY;
 	CPISODNM100 *pDNPort;
 
 	static int nMoveIndex = 0;
-	static int nTryTimes = 0;                                        //
+	static int nTryTimes = 0;                                        
 	static double dNewValue = 0;
-	static int nTimes = 0;                                           //次數
+	static int nTimes = 0;
+	static bool bPassCal = false;
 
 	if (m_nPressCalMoveIndex[bFront] == -1)                          // 當打勾從頭開始  就傳入起始位置
 	{
@@ -1299,15 +1293,13 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			m_nCalCol = nMoveIndex % 10;
 			m_nCalRow = nMoveIndex / 10;
 
-
 			if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
 			{
-				//nTryTimes=0;
-				m_listLog.push_back("開始重量校正程序-->" + FormatFloat("0", nMoveIndex + 1));
+				if (m_bAutoRetry == true) m_listLog.push_back("開始重量 校正程序-->" + FormatFloat("0", nMoveIndex + 1));
+				else m_listLog.push_back("開始重量 量測程序-->" + FormatFloat("0", nMoveIndex + 1));
 
 				if (nTryTimes == 0)
 				{
-					//dNewValue = g_IniFile.m_dLamPress[bFront];
 					if (m_bAutoRetry == true)
 					{
 						dNewValue = g_IniFile.m_dLamPress[bFront];
@@ -1327,17 +1319,9 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			}
 			else
 			{
-				if (nManualRange == 0)                                                                  //0=整盤,1=單顆
-				{                                                                                    //整盤時不引用cmbFirstLoc
-					nMoveIndex++;
-					nThreadIndex = nTagA;
-				}
-				else
-				{
-					nThreadIndex = nTagA;
-				}
+				if (nManualRange == 0) {nMoveIndex++; nThreadIndex = nTagA;}                                //0=整盤,1=單顆
+				else nThreadIndex = nTagA;
 			}
-
 		}
 		break;
 	case 1:
@@ -1364,15 +1348,13 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		if (tm1MS.timeUp())
 		{
 			//Get Load Cell Value
-
 			double dLoadCellValue = g_Balance.GetKg(1);       //Kg
 			m_listLog.push_back("重量=" + FormatFloat("0.0000 Kg", dLoadCellValue));
-			
-			
+
 			if (m_bAutoRetry == false)
 			{
-				//--自動情況------------------------------------------------------------------------------------------------------
-				if (m_bIsAutoMode && m_bIsHomeDone)
+				//--自動情況與手動皆判斷誤差容許值------------------------------------------------------------------------------------
+				if (nTimes != 0)//-------------------------------------------------------------------------------------------------------- //跳過第一次測量數據    need debug 
 				{
 					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * g_IniFile.m_dAutoStopTimes) ||
 						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * g_IniFile.m_dAutoStopTimes))
@@ -1381,48 +1363,61 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 						g_IniFile.m_nErrorCode = 74;
 					}
 					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * 1.0) ||
-							 dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * 1.0))
+								dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * 1.0))
 					{
 						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopTimes) + "，必須重新校正");
 						g_IniFile.m_nErrorCode = 1005;
 					}
 				}
 
-				if (nManualRange == 0)                                                                  //0=整盤,1=單顆
-				{
-					nMoveIndex++;
-				}
+				if (nManualRange == 0) nMoveIndex++;                                                                 //0=整盤,1=單顆
 				nTryTimes = 0;
 				nThreadIndex = nTagA;
 			}
 			else
 			{
                 //--加入壓力補償---------------------------------------------------------------------------------------------------
+				/*新設定值增加值採用曲線增加，當開始校正時bPassCal為F，代表該Unit尚未通過第一次PressCal，
+				當第一次進入容許值之後，bPassCal為T，就進入微調設定值，而不重新由0.1逼近，一直微調到連續通過3次;或動作25次還過不去，就出現Error並跳出.*/ 
 				if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 100.0) ||
 					dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 100.0))
 				{
 					m_listLog.push_back("NG-->Try Again");
-                    //校正補償公式
-					//dNewValue=dNewValue*dNewValue/dLoadCellValue;
-					//dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]);
-                    //dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2));
-                    dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]), 0.5));
-					if (dNewValue <= 0)  dNewValue = 0.1;
-					m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
-					pDNPort->SetKg(nMoveIndex, dNewValue);
-					pDNPort->WriteAllData();
-
 					nTryTimes++;
-                    m_nPressCalPassCount = 0;
-					if (nTryTimes<25)
+					if (bPassCal == false)
 					{
-						nThreadIndex = nTagA;
+						//校正補償公式
+						//dNewValue=dNewValue*dNewValue/dLoadCellValue;
+						//dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]);
+						//dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2));
+						dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]), 0.5));
+						if (dNewValue <= 0)  dNewValue = 0.1;
+						m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
+						pDNPort->SetKg(nMoveIndex, dNewValue);
+						pDNPort->WriteAllData();
+
+						m_nPressCalPassCount = 0;
 					}
+					else                                                                                                           //設定值加減微調                                                                               
+					{
+						dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.5));
+						if (dNewValue <= 0)  
+							dNewValue = dNewValue*(1 - pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.5));
+						m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
+						pDNPort->SetKg(nMoveIndex, dNewValue);
+						pDNPort->WriteAllData();
+
+						m_listLog.push_back("數值微調,再測一次");
+						m_nPressCalPassCount = 0;                                                                                  //一直微調到超過25次 停機
+					}
+
+					if (nTryTimes<25) nThreadIndex = nTagA;
 					else g_IniFile.m_nErrorCode = 71;
 				}
 				else
 				{
-                    if (m_nPressCalPassCount < 2)
+					bPassCal = true;
+					if (m_nPressCalPassCount < 3)
                     {
                         m_listLog.push_back("數值合格,再測一次");
                         m_nPressCalPassCount++;
@@ -1435,13 +1430,11 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					    pLoadCellValue[nMoveIndex] = dLoadCellValue;
 					    m_listLog.push_back("數值合格,OK");
 
-					    if (nManualRange == 0)                                                                  //0=整盤,1=單顆
-					    {                                                                                    //整盤時不引用cmbFirstLoc
-						    nMoveIndex++;
-					    }
+						if (nManualRange == 0) nMoveIndex++;                                                                  //0=整盤,1=單顆
 					    nTryTimes = 0;
                         m_nPressCalPassCount = 0;
 					    nThreadIndex = nTagA;
+						bPassCal = false;
                     }
 				}
 			}
@@ -1458,9 +1451,6 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	case 5:
 		if (g_DIO.ReadDIBit(DI::LoadCellDown))
 		{
-			//nMoveIndex++;
-			//if (nMoveIndex<50) nThreadIndex = 0;
-			//else nThreadIndex++;
 			if (nManualRange == 0)
 			{
 				if (nMoveIndex<50)
@@ -1492,7 +1482,6 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					nTimes = 0;
 				}
 			}
-
 		}
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 10;
 		break;
@@ -1510,6 +1499,11 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
                 if (g_IniFile.m_nErrorCode != 1005) g_IniFile.m_nErrorCode = 1007;
             }
 			else g_IniFile.m_nErrorCode = 72;
+			if (m_bAutoRetry == true)                                                                       //若完成校正則紀錄已校正的數據
+			{
+				g_IniFile.m_dLastLamPress[bFront] = g_IniFile.m_dLamPress[bFront];
+				g_IniFile.MachineFile(false);
+			}
 			nThreadIndex++;
 		}
 		break;
@@ -1521,7 +1515,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 
 	if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)
 	{
-		//nMoveIndex=0;
+		nMoveIndex=0;
 		nThreadIndex = 0;
 		nTryTimes = 0;
 		m_bStartAutoCal[bFront] = false;
@@ -1546,7 +1540,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	static int nMoveIndex = 0;
 	static int nMoveIndexSub = 0;
 
-	static int nTimes = 0;                                           //次數
+	static int nTimes = 0;                                           
 
 	if (m_nLaserCalMoveIndex[bFront] == -1)                          // 當不打勾從頭開始  就傳入起始位置
 	{
@@ -1971,6 +1965,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		nThreadIndex = 0;
 	}
 }
+
 
 
 

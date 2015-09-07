@@ -33,7 +33,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   strFile.sprintf("%s%s",IniFile_Dir,MachineFileName);
   pIniFile = new TIniFile(strFile);
 
- //System
+  //System
   DDXFile_Int(bRead,pIniFile,System_Section,"Language",m_nLanguageMode);
   DDXFile_Int(bRead,pIniFile,System_Section,"Priviledge",m_nPriviledge);
   DDXFile_String(bRead,pIniFile,System_Section,"ARTPassword",m_strARTPassword,"CLARE");
@@ -96,8 +96,8 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLoadCellY0",m_dLoadCellY[0],0.0);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLoadCellY1",m_dLoadCellY[1],0.0);
 
-
-
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLastLamPress0",m_dLastLamPress[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLastLamPress0",m_dLastLamPress[0],0.0);
   delete pIniFile;
 }
 //---------------------------------------------------------------------------
