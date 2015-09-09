@@ -106,6 +106,8 @@ __published:	// IDE-managed Components
         TGroupBox *GroupBox4;
         TLabel *Label34;
         TEdit *editUnitPerHour;
+    TSpeedButton *btnStartMotor1;
+    TSpeedButton *btnStartMotor0;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -140,6 +142,8 @@ __published:	// IDE-managed Components
         void __fastcall checkAutoRetryClick(TObject *Sender);
         void __fastcall btnHomingClick(TObject *Sender);
         void __fastcall checkStopLCClick(TObject *Sender);
+    void __fastcall btnStartMotor0Click(TObject *Sender);
+    void __fastcall btnStartMotor1Click(TObject *Sender);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;

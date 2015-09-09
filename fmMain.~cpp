@@ -710,8 +710,8 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
         
 	RefreshImage();
 
-    Label1->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "";
-    Label4->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "";
+    //Label1->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "";
+    //Label4->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "";
 
 	if (checkMonitor->Checked)
 	{
@@ -873,6 +873,7 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 		    Label4->Caption = "ヘ玡放:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "";
         }
     }
+
 
     //--- real time detect servermoter touch the soft limitation
     if (g_pMainThread->m_bIsHomeDone == true)
@@ -1760,6 +1761,38 @@ void __fastcall TfrmMain::RenewRadioGroup(bool bInit)
         }
     }
 
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::btnStartMotor0Click(TObject *Sender)
+{
+    if (btnStartMotor0->Down == true)
+    {
+        g_DIO.SetDO(DO::LamMotorStart2, true);
+        g_DIO.SetDO(DO::LCMotorStart, true);
+    }
+    else
+    {
+        g_DIO.SetDO(DO::LamMotorStart2, false);
+        g_DIO.SetDO(DO::LCMotorStart, false);
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::btnStartMotor1Click(TObject *Sender)
+{
+    if (btnStartMotor1->Down == true)
+    {
+        g_DIO.SetDO(DO::LamMotorStart1, true);
+        g_DIO.SetDO(DO::LCMotorStart, true);
+        g_DIO.SetDO(DO::EjectMotorStart1, true);
+    }
+    else
+    {
+        g_DIO.SetDO(DO::LamMotorStart1, false);
+        g_DIO.SetDO(DO::LCMotorStart, false);
+        g_DIO.SetDO(DO::EjectMotorStart1, false);
+    }
 }
 //---------------------------------------------------------------------------
 
