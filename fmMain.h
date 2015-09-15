@@ -108,6 +108,7 @@ __published:	// IDE-managed Components
         TEdit *editUnitPerHour;
     TSpeedButton *btnStartMotor1;
     TSpeedButton *btnStartMotor0;
+    TTimer *Timer3;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -144,10 +145,12 @@ __published:	// IDE-managed Components
         void __fastcall checkStopLCClick(TObject *Sender);
     void __fastcall btnStartMotor0Click(TObject *Sender);
     void __fastcall btnStartMotor1Click(TObject *Sender);
+    void __fastcall Timer3Timer(TObject *Sender);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;
         int m_nUserLevel;
+        AnsiString m_strDate;
 
         std::vector<TRect> m_vectRect;
         std::vector<TRect> m_vectRect2;

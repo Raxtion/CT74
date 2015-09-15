@@ -27,10 +27,13 @@
 #include <math.h>
 #include "fmPassword.h"
 #include "fmOffset.h"
+#include "Sqlite3Interface.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TfrmMain *frmMain;
+SQLITE3IF g_TempLog(0, "C:\\C74 Log\\TempLog");
+SQLITE3IF g_ActionLog(1, "C:\\C74 Log\\ActionLog");
 extern CIniFile g_IniFile;
 
 extern CPCIM114 g_Motion;
@@ -716,8 +719,8 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 	if (checkMonitor->Checked)
 	{
         Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_Balance.GetKg(1));
-		Label8->Caption = "Laser(上):" + FormatFloat("0.00", g_ModBus.GetAnalogData(3, 1)) + "mm";
-		Label9->Caption = "Laser(下):" + FormatFloat("0.00", g_ModBus.GetAnalogData(3, 0)) + "mm";
+		Label8->Caption = "Laser(上):" + FormatFloat("0.00", g_pMainThread->m_dUpperLaserRealTime) + "mm";
+		Label9->Caption = "Laser(下):" + FormatFloat("0.00", g_pMainThread->m_dDownLaserRealTime) + "mm";
 	}
 
     if (g_IniFile.m_nLanguageMode>0)
@@ -801,8 +804,8 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //---Detect temp. if fail then stop
     if (g_pMainThread->m_bIsAutoMode)
     {
-        if (fabs(g_IniFile.m_dLamTemp[0] - g_ModBus.GetPV(1))>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 32;
-        if (fabs(g_IniFile.m_dLamTemp[1] - g_ModBus.GetPV(2))>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 31;
+        if (fabs(g_IniFile.m_dLamTemp[0] - g_pMainThread->m_dRearTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 32;
+        if (fabs(g_IniFile.m_dLamTemp[1] - g_pMainThread->m_dFrontTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 31;
         editBoatFinishNow->Text = (AnsiString)g_pMainThread->m_nPassBoatCount1;
         editBoatFinishStart->Enabled = false;
     }
@@ -832,6 +835,16 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     PaintBox1Paint(this);
     PaintBox2Paint(this);
 
+    //--Add ActionLog---
+	if (g_pMainThread->m_ActionLog.size()>0)
+	{
+        //g_ActionLog.open(1);
+		AnsiString strLog = g_pMainThread->m_ActionLog.front();
+        g_ActionLog.insertAction(strLog);
+        //g_ActionLog.close();
+		g_pMainThread->m_ActionLog.pop_front();
+	}
+
 	Timer1->Enabled = true;
 
 }
@@ -841,54 +854,67 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 {
     Timer2->Enabled = false;
 
-    //--- renew paintBox per 1 second (if not Cal. manuel will show some stiky number, should off it)
-    /*
-	g_pMainThread->m_nPressCalMoveIndex[0]++;
-	g_pMainThread->m_nLaserCalMoveIndex[0]++;
-	g_pMainThread->m_nPressCalMoveIndex[1]++;
-	g_pMainThread->m_nLaserCalMoveIndex[1]++;
-
-	if (g_pMainThread->m_nPressCalMoveIndex[0] >= 50)
-	{
-		g_pMainThread->m_nPressCalMoveIndex[0] = 0;
-		g_pMainThread->m_nLaserCalMoveIndex[0] = 0;
-		g_pMainThread->m_nPressCalMoveIndex[1] = 0;
-		g_pMainThread->m_nLaserCalMoveIndex[1] = 0;
-	}
-    */
+    //--- renew Temperature and LaserValue
+    g_pMainThread->m_dRearTempRealTime = g_ModBus.GetPV(1);
+    g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
+    g_pMainThread->m_dDownLaserRealTime = g_ModBus.GetAnalogData(3, 0);
+    g_pMainThread->m_dUpperLaserRealTime = g_ModBus.GetAnalogData(3, 1);
 
     //--- real time monitor temperature
     if (g_pMainThread->m_bIsManualFinish == true
         && btnLaserUp1->Down == false && btnLaserUp0->Down == false && btnLaserDown1->Down == false && btnLaserDown0->Down == false)
-    //if (!g_pMainThread->m_bStartLaserUpCal[1] || !g_pMainThread->m_bStartLaserUpCal[0] || !g_pMainThread->m_bStartLaserDownCal[1] || !g_pMainThread->m_bStartLaserDownCal[0])
     {
         if (g_IniFile.m_nLanguageMode>0)
         {
-            Label1->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "℃ ";
-            Label4->Caption = "Temperature:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "℃ ";
+            Label1->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "℃ ";
+            Label4->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "℃ ";
         }
         else
         {
-		    Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "度";
-		    Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
+		    Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "度";
+		    Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "度";
         }
     }
-
 
     //--- real time detect servermoter touch the soft limitation
     if (g_pMainThread->m_bIsHomeDone == true)
     {
-        if (g_Motion.GetActualPos(0) < -0.1 || abs(g_Motion.GetActualPos(0) > 292.0)) g_pMainThread->m_listLog.push_back("X 撞軟體極限");
-        else if (g_Motion.GetActualPos(1) < -7.0 || abs(g_Motion.GetActualPos(1) > 583.0)) g_pMainThread->m_listLog.push_back("Y 撞軟體極限");
-        else if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_pMainThread->m_listLog.push_back("LC 撞軟體極限");
-        else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_pMainThread->m_listLog.push_back("FL 撞軟體極限");
-        else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_pMainThread->m_listLog.push_back("RL 撞軟體極限");
+        if (g_Motion.GetActualPos(0) < -0.1 || abs(g_Motion.GetActualPos(0) > 292.0)) g_IniFile.m_nErrorCode = 80;
+        else if (g_Motion.GetActualPos(1) < -7.0 || abs(g_Motion.GetActualPos(1) > 583.0)) g_IniFile.m_nErrorCode = 81;
+        else if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_IniFile.m_nErrorCode = 82;
+        else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_IniFile.m_nErrorCode = 83;
+        else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_IniFile.m_nErrorCode = 84;
     }
 
     Timer2->Enabled = true;
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TfrmMain::Timer3Timer(TObject *Sender)
+{
+    Timer3->Enabled = false;
+
+    AnsiString strNow;
+    time_t timer = time(NULL);
+    struct tm *tblock = localtime(&timer);
+    strNow.sprintf("%04d_%02d_%02d",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
+    if (strNow != m_strDate)
+    {
+        g_TempLog.close();
+        g_ActionLog.close();
+        g_TempLog.open(0);
+        g_ActionLog.open(1);
+    }
+
+    //--Add tempLog---
+    //g_TempLog.open(0);
+    g_TempLog.insertTemp();
+    //g_TempLog.close();
+
+    Timer3->Enabled = true;
+}
+//---------------------------------------------------------------------------
 
 
 //PaintBox
@@ -1643,12 +1669,20 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	Timer1->Enabled = true;
     Timer2->Enabled = true;
 	timerPressure->Enabled = true;
+
+    g_TempLog.open(0);
+    g_ActionLog.open(1);
+    time_t timer = time(NULL);
+    struct tm *tblock = localtime(&timer);
+    m_strDate.sprintf("%04d_%02d_%02d",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 {
 	g_bStopMainThread = true;
+    g_TempLog.close();
+    g_ActionLog.close();
 }
 //---------------------------------------------------------------------------
 
@@ -1770,11 +1804,13 @@ void __fastcall TfrmMain::btnStartMotor0Click(TObject *Sender)
     {
         g_DIO.SetDO(DO::LamMotorStart2, true);
         g_DIO.SetDO(DO::LCMotorStart, true);
+        g_DIO.SetDO(DO::EjectMotorStart2, true);
     }
     else
     {
         g_DIO.SetDO(DO::LamMotorStart2, false);
         g_DIO.SetDO(DO::LCMotorStart, false);
+        g_DIO.SetDO(DO::EjectMotorStart2, false);
     }
 }
 //---------------------------------------------------------------------------

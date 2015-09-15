@@ -15,7 +15,7 @@
 #include "DeltaPLC.h"
 #include "TA5Serial.h";
 #include "DeltaPLC.h"
-
+#include "time.h"
 
 #include <algorithm>
 
@@ -70,6 +70,11 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_nPassBoatCount0 = 0;
 	m_nPassBoatCount1 = 0;
 	m_bStopLC = false;
+
+    m_dUpperLaserRealTime = 0.0;
+    m_dDownLaserRealTime = 0.0;
+    m_dFrontTempRealTime = 0.0;
+    m_dRearTempRealTime = 0.0;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -192,8 +197,8 @@ void __fastcall CMainThread::Execute()
 			m_bStartLaserUpCal[1] = false;
 			m_bStartLaserDownCal[0] = false;
 			m_bStartLaserDownCal[1] = false;
-			m_bStartLamSub[0] = false;
-			m_bStartLamSub[1] = false;
+			//m_bStartLamSub[0] = false;
+			//m_bStartLamSub[1] = false;
 			m_bStartAutoCal[0] = false;
 			m_bStartAutoCal[1] = false;
 			m_bIsManualFinish = true;
@@ -202,8 +207,8 @@ void __fastcall CMainThread::Execute()
 			g_Motion.Stop(1);
 			g_Motion.Stop(2);
 			g_Motion.Stop(3);
-			g_Motion.Stop(4);
-			g_Motion.Stop(5);
+			//g_Motion.Stop(4);
+			//g_Motion.Stop(5);
 			g_Motion.Stop(6);
 			g_Motion.Stop(7);
 
@@ -422,6 +427,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 	switch (nThreadIndex)
 	{
 	case 0:
+        m_ActionLog.push_back(AddTimeString("[InitialMachine][0]復歸開始"));
 		g_Motion.SetDisableSoftLimit(2);
 		g_Motion.SetDisableSoftLimit(4);
 		g_Motion.SetDisableSoftLimit(5);
@@ -445,6 +451,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 	case 2:
 		if (tm1MS.timeUp())
 		{
+            m_ActionLog.push_back(AddTimeString("[InitialMachine][2]確認IO"));
 			if (g_DIO.ReadDIBit(DI::LifterVac1) || g_DIO.ReadDIBit(DI::LifterVac2)) g_IniFile.m_nErrorCode = 8;
 			//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;           //Don't Need
 			else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
@@ -469,6 +476,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 			g_Motion.ServoOn(AXIS_LC, true);
 			g_Motion.ServoOn(AXIS_FL, true);
 			g_Motion.ServoOn(AXIS_RL, true);
+            m_ActionLog.push_back(AddTimeString("[InitialMachine][3]開啟伺服馬達"));
 			nThreadIndex++;
 		}
 		break;
@@ -524,6 +532,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 	case 8:
 		if (tm1MS.timeUp())
 		{
+            m_ActionLog.push_back(AddTimeString("[InitialMachine][8]伺服馬達設定參數"));
 			g_Motion.SetSpeed(AXIS_X, g_IniFile.m_dACCSpeed[AXIS_X], g_IniFile.m_dDECSpeed[AXIS_X], g_IniFile.m_dJogSpeed[AXIS_X]);
 			g_Motion.SetSpeed(AXIS_Y, g_IniFile.m_dACCSpeed[AXIS_Y], g_IniFile.m_dDECSpeed[AXIS_Y], g_IniFile.m_dJogSpeed[AXIS_Y]);
 			g_Motion.SetSpeed(AXIS_LC, g_IniFile.m_dACCSpeed[AXIS_LC], g_IniFile.m_dDECSpeed[AXIS_LC], g_IniFile.m_dJogSpeed[AXIS_LC]);
@@ -568,6 +577,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 			g_IniFile.m_nErrorCode = 2001;
 
 			//HANDSHAKE INIT
+            m_ActionLog.push_back(AddTimeString("[InitialMachine][10]機台變數初始化"));
 			m_bLamReady[0] = false;
 			m_bLamReady[1] = false;
 			m_bEjectReady[0] = false;
@@ -615,6 +625,29 @@ void __fastcall CMainThread::CheckAlarm()
 	if (!g_DIO.ReadDIBit(DI::SafetyDoor) && !g_DIO.ReadDOBit(DO::SafetyDoorByPass)) g_IniFile.m_nErrorCode = 35; //debug
 }
 //---------------------------------------------------------------------------
+AnsiString CMainThread::AddTimeString(AnsiString Input)
+{
+    AnsiString strDateTime;
+    time_t timer = time(NULL);
+    struct tm *tblock = localtime(&timer);
+    strDateTime.sprintf("[%2d:%02d:%02d]",tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+    strDateTime = strDateTime+Input;
+    return strDateTime;
+}
+//---------------------------------------------------------------------------
+AnsiString CMainThread::AddTimeString(bool bFront,AnsiString Input)
+{
+    AnsiString strFront;
+    if (bFront) strFront = "1";
+    else strFront = "0";
+    AnsiString strDateTime;
+    time_t timer = time(NULL);
+    struct tm *tblock = localtime(&timer);
+    strDateTime.sprintf("[%2d:%02d:%02d]",tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+    strDateTime = strDateTime+"["+strFront+"]"+Input;
+    return strDateTime;
+}
+//---------------------------------------------------------------------------
 //AutoMode+Manual
 void __fastcall CMainThread::SetWorkSpeed()
 {
@@ -647,7 +680,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		else
 		{
 			g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCEntryPos);
-
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][0]LC 移動至接料區"));
 			nThreadIndex++;
 		}
 		break;
@@ -655,6 +688,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		if (g_Motion.IsLastPosDone(AXIS_LC))
 		{
 			g_DIO.SetDO(DO::ReadyIn1, true);
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][1]LC 移動接料區到位"));
 			nThreadIndex++;
 		}
 		break;
@@ -664,6 +698,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 			g_DIO.SetDO(DO::ReadyIn1, false);
 			g_DIO.SetDO(DO::LCMotorStart, true);
 			tm1MS.timeStart(5000);
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][2]LC 接料區進料開始"));
 			nThreadIndex++;
 		}
 		break;
@@ -674,11 +709,20 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 			tm1MS.timeStart(300);
 			nThreadIndex++;
 		}
+        else if (!g_DIO.ReadDOBit(DO::LCMotorStart))
+        {
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][3]LC 接料區進料失敗重試"));
+            g_DIO.SetDO(DO::LCMotorStart, true);
+			tm1MS.timeStart(5000);
+			//nThreadIndex++;
+            break;
+		}
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 43;
 		break;
 	case 4:
 		if (tm1MS.timeUp())
 		{
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][4]LC 接料區進料到位"));
 			g_DIO.SetDO(DO::LCMotorStart, false);
 			nThreadIndex++;
 		}
@@ -688,12 +732,14 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		{
 			if (m_bLamReady[1])
 			{
+                m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 前出料區Ready"));
 				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCFrontPos);
 				nLamInp = DI::LamInp1;
 				nLamEntry = DI::LamEntry1;
 			}
 			else if (m_bLamReady[0])
 			{
+                m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 後出料區Ready"));
 				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCRearPos);
 				nLamInp = DI::LamInp2;
 				nLamEntry = DI::LamEntry2;
@@ -704,6 +750,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 	case 6:
 		if (g_Motion.IsLastPosDone(AXIS_LC))
 		{
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][6]LC 出料區到位"));
 			g_DIO.SetDO(DO::LCStop, false);
 			tm1MS.timeStart(3000);
 			nThreadIndex++;
@@ -712,6 +759,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 	case 7:
 		if (g_DIO.ReadDIBit(DI::LCStopDown))
 		{
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][7]LC 出料區Stop汽缸下降"));
 			g_DIO.SetDO(DO::LCMotorStart, true);
 			tm1MS.timeStart(5000);
 			nThreadIndex++;
@@ -724,11 +772,20 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 			tm1MS.timeStart(1000);
 			nThreadIndex++;
 		}
+        else if (!g_DIO.ReadDOBit(DO::LCMotorStart))
+        {
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][8]LC 出料區出料失敗重試"));
+            g_DIO.SetDO(DO::LCMotorStart, true);
+			tm1MS.timeStart(5000);
+			//nThreadIndex++;
+            break;
+        }
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 44;
 		break;
 	case 9:
 		if (tm1MS.timeUp())
 		{
+            m_ActionLog.push_back(AddTimeString("[DoLaneChanger][9]LC 出料區出料到位"));
 			g_DIO.SetDO(DO::LCMotorStart, false);
 			g_DIO.SetDO(DO::LCStop, true);
 			tm1MS.timeStart(1000);
@@ -805,6 +862,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		else
 		{
 			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]);
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][0]Lane Lifter下降到最低位"));
 			nThreadIndex++;
 		}
 		break;
@@ -818,25 +876,35 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 	case 2:
 		if (g_DIO.ReadDIBit(nLamEntry))                                   //wait the for boat login
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][2]Lane 進料區Ready"));
 			g_DIO.SetDO(nLamMotorStart, true);
 			m_bLamReady[bFront] = false;
-			tm1MS->timeStart(3000);
+			tm1MS->timeStart(5000);
 			nThreadIndex++;
 		}
 		break;
 	case 3:
-		g_DIO.SetDO(nLamMotorStart, true);
+		//g_DIO.SetDO(nLamMotorStart, true);
 		if (g_DIO.ReadDIBit(nLamInp))
 		{
 			tm1MS->timeStart(300);
 			nThreadIndex++;
 		}
+        else if (!g_DIO.ReadDOBit(nLamMotorStart))
+        {
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][3]Lane 進料區進料失敗重試"));
+            g_DIO.SetDO(nLamMotorStart, true);
+            tm1MS->timeStart(5000);
+			//nThreadIndex++;
+            break;
+        }
 		else if (g_DIO.ReadDIBit(nLamWarp)) bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48;
 		else if (tm1MS->timeUp())  bFront ? g_IniFile.m_nErrorCode = 52 : g_IniFile.m_nErrorCode = 53;
 		break;
 	case 4:
 		if (tm1MS->timeUp())
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][4]Lane 進料區成功開始壓合"));
 			g_DIO.SetDO(nLamMotorStart, false);
 			m_bStartLamSub[bFront] = !g_IniFile.m_bNotLam;
 
@@ -846,6 +914,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 	case 5:                                                     //stop here and wait LamSub finished
 		if (!m_bStartLamSub[bFront])
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][5]Lane 壓合流程結束"));
 			tm1MS->timeStart(300);
 			nThreadIndex++;
 		}
@@ -869,6 +938,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 	case 8:
 		if (m_bEjectReady[bFront])
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][8]Lane 出料區Ready"));
 			g_DIO.SetDO(nLamMotorStart, true);
 			tm1MS->timeStart(5000);
 			nThreadIndex++;
@@ -877,9 +947,18 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 	case 9:
 		if (g_DIO.ReadDIBit(nEjectInp))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][9]Lane 出料區出料成功"));
 			g_DIO.SetDO(nLamMotorStart, false);
 			nThreadIndex++;
 		}
+        else if (!g_DIO.ReadDOBit(nLamMotorStart))
+        {
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][9]Lane 出料區出料失敗重試"));
+            g_DIO.SetDO(nLamMotorStart, true);
+			tm1MS->timeStart(5000);
+			//nThreadIndex++;
+            break;
+        }
 		else if (tm1MS->timeUp())  bFront ? g_IniFile.m_nErrorCode = 56 : g_IniFile.m_nErrorCode = 57;
 		break;
 	default:
@@ -942,6 +1021,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 0:
 		//if(tm1MS->timeUp())
 	{
+        m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][0]LamSub 壓合開始移動至LamHeight"));
 		g_DIO.SetDO(nLamMotorStart, false);
 		g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamHeight[bFront]);
 
@@ -958,6 +1038,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 2:
 		if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamStop[bFront] + 5.0))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][2]LamSub lifter接觸boat"));
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dWorkSpeed[nAxisLifter]);
 			nThreadIndex++;
 		}
@@ -965,6 +1046,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 3:
 		if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront]))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空開啟"));
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
 			g_DIO.SetDO(nLifterVac, true);
 			tm1MS->timeStart(2000);
@@ -974,11 +1056,18 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 4:   //20150803 加入第一次真空判別 有成功不反應 失敗時有警訊不停機
 		if (g_DIO.ReadDIBit(nLifterVacGauge))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空偵測成功"));
+            m_bFirstVacSuccessed = true;
 			nThreadIndex++;
 		}
 		else if (tm1MS->timeUp())
 		{
-			bFront ? g_IniFile.m_nErrorCode = 2054 : g_IniFile.m_nErrorCode = 2055;
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空偵測失敗"));
+            if (bFront) m_listLog.push_back("前壓合流道真空失敗(第一次)");
+            else m_listLog.push_back("後壓合流道真空失敗(第一次)");
+			//bFront ? g_IniFile.m_nErrorCode = 2054 : g_IniFile.m_nErrorCode = 2055;
+            m_bFirstVacSuccessed = false;
+            g_DIO.SetDO(DO::Buzzer, true);
 			nThreadIndex++;
 		}
 		break;
@@ -986,20 +1075,22 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		//20150803 加入進入第三段 開始倒數壓合、Buzzer OFF、VacDelayTimeStart
 		if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][5]LamSub lifter進入第三段"));
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamThirdHeight[bFront] / g_IniFile.m_dLamThirdTime[bFront]);
 
 			tm1MS->timeStart(g_IniFile.m_dLamTime[bFront] * 1000);
 
-			if (g_IniFile.m_nErrorCode > 2000)
+            if (m_bFirstVacSuccessed == false)
+			//if (g_IniFile.m_nErrorCode > 2000)
 			{
-				g_IniFile.m_nErrorCode = 0;
+				//g_IniFile.m_nErrorCode = 0;
 				g_DIO.SetDO(DO::Buzzer, false);
 
-				g_DIO.SetDO(DO::StopBtnLamp, false);
-				g_DIO.SetDO(DO::StartBtnLamp, true);
-				g_DIO.SetDO(DO::GreenLamp, true);
-				g_DIO.SetDO(DO::YellowLamp, false);
-				g_DIO.SetDO(DO::RedLamp, false);
+				//g_DIO.SetDO(DO::StopBtnLamp, false);
+				//g_DIO.SetDO(DO::StartBtnLamp, true);
+				//g_DIO.SetDO(DO::GreenLamp, true);
+				//g_DIO.SetDO(DO::YellowLamp, false);
+				//g_DIO.SetDO(DO::RedLamp, false);
 			}
 
 			tm2MS->timeStart(g_IniFile.m_dVacDelayTime * 1000);
@@ -1018,11 +1109,13 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 7:
 		if (g_DIO.ReadDIBit(nLifterVacGauge)) //bypass
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][7]LamSub 第二次真空偵測成功"));
 			bVacError = false;
 			nThreadIndex++;
 		}
 		else if (tm2MS->timeUp())
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][7]LamSub 第二次真空偵測失敗"));
 			bVacError = true;
 			nThreadIndex++;
 		}
@@ -1031,6 +1124,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 8:	//壓合時間到
 		if (tm1MS->timeUp())
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][8]LamSub 壓合時間到移動至m_dLamGetPos"));
 			g_Motion.Stop(nAxisLifter);
 			nThreadIndex++;
 		}
@@ -1048,6 +1142,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 10:
 		if (g_Motion.GetActualPos(nAxisLifter)<(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront]))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][10]LamSub lifter進入第一段真空關閉"));
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dWorkSpeed[nAxisLifter]);
 			g_DIO.SetDO(nLifterVac, false);
 			tm1MS->timeStart(1000);
@@ -1074,6 +1169,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 13:
 		if (g_Motion.IsPosDone(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][13]LamSub lifter到達m_dLamGetPos"));
 			nThreadIndex++;
 		}
 		break;
@@ -1148,6 +1244,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		else if (!g_DIO.ReadDIBit(nEjectStopUp)) bFront ? g_IniFile.m_nErrorCode = 13 : g_IniFile.m_nErrorCode = 14;
 		else
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][0]EjectLane 進料區Ready"));
 			m_bEjectReady[bFront] = true;
 			nThreadIndex++;
 		}
@@ -1163,15 +1260,25 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		break;
 	case 2:
 		if (g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry))               //g_DIO.ReadDIBit(nEjectExist)
-		{
+        {
+            m_bEjectReady[bFront] = false;
 			tm1MS->timeStart(500);
 			nThreadIndex++;
 		}
+        else if (!g_DIO.ReadDOBit(nEjectMotorStart))
+        {
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][2]EjectLane 進料區進料失敗重試"));
+            m_bEjectReady[bFront] = true;
+            g_DIO.SetDO(nEjectMotorStart, true);
+			tm1MS->timeStart(5000);
+            break;
+        }
 		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 56 : g_IniFile.m_nErrorCode = 57;
 		break;
 	case 3:
 		if (tm1MS->timeUp())
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][3]EjectLane 進料區進料成功"));
 			g_DIO.SetDO(nEjectMotorStart, false);
 			nThreadIndex++;
 		}
@@ -1179,6 +1286,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 	case 4:
 		if (g_DIO.ReadDIBit(nReadyOut) || g_IniFile.m_bForceEject)        //bypass
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][3]EjectLane 出料區Ready"));
 			if (bFront)
 			{
 					dPassTimeFront = CMainThread::tmUPHFront.timeDevEnd();
@@ -1211,12 +1319,19 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 	case 6:
 		if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][6]EjectLane 出料區出料完成"));
 			g_DIO.SetDO(nEjectMotorStart, false);
 			g_DIO.SetDO(nEjectStop, true);
 			tm1MS->timeStart(3000);
 			nThreadIndex++;
 
 		}
+        else if (!g_DIO.ReadDOBit(nEjectMotorStart))
+        {
+            g_DIO.SetDO(nEjectMotorStart, true);
+			tm1MS->timeStart(10000);
+			nThreadIndex++;
+        }
 		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 67 : g_IniFile.m_nErrorCode = 66;
 		break;
 	case 7:
@@ -1297,6 +1412,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 
 			if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
 			{
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][0]LoadCell 開始重量校正程序"));
 				if (m_bAutoRetry == true) m_listLog.push_back("開始重量 校正程序-->" + FormatFloat("0", nMoveIndex + 1));
 				else m_listLog.push_back("開始重量 量測程序-->" + FormatFloat("0", nMoveIndex + 1));
 
@@ -1329,6 +1445,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	case 1:
 		if (g_Motion.IsPosDone(AXIS_X, dStartX + m_nCalCol*g_IniFile.m_dColPitch) && g_Motion.IsPosDone(AXIS_Y, dStartY - m_nCalRow*g_IniFile.m_dRowPitch))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][1]LoadCell XY移動就位"));
 			if (/*g_DIO.ReadDIBit(DI::LaserCheck)*/false) g_IniFile.m_nErrorCode = 9;      //bypass
 			else
 			{
@@ -1341,6 +1458,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	case 2:
 		if (g_DIO.ReadDIBit(DI::LoadCellUp))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][2]LoadCell 上推到位讀值"));
 			tm1MS.timeStart(g_IniFile.m_dPressCalTime * 1000);          //Stable Time
 			nThreadIndex++;
 		}
@@ -1459,6 +1577,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	case 5:
 		if (g_DIO.ReadDIBit(DI::LoadCellDown))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][5]LoadCell 下降到位"));
 			if (nManualRange == 0)
 			{
 				if (nMoveIndex<50)
@@ -1500,6 +1619,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	case 7:
 		if (g_Motion.IsPosDone(AXIS_Y, g_IniFile.m_dSafePos))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][7]LoadCell 回到安全位置"));
 			nMoveIndex = 0;
 			nTryTimes = 0;
 			if (m_bIsAutoMode && m_bIsHomeDone)
@@ -1625,11 +1745,13 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 		else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 		//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;      //don't need
 		{
+
 			m_nCalCol = nMoveIndex % 10;
 			m_nCalRow = nMoveIndex / 10;
 
 			if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
 			{
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoLaserCal][0]Laser 開始Laser量測程序"));
 				if (nMoveIndex == 0 && nMoveIndexSub == 0) memset(p_dLaserValue, 0, sizeof(double) * 50);
 				m_listLog.push_back("開始Laser 量測程序-->" + FormatFloat("0", nMoveIndex + 1));
 
@@ -1644,6 +1766,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	case 1:
 		if (g_Motion.IsPosDone(AXIS_X, dStartX[nMoveIndexSub] + m_nCalCol*g_IniFile.m_dColPitch) && g_Motion.IsPosDone(AXIS_Y, dStartY[nMoveIndexSub] - m_nCalRow*g_IniFile.m_dRowPitch))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLaserCal][1]Laser XY移動就位"));
 			if (/*g_DIO.ReadDIBit(DI::LaserCheck)*/false) g_IniFile.m_nErrorCode = 9;         //bypass
 			else
 			{
@@ -1655,14 +1778,11 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	case 2:
 		if (tm1MS.timeUp())
 		{
-            if ((nMoveIndex * 4 + nMoveIndexSub)>200)
-            {
-                g_IniFile.m_nErrorCode = 75;
-            }
-            else
-            {
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLaserCal][2]Laser 高度讀值"));
 			double dLaserData = 0.0;
-			dLaserData = g_ModBus.GetAnalogData(3, bUp);
+            if (bUp) dLaserData = m_dUpperLaserRealTime;
+            else dLaserData = m_dDownLaserRealTime;
+			//dLaserData = g_ModBus.GetAnalogData(3, bUp);
 			if (g_ModBus.m_bInitOK)
 			{
 				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
@@ -1675,7 +1795,6 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = 0.0;
 				m_listLog.push_back("高度=N/A");
 			}
-            }
 
 			nThreadIndex++;
 		}
@@ -1767,6 +1886,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	case 5:
 		if (g_Motion.IsPosDone(AXIS_Y, g_IniFile.m_dSafePos))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLaserCal][5]Laser LoadCell回到安全位置"));
 			nMoveIndex = 0;
 			g_IniFile.m_nErrorCode = 73;
 		}
@@ -1847,6 +1967,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 1:
 		if (g_Motion.IsLastPosDone(nAxisLifter))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][1]Lifter 下降至0.0"));
 			m_bLamReady[bFront] = false;
             //tm1MS->timeStart(3000);
 			nThreadIndex++;
@@ -1854,6 +1975,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		else if (tm1MS->timeUp())  bFront ? g_IniFile.m_nErrorCode = 21 : g_IniFile.m_nErrorCode = 21;
 		break;
 	case 2:
+        m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][2]LoadCell 自動模式,測量開始(第一次)"));
         m_listLog.push_back("自動模式,測量開始(第一次)");
 		m_bStartAutoCal[bFront] = true;
 		m_bAutoRetry = false;
@@ -1882,6 +2004,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 			}
 			else if (g_IniFile.m_nErrorCode == 1005)
 			{
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][4]LoadCell 自動模式,校正開始..."));
                 m_listLog.push_back("自動模式,校正開始...");
 				m_bStartAutoCal[bFront] = true;
 				m_bAutoRetry = true;
@@ -1906,6 +2029,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 6:
 		if (m_bStartAutoCal[bFront] == false)
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][6]LoadCell 自動模式,測量開始(第二次)"));
             m_listLog.push_back("自動模式,測量開始(第二次)");
 			g_IniFile.m_nErrorCode = 0;
 			m_bStartAutoCal[bFront] = true;
@@ -1949,6 +2073,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 10:
 		if (g_Motion.IsPosDone(AXIS_Y, g_IniFile.m_dSafePos))
 		{
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][10]LoadCell 回到安全位置"));
 			if (g_IniFile.m_nErrorCode == 1007)
 			{
 				m_listLog.push_back("自動模式,測量與校正完成,繼續動作");

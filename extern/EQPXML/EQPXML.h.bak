@@ -1,0 +1,57 @@
+//---------------------------------------------------------------------------
+
+#ifndef EQPXMLH
+#define EQPXMLH
+#include <vcl>
+#include "tinyxml.h"
+#include "tinystr.h"
+
+#include <ScktComp.hpp>
+#include <vector>
+//---------------------------------------------------------------------------
+class CEQPXML
+{
+private:
+        TCustomWinSocket *m_pSocket;
+        //std::vector<AnsiString> m_strCIMMsg;
+
+public:
+        bool m_bOnLine;
+        AnsiString m_EqpStatus;       //I:Idle R:Run D:Down
+        AnsiString m_CIMStatus;       //0:Offline 1:online/local 2:online/remote
+
+public:
+        __fastcall CEQPXML();
+        __fastcall ~CEQPXML();
+
+        void __fastcall StartComm( TCustomWinSocket *pSocket);
+        void __fastcall EndComm();
+
+        void __fastcall ProcessCIM();
+        void __fastcall SendEventReport(char *pEvent);
+        void __fastcall SendAlarmMessage(char *pID,char *pText);
+
+        bool (*StartProcess)(bool bStart);
+        bool (*OpenFile)(AnsiString strFileName);
+
+private:
+        void __fastcall doHostStatus(char *pRx);
+        void __fastcall doDTSet(char *pRx);
+        void __fastcall doCIMMsg(char *pRx);
+        void __fastcall doQueryVID(char *pRx);
+        void __fastcall doEventReportAck(char *pRx);
+        void __fastcall doAlarmAck(char *pRx);
+        void __fastcall doRCMD(char *pRx);
+        void __fastcall doQueryPPID(char *pRx);
+        void __fastcall doQueryPPIDNew(char *pRx);
+        void __fastcall doQueryPPBody(char *pRx);
+        void __fastcall doSetPPBody(char *pRx);
+
+        void __fastcall SendXML(char *pMSGID,char *pType,char *pName,char *pValue);
+        void __fastcall SendXML(TiXmlDocument &theDoc);
+public:
+        const char * __fastcall doSendID(bool bIsBoat,char *pID,char *pSSID);
+        bool __fastcall doCheckID(char *pRx);
+
+};
+#endif

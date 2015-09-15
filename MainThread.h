@@ -23,12 +23,14 @@ protected:
         void __fastcall Execute();
 public:
         std::list<AnsiString> m_listLog;
+        std::list<AnsiString> m_ActionLog;
         int nThreadIndex[MAX_PROCESS];		//0:Inti 1:Start Measure
         bool m_bRefresh;
 
         bool m_bIsHomeDone;
         bool m_bIsAutoMode;
 
+        bool m_bFirstVacSuccessed;              //Record for First Vac Success.
         bool m_bIsHomingFromBtn;                //Homing from button
         int m_nPassBoatStart;                   //Input counted Boats start number.
         int m_nPassBoatCount0;                  //Counted how many Boats are finished (rare).
@@ -58,6 +60,11 @@ public:
         int m_nCalCol;
         int m_nCalRow;
 
+        // g_ModBus Real Time data //
+        double m_dUpperLaserRealTime;           //The result of g_ModBus get UpperLaser in UI
+        double m_dDownLaserRealTime;            //The result of g_ModBus get DownLaser in UI
+        double m_dFrontTempRealTime;            //The result of g_ModBus get FrontTemp in UI
+        double m_dRearTempRealTime;             //The result of g_ModBus get RearTemp in UI
 
         //Thread HandShake
         bool m_bLamReady[2];            //1: front 0:Rear
@@ -98,6 +105,8 @@ public:
        void __fastcall DoAutoCal(bool bFront, int &nThreadIndex);
 
        void __fastcall CheckAlarm();
+       AnsiString AddTimeString(AnsiString Input);
+       AnsiString AddTimeString(bool bFront, AnsiString Input);
 };
 //---------------------------------------------------------------------------
 #endif

@@ -9,7 +9,9 @@
       temp\FrmProduct.obj temp\IniFile.obj temp\MainThread.obj 
       temp\fmChoiceMotor.obj temp\fmMachinParam.obj temp\fmMotorCheck.obj 
       temp\fmAD.obj temp\fmManual.obj temp\C_GetTime.obj temp\GlobalFunction.obj 
-      temp\DeltaPLC.obj temp\TA5Serial.obj temp\SerialPort.obj temp\fmOffset.obj"/>
+      temp\DeltaPLC.obj temp\TA5Serial.obj temp\SerialPort.obj temp\fmOffset.obj 
+      temp\EQPXML.obj temp\tinystr.obj temp\tinyxml.obj temp\tinyxmlerror.obj 
+      temp\tinyxmlparser.obj"/>
     <RESFILES value="CT74.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -29,7 +31,7 @@
       inetdbbde.bpi inetdbxpress.bpi inetdb.bpi nmfast.bpi webdsnap.bpi 
       bcbie.bpi websnap.bpi soaprtl.bpi dclocx.bpi dbexpress.bpi dbxcds.bpi 
       indy.bpi bcb2kaxserver.bpi"/>
-    <PATHCPP value=".;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100;extern\General;extern\DMT;extern\AEP_TA5;extern\SerialPort"/>
+    <PATHCPP value=".;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100;extern\General;extern\DMT;extern\AEP_TA5;extern\SerialPort;extern\EQPXML;extern\TinyXML;extern\TinyXML;extern\TinyXML;extern\TinyXML"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
@@ -39,13 +41,14 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="CT74.cpp"/>
-    <INCLUDEPATH value="extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
-    <LIBPATH value="extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
+    <INCLUDEPATH value="extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
+    <LIBPATH value="extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-Iextern\SerialPort -Iextern\AEP_TA5 -Iextern\DMT -Iextern\General 
+    <IDLCFLAGS value="-Iextern\TinyXML -Iextern\SQLite3 -Iextern\EQPXML -Iextern\SerialPort 
+      -Iextern\AEP_TA5 -Iextern\DMT -Iextern\General 
       -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; 
       -IC:\Work\CLARE_PROGRAM\C74\CT74 -I$(BCB)\include -I$(BCB)\include\vcl 
       -Iextern\PCIS-DASK\Include -Iextern\PCI_M114\include -Iextern\PISO-DNM100 
@@ -93,6 +96,11 @@
       <FILE FILENAME="extern\PCOMM\Pcommb.lib" FORMNAME="" UNITNAME="Pcommb.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="extern\SerialPort\SerialPort.cpp" FORMNAME="" UNITNAME="SerialPort" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="fmOffset.cpp" FORMNAME="frmOffser" UNITNAME="fmOffset" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EQPXML\EQPXML.cpp" FORMNAME="" UNITNAME="EQPXML" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\TinyXML\tinystr.cpp" FORMNAME="" UNITNAME="tinystr.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\TinyXML\tinyxml.cpp" FORMNAME="" UNITNAME="tinyxml.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\TinyXML\tinyxmlerror.cpp" FORMNAME="" UNITNAME="tinyxmlerror.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\TinyXML\tinyxmlparser.cpp" FORMNAME="" UNITNAME="tinyxmlparser.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -126,29 +134,31 @@ ProductVersion=1.0.0.0
 Comments=
 
 [HistoryLists\hlIncludePath]
-Count=9
-Item0=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm
-Item1=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
-Item2=extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
-Item3=extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
-Item4=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
-Item5=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include
-Item6=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl
-Item7=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl
-Item8=$(BCB)\include;$(BCB)\include\vcl
+Count=10
+Item0=extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm
+Item1=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm
+Item2=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
+Item3=extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
+Item4=extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
+Item5=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114
+Item6=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include
+Item7=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl
+Item8=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl
+Item9=$(BCB)\include;$(BCB)\include\vcl
 
 [HistoryLists\hlLibraryPath]
-Count=10
-Item0=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
-Item1=extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
-Item2=extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
-Item3=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
-Item4=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
-Item5=extern\PISO-DNM100;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK
-Item6=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PISO-DNM100;extern\PCI_M114;extern\PCIS-DASK
-Item7=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
-Item8=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
-Item9=$(BCB)\lib\obj;$(BCB)\lib
+Count=11
+Item0=extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item1=extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item2=extern\DMT;extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item3=extern\General;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item4=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item5=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100
+Item6=extern\PISO-DNM100;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK
+Item7=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\PISO-DNM100;extern\PCI_M114;extern\PCIS-DASK
+Item8=extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item9=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item10=$(BCB)\lib\obj;$(BCB)\lib
 
 [HistoryLists\hlDebugSourcePath]
 Count=1

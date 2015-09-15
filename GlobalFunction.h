@@ -59,6 +59,4 @@ void DDXFile_String(bool bRead,TIniFile *pIniFile,AnsiString strSection,
 void FindFileName(char *strSource,char *strDest);
 
 
-
-
 #endif
