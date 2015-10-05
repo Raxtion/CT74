@@ -1,10 +1,10 @@
 object frmMotorCheck: TfrmMotorCheck
-  Left = 990
-  Top = 92
+  Left = 572
+  Top = 112
   BorderStyle = bsDialog
   Caption = #39340#36948#28204#35430
-  ClientHeight = 509
-  ClientWidth = 518
+  ClientHeight = 354
+  ClientWidth = 360
   Color = clSkyBlue
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,19 +15,19 @@ object frmMotorCheck: TfrmMotorCheck
   Position = poScreenCenter
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 23
+  TextHeight = 16
   object labelPosition: TLabel
     Left = 0
     Top = 0
-    Width = 518
-    Height = 42
+    Width = 360
+    Height = 29
     Align = alTop
     AutoSize = False
     Caption = 'labelPosition'
     Color = clBlack
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clLime
-    Font.Height = -32
+    Font.Height = -23
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentColor = False
@@ -35,17 +35,17 @@ object frmMotorCheck: TfrmMotorCheck
   end
   object Panel2: TPanel
     Left = 0
-    Top = 161
-    Width = 161
-    Height = 275
+    Top = 112
+    Width = 112
+    Height = 191
     Align = alLeft
     Color = 13430215
     TabOrder = 0
     object btnJog: TSpeedButton
-      Left = 16
-      Top = 16
-      Width = 129
-      Height = 49
+      Left = 11
+      Top = 11
+      Width = 90
+      Height = 34
       GroupIndex = 7
       Down = True
       Caption = 'JOG'
@@ -53,58 +53,58 @@ object frmMotorCheck: TfrmMotorCheck
     end
     object btnPitch1: TSpeedButton
       Tag = 1
-      Left = 16
-      Top = 73
-      Width = 129
-      Height = 51
+      Left = 11
+      Top = 51
+      Width = 90
+      Height = 35
       GroupIndex = 7
       Caption = '1 mm'
       OnClick = btnJogClick
     end
     object btnPitch01: TSpeedButton
       Tag = 2
-      Left = 16
-      Top = 134
-      Width = 129
-      Height = 49
+      Left = 11
+      Top = 93
+      Width = 90
+      Height = 34
       GroupIndex = 7
       Caption = '0.1 mm'
       OnClick = btnJogClick
     end
     object btnPitch001: TSpeedButton
       Tag = 3
-      Left = 16
-      Top = 193
-      Width = 129
-      Height = 49
+      Left = 11
+      Top = 134
+      Width = 90
+      Height = 34
       GroupIndex = 7
       Caption = '0.01 mm'
       OnClick = btnJogClick
     end
   end
   object Panel1: TPanel
-    Left = 357
-    Top = 161
-    Width = 161
-    Height = 275
+    Left = 248
+    Top = 112
+    Width = 112
+    Height = 191
     Align = alRight
     Color = 13430215
     TabOrder = 1
     object btnFastSpeed: TSpeedButton
-      Left = 16
-      Top = 16
-      Width = 129
-      Height = 49
+      Left = 11
+      Top = 11
+      Width = 90
+      Height = 34
       GroupIndex = 8
       Caption = #24555' '#36895
       OnClick = btnFastSpeedClick
     end
     object btnMidSpeed: TSpeedButton
       Tag = 1
-      Left = 16
-      Top = 73
-      Width = 129
-      Height = 51
+      Left = 11
+      Top = 51
+      Width = 90
+      Height = 35
       GroupIndex = 8
       Down = True
       Caption = #20013' '#36895
@@ -112,46 +112,46 @@ object frmMotorCheck: TfrmMotorCheck
     end
     object btnSlowSpeed: TSpeedButton
       Tag = 2
-      Left = 16
-      Top = 134
-      Width = 129
-      Height = 49
+      Left = 11
+      Top = 93
+      Width = 90
+      Height = 34
       GroupIndex = 8
       Caption = #20302' '#36895
       OnClick = btnFastSpeedClick
     end
     object bntVerySlowSpeed: TSpeedButton
       Tag = 3
-      Left = 16
-      Top = 193
-      Width = 129
-      Height = 49
+      Left = 11
+      Top = 134
+      Width = 90
+      Height = 34
       GroupIndex = 8
       Caption = #24494' '#36895
       OnClick = btnFastSpeedClick
     end
   end
   object Panel3: TPanel
-    Left = 161
-    Top = 161
-    Width = 196
-    Height = 275
+    Left = 112
+    Top = 112
+    Width = 136
+    Height = 191
     Align = alClient
     Color = 13430215
     TabOrder = 2
     object Label1: TLabel
-      Left = 56
-      Top = 16
-      Width = 81
-      Height = 29
+      Left = 39
+      Top = 11
+      Width = 56
+      Height = 20
       AutoSize = False
       Caption = #21069#26997#38480
     end
     object shapePL: TShape
-      Left = 16
-      Top = 16
-      Width = 33
-      Height = 29
+      Left = 11
+      Top = 11
+      Width = 23
+      Height = 20
       Hint = #21407#40670
       Brush.Color = clGreen
       ParentShowHint = False
@@ -159,10 +159,10 @@ object frmMotorCheck: TfrmMotorCheck
       ShowHint = True
     end
     object shapeML: TShape
-      Left = 16
-      Top = 56
-      Width = 33
-      Height = 27
+      Left = 11
+      Top = 39
+      Width = 23
+      Height = 19
       Hint = #21407#40670
       Brush.Color = clGreen
       ParentShowHint = False
@@ -170,26 +170,26 @@ object frmMotorCheck: TfrmMotorCheck
       ShowHint = True
     end
     object Label3: TLabel
-      Left = 56
-      Top = 56
-      Width = 89
-      Height = 27
+      Left = 39
+      Top = 39
+      Width = 62
+      Height = 19
       AutoSize = False
       Caption = #24460#26997#38480
     end
     object Label2: TLabel
-      Left = 56
-      Top = 96
-      Width = 89
-      Height = 28
+      Left = 39
+      Top = 67
+      Width = 62
+      Height = 19
       AutoSize = False
       Caption = #21407#40670
     end
     object shapeOrg: TShape
-      Left = 16
-      Top = 96
-      Width = 33
-      Height = 28
+      Left = 11
+      Top = 67
+      Width = 23
+      Height = 19
       Hint = #21407#40670
       Brush.Color = clGreen
       ParentShowHint = False
@@ -197,10 +197,10 @@ object frmMotorCheck: TfrmMotorCheck
       ShowHint = True
     end
     object shapeInp: TShape
-      Left = 16
-      Top = 137
-      Width = 33
-      Height = 27
+      Left = 11
+      Top = 95
+      Width = 23
+      Height = 19
       Hint = #21407#40670
       Brush.Color = clGreen
       ParentShowHint = False
@@ -208,18 +208,18 @@ object frmMotorCheck: TfrmMotorCheck
       ShowHint = True
     end
     object Label4: TLabel
-      Left = 56
-      Top = 137
-      Width = 73
-      Height = 27
+      Left = 39
+      Top = 95
+      Width = 51
+      Height = 19
       AutoSize = False
       Caption = 'INP'
     end
     object shapeAlarm: TShape
-      Left = 16
-      Top = 175
-      Width = 33
-      Height = 29
+      Left = 11
+      Top = 122
+      Width = 23
+      Height = 20
       Hint = #21407#40670
       Brush.Color = clMaroon
       ParentShowHint = False
@@ -227,39 +227,39 @@ object frmMotorCheck: TfrmMotorCheck
       ShowHint = True
     end
     object Label5: TLabel
-      Left = 56
-      Top = 175
-      Width = 73
-      Height = 29
+      Left = 39
+      Top = 122
+      Width = 51
+      Height = 20
       AutoSize = False
       Caption = 'Alarm'
     end
     object btnHome: TSpeedButton
-      Left = 118
-      Top = 88
-      Width = 75
-      Height = 41
+      Left = 82
+      Top = 61
+      Width = 52
+      Height = 29
       Caption = 'Home'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clRed
-      Font.Height = -16
+      Font.Height = -11
       Font.Name = 'Arial Black'
       Font.Style = []
       ParentFont = False
       OnClick = btnHomeClick
     end
     object btnServoOnOff: TSpeedButton
-      Left = 40
-      Top = 224
-      Width = 130
-      Height = 41
+      Left = 28
+      Top = 156
+      Width = 90
+      Height = 28
       AllowAllUp = True
       GroupIndex = 38
       Down = True
       Caption = 'Servo On'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clRed
-      Font.Height = -16
+      Font.Height = -11
       Font.Name = 'Arial Black'
       Font.Style = []
       ParentFont = False
@@ -268,27 +268,27 @@ object frmMotorCheck: TfrmMotorCheck
   end
   object Panel4: TPanel
     Left = 0
-    Top = 436
-    Width = 518
-    Height = 73
+    Top = 303
+    Width = 360
+    Height = 51
     Align = alBottom
     Color = 13430215
     TabOrder = 3
     object BitBtn1: TBitBtn
-      Left = 112
-      Top = 16
-      Width = 96
-      Height = 42
+      Left = 78
+      Top = 11
+      Width = 67
+      Height = 29
       Caption = #30906'  '#23450
       ModalResult = 1
       TabOrder = 0
       OnClick = BitBtn1Click
     end
     object BitBtn2: TBitBtn
-      Left = 296
-      Top = 16
-      Width = 96
-      Height = 42
+      Left = 206
+      Top = 11
+      Width = 67
+      Height = 29
       Caption = #21462'  '#28040
       ModalResult = 2
       TabOrder = 1
@@ -296,17 +296,17 @@ object frmMotorCheck: TfrmMotorCheck
   end
   object Panel5: TPanel
     Left = 0
-    Top = 42
-    Width = 518
-    Height = 119
+    Top = 29
+    Width = 360
+    Height = 83
     Align = alTop
     Color = 13430215
     TabOrder = 4
     object btnFWD: TSpeedButton
-      Left = 101
-      Top = 23
-      Width = 80
-      Height = 73
+      Left = 70
+      Top = 16
+      Width = 56
+      Height = 51
       Caption = '+'
       Glyph.Data = {
         360C0000424D360C000000000000360000002800000020000000200000000100
@@ -411,24 +411,24 @@ object frmMotorCheck: TfrmMotorCheck
       OnMouseUp = btnFWDMouseUp
     end
     object btnStop: TSpeedButton
-      Left = 208
-      Top = 23
-      Width = 81
-      Height = 73
+      Left = 145
+      Top = 16
+      Width = 56
+      Height = 51
       Caption = 'STOP'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clRed
-      Font.Height = -16
+      Font.Height = -11
       Font.Name = 'Arial Black'
       Font.Style = []
       ParentFont = False
       OnClick = btnStopClick
     end
     object btnRWD: TSpeedButton
-      Left = 312
-      Top = 23
-      Width = 80
-      Height = 73
+      Left = 217
+      Top = 16
+      Width = 56
+      Height = 51
       Caption = '--'
       Glyph.Data = {
         360C0000424D360C000000000000360000002800000020000000200000000100

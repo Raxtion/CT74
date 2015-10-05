@@ -28,6 +28,7 @@
 #include "fmPassword.h"
 #include "fmOffset.h"
 #include "Sqlite3Interface.h"
+#include "EQPXML.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -44,7 +45,7 @@ extern CPISODNM100 g_DNPort0;
 extern CPISODNM100 g_DNPort1;
 extern CDeltaPLC g_ModBus;
 extern CTA5Serial g_Balance;
-
+extern CEQPXML g_eqpXML;
 
 //---------------------------------------------------------------------------
 __fastcall TfrmMain::TfrmMain(TComponent* Owner)
@@ -547,7 +548,7 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
     //CreateCaptionFile(pChoiceMotorDlg);
     ReadCaptionFile(pChoiceMotorDlg, g_IniFile.m_nLanguageMode);
 
-    AnsiString sPath = ExtractFilePath(Application->ExeName);
+    AnsiString sPath = g_IniFile.m_strApplicationPath;
     sPath = StringReplace(sPath, "\\exe\\", "",TReplaceFlags());
 
 	while (pChoiceMotorDlg->ShowModal() != mrCancel)
@@ -844,6 +845,24 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         //g_ActionLog.close();
 		g_pMainThread->m_ActionLog.pop_front();
 	}
+
+    //--Idle Run Down---
+    if (g_DIO.ReadDIBit(DO::RedLamp) && g_eqpXML.m_EqpStatus !='D')
+    {
+        g_eqpXML.m_EqpStatus='D';
+        g_eqpXML.SendEventReport("1");
+    }
+    if (g_DIO.ReadDIBit(DO::GreenLamp) && g_eqpXML.m_EqpStatus !='R')
+    {
+        g_eqpXML.m_EqpStatus='R';
+        g_eqpXML.SendEventReport("1");
+    }
+    if (g_DIO.ReadDIBit(DO::YellowLamp) && g_eqpXML.m_EqpStatus !='I')
+    {
+        g_eqpXML.m_EqpStatus='I';
+        g_eqpXML.SendEventReport("1");
+    }
+
 
 	Timer1->Enabled = true;
 
@@ -1675,6 +1694,13 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
     time_t timer = time(NULL);
     struct tm *tblock = localtime(&timer);
     m_strDate.sprintf("%04d_%02d_%02d",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
+
+    g_eqpXML.m_bOnLine = true;
+    g_eqpXML.StartProcess = frmMain->StartProcess;
+    g_eqpXML.OpenFile = frmMain->OpenFilebyCIM;
+
+    ServerCIM->Active = true;
+    g_eqpXML.m_EqpStatus = 'I';
 }
 //---------------------------------------------------------------------------
 
@@ -1829,6 +1855,72 @@ void __fastcall TfrmMain::btnStartMotor1Click(TObject *Sender)
         g_DIO.SetDO(DO::LCMotorStart, false);
         g_DIO.SetDO(DO::EjectMotorStart1, false);
     }
+}
+//---------------------------------------------------------------------------
+bool TfrmMain::StartProcess(bool bStart)
+{
+	if(bStart)
+	{
+		g_pMainThread->m_bIsStartProcessbyCIM = true;
+	}
+	else
+	{
+		g_pMainThread->m_bIsStopProcessbyCIM = true;
+	}
+	return true;
+}
+//---------------------------------------------------------------------------
+bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
+{
+	frmMain->Caption = strFileName;
+	g_IniFile.m_strLastFileName = strFileName;
+
+	g_IniFile.ProductFile(strFileName.c_str(), true);
+
+	frmMain->SetAllDevice();
+
+	frmMain->Label22->Caption = g_IniFile.m_dLamTime[0];
+	frmMain->Label25->Caption = g_IniFile.m_dLamTemp[0];
+	frmMain->Label28->Caption = g_IniFile.m_dLamPress[0];
+	frmMain->Label17->Caption = g_IniFile.m_dLamTime[1];
+	frmMain->Label13->Caption = g_IniFile.m_dLamTemp[1];
+	frmMain->Label14->Caption = g_IniFile.m_dLamPress[1];
+	frmMain->GroupBox2->Caption = StringReplace(g_IniFile.m_strLastFileName, "C:\\Product Data\\", "", TReplaceFlags());
+
+	frmMain->PaintBox1Paint(frmMain);
+	frmMain->PaintBox2Paint(frmMain);
+
+	g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
+	g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
+	return true;
+}
+//---------------------------------------------------------------------------
+void __fastcall TfrmMain::ServerCIMClientConnect(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    g_eqpXML.StartComm(Socket);
+    AddList("CIM Connected!!");
+}
+//---------------------------------------------------------------------------
+void __fastcall TfrmMain::ServerCIMClientDisconnect(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    g_eqpXML.EndComm();
+    AddList("CIM Disconnected!!");
+}
+//---------------------------------------------------------------------------
+void __fastcall TfrmMain::ServerCIMClientError(TObject *Sender,
+      TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
+{
+    AddList("CIM SocketEror");
+    Socket->Close();
+}
+//---------------------------------------------------------------------------
+void __fastcall TfrmMain::ServerCIMClientRead(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    AddList("CIM Read");
+    g_eqpXML.ProcessCIM();
 }
 //---------------------------------------------------------------------------
 

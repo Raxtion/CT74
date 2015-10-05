@@ -1,6 +1,6 @@
 object frmManual: TfrmManual
-  Left = 964
-  Top = 195
+  Left = 494
+  Top = 0
   BorderStyle = bsDialog
   Caption = 'Manual Operation'
   ClientHeight = 591

@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 190
-  Top = 8
+  Left = 179
+  Top = -3
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 591

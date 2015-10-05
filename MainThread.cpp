@@ -16,7 +16,7 @@
 #include "TA5Serial.h";
 #include "DeltaPLC.h"
 #include "time.h"
-
+#include "EQPXML.h"
 #include <algorithm>
 
 extern CMyPISODIO g_DIO;
@@ -26,6 +26,7 @@ extern CPISODNM100 g_DNPort0;
 extern CPISODNM100 g_DNPort1;
 extern CTA5Serial g_Balance;
 extern CDeltaPLC g_ModBus;
+extern CEQPXML g_eqpXML;
 
 bool g_bStopMainThread = false;
 
@@ -48,7 +49,6 @@ CMainThread *g_pMainThread;
 __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	: TThread(CreateSuspended)
 {
-
 	m_bRefresh = false;
 	m_bIsHomeDone = false;
 
@@ -75,6 +75,9 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dDownLaserRealTime = 0.0;
     m_dFrontTempRealTime = 0.0;
     m_dRearTempRealTime = 0.0;
+
+	m_bIsStartProcessbyCIM = false;
+	m_bIsStopProcessbyCIM = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -240,7 +243,7 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//--Stop Auto
-		if (g_DIO.ReadDIBit(DI::StopBtn))
+		if (g_DIO.ReadDIBit(DI::StopBtn) || m_bIsStopProcessbyCIM)
 		{
 			bAutoMode = false;
 			SetManualSpeed();
@@ -252,6 +255,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::LamMotorStart2, false);
 			g_DIO.SetDO(DO::EjectMotorStart1, false);
 			g_DIO.SetDO(DO::EjectMotorStart2, false);
+			m_bIsStopProcessbyCIM = false;
 		}
 
 		//---Homing Process
@@ -355,7 +359,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::YellowLamp, true);
 			//g_DIO.SetDO(DO::RedLamp,false);
 
-			if (g_DIO.ReadDIBit(DI::StartBtn))                                          //當start綠燈被壓下時
+			if (g_DIO.ReadDIBit(DI::StartBtn) || m_bIsStartProcessbyCIM)    //當start綠燈被壓下時，或者CIM觸發StartProcess function
 			{
 				if (g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0] || g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
 				{
@@ -388,6 +392,7 @@ void __fastcall CMainThread::Execute()
 					nThreadIndex[12] = 0;
 					nThreadIndex[13] = 0;
 				}
+				m_bIsStartProcessbyCIM = false;
 			}
 
 			if (m_bStartPressCal[1]) DoPressCal(true, nThreadIndex[6], m_nManualRange, m_nManualFirstLoc, m_nManualTimes);
@@ -862,7 +867,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		else
 		{
 			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]);
-            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][0]Lane Lifter下降到最低位"));
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][0]Lane Lifter上升到接片高度"));
 			nThreadIndex++;
 		}
 		break;
@@ -2098,6 +2103,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		nThreadIndex = 0;
 	}
 }
+
 
 
 

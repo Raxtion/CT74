@@ -97,7 +97,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLoadCellY1",m_dLoadCellY[1],0.0);
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLastLamPress0",m_dLastLamPress[0],0.0);
-  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLastLamPress0",m_dLastLamPress[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLastLamPress1",m_dLastLamPress[1],0.0);
   delete pIniFile;
 }
 //---------------------------------------------------------------------------

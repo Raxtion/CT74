@@ -12,6 +12,7 @@
 #include "C_GetTime.h"
 #include <ExtCtrls.hpp>
 #include <Buttons.hpp>
+#include <ScktComp.hpp>
 #include <vector>
 //---------------------------------------------------------------------------
 class TfrmMain : public TForm
@@ -109,6 +110,7 @@ __published:	// IDE-managed Components
     TSpeedButton *btnStartMotor1;
     TSpeedButton *btnStartMotor0;
     TTimer *Timer3;
+    TServerSocket *ServerCIM;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -146,6 +148,15 @@ __published:	// IDE-managed Components
     void __fastcall btnStartMotor0Click(TObject *Sender);
     void __fastcall btnStartMotor1Click(TObject *Sender);
     void __fastcall Timer3Timer(TObject *Sender);
+    void __fastcall ServerCIMClientConnect(TObject *Sender,
+          TCustomWinSocket *Socket);
+    void __fastcall ServerCIMClientDisconnect(TObject *Sender,
+          TCustomWinSocket *Socket);
+    void __fastcall ServerCIMClientError(TObject *Sender,
+          TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
+          int &ErrorCode);
+    void __fastcall ServerCIMClientRead(TObject *Sender,
+          TCustomWinSocket *Socket);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;
@@ -171,8 +182,12 @@ public:		// User declarations
         void __fastcall RefreshImage();
         void __fastcall SetAllDevice();
         void __fastcall RenewRadioGroup(bool bInit);
+
+        static bool StartProcess(bool bStart);
+        static bool OpenFilebyCIM(AnsiString strFileName);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmMain *frmMain;
 //---------------------------------------------------------------------------
 #endif
+

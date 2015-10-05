@@ -6,7 +6,8 @@
 #include "fmMotorCheck.h"
 #include "PCIM114.h"
 #include "IniFile.h"
-#include "MyPISODIO.h""
+#include "MyPISODIO.h"
+#include "MainThread.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -14,6 +15,7 @@
 extern CMyPISODIO g_DIO;
 extern CPCIM114 g_Motion;
 extern CIniFile g_IniFile;
+extern CMainThread *g_pMainThread;
 //---------------------------------------------------------------------------
 __fastcall TfrmMotorCheck::TfrmMotorCheck(TComponent* Owner)
     : TForm(Owner)
@@ -80,12 +82,18 @@ void __fastcall TfrmMotorCheck::btnFastSpeedClick(TObject *Sender)
 
 void __fastcall TfrmMotorCheck::btnHomeClick(TObject *Sender)
 {
+    if (g_pMainThread->m_bIsHomeDone != true)
+    {
         g_Motion.SetSpeed(m_nActiveAxis,0.1,0.1,10);
-    g_Motion.AxisHome(m_nActiveAxis);
-    g_Motion.WaitMotionDone(m_nActiveAxis,10000);
-    g_Motion.SetActualPos(m_nActiveAxis,0);
-    g_Motion.SetCommandPos(m_nActiveAxis,0);
-      
+        g_Motion.AxisHome(m_nActiveAxis);
+        g_Motion.WaitMotionDone(m_nActiveAxis,10000);
+        g_Motion.SetActualPos(m_nActiveAxis,0);
+        g_Motion.SetCommandPos(m_nActiveAxis,0);
+    }
+    else if (g_pMainThread->m_bIsHomeDone == true)
+    {
+        g_Motion.AbsMove(m_nActiveAxis, 0);
+    }
 }
 //---------------------------------------------------------------------------
 

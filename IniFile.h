@@ -29,6 +29,7 @@ public:
   AnsiString m_strARTPassword;
   AnsiString m_strENGPassword;
   AnsiString m_strLastFileName;
+  AnsiString m_strApplicationPath;
   double m_dCycleTimeOut;
 
   std::vector<AnsiString> m_vecMsg;

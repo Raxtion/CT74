@@ -63,14 +63,14 @@ void __fastcall SQLITE3IF::open(int DBtype)
             break;
         case 1:
             /* 建立 Action Table */
-            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(10), action VARCHAR(20));", 0, 0, &errMsg);
+            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(10), action VARCHAR(50));", 0, 0, &errMsg);
             if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
             break;
         default:
             g_pMainThread->m_listLog.push_back("open() DBType Error!");
             sqlite3_free(errMsg);
         }
-
+        unique_id = 0;
     }
     free();
 }
@@ -78,7 +78,7 @@ void __fastcall SQLITE3IF::open(int DBtype)
 void __fastcall SQLITE3IF::free()
 {
     /* 釋放 */
-    //if (*result != "")
+    //目的是釋放記憶體,所以不只是釋放來自table的result
     //sqlite3_free_table(result);
     sqlite3_free(result);
 }

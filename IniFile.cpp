@@ -405,6 +405,7 @@ void __fastcall CIniFile::AddLog(char *pRx,int nSize)
  __fastcall CIniFile::CIniFile()
  {
         mkdir("C:\\C74 Log");
+        m_strApplicationPath = ExtractFilePath(Application->ExeName);
  }
  //---------------------------------------------------------------------------
  AnsiString __fastcall CIniFile::GetFileNameWithoutExt(char *strFileName)

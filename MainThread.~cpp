@@ -48,7 +48,6 @@ CMainThread *g_pMainThread;
 __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	: TThread(CreateSuspended)
 {
-
 	m_bRefresh = false;
 	m_bIsHomeDone = false;
 
@@ -75,6 +74,9 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dDownLaserRealTime = 0.0;
     m_dFrontTempRealTime = 0.0;
     m_dRearTempRealTime = 0.0;
+
+	m_bIsStartProcessbyCIM = false;
+	m_bIsStopProcessbyCIM = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -240,7 +242,7 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//--Stop Auto
-		if (g_DIO.ReadDIBit(DI::StopBtn))
+		if (g_DIO.ReadDIBit(DI::StopBtn) || m_bIsStopProcessbyCIM)
 		{
 			bAutoMode = false;
 			SetManualSpeed();
@@ -252,6 +254,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::LamMotorStart2, false);
 			g_DIO.SetDO(DO::EjectMotorStart1, false);
 			g_DIO.SetDO(DO::EjectMotorStart2, false);
+			m_bIsStopProcessbyCIM = false;
 		}
 
 		//---Homing Process
@@ -355,7 +358,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::YellowLamp, true);
 			//g_DIO.SetDO(DO::RedLamp,false);
 
-			if (g_DIO.ReadDIBit(DI::StartBtn))                                          //當start綠燈被壓下時
+			if (g_DIO.ReadDIBit(DI::StartBtn) || m_bIsStartProcessbyCIM)    //當start綠燈被壓下時，或者CIM觸發StartProcess function
 			{
 				if (g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0] || g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
 				{
@@ -388,6 +391,7 @@ void __fastcall CMainThread::Execute()
 					nThreadIndex[12] = 0;
 					nThreadIndex[13] = 0;
 				}
+				m_bIsStartProcessbyCIM = false;
 			}
 
 			if (m_bStartPressCal[1]) DoPressCal(true, nThreadIndex[6], m_nManualRange, m_nManualFirstLoc, m_nManualTimes);
@@ -1057,12 +1061,17 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		if (g_DIO.ReadDIBit(nLifterVacGauge))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空偵測成功"));
+            m_bFirstVacSuccessed = true;
 			nThreadIndex++;
 		}
 		else if (tm1MS->timeUp())
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空偵測失敗"));
-			bFront ? g_IniFile.m_nErrorCode = 2054 : g_IniFile.m_nErrorCode = 2055;
+            if (bFront) m_listLog.push_back("前壓合流道真空失敗(第一次)");
+            else m_listLog.push_back("後壓合流道真空失敗(第一次)");
+			//bFront ? g_IniFile.m_nErrorCode = 2054 : g_IniFile.m_nErrorCode = 2055;
+            m_bFirstVacSuccessed = false;
+            g_DIO.SetDO(DO::Buzzer, true);
 			nThreadIndex++;
 		}
 		break;
@@ -1075,16 +1084,17 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 
 			tm1MS->timeStart(g_IniFile.m_dLamTime[bFront] * 1000);
 
-			if (g_IniFile.m_nErrorCode > 2000)
+            if (m_bFirstVacSuccessed == false)
+			//if (g_IniFile.m_nErrorCode > 2000)
 			{
-				g_IniFile.m_nErrorCode = 0;
+				//g_IniFile.m_nErrorCode = 0;
 				g_DIO.SetDO(DO::Buzzer, false);
 
-				g_DIO.SetDO(DO::StopBtnLamp, false);
-				g_DIO.SetDO(DO::StartBtnLamp, true);
-				g_DIO.SetDO(DO::GreenLamp, true);
-				g_DIO.SetDO(DO::YellowLamp, false);
-				g_DIO.SetDO(DO::RedLamp, false);
+				//g_DIO.SetDO(DO::StopBtnLamp, false);
+				//g_DIO.SetDO(DO::StartBtnLamp, true);
+				//g_DIO.SetDO(DO::GreenLamp, true);
+				//g_DIO.SetDO(DO::YellowLamp, false);
+				//g_DIO.SetDO(DO::RedLamp, false);
 			}
 
 			tm2MS->timeStart(g_IniFile.m_dVacDelayTime * 1000);
@@ -1255,14 +1265,16 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 	case 2:
 		if (g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry))               //g_DIO.ReadDIBit(nEjectExist)
         {
+            m_bEjectReady[bFront] = false;
 			tm1MS->timeStart(500);
 			nThreadIndex++;
 		}
         else if (!g_DIO.ReadDOBit(nEjectMotorStart))
         {
             m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][2]EjectLane 進料區進料失敗重試"));
-            if (bFront) CMainThread::nThreadIndex[4] = 0;
-            else CMainThread::nThreadIndex[5] = 0;
+            m_bEjectReady[bFront] = true;
+            g_DIO.SetDO(nEjectMotorStart, true);
+			tm1MS->timeStart(5000);
             break;
         }
 		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 56 : g_IniFile.m_nErrorCode = 57;
@@ -2090,6 +2102,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		nThreadIndex = 0;
 	}
 }
+
 
 
 
