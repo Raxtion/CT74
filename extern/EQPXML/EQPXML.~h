@@ -17,7 +17,6 @@ class CEQPXML
 {
 private:
 	TCustomWinSocket *m_pSocket;
-	//std::vector<AnsiString> m_strCIMMsg;
 	unsigned char *receiveRx;
 	unsigned char *receive;
 
@@ -37,7 +36,7 @@ private:
 	void __fastcall SendXML(TiXmlDocument &theDoc);                                                //利用m_pSocket->SendBuf() 送出xml資料
 
 public:
-
+    std::list<AnsiString> m_strCIMMsgLog;
 	void __fastcall doQueryVID(char *pRx);
 	bool m_bOnLine;
 	AnsiString m_EqpStatus;                                                                        //I:Idle R:Run D:Down

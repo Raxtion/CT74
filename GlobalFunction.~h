@@ -53,12 +53,12 @@ void DDXFile_Float(bool bRead,TIniFile *pIniFile,AnsiString strSection,
 void DDXFile_Bool(bool bRead,TIniFile *pIniFile,AnsiString strSection,
   AnsiString strIdent,bool &bParameter,bool bDefault=false);
 void DDXFile_String(bool bRead,TIniFile *pIniFile,AnsiString strSection,
-  AnsiString strIdent,AnsiString &strParameter,AnsiString strDefault="");
+  AnsiString strIdent,AnsiString &strParameter,AnsiString strDefault="2x2/3x3/");
 
 
 void FindFileName(char *strSource,char *strDest);
 
-
-
+TStringList* SplitString(AnsiString Original, AnsiString Delim);
+void ReplaceString(AnsiString *Original, AnsiString OldStr, AnsiString NewStr)
 
 #endif

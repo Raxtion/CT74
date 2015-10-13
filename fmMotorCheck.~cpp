@@ -92,7 +92,7 @@ void __fastcall TfrmMotorCheck::btnHomeClick(TObject *Sender)
     }
     else if (g_pMainThread->m_bIsHomeDone == true)
     {
-        g_Motion.AbsMove(m_nActiveAxis, 0)
+        g_Motion.AbsMove(m_nActiveAxis, 0);
     }
 }
 //---------------------------------------------------------------------------

@@ -11,7 +11,8 @@
       temp\fmAD.obj temp\fmManual.obj temp\C_GetTime.obj temp\GlobalFunction.obj 
       temp\DeltaPLC.obj temp\TA5Serial.obj temp\SerialPort.obj temp\fmOffset.obj 
       temp\EQPXML.obj temp\tinystr.obj temp\tinyxml.obj temp\tinyxmlerror.obj 
-      temp\tinyxmlparser.obj"/>
+      temp\tinyxmlparser.obj temp\sqlite3.obj temp\shell.obj 
+      temp\Sqlite3Interface.obj"/>
     <RESFILES value="CT74.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -31,7 +32,7 @@
       inetdbbde.bpi inetdbxpress.bpi inetdb.bpi nmfast.bpi webdsnap.bpi 
       bcbie.bpi websnap.bpi soaprtl.bpi dclocx.bpi dbexpress.bpi dbxcds.bpi 
       indy.bpi bcb2kaxserver.bpi"/>
-    <PATHCPP value=".;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100;extern\General;extern\DMT;extern\AEP_TA5;extern\SerialPort;extern\EQPXML;extern\TinyXML;extern\TinyXML;extern\TinyXML;extern\TinyXML"/>
+    <PATHCPP value=".;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100;extern\General;extern\DMT;extern\AEP_TA5;extern\SerialPort;extern\EQPXML;extern\TinyXML;extern\TinyXML;extern\TinyXML;extern\TinyXML;extern\SQLite3;extern\SQLite3"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
@@ -101,6 +102,9 @@
       <FILE FILENAME="extern\TinyXML\tinyxml.cpp" FORMNAME="" UNITNAME="tinyxml.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="extern\TinyXML\tinyxmlerror.cpp" FORMNAME="" UNITNAME="tinyxmlerror.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="extern\TinyXML\tinyxmlparser.cpp" FORMNAME="" UNITNAME="tinyxmlparser.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\SQLite3\sqlite3.c" FORMNAME="" UNITNAME="sqlite3.c" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\SQLite3\shell.c" FORMNAME="" UNITNAME="shell.c" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Sqlite3Interface.cpp" FORMNAME="" UNITNAME="Sqlite3Interface" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

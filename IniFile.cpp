@@ -85,6 +85,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dSafePos",m_dSafePos,0);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bForceEject",m_bForceEject,false);
+  DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseCIM",m_bIsUseCIM,false);
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dPLimitF",m_dPLimitF,0.0);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dNLimitF",m_dNLimitF,0.0);
@@ -98,6 +99,8 @@ void __fastcall CIniFile::MachineFile(bool bRead)
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLastLamPress0",m_dLastLamPress[0],0.0);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLastLamPress1",m_dLastLamPress[1],0.0);
+
+  DDXFile_String(bRead,pIniFile,Machine_Section,"m_strHeadScal",m_strHeadScal,"2x2/3x3/4x4/");
   delete pIniFile;
 }
 //---------------------------------------------------------------------------
@@ -185,6 +188,13 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dAutoRunTempRange",m_dAutoRunTempRange,0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dVacDelayTime",m_dVacDelayTime,0.0);
+
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nHeadType",m_nHeadType,0);
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nHeadScal",m_nHeadScal,0);
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nVacummOn",m_nVacummOn,0);
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nPressCheck",m_nPressCheck,0);
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDummyCheck",m_nDummyCheck,0);
+  DDXFile_String(bRead,pIniFile,Product_Section,"m_strSetupEENum",m_strSetupEENum,"");
 
   delete pIniFile;
 }

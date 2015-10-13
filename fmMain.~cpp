@@ -137,8 +137,8 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
         Label17->Caption = g_IniFile.m_dLamTime[1];
         Label13->Caption = g_IniFile.m_dLamTemp[1];
         Label14->Caption = g_IniFile.m_dLamPress[1];
-        GroupBox2->Caption = StringReplace(g_IniFile.m_strLastFileName, "C:\\Product Data\\", "",TReplaceFlags());
-
+        TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+        GroupBox2->Caption = StrList->Strings[StrList->Count-1];
 	}
     PaintBox1Paint(this);
     PaintBox2Paint(this);
@@ -166,7 +166,8 @@ void __fastcall TfrmMain::N3Click(TObject *Sender)
     Label17->Caption = g_IniFile.m_dLamTime[1];
     Label13->Caption = g_IniFile.m_dLamTemp[1];
     Label14->Caption = g_IniFile.m_dLamPress[1];
-    GroupBox2->Caption = StringReplace(g_IniFile.m_strLastFileName, "C:\\Product Data\\", "",TReplaceFlags());
+    TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+    GroupBox2->Caption = StrList->Strings[StrList->Count-1];
 
     PaintBox1Paint(this);
     PaintBox2Paint(this);
@@ -194,7 +195,8 @@ void __fastcall TfrmMain::N4Click(TObject *Sender)
         Label17->Caption = g_IniFile.m_dLamTime[1];
         Label13->Caption = g_IniFile.m_dLamTemp[1];
         Label14->Caption = g_IniFile.m_dLamPress[1];
-        GroupBox2->Caption = StringReplace(g_IniFile.m_strLastFileName, "C:\\Product Data\\", "",TReplaceFlags());
+        TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+        GroupBox2->Caption = StrList->Strings[StrList->Count-1];
 	}
     PaintBox1Paint(this);
     PaintBox2Paint(this);
@@ -246,6 +248,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
 	DDX_Float(bRead, g_IniFile.m_dSafePos, pMachineDlg->m_dSafePos);
     DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
+    DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
     DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
 
 	DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
@@ -271,6 +274,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
 		DDX_Float(bRead, g_IniFile.m_dSafePos, pMachineDlg->m_dSafePos);
         DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
+        DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
         DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
 
 		DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
@@ -311,7 +315,6 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Int(bRead, g_IniFile.m_nRows, pWnd->m_nRows);
 	DDX_Float(bRead, g_IniFile.m_dColPitch, pWnd->m_dColPitch);
 	DDX_Float(bRead, g_IniFile.m_dRowPitch, pWnd->m_dRowPitch);
-
 
 	DDX_Float(bRead, g_IniFile.m_dLamHeight[0], pWnd->m_dLamHeight0);
 	DDX_Float(bRead, g_IniFile.m_dLamHeight[1], pWnd->m_dLamHeight1);
@@ -380,6 +383,13 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pWnd->m_dAutoRunTempRange);
     DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pWnd->m_dVacDelayTime);
 
+    DDX_ComboBox(bRead, g_IniFile.m_cmbHeadType, pWnd->m_cmbHeadType);
+    DDX_ComboBox(bRead, g_IniFile.m_cmbHeadScal, pWnd->m_cmbHeadScal);
+    DDX_ComboBox(bRead, g_IniFile.m_cmbVacummOn, pWnd->m_cmbVacummOn);
+    DDX_ComboBox(bRead, g_IniFile.m_cmbPressCheck, pWnd->m_cmbPressCheck);
+    DDX_ComboBox(bRead, g_IniFile.m_cmbDummyCheck, pWnd->m_cmbDummyCheck);
+    pWnd->m_strSetupEENum->Text = "";
+
     while (1)
     {
         if (pWnd->ShowModal()== mrOk)
@@ -400,6 +410,10 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
             else if (pWnd->m_dAutoStopTimes->Text.ToDouble() < 1.0)
             {
                 Application->MessageBoxA("超出容許誤差停機,必須大於1倍","Confirm",MB_OK);
+            }
+            else if (pWnd->m_strSetupEENum->Text == "")
+            {
+                Application->MessageBoxA("SetupEE 編號不可空白","Confirm",MB_OK);
             }
             else
             {
@@ -485,6 +499,13 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
         DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pWnd->m_dAutoRunTempRange);
         DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pWnd->m_dVacDelayTime);
+
+        DDX_ComboBox(bRead, g_IniFile.m_cmbHeadType, pWnd->m_cmbHeadType);
+        DDX_ComboBox(bRead, g_IniFile.m_cmbHeadScal, pWnd->m_cmbHeadScal);
+        DDX_ComboBox(bRead, g_IniFile.m_cmbVacummOn, pWnd->m_cmbVacummOn);
+        DDX_ComboBox(bRead, g_IniFile.m_cmbPressCheck, pWnd->m_cmbPressCheck);
+        DDX_ComboBox(bRead, g_IniFile.m_cmbDummyCheck, pWnd->m_cmbDummyCheck);
+        DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
 	}
 
 	SetAllDevice();
@@ -753,8 +774,16 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 		AddList(strLog);
 		g_IniFile.AddLog(strLog.c_str(), strLog.Length());
 		g_pMainThread->m_listLog.pop_front();
-
 	}
+    //--CIMMsg Log---
+	if (g_eqpXML.m_strCIMMsgLog.size()>0)
+	{
+		AnsiString strLog = g_eqpXML.m_strCIMMsgLog.front();
+		AddList(strLog);
+		g_IniFile.AddLog(strLog.c_str(), strLog.Length());
+		g_eqpXML.m_strCIMMsgLog.pop_front();
+	}
+
 
 	//---Error Code
 	if (g_IniFile.m_nErrorCode>0 && (nErrorCode != g_IniFile.m_nErrorCode))
@@ -845,6 +874,27 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         //g_ActionLog.close();
 		g_pMainThread->m_ActionLog.pop_front();
 	}
+
+    //--Idle Run Down---
+    if (ServerCIM->Active == true)
+    {
+        if (g_DIO.ReadDIBit(DO::RedLamp) && g_eqpXML.m_EqpStatus !='D')
+        {
+            g_eqpXML.m_EqpStatus='D';
+            g_eqpXML.SendEventReport("1");
+        }
+        if (g_DIO.ReadDIBit(DO::GreenLamp) && g_eqpXML.m_EqpStatus !='R')
+        {
+            g_eqpXML.m_EqpStatus='R';
+            g_eqpXML.SendEventReport("1");
+        }
+        if (g_DIO.ReadDIBit(DO::YellowLamp) && g_eqpXML.m_EqpStatus !='I')
+        {
+            g_eqpXML.m_EqpStatus='I';
+            g_eqpXML.SendEventReport("1");
+        }
+    }
+
 
 	Timer1->Enabled = true;
 
@@ -972,7 +1022,6 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 		else if( <normal ) PaintBox1->Canvas->Brush->Color=clYellow;
 		else PaintBox1->Canvas->Brush->Color=clGreen;
 		*/
-
 		int nCol = nIndex % 10;
 		int nRow = nIndex / 10;
 
@@ -1648,24 +1697,24 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	Caption = g_IniFile.m_strLastFileName;
 	g_IniFile.ProductFile(g_IniFile.m_strLastFileName.c_str(), true);
 
+    //CreateCaptionFile(this);
+    ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
+    //CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
+    ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
+
     Label22->Caption = g_IniFile.m_dLamTime[0];
     Label25->Caption = g_IniFile.m_dLamTemp[0];
     Label28->Caption = g_IniFile.m_dLamPress[0];
     Label17->Caption = g_IniFile.m_dLamTime[1];
     Label13->Caption = g_IniFile.m_dLamTemp[1];
     Label14->Caption = g_IniFile.m_dLamPress[1];
-    GroupBox2->Caption = StringReplace(g_IniFile.m_strLastFileName, "C:\\Product Data\\", "",TReplaceFlags());
+    TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+    GroupBox2->Caption = StrList->Strings[StrList->Count-1];
 
 	g_pMainThread = new CMainThread(false);
 
 	SetAllDevice();
-
     RenewRadioGroup(true);
-
-    //CreateCaptionFile(this);
-    ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
-    //CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
-    ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
 
 	Timer1->Enabled = true;
     Timer2->Enabled = true;
@@ -1680,9 +1729,20 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
     g_eqpXML.m_bOnLine = true;
     g_eqpXML.StartProcess = frmMain->StartProcess;
     g_eqpXML.OpenFile = frmMain->OpenFilebyCIM;
-
-    ServerCIM->Active = true;
     g_eqpXML.m_EqpStatus = 'I';
+
+    // IniFile boot CIM 
+    if (g_IniFile.m_bIsUseCIM == true)
+    {
+        ServerCIM->Active = true;
+        AddList("CIM Start!");
+    }
+    else
+    {
+        ServerCIM->Active = false;
+        AddList("CIM Stop!");
+        g_eqpXML.m_CIMStatus = "0";
+    }
 }
 //---------------------------------------------------------------------------
 
@@ -1867,7 +1927,8 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 	frmMain->Label17->Caption = g_IniFile.m_dLamTime[1];
 	frmMain->Label13->Caption = g_IniFile.m_dLamTemp[1];
 	frmMain->Label14->Caption = g_IniFile.m_dLamPress[1];
-	frmMain->GroupBox2->Caption = StringReplace(g_IniFile.m_strLastFileName, "C:\\Product Data\\", "", TReplaceFlags());
+	TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+    frmMain->GroupBox2->Caption = StrList->Strings[StrList->Count-1];
 
 	frmMain->PaintBox1Paint(frmMain);
 	frmMain->PaintBox2Paint(frmMain);

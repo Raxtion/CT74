@@ -173,8 +173,25 @@ __published:	// IDE-managed Components
         TLabel *Label87;
         TEdit *m_dVacDelayTime;
         TLabel *Label88;
+    TGroupBox *GroupBox14;
+    TLabel *Label10;
+    TComboBox *m_cmbHeadType;
+    TLabel *Label18;
+    TLabel *Label89;
+    TComboBox *m_cmbVacummOn;
+    TLabel *Label90;
+    TComboBox *m_cmbPressCheck;
+    TLabel *Label91;
+    TComboBox *m_cmbDummyCheck;
+    TLabel *Label92;
+    TLabel *Label93;
+    TEdit *m_strSetupEENum;
+    TComboBox *m_cmbHeadScal;
+    TButton *btnHeadScalModify;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
+        void __fastcall RenewCmbHeadScal();
+    void __fastcall btnHeadScalModifyClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TfmProduct(TComponent* Owner);

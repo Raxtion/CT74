@@ -60,7 +60,6 @@ void __fastcall CEQPXML::doDTSet(char *pRx)
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doCIMMsg(char *pRx)
 {
-    /*
 	TiXmlDocument doc;
 	doc.Parse(pRx);
 	TiXmlElement *pRoot = doc.FirstChildElement("Root");
@@ -69,14 +68,9 @@ void __fastcall CEQPXML::doCIMMsg(char *pRx)
 	AnsiString strMsgID(pRoot->Attribute("MSGID"));
 	AnsiString strData = pData->GetText();
 	//do something whith that message
-	//m_strCIMMsg.push_back(strData);
-
-	//g_pAutoRunThread->AddMessage(strData,g_pAutoRunThread->m_bIsRunning);
-
-	//if(!g_pAutoRunThread->m_bIsRunning) g_pAutoRunThread->ShowAlarmMessage();
+	m_strCIMMsgLog.push_back(strData);
 
 	SendXML("CIMMSG", "ACK", "ACK", "0");           //0:OK 1:NG
-    */
 }
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doQueryVID(char *pRx)
@@ -98,10 +92,17 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
 	TiXmlElement *pID;
 	TiXmlElement *pValue;
 
+    TStringList *strList = SplitString(g_IniFile.m_strLastFileName, "\\");
+    AnsiString strLastFilePath = "";
+    for (int i=0;i<strList->Count-1;i++)
+    {
+        strLastFilePath += strList->Strings[i] + "\\";
+    }
+    delete strList;
     //---------------------------------------------------------------------------
     //Add SVID
     TDateTime DT = TDateTime::CurrentDateTime();
-    char SVIDIndex[23][4] = { 0 };
+    char SVIDIndex[28][4] = { 0 };
     strcpy(SVIDIndex[0], "16");
     strcpy(SVIDIndex[1], "17");
     strcpy(SVIDIndex[2], "18");
@@ -125,8 +126,13 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     strcpy(SVIDIndex[20], "6");
     strcpy(SVIDIndex[21], "7");
     strcpy(SVIDIndex[22], "8");
+    strcpy(SVIDIndex[23], "311");
+    strcpy(SVIDIndex[24], "312");
+    strcpy(SVIDIndex[25], "313");
+    strcpy(SVIDIndex[26], "314");
+    strcpy(SVIDIndex[27], "315");
 
-    char SVID[23][100] = { 0 };
+    char SVID[28][100] = { 0 };
     strcpy(SVID[0], FormatFloat("0.0", 20.40/*g_pMainThread->m_dRearTempRealTime*/).c_str());
     strcpy(SVID[1], FormatFloat("0.0", 203.44/*g_IniFile.m_dLamTemp[0]*/).c_str());
     strcpy(SVID[2], FormatFloat("0.0", 33.40/*g_pMainThread->m_dFrontTempRealTime*/).c_str());
@@ -141,7 +147,7 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     strcpy(SVID[11], FormatFloat("0.0", 123.94/*g_IniFile.m_dLamTime[1]*/).c_str());
     strcpy(SVID[12], FormatFloat("0.0", g_IniFile.m_nCols).c_str());
     strcpy(SVID[13], FormatFloat("0.0", g_IniFile.m_nRows).c_str());
-    strcpy(SVID[14], g_IniFile.m_strLastFileName.c_str());
+    strcpy(SVID[14], strLastFilePath.c_str());
     strcpy(SVID[15], DT.FormatString("yyyymmddhhnnss").c_str());
     strcpy(SVID[16], "CT-74");
     strcpy(SVID[17], "01");
@@ -150,8 +156,13 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     strcpy(SVID[20], g_IniFile.m_strLastFileName.c_str());
     strcpy(SVID[21], m_EqpStatus.c_str());                           //Equipment process state (I=Idle, R=Run, D=Down)
     strcpy(SVID[22], m_CIMStatus.c_str());                           //CIM control state (0=Offline, 1=Online/Local, 2=Online/Remote)
+    strcpy(SVID[23], FormatFloat("0.0", g_IniFile.m_nHeadType).c_str());
+    strcpy(SVID[24], FormatFloat("0.0", g_IniFile.m_nHeadScal).c_str());
+    strcpy(SVID[25], FormatFloat("0.0", g_IniFile.m_nVacummOn).c_str());
+    strcpy(SVID[26], FormatFloat("0.0", g_IniFile.m_nPressCheck).c_str());
+    strcpy(SVID[27], FormatFloat("0.0", g_IniFile.m_nDummyCheck).c_str());
 
-	for (int nIndex = 0; nIndex<23; nIndex++)
+	for (int nIndex = 0; nIndex<28; nIndex++)
 	{
 		pSVID = new TiXmlElement("SVID");
 		pID = new TiXmlElement("ID");
@@ -185,20 +196,63 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
 
     //---------------------------------------------------------------------------
     //Add DVID
-	//char DVID[1][100] = { 0 };
-	//strcpy(DVID[1], "60");
+    AnsiString strRDLD = "";
+    AnsiString strFDLD = "";
+    AnsiString strRULD = "";
+    AnsiString strFULD = "";
 
-	//for (int nIndex = 0; nIndex<1; nIndex++)
-	//{
-	//	pSVID = new TiXmlElement("DVID");
-	//	pID = new TiXmlElement("ID");
-	//	pID->LinkEndChild(new TiXmlText(FormatFloat("0", nIndex + 1001).c_str()));
-	//	pValue = new TiXmlElement("VALUE");
-	//	pValue->LinkEndChild(new TiXmlText(DVID[nIndex]));
-	//	pSVID->LinkEndChild(pID);
-	//	pSVID->LinkEndChild(pValue);
-	//	pData->LinkEndChild(pSVID);
-	//}
+    TStringList *strStrings = new TStringList;
+    for (int i=0;i<(g_IniFile.m_nCols*g_IniFile.m_nRows);i++)
+    {
+        strStrings->Add(FormatFloat("0.00", *g_pMainThread->m_dRearDownLaserDiff[i]).c_str());
+    }
+    strStrings->Delimiter = '/';
+    strRDLD = strStrings->DelimitedText;
+    strStrings->Clear();
+
+    for (int i=0;i<(g_IniFile.m_nCols*g_IniFile.m_nRows);i++)
+    {
+        strStrings->Add(FormatFloat("0.00", *g_pMainThread->m_dFrontDownLaserDiff[i]).c_str());
+    }
+    strStrings->Delimiter = '/';
+    strFDLD = strStrings->DelimitedText;
+    strStrings->Clear();
+
+    for (int i=0;i<(g_IniFile.m_nCols*g_IniFile.m_nRows);i++)
+    {
+        strStrings->Add(FormatFloat("0.00", *g_pMainThread->m_dRearUpperLaserDiff[i]).c_str());
+    }
+    strStrings->Delimiter = '/';
+    strRULD = strStrings->DelimitedText;
+    strStrings->Clear();
+
+    for (int i=0;i<(g_IniFile.m_nCols*g_IniFile.m_nRows);i++)
+    {
+        strStrings->Add(FormatFloat("0.00", *g_pMainThread->m_dFrontUpperLaserDiff[i]).c_str());
+    }
+    strStrings->Delimiter = '/';
+    strFULD = strStrings->DelimitedText;
+    strStrings->Clear();
+    delete strStrings;
+
+	char DVID[5][100] = { 0 };
+	strcpy(DVID[0], g_IniFile.m_strSetupEENum.c_str());
+    strcpy(DVID[1], strRDLD.c_str());
+    strcpy(DVID[2], strFDLD.c_str());
+    strcpy(DVID[3], strRULD.c_str());
+    strcpy(DVID[4], strFULD.c_str());
+
+	for (int nIndex = 0; nIndex<5; nIndex++)
+	{
+		pSVID = new TiXmlElement("DVID");
+		pID = new TiXmlElement("ID");
+		pID->LinkEndChild(new TiXmlText(FormatFloat("0", nIndex + 1300).c_str()));
+		pValue = new TiXmlElement("VALUE");
+		pValue->LinkEndChild(new TiXmlText(DVID[nIndex]));
+		pSVID->LinkEndChild(pID);
+		pSVID->LinkEndChild(pValue);
+		pData->LinkEndChild(pSVID);
+	}
 	SendXML(doc);
 }
 //---------------------------------------------------------------------------
@@ -231,7 +285,7 @@ void __fastcall CEQPXML::doAlarmAck(char *pRx)
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doRCMD(char *pRx)
 {
-    /*
+
 	bool bRet = false;
 	TiXmlDocument doc;
 	doc.Parse(pRx);
@@ -270,7 +324,7 @@ void __fastcall CEQPXML::doRCMD(char *pRx)
 
 	if (bRet) SendXML("RCMD", "ACK", "ACK", "0");
 	else SendXML("RCMD", "ACK", "ACK", "2");
-    */
+
 }
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doQueryPPID(char *pRx)
@@ -451,6 +505,11 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_nAutoInterval","mm","F4","0","1000",
 		"m_dAutoRunTempRange","mm","F4","0","1000",
 		"m_dVacDelayTime","mm","F4","0","1000",
+        "m_nHeadType","mm","F4","0","1000",
+        "m_nHeadScal","mm","F4","0","1000",
+        "m_nVacummOn","mm","F4","0","1",
+        "m_nPressCheck","mm","F4","0","1",
+        "m_nDummyCheck","mm","F4","0","1",
 		"END"};           //E:End
 
 	int nX=0;
@@ -675,16 +734,16 @@ void __fastcall CEQPXML::ProcessCIM()
             AnsiString strMsgID(pRoot->Attribute("MSGID"));
             //AnsiString strData=pData->GetText();
 
-            if (strMsgID=="HOST_STATUS") doHostStatus(receive+5);
-            else if (strMsgID=="DTSET") doDTSet(receive+5);
-            else if (strMsgID=="CIMMSG") doCIMMsg(receive+5);
-            else if (strMsgID=="QUERY_VID") doQueryVID(receive+5);
-            else if (strMsgID=="EVENT_REPORT") doEventReportAck(receive+5);
-            else if (strMsgID=="ALARM") doAlarmAck(receive+5);
-            else if (strMsgID=="RCMD") doRCMD(receive+5);
-            else if (strMsgID=="QUERY_PPID") doQueryPPIDNew(receive+5);
-            else if (strMsgID=="QUERY_PPBODY") doQueryPPBody(receive+5);
-            else if (strMsgID=="SET_PPBODY") doSetPPBody(receive+5);
+            if (strMsgID=="HOST_STATUS") doHostStatus(receive+5);                         //Local realtime renew CIMAP status
+            else if (strMsgID=="DTSET") doDTSet(receive+5);                               // no used
+            else if (strMsgID=="CIMMSG") doCIMMsg(receive+5);                             //Secs/Gem S10F3   CIM show TEXT to machine
+            else if (strMsgID=="QUERY_VID") doQueryVID(receive+5);                        //Secs/Gem S1F3,S2F13  CIM Use SCID,ECID,DVID get machine param
+            else if (strMsgID=="EVENT_REPORT") doEventReportAck(receive+5);               //Local Rise ECID 1,3,115
+            else if (strMsgID=="ALARM") doAlarmAck(receive+5);                            // no used
+            else if (strMsgID=="RCMD") doRCMD(receive+5);                                 //Secs/Gem S2F21,S2F41 CIM send RCMD, change machine /RUN/STOP/PAUSE/RESUME/PPSELECT,PPID/LOCAL/REMOTE
+            else if (strMsgID=="QUERY_PPID") doQueryPPIDNew(receive+5);                   //Secs/Gem S7F19   CIM Find Recipe folder and file name
+            else if (strMsgID=="QUERY_PPBODY") doQueryPPBody(receive+5);                  //Secs/Gem S7F25   CIM Use Recipe file name get all recipe param
+            else if (strMsgID=="SET_PPBODY") doSetPPBody(receive+5);                      //Secs/Gem S7F23   CIM Use param and value modify recipe, not add a new recipy
 
         }
 

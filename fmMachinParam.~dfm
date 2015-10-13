@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 645
-  Top = 44
+  Left = 705
+  Top = 37
   Width = 594
   Height = 548
   Caption = #27231#21488#21443#25976
@@ -699,7 +699,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_bForceEject: TCheckBox
     Left = 464
-    Top = 228
+    Top = 212
     Width = 97
     Height = 25
     Caption = #24375#21046#25490#38500
@@ -869,7 +869,7 @@ object frmMachineParam: TfrmMachineParam
       TabOrder = 11
     end
   end
-  object m_nLanguage: TComboBox
+  object m_cmbLanguage: TComboBox
     Left = 360
     Top = 230
     Width = 81
@@ -887,5 +887,14 @@ object frmMachineParam: TfrmMachineParam
     Items.Strings = (
       #20013#25991
       'English')
+  end
+  object m_bIsUseCIM: TCheckBox
+    Left = 464
+    Top = 236
+    Width = 97
+    Height = 25
+    Caption = #21855#29992'CIM'
+    TabOrder = 10
+    OnClick = m_bIsUseCIMClick
   end
 end

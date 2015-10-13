@@ -29,6 +29,7 @@ public:
 
 	bool m_bIsHomeDone;
 	bool m_bIsAutoMode;
+    bool m_bIsStartProcessbyDIO;            //Record for Strat Process by DI::StartBtn
 	bool m_bIsStartProcessbyCIM;            //Record for Strat Process by CIM in CMainThread::Execute() not by DI::StartBtn
 	bool m_bIsStopProcessbyCIM;             //Record for Stop Process by CIM in CMainThread::Execute() not by DI::StopBtn
 
@@ -55,6 +56,11 @@ public:
 	double m_dFrontDownLaser[50][4];
 	double m_dRearUpperLaser[50][4];
 	double m_dRearDownLaser[50][4];
+
+    double m_dFrontUpperLaserDiff[50][4];
+    double m_dFrontDownLaserDiff[50][4];
+    double m_dRearUpperLaserDiff[50][4];
+    double m_dRearDownLaserDiff[50][4];
 
 	double m_dFrontPressCal[50];
 	double m_dRearPressCal[50];

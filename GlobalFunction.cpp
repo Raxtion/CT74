@@ -391,3 +391,40 @@ void FindFileName(char *strSource,char *strDest)
 
 
 
+
+
+//---------------------------------------------------------------------------
+//AnsiString SplitString
+TStringList* SplitString(AnsiString Original, AnsiString Delim)
+{
+    TStringList *Tokens = new TStringList;
+    int iPos = 0;
+    while( true )
+    {
+        iPos = Original.Pos(Delim);
+        if( iPos == 0 )
+            break;
+
+        Tokens->Append(Original.SubString(1, iPos-1));
+        Original.Delete(1, iPos + Delim.Length()-1);
+    }
+    if( !Original.IsEmpty() )
+    Tokens->Append(Original);
+    return Tokens;
+}
+
+//---------------------------------------------------------------------------
+//AnsiString ReplaceString
+void ReplaceString(AnsiString *Original, AnsiString OldStr, AnsiString NewStr)
+{
+    int iPos = 0;
+    while( true )
+    {
+        iPos = Original->Pos(OldStr);
+        if( iPos == 0 )
+            break;
+        Original->Delete(iPos, OldStr.Length());
+        Original->Insert(NewStr,iPos);
+    }
+}
+

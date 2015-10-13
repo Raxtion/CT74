@@ -91,6 +91,8 @@ __published:	// IDE-managed Components
         TStaticText *StaticText31;
         TComboBox *m_cmbLanguage;
         TLabel *Label1;
+        TCheckBox *m_bIsUseCIM;
+    void __fastcall m_bIsUseCIMClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TfrmMachineParam(TComponent* Owner);

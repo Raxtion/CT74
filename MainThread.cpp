@@ -76,8 +76,20 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dFrontTempRealTime = 0.0;
     m_dRearTempRealTime = 0.0;
 
+	m_bIsStartProcessbyDIO = false;
 	m_bIsStartProcessbyCIM = false;
 	m_bIsStopProcessbyCIM = false;
+
+
+    *m_dFrontUpperLaserDiff[0] = 0.01;
+    *m_dFrontUpperLaserDiff[1] = 0.23;
+    *m_dFrontUpperLaserDiff[2] = 0.41;
+    *m_dFrontUpperLaserDiff[3] = 0.04;
+
+    *m_dRearDownLaserDiff[0] = 0.01;
+    *m_dRearDownLaserDiff[1] = 0.03;
+    *m_dRearDownLaserDiff[2] = 0.05;
+    *m_dRearDownLaserDiff[3] = 0.08;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -358,8 +370,21 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::GreenLamp, false);
 			g_DIO.SetDO(DO::YellowLamp, true);
 			//g_DIO.SetDO(DO::RedLamp,false);
-
-			if (g_DIO.ReadDIBit(DI::StartBtn) || m_bIsStartProcessbyCIM)    //當start綠燈被壓下時，或者CIM觸發StartProcess function
+			
+			//當start綠燈被壓下時，或者CIM觸發StartProcess function
+			switch (g_eqpXML.m_CIMStatus.ToInt())
+			{
+			case 0:                                                                              //Offline
+			case 1:                                                                              //online/local
+				if (g_DIO.ReadDIBit(DI::StartBtn)) m_bIsStartProcessbyDIO = true;
+				break;
+			case 2:                                                                             //online/remote
+				if (g_DIO.ReadDIBit(DI::StartBtn)) g_eqpXML.SendEventReport("115");
+				break;
+			default:
+				break;
+			}
+			if (m_bIsStartProcessbyDIO || m_bIsStartProcessbyCIM)    
 			{
 				if (g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0] || g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
 				{
@@ -372,8 +397,8 @@ void __fastcall CMainThread::Execute()
 
 					//m_nPassBoatCount0 = m_nPassBoatStart;                           //If auto 從0開始
 					//m_nPassBoatCount1 = m_nPassBoatStart;
-                    m_nPassBoatCount0 = 0;
-                    m_nPassBoatCount1 = 0;
+					m_nPassBoatCount0 = 0;
+					m_nPassBoatCount1 = 0;
 
 					//g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
 					//g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
@@ -391,8 +416,10 @@ void __fastcall CMainThread::Execute()
 
 					nThreadIndex[12] = 0;
 					nThreadIndex[13] = 0;
+					if (g_eqpXML.m_CIMStatus == "1") g_eqpXML.SendEventReport("115");
 				}
 				m_bIsStartProcessbyCIM = false;
+				m_bIsStartProcessbyDIO = false;
 			}
 
 			if (m_bStartPressCal[1]) DoPressCal(true, nThreadIndex[6], m_nManualRange, m_nManualFirstLoc, m_nManualTimes);
@@ -532,8 +559,6 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 		}
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 22;
 		break;
-
-
 	case 8:
 		if (tm1MS.timeUp())
 		{
@@ -1051,30 +1076,44 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 3:
 		if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront]))
 		{
-            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空開啟"));
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
-			g_DIO.SetDO(nLifterVac, true);
+            if (g_IniFile.m_nVacummOn == 0)
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空不開啟"));
+            else
+            {
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空開啟"));
+			    g_DIO.SetDO(nLifterVac, true);
+            }
 			tm1MS->timeStart(2000);
 			nThreadIndex++;
 		}
 		break;
 	case 4:   //20150803 加入第一次真空判別 有成功不反應 失敗時有警訊不停機
-		if (g_DIO.ReadDIBit(nLifterVacGauge))
-		{
-            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空偵測成功"));
+        if (g_IniFile.m_nVacummOn == 0)
+        {
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空不偵測"));
             m_bFirstVacSuccessed = true;
-			nThreadIndex++;
-		}
-		else if (tm1MS->timeUp())
-		{
-            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空偵測失敗"));
-            if (bFront) m_listLog.push_back("前壓合流道真空失敗(第一次)");
-            else m_listLog.push_back("後壓合流道真空失敗(第一次)");
-			//bFront ? g_IniFile.m_nErrorCode = 2054 : g_IniFile.m_nErrorCode = 2055;
-            m_bFirstVacSuccessed = false;
-            g_DIO.SetDO(DO::Buzzer, true);
-			nThreadIndex++;
-		}
+            nThreadIndex++;
+        }
+        else
+        {
+		    if (g_DIO.ReadDIBit(nLifterVacGauge))
+		    {
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空偵測成功"));
+                m_bFirstVacSuccessed = true;
+			    nThreadIndex++;
+		    }
+		    else if (tm1MS->timeUp())
+		    {
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空偵測失敗"));
+                if (bFront) m_listLog.push_back("前壓合流道真空失敗(第一次)");
+                else m_listLog.push_back("後壓合流道真空失敗(第一次)");
+			    //bFront ? g_IniFile.m_nErrorCode = 2054 : g_IniFile.m_nErrorCode = 2055;
+                m_bFirstVacSuccessed = false;
+                g_DIO.SetDO(DO::Buzzer, true);
+			    nThreadIndex++;
+		    }
+        }
 		break;
 	case 5: //20150721 加入上升第三段變速  小於1mm就降速為1mm跑完需要60秒
 		//20150803 加入進入第三段 開始倒數壓合、Buzzer OFF、VacDelayTimeStart
@@ -1112,18 +1151,27 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		m_dLamTimer[bFront] = g_IniFile.m_dLamTime[bFront] * 1000 - tm1MS->timeStartTime();
 		break;
 	case 7:
-		if (g_DIO.ReadDIBit(nLifterVacGauge)) //bypass
-		{
-            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][7]LamSub 第二次真空偵測成功"));
-			bVacError = false;
-			nThreadIndex++;
-		}
-		else if (tm2MS->timeUp())
-		{
-            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][7]LamSub 第二次真空偵測失敗"));
-			bVacError = true;
-			nThreadIndex++;
-		}
+        if (g_IniFile.m_nVacummOn == 0)
+        {
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][7]LamSub 第二次真空不偵測"));
+            bVacError = false;
+            nThreadIndex++;
+        }
+        else
+        {
+		    if (g_DIO.ReadDIBit(nLifterVacGauge))
+		    {
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][7]LamSub 第二次真空偵測成功"));
+			    bVacError = false;
+			    nThreadIndex++;
+		    }
+		    else if (tm2MS->timeUp())
+		    {
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][7]LamSub 第二次真空偵測失敗"));
+			    bVacError = true;
+			    nThreadIndex++;
+		    }
+        }
 		m_dLamTimer[bFront] = g_IniFile.m_dLamTime[bFront] * 1000 - tm1MS->timeStartTime();
 		break;
 	case 8:	//壓合時間到
@@ -1669,6 +1717,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	double dStartY[4] = { 0 };
 	int nLaserChannel;
 	double *p_dLaserValue;
+    double *p_dLaserValueDiff;
 
 	static int nMoveIndex = 0;
 	static int nMoveIndexSub = 0;
@@ -1702,7 +1751,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			nLaserChannel = 0;
 
 			p_dLaserValue = (double *)m_dFrontUpperLaser;
-
+            p_dLaserValueDiff = (double *)m_dFrontUpperLaserDiff;
 		}
 		else
 		{
@@ -1711,6 +1760,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			nLaserChannel = 1;
 
 			p_dLaserValue = (double *)m_dFrontDownLaser;
+            p_dLaserValueDiff = (double *)m_dFrontDownLaserDiff;
 		}
 
 	}
@@ -1729,7 +1779,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			nLaserChannel = 0;
 
 			p_dLaserValue = (double *)m_dRearUpperLaser;
-
+            p_dLaserValueDiff = (double *)m_dRearUpperLaserDiff;
 		}
 		else
 		{
@@ -1738,6 +1788,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			nLaserChannel = 1;
 
 			p_dLaserValue = (double *)m_dRearDownLaser;
+            p_dLaserValueDiff = (double *)m_dRearDownLaserDiff;
 		}
 
 
@@ -1757,7 +1808,11 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
 			{
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLaserCal][0]Laser 開始Laser量測程序"));
-				if (nMoveIndex == 0 && nMoveIndexSub == 0) memset(p_dLaserValue, 0, sizeof(double) * 50);
+				if (nMoveIndex == 0 && nMoveIndexSub == 0)
+                {
+                    memset(p_dLaserValue, 0, sizeof(double) * 50);
+                    memset(p_dLaserValueDiff, 0, sizeof(double) * 50);
+                }
 				m_listLog.push_back("開始Laser 量測程序-->" + FormatFloat("0", nMoveIndex + 1));
 
 				g_Motion.AbsMove(AXIS_X, dStartX[nMoveIndexSub] + m_nCalCol*g_IniFile.m_dColPitch);
@@ -1791,16 +1846,63 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			if (g_ModBus.m_bInitOK)
 			{
 				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
-
-				m_listLog.push_back("高度=" + FormatFloat("0.00 mm", dLaserData));
+				m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", dLaserData));
 			}
 			else
 			{
 				g_ModBus.m_bInitOK = true;
-				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = 0.0;
+				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = 999;
 				m_listLog.push_back("高度=N/A");
 			}
 
+            if (bUp)
+            {
+                if (nMoveIndexSub == 4-1)
+                {
+                    std::vector<double> vecTempUp;
+                    for (int i=0;i<4;i++)
+                    {
+                        if (p_dLaserValue[i] != 999) vecTempUp.push_back(p_dLaserValue[(nMoveIndex * 4 + nMoveIndexSub) - 3 + i]);
+                    }
+                    if (vecTempUp.size() != 0)
+                    {
+                        double *maxValue = std::max_element(vecTempUp.begin(), vecTempUp.end());
+                        double *minValue = std::min_element(vecTempUp.begin(), vecTempUp.end());
+                        p_dLaserValueDiff[nMoveIndex] = maxValue - minValue;
+                        vecTempUp.clear();
+                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.0000 mm", maxValue - minValue));
+                    }
+                    else
+                    {
+                        p_dLaserValueDiff[nMoveIndex] = 999;
+                        m_listLog.push_back("上模高度誤差 錯誤!!");
+                    }
+                }
+            }
+            else
+            {
+                if (nMoveIndex == 50-1)
+                {
+                    std::vector<double> vecTempDown;
+                    for (int i=0;i<50;i++)
+                    {
+                        if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[i]);
+                    }
+                    if (vecTempDown.size() != 0)
+                    {
+                        double *maxValue = std::max_element(vecTempDown.begin(), vecTempDown.end());
+                        double *minValue = std::min_element(vecTempDown.begin(), vecTempDown.end());
+                        p_dLaserValueDiff[nMoveIndex] = maxValue - minValue;
+                        vecTempDown.clear();
+                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", maxValue - minValue));
+                    }
+                    else
+                    {
+                        p_dLaserValueDiff[nMoveIndex] = 999;
+                        m_listLog.push_back("下模高度誤差 錯誤!!");
+                    }
+                }
+            }
 			nThreadIndex++;
 		}
 		break;
@@ -2103,6 +2205,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		nThreadIndex = 0;
 	}
 }
+
 
 
 
