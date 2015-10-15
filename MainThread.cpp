@@ -79,17 +79,6 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_bIsStartProcessbyDIO = false;
 	m_bIsStartProcessbyCIM = false;
 	m_bIsStopProcessbyCIM = false;
-
-
-    *m_dFrontUpperLaserDiff[0] = 0.01;
-    *m_dFrontUpperLaserDiff[1] = 0.23;
-    *m_dFrontUpperLaserDiff[2] = 0.41;
-    *m_dFrontUpperLaserDiff[3] = 0.04;
-
-    *m_dRearDownLaserDiff[0] = 0.01;
-    *m_dRearDownLaserDiff[1] = 0.03;
-    *m_dRearDownLaserDiff[2] = 0.05;
-    *m_dRearDownLaserDiff[3] = 0.08;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -185,6 +174,8 @@ void __fastcall CMainThread::Execute()
 					nThreadIndex[14] = 0;
 					nThreadIndex[15] = 0;
 
+                    m_bStartLamSub[1] = false;
+                    m_bStartLamSub[0] = false;
 					bStartMachineInit = false;
 
 					g_IniFile.m_nErrorCode = 1003;
@@ -376,10 +367,12 @@ void __fastcall CMainThread::Execute()
 			{
 			case 0:                                                                              //Offline
 			case 1:                                                                              //online/local
-				if (g_DIO.ReadDIBit(DI::StartBtn)) m_bIsStartProcessbyDIO = true;
+				if (g_DIO.ReadDIBit(DI::StartBtn))
+                    m_bIsStartProcessbyDIO = true;
 				break;
 			case 2:                                                                             //online/remote
-				if (g_DIO.ReadDIBit(DI::StartBtn)) g_eqpXML.SendEventReport("115");
+				if (g_DIO.ReadDIBit(DI::StartBtn))
+                    g_eqpXML.SendEventReport("115");
 				break;
 			default:
 				break;

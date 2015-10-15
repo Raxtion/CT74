@@ -133,18 +133,18 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     strcpy(SVIDIndex[27], "315");
 
     char SVID[28][100] = { 0 };
-    strcpy(SVID[0], FormatFloat("0.0", 20.40/*g_pMainThread->m_dRearTempRealTime*/).c_str());
-    strcpy(SVID[1], FormatFloat("0.0", 203.44/*g_IniFile.m_dLamTemp[0]*/).c_str());
-    strcpy(SVID[2], FormatFloat("0.0", 33.40/*g_pMainThread->m_dFrontTempRealTime*/).c_str());
-    strcpy(SVID[3], FormatFloat("0.0", 22.39/*g_IniFile.m_dLamTemp[1]*/).c_str());
+    strcpy(SVID[0], FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime).c_str());
+    strcpy(SVID[1], FormatFloat("0.0", g_IniFile.m_dLamTemp[0]).c_str());
+    strcpy(SVID[2], FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime).c_str());
+    strcpy(SVID[3], FormatFloat("0.0", g_IniFile.m_dLamTemp[1]).c_str());
     strcpy(SVID[4], FormatFloat("0.0", 0.0).c_str());
-    strcpy(SVID[5], FormatFloat("0.0", 34.9/*g_IniFile.m_dLamPress[0]*/).c_str());
+    strcpy(SVID[5], FormatFloat("0.0", g_IniFile.m_dLamPress[0]).c_str());
     strcpy(SVID[6], FormatFloat("0.0", 0.0).c_str());
-    strcpy(SVID[7], FormatFloat("0.0", 22.0/*g_IniFile.m_dLamPress[1]*/).c_str());
+    strcpy(SVID[7], FormatFloat("0.0", g_IniFile.m_dLamPress[1]).c_str());
     strcpy(SVID[8], FormatFloat("0.0", 0.0).c_str());
-    strcpy(SVID[9], FormatFloat("0.0", 3.2094/*g_IniFile.m_dLamTime[0]*/).c_str());
+    strcpy(SVID[9], FormatFloat("0.0", g_IniFile.m_dLamTime[0]).c_str());
     strcpy(SVID[10], FormatFloat("0.0", 0.0).c_str());
-    strcpy(SVID[11], FormatFloat("0.0", 123.94/*g_IniFile.m_dLamTime[1]*/).c_str());
+    strcpy(SVID[11], FormatFloat("0.0", g_IniFile.m_dLamTime[1]).c_str());
     strcpy(SVID[12], FormatFloat("0.0", g_IniFile.m_nCols).c_str());
     strcpy(SVID[13], FormatFloat("0.0", g_IniFile.m_nRows).c_str());
     strcpy(SVID[14], strLastFilePath.c_str());
@@ -196,8 +196,6 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
 
     //---------------------------------------------------------------------------
     //Add DVID
-
-
     AnsiString strRDLD = "";
     AnsiString strFDLD = "";
     AnsiString strRULD = "";
@@ -260,7 +258,7 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doEventReportAck(char *pRx)
 {
-    /*
+
 	TiXmlDocument doc;
 	doc.Parse(pRx);
 	TiXmlElement* pRoot = doc.FirstChildElement("Root");
@@ -271,7 +269,7 @@ void __fastcall CEQPXML::doEventReportAck(char *pRx)
 	if (pTID && pAckText) EventReportAck(pTID, pAckText);
 
 	//do something for that
-    */
+    
 }
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doAlarmAck(char *pRx)

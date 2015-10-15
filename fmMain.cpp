@@ -139,6 +139,7 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
         Label14->Caption = g_IniFile.m_dLamPress[1];
         TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
         GroupBox2->Caption = StrList->Strings[StrList->Count-1];
+        delete StrList;
 	}
     PaintBox1Paint(this);
     PaintBox2Paint(this);
@@ -168,6 +169,7 @@ void __fastcall TfrmMain::N3Click(TObject *Sender)
     Label14->Caption = g_IniFile.m_dLamPress[1];
     TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
     GroupBox2->Caption = StrList->Strings[StrList->Count-1];
+    delete StrList;
 
     PaintBox1Paint(this);
     PaintBox2Paint(this);
@@ -197,6 +199,7 @@ void __fastcall TfrmMain::N4Click(TObject *Sender)
         Label14->Caption = g_IniFile.m_dLamPress[1];
         TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
         GroupBox2->Caption = StrList->Strings[StrList->Count-1];
+        delete StrList;
 	}
     PaintBox1Paint(this);
     PaintBox2Paint(this);
@@ -506,6 +509,16 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
         DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
         DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
+
+        Label22->Caption = g_IniFile.m_dLamTime[0];
+        Label25->Caption = g_IniFile.m_dLamTemp[0];
+        Label28->Caption = g_IniFile.m_dLamPress[0];
+        Label17->Caption = g_IniFile.m_dLamTime[1];
+        Label13->Caption = g_IniFile.m_dLamTemp[1];
+        Label14->Caption = g_IniFile.m_dLamPress[1];
+        TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+        GroupBox2->Caption = StrList->Strings[StrList->Count-1];
+        delete StrList;
 	}
 
 	SetAllDevice();
@@ -878,17 +891,17 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //--Idle Run Down---
     if (ServerCIM->Active == true)
     {
-        if (g_DIO.ReadDIBit(DO::RedLamp) && g_eqpXML.m_EqpStatus !='D')
+        if (g_DIO.ReadDIBit(DO::StopBtnLamp) && g_eqpXML.m_EqpStatus !='D')
         {
             g_eqpXML.m_EqpStatus='D';
             g_eqpXML.SendEventReport("1");
         }
-        if (g_DIO.ReadDIBit(DO::GreenLamp) && g_eqpXML.m_EqpStatus !='R')
+        else if (g_DIO.ReadDIBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus !='R')
         {
             g_eqpXML.m_EqpStatus='R';
             g_eqpXML.SendEventReport("1");
         }
-        if (g_DIO.ReadDIBit(DO::YellowLamp) && g_eqpXML.m_EqpStatus !='I')
+        else if (!g_DIO.ReadDIBit(DO::StopBtnLamp) && !g_DIO.ReadDIBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus !='I')
         {
             g_eqpXML.m_EqpStatus='I';
             g_eqpXML.SendEventReport("1");
@@ -1710,6 +1723,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
     Label14->Caption = g_IniFile.m_dLamPress[1];
     TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
     GroupBox2->Caption = StrList->Strings[StrList->Count-1];
+    delete StrList;
 
 	g_pMainThread = new CMainThread(false);
 
@@ -1929,6 +1943,7 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 	frmMain->Label14->Caption = g_IniFile.m_dLamPress[1];
 	TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
     frmMain->GroupBox2->Caption = StrList->Strings[StrList->Count-1];
+    delete StrList;
 
 	frmMain->PaintBox1Paint(frmMain);
 	frmMain->PaintBox2Paint(frmMain);

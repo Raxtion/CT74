@@ -383,11 +383,11 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pWnd->m_dAutoRunTempRange);
     DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pWnd->m_dVacDelayTime);
 
-    DDX_ComboBox(bRead, g_IniFile.m_cmbHeadType, pWnd->m_cmbHeadType);
-    DDX_ComboBox(bRead, g_IniFile.m_cmbHeadScal, pWnd->m_cmbHeadScal);
-    DDX_ComboBox(bRead, g_IniFile.m_cmbVacummOn, pWnd->m_cmbVacummOn);
-    DDX_ComboBox(bRead, g_IniFile.m_cmbPressCheck, pWnd->m_cmbPressCheck);
-    DDX_ComboBox(bRead, g_IniFile.m_cmbDummyCheck, pWnd->m_cmbDummyCheck);
+    DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
+    DDX_ComboBox(bRead, g_IniFile.m_nHeadScal, pWnd->m_cmbHeadScal);
+    DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
+    DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
+    DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
     pWnd->m_strSetupEENum->Text = "";
 
     while (1)
@@ -500,11 +500,11 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pWnd->m_dAutoRunTempRange);
         DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pWnd->m_dVacDelayTime);
 
-        DDX_ComboBox(bRead, g_IniFile.m_cmbHeadType, pWnd->m_cmbHeadType);
-        DDX_ComboBox(bRead, g_IniFile.m_cmbHeadScal, pWnd->m_cmbHeadScal);
-        DDX_ComboBox(bRead, g_IniFile.m_cmbVacummOn, pWnd->m_cmbVacummOn);
-        DDX_ComboBox(bRead, g_IniFile.m_cmbPressCheck, pWnd->m_cmbPressCheck);
-        DDX_ComboBox(bRead, g_IniFile.m_cmbDummyCheck, pWnd->m_cmbDummyCheck);
+        DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
+        DDX_ComboBox(bRead, g_IniFile.m_nHeadScal, pWnd->m_cmbHeadScal);
+        DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
+        DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
+        DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
         DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
 	}
 
@@ -878,17 +878,17 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //--Idle Run Down---
     if (ServerCIM->Active == true)
     {
-        if (g_DIO.ReadDIBit(DO::RedLamp) && g_eqpXML.m_EqpStatus !='D')
+        if (g_DIO.ReadDIBit(DO::StopBtnLamp) && g_eqpXML.m_EqpStatus !='D')
         {
             g_eqpXML.m_EqpStatus='D';
             g_eqpXML.SendEventReport("1");
         }
-        if (g_DIO.ReadDIBit(DO::GreenLamp) && g_eqpXML.m_EqpStatus !='R')
+        else if (g_DIO.ReadDIBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus !='R')
         {
             g_eqpXML.m_EqpStatus='R';
             g_eqpXML.SendEventReport("1");
         }
-        if (g_DIO.ReadDIBit(DO::YellowLamp) && g_eqpXML.m_EqpStatus !='I')
+        else if (!g_DIO.ReadDIBit(DO::StopBtnLamp) && !g_DIO.ReadDIBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus !='I')
         {
             g_eqpXML.m_EqpStatus='I';
             g_eqpXML.SendEventReport("1");
