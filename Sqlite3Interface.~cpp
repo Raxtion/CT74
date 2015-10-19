@@ -58,12 +58,12 @@ void __fastcall SQLITE3IF::open(int DBtype)
         {
         case 0:
             /* 建立 Temp Table */
-            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(10), FrontT FLOAT, RearT FLOAT);", 0, 0, &errMsg);
+            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), FrontT FLOAT, RearT FLOAT);", 0, 0, &errMsg);
             if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
             break;
         case 1:
             /* 建立 Action Table */
-            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(10), action VARCHAR(50));", 0, 0, &errMsg);
+            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), action VARCHAR(50));", 0, 0, &errMsg);
             if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
             break;
         default:
@@ -97,7 +97,9 @@ void __fastcall SQLITE3IF::insertTemp()
     AnsiString strFrontTemp;
     time_t timer = time(NULL);
     struct tm *tblock = localtime(&timer);
-    strDateTime.sprintf("[%2d:%02d:%02d]",tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+    strDateTime.sprintf("[%4d:%02d:%02d:%2d:%02d:%02d]",
+        tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday
+        ,tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
 
     AnsiString strLastrowid = IntToStr(unique_id);
 
@@ -129,7 +131,9 @@ void __fastcall SQLITE3IF::insertAction(AnsiString Action)
     AnsiString strDateTime;
     time_t timer = time(NULL);
     struct tm *tblock = localtime(&timer);
-    strDateTime.sprintf("[%2d:%02d:%02d]",tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+    strDateTime.sprintf("[%4d:%02d:%02d:%2d:%02d:%02d]",
+        tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday
+        ,tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
 
     AnsiString strLastrowid = IntToStr(unique_id);
 

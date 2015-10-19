@@ -92,6 +92,8 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
 	TiXmlElement *pID;
 	TiXmlElement *pValue;
 
+    //---------------------------------------------------------------------------
+    //Set param for SVID
     TStringList *strList = SplitString(g_IniFile.m_strLastFileName, "\\");
     AnsiString strLastFilePath = "";
     for (int i=0;i<strList->Count-1;i++)
@@ -99,6 +101,12 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
         strLastFilePath += strList->Strings[i] + "\\";
     }
     delete strList;
+
+    AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
+    AnsiString strVacummOn; (g_IniFile.m_nVacummOn) ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
+    AnsiString strPressCheck; (g_IniFile.m_nPressCheck) ? strPressCheck = "FAIL" : strPressCheck = "TRUE";
+    AnsiString strDummyCheck; (g_IniFile.m_nDummyCheck) ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
+
     //---------------------------------------------------------------------------
     //Add SVID
     TDateTime DT = TDateTime::CurrentDateTime();
@@ -156,11 +164,11 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     strcpy(SVID[20], g_IniFile.m_strLastFileName.c_str());
     strcpy(SVID[21], m_EqpStatus.c_str());                           //Equipment process state (I=Idle, R=Run, D=Down)
     strcpy(SVID[22], m_CIMStatus.c_str());                           //CIM control state (0=Offline, 1=Online/Local, 2=Online/Remote)
-    strcpy(SVID[23], FormatFloat("0.0", g_IniFile.m_nHeadType).c_str());
-    strcpy(SVID[24], FormatFloat("0.0", g_IniFile.m_nHeadScal).c_str());
-    strcpy(SVID[25], FormatFloat("0.0", g_IniFile.m_nVacummOn).c_str());
-    strcpy(SVID[26], FormatFloat("0.0", g_IniFile.m_nPressCheck).c_str());
-    strcpy(SVID[27], FormatFloat("0.0", g_IniFile.m_nDummyCheck).c_str());
+    strcpy(SVID[23], strHeadType.c_str());
+    strcpy(SVID[24], g_IniFile.m_strHeadScal.c_str());
+    strcpy(SVID[25], strVacummOn.c_str());
+    strcpy(SVID[26], strPressCheck.c_str());
+    strcpy(SVID[27], strDummyCheck.c_str());
 
 	for (int nIndex = 0; nIndex<28; nIndex++)
 	{
@@ -180,7 +188,7 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
 	strcpy(ECIDIndex[0], "621");
 
 	char ECID[1][100] = { 0 };
-	strcpy(ECID[0], "C:\\asdw\\sdwqfqw.exe"/*g_IniFile.m_strApplicationPath.c_str()*/);
+	strcpy(ECID[0], g_IniFile.m_strApplicationPath.c_str());
 
 	for (int nIndex = 0; nIndex<1; nIndex++)
 	{
@@ -258,7 +266,7 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doEventReportAck(char *pRx)
 {
-
+    /*
 	TiXmlDocument doc;
 	doc.Parse(pRx);
 	TiXmlElement* pRoot = doc.FirstChildElement("Root");
@@ -266,10 +274,10 @@ void __fastcall CEQPXML::doEventReportAck(char *pRx)
 	const char *pTID = pRoot->Attribute("TID");
 	const char *pAckText = pData->GetText();
 
-	if (pTID && pAckText) EventReportAck(pTID, pAckText);                              // error there
+	if (pTID && pAckText) EventReportAck(pTID, pAckText);
 
 	//do something for that
-    
+    */
 }
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doAlarmAck(char *pRx)
@@ -506,53 +514,60 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_dAutoRunTempRange","mm","F4","0","1000",
 		"m_dVacDelayTime","mm","F4","0","1000",
         "m_nHeadType","mm","F4","0","1000",
-        "m_nHeadScal","mm","F4","0","1000",
+        "m_strHeadScal","mm","F4","0","1000",
         "m_nVacummOn","mm","F4","0","1",
         "m_nPressCheck","mm","F4","0","1",
         "m_nDummyCheck","mm","F4","0","1",
 		"END"};           //E:End
 
-	int nX=0;
-	while(1)
+
+    if (FileExists("C:\\Product Data\\"+strData+"\\"+strData+".ini"))
 	{
-		if(strcmp(ParamItem[nX*5],"END")==0) break;
-		pParam=new TiXmlElement("PARAMETER");
-		pParam->SetAttribute("NAME",ParamItem[nX*5]);
-		///strTmp.sprintf("%s,%s",ParamItem[nX],pIniFile->ReadString(Product_Section,ParamItem[nX],"Not Valid"));
-		//pParam->LinkEndChild(new TiXmlText(strTmp.c_str()));
+	    int nX=0;
+	    while(1)
+	    {
+		    if(strcmp(ParamItem[nX*5],"END")==0) break;
+		    pParam=new TiXmlElement("PARAMETER");
+		    pParam->SetAttribute("NAME",ParamItem[nX*5]);
+		    ///strTmp.sprintf("%s,%s",ParamItem[nX],pIniFile->ReadString(Product_Section,ParamItem[nX],"Not Valid"));
+		    //pParam->LinkEndChild(new TiXmlText(strTmp.c_str()));
 
-		pProperty=new TiXmlElement("PROPERTY");
-		pProperty->LinkEndChild(new TiXmlText("TRUE"));
-		pParam->LinkEndChild(pProperty);
+		    pProperty=new TiXmlElement("PROPERTY");
+		    pProperty->LinkEndChild(new TiXmlText("TRUE"));
+		    pParam->LinkEndChild(pProperty);
 
-		for(int t=0;t<3; t++)
-		{
-			pProperty=new TiXmlElement("PROPERTY");
-			pProperty->LinkEndChild(new TiXmlText(ParamItem[nX*5+t]));
-			pParam->LinkEndChild(pProperty);
-		}
+		    for(int t=0;t<3; t++)
+		    {
+			    pProperty=new TiXmlElement("PROPERTY");
+			    pProperty->LinkEndChild(new TiXmlText(ParamItem[nX*5+t]));
+			    pParam->LinkEndChild(pProperty);
+		    }
 
-		pProperty=new TiXmlElement("PROPERTY");
-		pProperty->LinkEndChild(new TiXmlText(pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0").c_str()));
-		pParam->LinkEndChild(pProperty);
+		    pProperty=new TiXmlElement("PROPERTY");
+		    pProperty->LinkEndChild(new TiXmlText(pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0").c_str()));
+		    pParam->LinkEndChild(pProperty);
 
-		for(int t=3;t<5; t++)
-		{
-			pProperty=new TiXmlElement("PROPERTY");
-			pProperty->LinkEndChild(new TiXmlText(ParamItem[nX*5+t]));
-			pParam->LinkEndChild(pProperty);
-		}
+		    for(int t=3;t<5; t++)
+		    {
+			    pProperty=new TiXmlElement("PROPERTY");
+			    pProperty->LinkEndChild(new TiXmlText(ParamItem[nX*5+t]));
+			    pParam->LinkEndChild(pProperty);
+		    }
 
-		pData->LinkEndChild(pParam);
-		nX++;
-	}
+		    pData->LinkEndChild(pParam);
+		    nX++;
+	    }
 
-	pRoot->LinkEndChild(pData);
-
-	doc.LinkEndChild(pRoot);
-
-	SendXML(doc);
-
+	    pRoot->LinkEndChild(pData);
+	    doc.LinkEndChild(pRoot);
+	    SendXML(doc);
+    }
+    else
+    {
+        pRoot->LinkEndChild(pData);
+	    doc.LinkEndChild(pRoot);
+	    SendXML(doc);
+    }
 	delete pIniFile;
 
 }

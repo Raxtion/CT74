@@ -387,7 +387,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pWnd->m_dVacDelayTime);
 
     DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
-    DDX_ComboBox(bRead, g_IniFile.m_nHeadScal, pWnd->m_cmbHeadScal);
+    DDX_String(bRead, g_IniFile.m_strHeadScal, pWnd->m_cmbHeadScal, g_IniFile.m_strHeadScals);
     DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
     DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
     DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
@@ -504,7 +504,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pWnd->m_dVacDelayTime);
 
         DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
-        DDX_ComboBox(bRead, g_IniFile.m_nHeadScal, pWnd->m_cmbHeadScal);
+        DDX_String(bRead, g_IniFile.m_strHeadScal, pWnd->m_cmbHeadScal, g_IniFile.m_strHeadScals);
         DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
         DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
         DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
@@ -871,6 +871,9 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //---Renew UPH
     editUnitPerHour->Text = FormatFloat("0.000", float(g_pMainThread->m_dUnitPerHour1)+float(g_pMainThread->m_dUnitPerHour0));
 
+    //---Renew CIM signal
+    Shape3->Brush->Color = clLime;
+
     //---Auto active LC no function
     if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55) checkStopLC->Checked = true;
 
@@ -891,7 +894,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //--Idle Run Down---
     if (ServerCIM->Active == true)
     {
-        if (g_DIO.ReadDIBit(DO::StopBtnLamp) && g_eqpXML.m_EqpStatus !='D')
+        if (g_IniFile.m_nErrorCode > 0 && g_IniFile.m_nErrorCode < 1000 && g_eqpXML.m_EqpStatus !='D')
         {
             g_eqpXML.m_EqpStatus='D';
             g_eqpXML.SendEventReport("1");
@@ -901,13 +904,12 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
             g_eqpXML.m_EqpStatus='R';
             g_eqpXML.SendEventReport("1");
         }
-        else if (!g_DIO.ReadDIBit(DO::StopBtnLamp) && !g_DIO.ReadDIBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus !='I')
+        else if (g_IniFile.m_nErrorCode == 0 && g_eqpXML.m_EqpStatus !='I')
         {
             g_eqpXML.m_EqpStatus='I';
             g_eqpXML.SendEventReport("1");
         }
     }
-
 
 	Timer1->Enabled = true;
 
@@ -1958,6 +1960,7 @@ void __fastcall TfrmMain::ServerCIMClientConnect(TObject *Sender,
 {
     g_eqpXML.StartComm(Socket);
     AddList("CIM Connected!!");
+    Shape3->Visible = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::ServerCIMClientDisconnect(TObject *Sender,
@@ -1965,6 +1968,7 @@ void __fastcall TfrmMain::ServerCIMClientDisconnect(TObject *Sender,
 {
     g_eqpXML.EndComm();
     AddList("CIM Disconnected!!");
+    Shape3->Visible = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::ServerCIMClientError(TObject *Sender,
@@ -1972,12 +1976,15 @@ void __fastcall TfrmMain::ServerCIMClientError(TObject *Sender,
 {
     AddList("CIM SocketEror");
     Socket->Close();
+    Shape3->Brush->Color = clRed;
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::ServerCIMClientRead(TObject *Sender,
       TCustomWinSocket *Socket)
 {
-    AddList("CIM Read");
+    //AddList("CIM Read");
+    g_pMainThread->m_ActionLog.push_back(g_pMainThread->AddTimeString("[ServerCIM]CIM Read"));
+    Shape3->Brush->Color = clYellow;
     g_eqpXML.ProcessCIM();
 }
 //---------------------------------------------------------------------------

@@ -59,7 +59,6 @@ void __fastcall TfmProduct::RenewCmbHeadScal()
         this->m_cmbHeadScal->AddItem(strList->Strings[i], NULL);
     }
     this->m_cmbHeadScal->ItemIndex = 0;
-
     delete strList;
 }
 

@@ -55,8 +55,8 @@ public:
 	void __fastcall SendAlarmMessage(char *pID,char *pText);
 
 	bool (*StartProcess)(bool bStart);
-	bool (*OpenFile)(AnsiString strFileName);
-	bool (*EventReportAck)(AnsiString strSSID,AnsiString strAckCode);
+	bool (*OpenFile)(AnsiString strFileName);                                                      
+	bool (*EventReportAck)(AnsiString strSSID,AnsiString strAckCode);                              //接收到回傳的EventReportAck時,要做的事情.一般收到Ack是不做反應的,只用於追查訊息傳遞
 
 };
 #endif

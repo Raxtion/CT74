@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 196
-  Top = 217
+  Left = 7
+  Top = 18
   Width = 1350
   Height = 623
   HorzScrollBar.Position = 244
@@ -224,6 +224,16 @@ object frmMain: TfrmMain
     Visible = False
     OnClick = btnStartMotor0Click
   end
+  object Shape3: TShape
+    Left = 1321
+    Top = 8
+    Width = 17
+    Height = 17
+    Brush.Color = clLime
+    Pen.Color = clMedGray
+    Shape = stCircle
+    Visible = False
+  end
   object listHistory: TListBox
     Left = -244
     Top = 726
@@ -304,7 +314,7 @@ object frmMain: TfrmMain
   object checkRestartCal: TCheckBox
     Left = 1116
     Top = 8
-    Width = 201
+    Width = 158
     Height = 17
     Caption = #27599#27425#37117#24478#38957#38283#22987
     Checked = True

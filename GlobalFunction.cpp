@@ -189,6 +189,18 @@ void DDX_String(bool bRead,AnsiString &strParameter,TEdit *pEdit)
   else strParameter=pEdit->Text;
 }
 //---------------------------------------------------------------------------
+void DDX_String(bool bRead,AnsiString &strParameter, TComboBox *pComboBox, AnsiString &CmbDataSource)
+{
+  if(bRead)
+  {
+    TStringList* strList = SplitString(CmbDataSource, "/");
+    if (strList->Find(strParameter, 0)) pComboBox->ItemIndex = strList->IndexOf(strParameter);
+    else pComboBox->ItemIndex = 0;
+    delete strList;
+  }
+  else strParameter=pComboBox->Text;
+}
+//---------------------------------------------------------------------------
 void DDXFile_Int(bool bRead,TIniFile *pIniFile,AnsiString strSection,
   AnsiString strIdent,int &nParameter,int nDefault)
 {

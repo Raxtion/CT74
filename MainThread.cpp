@@ -51,6 +51,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 {
 	m_bRefresh = false;
 	m_bIsHomeDone = false;
+    m_bPrassNeedReCal = false;
 
 	m_nPressCalMoveIndex[0] = 0;
 	m_nPressCalMoveIndex[1] = 0;
@@ -361,24 +362,33 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::GreenLamp, false);
 			g_DIO.SetDO(DO::YellowLamp, true);
 			//g_DIO.SetDO(DO::RedLamp,false);
-			
+
 			//當start綠燈被壓下時，或者CIM觸發StartProcess function
 			switch (g_eqpXML.m_CIMStatus.ToInt())
 			{
 			case 0:                                                                              //Offline
 			case 1:                                                                              //online/local
 				if (g_DIO.ReadDIBit(DI::StartBtn))
+                {
                     m_bIsStartProcessbyDIO = true;
+                }
 				break;
 			case 2:                                                                             //online/remote
 				if (g_DIO.ReadDIBit(DI::StartBtn))
+                {
                     g_eqpXML.SendEventReport("115");
+                    m_listLog.push_back("發送啟動請求，等待CIM回應...");
+                    m_ActionLog.push_back(AddTimeString("[Execute]發送啟動請求，等待CIM回應..."));
+                }
 				break;
 			default:
 				break;
-			}
-			if (m_bIsStartProcessbyDIO || m_bIsStartProcessbyCIM)    
+            }
+			if (m_bIsStartProcessbyDIO || m_bIsStartProcessbyCIM)
 			{
+                if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
+                else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
+
 				if (g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0] || g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
 				{
 					g_IniFile.m_nErrorCode = 75;
@@ -1520,19 +1530,20 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			if (m_bAutoRetry == false)
 			{
 				//--自動情況與手動皆判斷誤差容許值------------------------------------------------------------------------------------
-				//if (nTimes != 0)//-------------------------------------------------------------------------------------------------------- //跳過第一次測量數據    need debug
+				//if (nTimes != 0)//--------------------------------------------------------------------------------------------------------
 				//{
 					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * g_IniFile.m_dAutoStopTimes) ||
 						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * g_IniFile.m_dAutoStopTimes))
 					{
 						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopTimes) + "，必須停機");
 						g_IniFile.m_nErrorCode = 74;
+                        m_bPrassNeedReCal = false;
 					}
 					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * 1.0) ||
 								dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * 1.0))
 					{
 						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopTimes) + "，必須重新校正");
-						g_IniFile.m_nErrorCode = 1005;
+                        m_bPrassNeedReCal = true;
 					}
 				//}
 
@@ -1670,7 +1681,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			nTryTimes = 0;
 			if (m_bIsAutoMode && m_bIsHomeDone)
             {
-                if (g_IniFile.m_nErrorCode != 1005) g_IniFile.m_nErrorCode = 1007;
+                if (m_bPrassNeedReCal != true) m_bPrassNeedReCal = false;
             }
 			else g_IniFile.m_nErrorCode = 72;
 			if (m_bAutoRetry == true)                                                                       //若完成校正則紀錄已校正的數據
@@ -2098,11 +2109,11 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 4:
 		if (m_bStartAutoCal[bFront] == false)
 		{
-			if (g_IniFile.m_nErrorCode == 1007)
+			if (m_bPrassNeedReCal == false)
 			{
 				nThreadIndex = nTagA;
 			}
-			else if (g_IniFile.m_nErrorCode == 1005)
+			else if (m_bPrassNeedReCal == true)
 			{
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][4]LoadCell 自動模式,校正開始..."));
                 m_listLog.push_back("自動模式,校正開始...");
@@ -2154,13 +2165,14 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 8:
 		if (m_bStartAutoCal[bFront] == false)
 		{
-			if (g_IniFile.m_nErrorCode == 1007)
+			if (m_bPrassNeedReCal == false)
 			{
 				nThreadIndex++;
 			}
-			else if (g_IniFile.m_nErrorCode == 1005)
+			else if (m_bPrassNeedReCal == true)
 			{
 				g_IniFile.m_nErrorCode == 74;
+                m_bPrassNeedReCal = false;
 				nThreadIndex++;
 			}
 		}
@@ -2174,10 +2186,9 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		if (g_Motion.IsPosDone(AXIS_Y, g_IniFile.m_dSafePos))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][10]LoadCell 回到安全位置"));
-			if (g_IniFile.m_nErrorCode == 1007)
+			if (m_bPrassNeedReCal == false)
 			{
 				m_listLog.push_back("自動模式,測量與校正完成,繼續動作");
-				g_IniFile.m_nErrorCode = 0;
 			}
 			nThreadIndex++;
 		}

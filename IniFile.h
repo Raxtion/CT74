@@ -61,7 +61,7 @@ public:
 
   double m_dLastLamPress[2];  //Record for LastPressCal. Protect Wrong press Lamination in AutoRun
   
-  AnsiString m_strHeadScal;
+  AnsiString m_strHeadScals;
 
   //-----------------Product-----------------
   int m_nCols;
@@ -105,9 +105,9 @@ public:
   double m_dAutoRunTempRange;
   double m_dVacDelayTime;
 
-  AnsiString m_strSetupEENum;           
+  AnsiString m_strSetupEENum;
   int m_nHeadType;                    //0=實心; 1=空心;
-  int m_nHeadScal;                    //(43X43/31X31)
+  AnsiString m_strHeadScal;           //(43X43/31X31)
   int m_nVacummOn;                    //0=FAIL; 1=TRUE
   int m_nPressCheck;                  //0=FAIL; 1=TRUE
   int m_nDummyCheck;                  //0=FAIL; 1=TRUE

@@ -111,6 +111,7 @@ __published:	// IDE-managed Components
     TSpeedButton *btnStartMotor0;
     TTimer *Timer3;
     TServerSocket *ServerCIM;
+    TShape *Shape3;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);

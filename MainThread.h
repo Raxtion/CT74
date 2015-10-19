@@ -33,6 +33,7 @@ public:
 	bool m_bIsStartProcessbyCIM;            //Record for Strat Process by CIM in CMainThread::Execute() not by DI::StartBtn
 	bool m_bIsStopProcessbyCIM;             //Record for Stop Process by CIM in CMainThread::Execute() not by DI::StopBtn
 
+    bool m_bPrassNeedReCal;                 //Record for NeedReCal in DoPressCal.
 	bool m_bFirstVacSuccessed;              //Record for First Vac Success.
 	bool m_bIsHomingFromBtn;                //Homing from button
 	int m_nPassBoatStart;                   //Input counted Boats start number.
