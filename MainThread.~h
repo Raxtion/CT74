@@ -34,7 +34,6 @@ public:
 	bool m_bIsStopProcessbyCIM;             //Record for Stop Process by CIM in CMainThread::Execute() not by DI::StopBtn
 
     bool m_bPrassNeedReCal;                 //Record for NeedReCal in DoPressCal.
-    bool m_bPrassReCalFinished;             //Record for PrassNeedReCal finished.
 	bool m_bFirstVacSuccessed;              //Record for First Vac Success.
 	bool m_bIsHomingFromBtn;                //Homing from button
 	int m_nPassBoatStart;                   //Input counted Boats start number.
@@ -48,6 +47,8 @@ public:
 	int m_nPressCalPassCount;               //Record for succeed PressCal times. (default 2 times)
 
 	int m_nTrayRowIndex;
+
+    bool m_bStartAgain;
 
 	int m_nPressCalMoveIndex[2];
 	int m_nLaserCalMoveIndex[2];

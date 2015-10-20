@@ -48,6 +48,8 @@ public:
 
 	int m_nTrayRowIndex;
 
+    bool m_bStartAgain;
+
 	int m_nPressCalMoveIndex[2];
 	int m_nLaserCalMoveIndex[2];
 

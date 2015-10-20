@@ -112,6 +112,7 @@ __published:	// IDE-managed Components
     TTimer *Timer3;
     TServerSocket *ServerCIM;
     TShape *Shape3;
+    TTimer *timerDIOStartAgain;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -158,6 +159,7 @@ __published:	// IDE-managed Components
           int &ErrorCode);
     void __fastcall ServerCIMClientRead(TObject *Sender,
           TCustomWinSocket *Socket);
+    void __fastcall timerDIOStartAgainTimer(TObject *Sender);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;

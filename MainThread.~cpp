@@ -52,7 +52,6 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_bRefresh = false;
 	m_bIsHomeDone = false;
     m_bPrassNeedReCal = false;
-    //m_bPrassReCalFinished = false;
 
 	m_nPressCalMoveIndex[0] = 0;
 	m_nPressCalMoveIndex[1] = 0;
@@ -72,6 +71,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_nPassBoatCount0 = 0;
 	m_nPassBoatCount1 = 0;
 	m_bStopLC = false;
+    m_bStartAgain = false;
 
     m_dUpperLaserRealTime = 0.0;
     m_dDownLaserRealTime = 0.0;
@@ -369,17 +369,19 @@ void __fastcall CMainThread::Execute()
 			{
 			case 0:                                                                              //Offline
 			case 1:                                                                              //online/local
-				if (g_DIO.ReadDIBit(DI::StartBtn))
+				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
                 {
                     m_bIsStartProcessbyDIO = true;
+                    m_bStartAgain = false;
                 }
 				break;
 			case 2:                                                                             //online/remote
-				if (g_DIO.ReadDIBit(DI::StartBtn))
+				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
                 {
                     g_eqpXML.SendEventReport("115");
                     m_listLog.push_back("發送啟動請求，等待CIM回應...");
                     m_ActionLog.push_back(AddTimeString("[Execute]發送啟動請求，等待CIM回應..."));
+                    m_bStartAgain = false;
                 }
 				break;
 			default:
@@ -1682,11 +1684,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			nTryTimes = 0;
 			if (m_bIsAutoMode && m_bIsHomeDone)
             {
-                if (m_bPrassNeedReCal != true)
-                {
-                    //m_bPrassReCalFinished = true;
-                    m_bPrassNeedReCal = false;
-                }
+                if (m_bPrassNeedReCal != true) m_bPrassNeedReCal = false;
             }
 			else g_IniFile.m_nErrorCode = 72;
 			if (m_bAutoRetry == true)                                                                       //若完成校正則紀錄已校正的數據
@@ -1727,6 +1725,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	int nLaserChannel;
 	double *p_dLaserValue;
     double *p_dLaserValueDiff;
+    //typedef vector<double>::iterator iterator;
 
 	static int nMoveIndex = 0;
 	static int nMoveIndexSub = 0;
@@ -1877,9 +1876,9 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                     {
                         double *maxValue = std::max_element(vecTempUp.begin(), vecTempUp.end());
                         double *minValue = std::min_element(vecTempUp.begin(), vecTempUp.end());
-                        p_dLaserValueDiff[nMoveIndex] = maxValue - minValue;
+                        p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub) - 3] = (*maxValue - *minValue);
                         vecTempUp.clear();
-                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.0000 mm", maxValue - minValue));
+                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
                     }
                     else
                     {
@@ -1890,20 +1889,20 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
             }
             else
             {
-                if (nMoveIndex == 50-1)
+                if (nMoveIndex == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
                 {
                     std::vector<double> vecTempDown;
                     for (int i=0;i<50;i++)
                     {
-                        if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[i]);
+                        if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[(nMoveIndex * 4 + nMoveIndexSub) - 3 + i]);
                     }
                     if (vecTempDown.size() != 0)
                     {
                         double *maxValue = std::max_element(vecTempDown.begin(), vecTempDown.end());
                         double *minValue = std::min_element(vecTempDown.begin(), vecTempDown.end());
-                        p_dLaserValueDiff[nMoveIndex] = maxValue - minValue;
+                        p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub)] = (*maxValue - *minValue);
                         vecTempDown.clear();
-                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", maxValue - minValue));
+                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
                     }
                     else
                     {
@@ -2114,7 +2113,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 4:
 		if (m_bStartAutoCal[bFront] == false)
 		{
-			if (m_bPrassReCalFinished == true)
+			if (m_bPrassNeedReCal == false)
 			{
 				nThreadIndex = nTagA;
 			}
@@ -2123,7 +2122,6 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][4]LoadCell 自動模式,校正開始..."));
                 m_listLog.push_back("自動模式,校正開始...");
 				m_bStartAutoCal[bFront] = true;
-                //m_bPrassNeedReCal = false;
 				m_bAutoRetry = true;
 				nThreadIndex++;
 			}
@@ -2171,7 +2169,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 8:
 		if (m_bStartAutoCal[bFront] == false)
 		{
-			if (m_bPrassReCalFinished == true)
+			if (m_bPrassNeedReCal == false)
 			{
 				nThreadIndex++;
 			}
@@ -2192,11 +2190,9 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		if (g_Motion.IsPosDone(AXIS_Y, g_IniFile.m_dSafePos))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoAutoCal][10]LoadCell 回到安全位置"));
-			if (m_bPrassReCalFinished == true)
+			if (m_bPrassNeedReCal == false)
 			{
-                m_bPrassReCalFinished = false;
 				m_listLog.push_back("自動模式,測量與校正完成,繼續動作");
-				g_IniFile.m_nErrorCode = 0;
 			}
 			nThreadIndex++;
 		}

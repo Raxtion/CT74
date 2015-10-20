@@ -102,10 +102,10 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     }
     delete strList;
 
-    AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
-    AnsiString strVacummOn; (g_IniFile.m_nVacummOn) ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
-    AnsiString strPressCheck; (g_IniFile.m_nPressCheck) ? strPressCheck = "FAIL" : strPressCheck = "TRUE";
-    AnsiString strDummyCheck; (g_IniFile.m_nDummyCheck) ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
+    AnsiString strHeadType; (g_IniFile.m_nHeadType == 0) ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
+    AnsiString strVacummOn; (g_IniFile.m_nVacummOn == 0) ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
+    AnsiString strPressCheck; (g_IniFile.m_nPressCheck == 0) ? strPressCheck = "FAIL" : strPressCheck = "TRUE";
+    AnsiString strDummyCheck; (g_IniFile.m_nDummyCheck == 0) ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
 
     //---------------------------------------------------------------------------
     //Add SVID
@@ -208,35 +208,53 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     AnsiString strFDLD = "";
     AnsiString strRULD = "";
     AnsiString strFULD = "";
+    int m_nCalCol = 0;
+    int m_nCalRow = 0;
 
     TStringList *strStrings = new TStringList;
-    for (int i=0;i<(g_IniFile.m_nCols*g_IniFile.m_nRows);i++)
+    for (int i=0;i<50;i++)
     {
-        strStrings->Add(FormatFloat("0.00", *g_pMainThread->m_dRearDownLaserDiff[i]).c_str());
+        if (i == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
+        {
+            strStrings->Add(FormatFloat("0.00", g_pMainThread->m_dRearDownLaserDiff[i][0]).c_str());
+        }
     }
     strStrings->Delimiter = '/';
     strRDLD = strStrings->DelimitedText;
     strStrings->Clear();
 
-    for (int i=0;i<(g_IniFile.m_nCols*g_IniFile.m_nRows);i++)
+    for (int i=0;i<50;i++)
     {
-        strStrings->Add(FormatFloat("0.00", *g_pMainThread->m_dFrontDownLaserDiff[i]).c_str());
+        if (i == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
+        {
+            strStrings->Add(FormatFloat("0.00", g_pMainThread->m_dFrontDownLaserDiff[i][0]).c_str());
+        }
     }
     strStrings->Delimiter = '/';
     strFDLD = strStrings->DelimitedText;
     strStrings->Clear();
 
-    for (int i=0;i<(g_IniFile.m_nCols*g_IniFile.m_nRows);i++)
+    for (int i=0;i<50;i++)
     {
-        strStrings->Add(FormatFloat("0.00", *g_pMainThread->m_dRearUpperLaserDiff[i]).c_str());
+        m_nCalCol = i % 10;
+        m_nCalRow = i / 10;
+        if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
+        {
+            strStrings->Add(FormatFloat("0.00", g_pMainThread->m_dRearUpperLaserDiff[i][0]).c_str());
+        }
     }
     strStrings->Delimiter = '/';
     strRULD = strStrings->DelimitedText;
     strStrings->Clear();
 
-    for (int i=0;i<(g_IniFile.m_nCols*g_IniFile.m_nRows);i++)
+    for (int i=0;i<50;i++)
     {
-        strStrings->Add(FormatFloat("0.00", *g_pMainThread->m_dFrontUpperLaserDiff[i]).c_str());
+        m_nCalCol = i % 10;
+        m_nCalRow = i / 10;
+        if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
+        {
+            strStrings->Add(FormatFloat("0.00", g_pMainThread->m_dFrontUpperLaserDiff[i][0]).c_str());
+        }
     }
     strStrings->Delimiter = '/';
     strFULD = strStrings->DelimitedText;

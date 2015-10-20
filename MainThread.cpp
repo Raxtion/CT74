@@ -71,6 +71,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_nPassBoatCount0 = 0;
 	m_nPassBoatCount1 = 0;
 	m_bStopLC = false;
+    m_bStartAgain = false;
 
     m_dUpperLaserRealTime = 0.0;
     m_dDownLaserRealTime = 0.0;
@@ -368,17 +369,19 @@ void __fastcall CMainThread::Execute()
 			{
 			case 0:                                                                              //Offline
 			case 1:                                                                              //online/local
-				if (g_DIO.ReadDIBit(DI::StartBtn))
+				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
                 {
                     m_bIsStartProcessbyDIO = true;
+                    m_bStartAgain = false;
                 }
 				break;
 			case 2:                                                                             //online/remote
-				if (g_DIO.ReadDIBit(DI::StartBtn))
+				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
                 {
                     g_eqpXML.SendEventReport("115");
                     m_listLog.push_back("發送啟動請求，等待CIM回應...");
                     m_ActionLog.push_back(AddTimeString("[Execute]發送啟動請求，等待CIM回應..."));
+                    m_bStartAgain = false;
                 }
 				break;
 			default:
@@ -1722,6 +1725,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	int nLaserChannel;
 	double *p_dLaserValue;
     double *p_dLaserValueDiff;
+    //typedef vector<double>::iterator iterator;
 
 	static int nMoveIndex = 0;
 	static int nMoveIndexSub = 0;
@@ -1872,9 +1876,9 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                     {
                         double *maxValue = std::max_element(vecTempUp.begin(), vecTempUp.end());
                         double *minValue = std::min_element(vecTempUp.begin(), vecTempUp.end());
-                        p_dLaserValueDiff[nMoveIndex] = maxValue - minValue;
+                        p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub) - 3] = (*maxValue - *minValue);
                         vecTempUp.clear();
-                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.0000 mm", maxValue - minValue));
+                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
                     }
                     else
                     {
@@ -1885,20 +1889,23 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
             }
             else
             {
-                if (nMoveIndex == 50-1)
+                if (nMoveIndex == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
                 {
                     std::vector<double> vecTempDown;
                     for (int i=0;i<50;i++)
                     {
-                        if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[i]);
+                        if ((i % 10)<g_IniFile.m_nCols && (i / 10)< g_IniFile.m_nRows)
+                        {
+                            if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[i * 4]);
+                        }
                     }
                     if (vecTempDown.size() != 0)
                     {
                         double *maxValue = std::max_element(vecTempDown.begin(), vecTempDown.end());
                         double *minValue = std::min_element(vecTempDown.begin(), vecTempDown.end());
-                        p_dLaserValueDiff[nMoveIndex] = maxValue - minValue;
+                        p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub)] = (*maxValue - *minValue);
                         vecTempDown.clear();
-                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", maxValue - minValue));
+                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
                     }
                     else
                     {

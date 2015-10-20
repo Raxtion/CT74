@@ -892,19 +892,19 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 	}
 
     //--Idle Run Down---
-    if (ServerCIM->Active == true)
+    if (ServerCIM->Active == true && g_pMainThread->m_bIsHomeDone == true)
     {
         if (g_IniFile.m_nErrorCode > 0 && g_IniFile.m_nErrorCode < 1000 && g_eqpXML.m_EqpStatus !='D')
         {
             g_eqpXML.m_EqpStatus='D';
             g_eqpXML.SendEventReport("1");
         }
-        else if (g_DIO.ReadDIBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus !='R')
+        else if (g_DIO.ReadDOBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus !='R')
         {
             g_eqpXML.m_EqpStatus='R';
             g_eqpXML.SendEventReport("1");
         }
-        else if (g_IniFile.m_nErrorCode == 0 && g_eqpXML.m_EqpStatus !='I')
+        else if (g_IniFile.m_nErrorCode == 0 && g_eqpXML.m_EqpStatus !='I' && !g_DIO.ReadDOBit(DO::StartBtnLamp))
         {
             g_eqpXML.m_EqpStatus='I';
             g_eqpXML.SendEventReport("1");
@@ -1920,10 +1920,15 @@ bool TfrmMain::StartProcess(bool bStart)
 	if(bStart)
 	{
 		g_pMainThread->m_bIsStartProcessbyCIM = true;
+        g_pMainThread->m_listLog.push_back("收到CIM回應 START，機台開始啟動...");
+        g_pMainThread->m_ActionLog.push_back(AddTimeString("[Execute]收到CIM回應 START，機台開始啟動..."));
 	}
 	else
 	{
 		g_pMainThread->m_bIsStopProcessbyCIM = true;
+        g_pMainThread->m_listLog.push_back("收到CIM回應 STOP，機台禁止啟動...");
+        g_pMainThread->m_ActionLog.push_back(AddTimeString("[Execute]收到CIM回應 STOP，機台禁止啟動..."));
+        g_IniFile.m_nErrorCode = 37;
 	}
 	return true;
 }
@@ -1986,6 +1991,12 @@ void __fastcall TfrmMain::ServerCIMClientRead(TObject *Sender,
     g_pMainThread->m_ActionLog.push_back(g_pMainThread->AddTimeString("[ServerCIM]CIM Read"));
     Shape3->Brush->Color = clYellow;
     g_eqpXML.ProcessCIM();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
+{
+    g_pMainThread->m_bStartAgain = true;
 }
 //---------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 7
-  Top = 18
+  Left = 68
+  Top = 198
   Width = 1350
   Height = 623
   VertScrollBar.Position = 267
@@ -810,5 +810,11 @@ object frmMain: TfrmMain
     OnClientError = ServerCIMClientError
     Left = 256
     Top = 328
+  end
+  object timerDIOStartAgain: TTimer
+    Interval = 3000
+    OnTimer = timerDIOStartAgainTimer
+    Left = 360
+    Top = 296
   end
 end
