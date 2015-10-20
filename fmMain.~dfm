@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 68
-  Top = 198
+  Left = 2
+  Top = 38
   Width = 1350
   Height = 623
   VertScrollBar.Position = 267
@@ -812,9 +812,9 @@ object frmMain: TfrmMain
     Top = 328
   end
   object timerDIOStartAgain: TTimer
-    Interval = 3000
+    Interval = 2000
     OnTimer = timerDIOStartAgainTimer
-    Left = 360
+    Left = 352
     Top = 296
   end
 end

@@ -545,6 +545,7 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 	    while(1)
 	    {
 		    if(strcmp(ParamItem[nX*5],"END")==0) break;
+
 		    pParam=new TiXmlElement("PARAMETER");
 		    pParam->SetAttribute("NAME",ParamItem[nX*5]);
 		    ///strTmp.sprintf("%s,%s",ParamItem[nX],pIniFile->ReadString(Product_Section,ParamItem[nX],"Not Valid"));
@@ -561,9 +562,40 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 			    pParam->LinkEndChild(pProperty);
 		    }
 
-		    pProperty=new TiXmlElement("PROPERTY");
-		    pProperty->LinkEndChild(new TiXmlText(pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0").c_str()));
-		    pParam->LinkEndChild(pProperty);
+            if (strcmp(ParamItem[nX*5],"m_nHeadType")==0)
+            {
+                AnsiString strHeadType; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strHeadType.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_nVacummOn")==0)
+            {
+                AnsiString strVacummOn; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strVacummOn.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_nPressCheck")==0)
+            {
+                AnsiString strPressCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strPressCheck = "FAIL" : strPressCheck = "TRUE";
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strPressCheck.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_nDummyCheck")==0)
+            {
+                AnsiString strDummyCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strDummyCheck.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else
+            {
+		        pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0").c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
 
 		    for(int t=3;t<5; t++)
 		    {
@@ -705,7 +737,7 @@ __fastcall CEQPXML::~CEQPXML()
 }
 //---------------------------------------------------------------------------
 
-void __fastcall CEQPXML::StartComm( TCustomWinSocket *pSocket)
+void __fastcall CEQPXML::StartComm(TCustomWinSocket *pSocket)
 {
      m_pSocket = pSocket;
 }
@@ -723,7 +755,6 @@ void __fastcall CEQPXML::ProcessCIM()
 
     try
     {
-
         //receiveRx=(char *)VirtualAlloc(NULL, 30000, MEM_COMMIT, PAGE_READWRITE);//(char *)malloc(30000);//new char[30000];
         //receive=(char *)VirtualAlloc(NULL, 30000, MEM_COMMIT, PAGE_READWRITE);///(char *)malloc(30000);//new char[30000];
 

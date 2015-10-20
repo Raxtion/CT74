@@ -1921,13 +1921,11 @@ bool TfrmMain::StartProcess(bool bStart)
 	{
 		g_pMainThread->m_bIsStartProcessbyCIM = true;
         g_pMainThread->m_listLog.push_back("收到CIM回應 START，機台開始啟動...");
-        g_pMainThread->m_ActionLog.push_back(AddTimeString("[Execute]收到CIM回應 START，機台開始啟動..."));
 	}
 	else
 	{
 		g_pMainThread->m_bIsStopProcessbyCIM = true;
         g_pMainThread->m_listLog.push_back("收到CIM回應 STOP，機台禁止啟動...");
-        g_pMainThread->m_ActionLog.push_back(AddTimeString("[Execute]收到CIM回應 STOP，機台禁止啟動..."));
         g_IniFile.m_nErrorCode = 37;
 	}
 	return true;
@@ -1997,6 +1995,7 @@ void __fastcall TfrmMain::ServerCIMClientRead(TObject *Sender,
 void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
 {
     g_pMainThread->m_bStartAgain = true;
+    g_pMainThread->m_bStopAgain = true;
 }
 //---------------------------------------------------------------------------
 

@@ -72,6 +72,8 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_nPassBoatCount1 = 0;
 	m_bStopLC = false;
     m_bStartAgain = false;
+    m_bStopAgain = false;
+    m_bResetAgain = false;
 
     m_dUpperLaserRealTime = 0.0;
     m_dDownLaserRealTime = 0.0;
@@ -230,12 +232,13 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//---Reset Alarm
-		if (g_DIO.ReadDIBit(DI::ResetBtn))
+		if (g_DIO.ReadDIBit(DI::ResetBtn) && m_bResetAgain)
 		{
 			g_IniFile.m_nErrorCode = 0;
-
+            if (m_bResetAgain == true) m_listLog.push_back("機台重置");
 			g_DIO.SetDO(DO::RedLamp, false);
 			g_DIO.SetDO(DO::Buzzer, false);
+            m_bResetAgain = false;
 		}
 
 		//---Buzzer
@@ -248,7 +251,7 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//--Stop Auto
-		if (g_DIO.ReadDIBit(DI::StopBtn) || m_bIsStopProcessbyCIM)
+		if ((g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain) || m_bIsStopProcessbyCIM)
 		{
 			bAutoMode = false;
 			SetManualSpeed();
@@ -260,7 +263,18 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::LamMotorStart2, false);
 			g_DIO.SetDO(DO::EjectMotorStart1, false);
 			g_DIO.SetDO(DO::EjectMotorStart2, false);
+            if (m_bStopAgain == true)
+            {
+                m_listLog.push_back("機台停止");
+                m_ActionLog.push_back(AddTimeString("[Execute]由DIO停止"));
+            }
+            if (m_bIsStopProcessbyCIM == true)
+            {
+                m_listLog.push_back("機台停止byCIM");
+                m_ActionLog.push_back(AddTimeString("[Execute]由CIM停止"));
+            }
 			m_bIsStopProcessbyCIM = false;
+            m_bStopAgain = false;
 		}
 
 		//---Homing Process
@@ -371,6 +385,7 @@ void __fastcall CMainThread::Execute()
 			case 1:                                                                              //online/local
 				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
                 {
+                    m_listLog.push_back("機台啟動");
                     m_bIsStartProcessbyDIO = true;
                     m_bStartAgain = false;
                 }
@@ -380,7 +395,6 @@ void __fastcall CMainThread::Execute()
                 {
                     g_eqpXML.SendEventReport("115");
                     m_listLog.push_back("發送啟動請求，等待CIM回應...");
-                    m_ActionLog.push_back(AddTimeString("[Execute]發送啟動請求，等待CIM回應..."));
                     m_bStartAgain = false;
                 }
 				break;
@@ -1558,9 +1572,12 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			{
                 //--加入壓力補償---------------------------------------------------------------------------------------------------
 				/*新設定值增加值採用曲線增加，當開始校正時bPassCal為F，代表該Unit尚未通過第一次PressCal，
-				當第一次進入容許值之後，bPassCal為T，就進入微調設定值，而不重新由0.1逼近，一直微調到連續通過3次;或動作25次還過不去，就出現Error並跳出.*/ 
-				if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 100.0) ||
-					dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 100.0))
+				當第一次進入容許值之後，bPassCal為T，就進入微調設定值，而不重新由0.1逼近，一直微調到連續通過3次;或動作25次還過不去，就出現Error並跳出.*/
+                /*將校正標準提高2倍以防止自動走位校正會一直在校正(機構問題:第一次量測下數值偏高,容易超出容許範圍*/
+				//if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 100.0) ||
+				//	dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 100.0))
+                if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 200.0) ||
+					dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 200.0))
 				{
 					m_listLog.push_back("NG-->Try Again");
 					nTryTimes++;
