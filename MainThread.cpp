@@ -235,7 +235,7 @@ void __fastcall CMainThread::Execute()
 		if (g_DIO.ReadDIBit(DI::ResetBtn) && m_bResetAgain)
 		{
 			g_IniFile.m_nErrorCode = 0;
-            if (m_bResetAgain == true) m_listLog.push_back("機台重置");
+            if (m_bResetAgain == true && bHomeDone) m_listLog.push_back("機台重置");
 			g_DIO.SetDO(DO::RedLamp, false);
 			g_DIO.SetDO(DO::Buzzer, false);
             m_bResetAgain = false;

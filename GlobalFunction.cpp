@@ -194,7 +194,7 @@ void DDX_String(bool bRead,AnsiString &strParameter, TComboBox *pComboBox, AnsiS
   if(bRead)
   {
     TStringList* strList = SplitString(CmbDataSource, "/");
-    if (strList->Find(strParameter, 0)) pComboBox->ItemIndex = strList->IndexOf(strParameter);
+    if (strList->IndexOf(strParameter) != -1) pComboBox->ItemIndex = strList->IndexOf(strParameter);
     else pComboBox->ItemIndex = 0;
     delete strList;
   }

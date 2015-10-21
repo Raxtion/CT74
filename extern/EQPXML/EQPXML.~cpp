@@ -562,28 +562,28 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 			    pParam->LinkEndChild(pProperty);
 		    }
 
-            if (ParamItem[nX*5] == "m_nHeadType")
+            if (strcmp(ParamItem[nX*5],"m_nHeadType")==0)
             {
                 AnsiString strHeadType; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
                 pProperty=new TiXmlElement("PROPERTY");
 		        pProperty->LinkEndChild(new TiXmlText(strHeadType.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
-            else if (ParamItem[nX*5] == "m_nVacummOn")
+            else if (strcmp(ParamItem[nX*5],"m_nVacummOn")==0)
             {
                 AnsiString strVacummOn; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
 		        pProperty->LinkEndChild(new TiXmlText(strVacummOn.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
-            else if (ParamItem[nX*5] == "m_nPressCheck")
+            else if (strcmp(ParamItem[nX*5],"m_nPressCheck")==0)
             {
                 AnsiString strPressCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strPressCheck = "FAIL" : strPressCheck = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
 		        pProperty->LinkEndChild(new TiXmlText(strPressCheck.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
-            else if (ParamItem[nX*5] == "m_nDummyCheck")
+            else if (strcmp(ParamItem[nX*5],"m_nDummyCheck")==0)
             {
                 AnsiString strDummyCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
