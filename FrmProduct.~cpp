@@ -53,7 +53,7 @@ void __fastcall TfmProduct::RenewCmbHeadScal()
 {
     this->m_cmbHeadScal->Clear();
 
-    TStringList* strList = SplitString(g_IniFile.m_strHeadScal, "/");
+    TStringList* strList = SplitString(g_IniFile.m_strHeadScals, "/");
     for (int i=0;i<strList->Count;i++)
     {
         this->m_cmbHeadScal->AddItem(strList->Strings[i], NULL);
@@ -67,7 +67,7 @@ void __fastcall TfmProduct::btnHeadScalModifyClick(TObject *Sender)
 {
     TfrmHeadScalModify *pHeadScalModifyDlg = new TfrmHeadScalModify(this);
 
-    TStringList* strList = SplitString(g_IniFile.m_strHeadScal, "/");
+    TStringList* strList = SplitString(g_IniFile.m_strHeadScals, "/");
 
     pHeadScalModifyDlg->cmbSelectData->AddItem("", NULL);
     for (int i=0;i<strList->Count;i++)
@@ -90,7 +90,7 @@ void __fastcall TfmProduct::btnHeadScalModifyClick(TObject *Sender)
         }
         if (bIsInputINstrList == false && pHeadScalModifyDlg->cmbSelectData->Text != "")
         {
-            g_IniFile.m_strHeadScal += (pHeadScalModifyDlg->cmbSelectData->Text+"/");
+            g_IniFile.m_strHeadScals += (pHeadScalModifyDlg->cmbSelectData->Text+"/");
             g_IniFile.MachineFile(false);
         }
 	}
@@ -108,7 +108,7 @@ void __fastcall TfmProduct::btnHeadScalModifyClick(TObject *Sender)
         }
         if (bIsInputINstrList == true && pHeadScalModifyDlg->cmbSelectData->Text != "")
         {
-            ReplaceString(&g_IniFile.m_strHeadScal, pHeadScalModifyDlg->cmbSelectData->Items->Strings[pHeadScalModifyDlg->cmbSelectData->ItemIndex]+"/", "");
+            ReplaceString(&g_IniFile.m_strHeadScals, pHeadScalModifyDlg->cmbSelectData->Items->Strings[pHeadScalModifyDlg->cmbSelectData->ItemIndex]+"/", "");
             g_IniFile.MachineFile(false);
         }
     }

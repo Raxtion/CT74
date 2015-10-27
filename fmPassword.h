@@ -19,6 +19,8 @@ __published:	// IDE-managed Components
     TMaskEdit *editNewPassword;
     TBitBtn *BitBtn1;
     TBitBtn *BitBtn2;
+    TLabel *labelAccount;
+    TEdit *editAccount;
     void __fastcall editOldPasswordClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations

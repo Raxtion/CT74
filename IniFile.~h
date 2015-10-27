@@ -30,6 +30,7 @@ public:
   AnsiString m_strENGPassword;
   AnsiString m_strLastFileName;
   AnsiString m_strApplicationPath;
+  AnsiString m_strLogInENGAccount;
   double m_dCycleTimeOut;
 
   std::vector<AnsiString> m_vecMsg;
@@ -91,7 +92,7 @@ public:
   double m_dLaserDownPosY[2];
 
   int m_nAutoInterval;
-  double m_dAutoStopTimes;
+  double m_dAutoStopRange;
 
   double m_dScaleOffsetFront[50];
   double m_dScaleOffsetRear[50];

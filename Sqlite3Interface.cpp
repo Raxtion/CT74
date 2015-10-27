@@ -25,6 +25,7 @@ __fastcall SQLITE3IF::SQLITE3IF(int DBtype,AnsiString DBPath)
 
     /* 初始DB */
     open(DBtype);
+    free();
     close();
 
     /* 取得unique_id */
@@ -40,14 +41,13 @@ __fastcall SQLITE3IF::SQLITE3IF(int DBtype,AnsiString DBPath)
 void __fastcall SQLITE3IF::open(int DBtype)
 {
     AnsiString strFullPath;
-    AnsiString strDBName = "\\%04d_%02d_%02d.db3";
+    AnsiString strDBName; (DBtype==2) ? strDBName = "\\AccountLog.db3" :strDBName = "\\%04d_%02d_%02d.db3";
     time_t timer = time(NULL);
     struct tm *tblock = localtime(&timer);
 
     strFullPath.sprintf((m_strDBPath+strDBName).c_str(),tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
     /* 開啟 database 檔 */
-    if (sqlite3_open_v2(strFullPath.c_str(), &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL)) { return;}
-    if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
+    if (sqlite3_open_v2(strFullPath.c_str(), &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL)) {return;}
 
     /* 確認table是否存在 */
     selectSQL("SELECT name FROM SQLITE_MASTER WHERE type='table' and name='C74Log';");
@@ -59,21 +59,25 @@ void __fastcall SQLITE3IF::open(int DBtype)
         case 0:
             /* 建立 Temp Table */
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), FrontT FLOAT, RearT FLOAT);", 0, 0, &errMsg);
-            if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
+            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         case 1:
             /* 建立 Action Table */
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), action VARCHAR(30));", 0, 0, &errMsg);
-            if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
+            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+            break;
+        case 2:
+            /* 建立 Account Table*/
+            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, account VARCHAR(25), password VARCHAR(25));", 0, 0, &errMsg);
+            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         default:
             g_pMainThread->m_listLog.push_back("open() DBType Error!");
-            sqlite3_free(errMsg);
         }
         unique_id = 0;
     }
-    free();
 }
+
 //---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::free()
 {
@@ -81,6 +85,7 @@ void __fastcall SQLITE3IF::free()
     //目的是釋放記憶體,所以不只是釋放來自table的result
     //sqlite3_free_table(result);
     sqlite3_free(result);
+    sqlite3_free(errMsg);
 }
 //---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::close()
@@ -120,7 +125,7 @@ void __fastcall SQLITE3IF::insertTemp()
                                                     +" , "+strRearTemp+");";
     /* 新增一筆資料 */
     sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
-    if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 
     unique_id += 1;
 }
@@ -142,15 +147,87 @@ void __fastcall SQLITE3IF::insertAction(AnsiString Action)
                                                     +"','"+Action+"');";
     /* 新增一筆資料 */
     sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
-    if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 
     unique_id += 1;
 }
 
 //---------------------------------------------------------------------------
+void __fastcall SQLITE3IF::insertAccount(AnsiString Account, AnsiString Password)
+{
+    AnsiString strLastrowid = IntToStr(unique_id);
+    AnsiString insertsql = "INSERT INTO C74Log VALUES( "+strLastrowid
+                                                    +" ,'"+Account
+                                                    +"','"+Password+"');";
+    /* 新增一筆資料 */
+    sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+
+    unique_id += 1;
+}
+
+//---------------------------------------------------------------------------
+int __fastcall SQLITE3IF::checkAccountPass(AnsiString Account, AnsiString Password)
+{
+    int IsPass = 1;
+
+    /* 取得account */
+    open(2);
+    selectSQL("SELECT account, password FROM C74Log WHERE account='"+Account+"';");
+
+    if (rows != 0)
+    {
+        if (strcmp(result[3], Password.c_str())==0) IsPass = 0;
+        else IsPass = 2;
+    }
+    else IsPass = 1;
+
+    free();
+    close();
+    return IsPass;
+}
+
+//---------------------------------------------------------------------------
+int __fastcall SQLITE3IF::changeAccountPass(AnsiString Account, AnsiString OldPassword, AnsiString NewPassword)
+{
+    int IsPass = 0;
+
+    /* 取得account */
+    open(2);
+    selectSQL("SELECT account, password FROM C74Log WHERE account='"+Account+"';");
+
+    if (rows != 0)
+    {
+        if (strcmp(result[3], OldPassword.c_str())==0)
+        {
+            updateSQL("UPDATE C74Log SET password = '"+NewPassword+"' WHERE account = '"+Account+"';");
+            if (errMsg == NULL) IsPass = 1;
+        }
+    }
+    else IsPass = 0;
+
+    free();
+    close();
+    return IsPass;
+}
+
+//---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::selectSQL(AnsiString SQL_SELECT)
 {
-    sqlite3_free_table(result);
     sqlite3_get_table(db ,SQL_SELECT.c_str(), &result , &rows, &cols, &errMsg);
-    if (errMsg != NULL) g_pMainThread->m_listLog.push_back(errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+}
+
+//---------------------------------------------------------------------------
+void __fastcall SQLITE3IF::insertSQL(AnsiString SQL_INSERT)
+{
+    sqlite3_exec(db, SQL_INSERT.c_str(), 0, 0, &errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+}
+
+//---------------------------------------------------------------------------
+void __fastcall SQLITE3IF::updateSQL(AnsiString SQL_UPDATE)
+{
+    sqlite3_exec(db, SQL_UPDATE.c_str(), 0, 0, &errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 }

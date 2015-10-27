@@ -161,7 +161,6 @@ __published:	// IDE-managed Components
         TGroupBox *GroupBox7;
         TLabel *Label79;
         TLabel *Label80;
-        TEdit *m_dAutoStopTimes;
         TLabel *Label81;
         TLabel *Label82;
         TLabel *Label83;
@@ -188,6 +187,7 @@ __published:	// IDE-managed Components
     TEdit *m_strSetupEENum;
     TComboBox *m_cmbHeadScal;
     TButton *btnHeadScalModify;
+    TEdit *m_dAutoStopRange;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbHeadScal();

@@ -113,6 +113,7 @@ __published:	// IDE-managed Components
     TServerSocket *ServerCIM;
     TShape *Shape3;
     TTimer *timerDIOStartAgain;
+    TMenuItem *N15;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -185,6 +186,8 @@ public:		// User declarations
         void __fastcall RefreshImage();
         void __fastcall SetAllDevice();
         void __fastcall RenewRadioGroup(bool bInit);
+        AnsiString __fastcall CheckAccount(AnsiString Account, AnsiString Password);
+        AnsiString __fastcall ChangePWD(AnsiString Account, AnsiString OldPassword, AnsiString NewPassword);
 
         static bool StartProcess(bool bStart);
         static bool OpenFilebyCIM(AnsiString strFileName);

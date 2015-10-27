@@ -338,7 +338,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dLamThirdTime[1], pWnd->m_dLamThirdTime1);
 
     DDX_Int(bRead, g_IniFile.m_nAutoInterval, pWnd->m_nAutoInterval);
-	DDX_Float(bRead, g_IniFile.m_dAutoStopTimes, pWnd->m_dAutoStopTimes);
+	DDX_Float(bRead, g_IniFile.m_dAutoStopRange, pWnd->m_dAutoStopRange);
 
 	DDX_Float(bRead, g_IniFile.m_dLamTime[0], pWnd->m_dLamTime0);
 	DDX_Float(bRead, g_IniFile.m_dLamTemp[0], pWnd->m_dLamTemp0);
@@ -391,7 +391,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
     DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
     DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
-    pWnd->m_strSetupEENum->Text = "";
+    pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
     while (1)
     {
@@ -410,13 +410,13 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
             {
                 Application->MessageBoxA("第三段速度不可超過第二段速度","Confirm",MB_OK);
             }
-            else if (pWnd->m_dAutoStopTimes->Text.ToDouble() < 1.0)
-            {
-                Application->MessageBoxA("超出容許誤差停機,必須大於1倍","Confirm",MB_OK);
-            }
             else if (pWnd->m_strSetupEENum->Text == "")
             {
                 Application->MessageBoxA("SetupEE 編號不可空白","Confirm",MB_OK);
+            }
+            else if (pWnd->m_dAutoStopRange->Text.ToDouble() <= pWnd->m_dPressCalRange->Text.ToDouble())
+            {
+                Application->MessageBoxA("自動停機誤差不可以<=容許誤差","Confirm",MB_OK);
             }
             else
             {
@@ -424,7 +424,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
                 break;
             }
         }
-        else 
+        else
         {
             break;
         }
@@ -459,7 +459,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	    DDX_Float(bRead, g_IniFile.m_dLamThirdTime[1], pWnd->m_dLamThirdTime1);
 
         DDX_Int(bRead, g_IniFile.m_nAutoInterval, pWnd->m_nAutoInterval);
-        DDX_Float(bRead, g_IniFile.m_dAutoStopTimes, pWnd->m_dAutoStopTimes);
+        DDX_Float(bRead, g_IniFile.m_dAutoStopRange, pWnd->m_dAutoStopRange);
 
 		DDX_Float(bRead, g_IniFile.m_dLamTime[0], pWnd->m_dLamTime0);
 		DDX_Float(bRead, g_IniFile.m_dLamTemp[0], pWnd->m_dLamTemp0);
@@ -651,6 +651,7 @@ void __fastcall TfrmMain::N11Click(TObject *Sender)
 void __fastcall TfrmMain::OP1Click(TObject *Sender)
 {
 	SetPrivilege(0);
+    g_IniFile.m_strLogInENGAccount = "";
 }
 //---------------------------------------------------------------------------
 
@@ -661,16 +662,43 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
     //CreateCaptionFile(pPwdDlg);
     ReadCaptionFile(pPwdDlg, g_IniFile.m_nLanguageMode);
 
-    if (g_IniFile.m_nLanguageMode>0) pPwdDlg->labelOldPassword->Caption = "Plase Enter Password";
-    else pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
+    if (g_IniFile.m_nLanguageMode>0)
+    {
+        pPwdDlg->labelOldPassword->Caption = "Enter Password";
+        pPwdDlg->labelAccount->Caption = "Enter Account";
+    }
+    else
+    {
+        pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
+        pPwdDlg->labelAccount->Caption = "請輸入帳號";
+    }
 
 	pPwdDlg->labelNewPassword->Visible = false;
 	pPwdDlg->editNewPassword->Visible = false;
-	if (pPwdDlg->ShowModal() == mrOk)
-	{
-		if (pPwdDlg->editOldPassword->Text == g_IniFile.m_strENGPassword) m_nUserLevel = 1;
-		else { Application->MessageBox("密碼錯誤!!", "錯誤", MB_OK); m_nUserLevel = 0; }
-	}
+
+    while (1)
+    {
+        if (pPwdDlg->ShowModal()== mrOk)
+        {
+            AnsiString result = CheckAccount(pPwdDlg->editAccount->Text, pPwdDlg->editOldPassword->Text);
+            if (result == "帳號錯誤") Application->MessageBox("帳號錯誤!!", "認證", MB_OK);
+            else if (result == "密碼錯誤") Application->MessageBox("密碼錯誤!!", "認證", MB_OK);
+            else
+            {
+                Application->MessageBox("登入成功!!", "認證", MB_OK);
+                g_IniFile.m_strLogInENGAccount = pPwdDlg->editAccount->Text;
+                m_nUserLevel = 1;
+                break;
+            }
+        }
+        else
+        {
+            g_IniFile.m_strLogInENGAccount = "";
+            m_nUserLevel = 0;
+            break;
+        }
+    }
+
 	SetPrivilege(m_nUserLevel);
 
 	delete pPwdDlg;
@@ -681,15 +709,28 @@ void __fastcall TfrmMain::N13Click(TObject *Sender)
 {
 	TfrmPassword *pPwdDlg = new TfrmPassword(this);
 
-		//CreateCaptionFile(pPwdDlg);
-		ReadCaptionFile(pPwdDlg, g_IniFile.m_nLanguageMode);
+    //CreateCaptionFile(pPwdDlg);
+    ReadCaptionFile(pPwdDlg, g_IniFile.m_nLanguageMode);
 
-	if (pPwdDlg->ShowModal() == mrOk)
-	{
-		if (pPwdDlg->editOldPassword->Text == g_IniFile.m_strENGPassword)
-			g_IniFile.m_strENGPassword = pPwdDlg->editNewPassword->Text;
-	}
-        
+    while (1)
+    {
+        if (pPwdDlg->ShowModal()== mrOk)
+        {
+            AnsiString result = ChangePWD(pPwdDlg->editAccount->Text, pPwdDlg->editOldPassword->Text, pPwdDlg->editNewPassword->Text);
+            if (result == "修改失敗") Application->MessageBox("修改失敗!!", "認證", MB_OK);
+            else
+            {
+                Application->MessageBox("修改成功!!", "認證", MB_OK);
+                m_nUserLevel = 0;
+                break;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
 	delete pPwdDlg;
 }
 //---------------------------------------------------------------------------
@@ -698,9 +739,11 @@ void __fastcall TfrmMain::Admin1Click(TObject *Sender)
 {
 	TfrmPassword *pPwdDlg = new TfrmPassword(this);
 
-	if (g_IniFile.m_nLanguageMode>0) pPwdDlg->labelOldPassword->Caption = "Plase Enter Password";
+	if (g_IniFile.m_nLanguageMode>0) pPwdDlg->labelOldPassword->Caption = "Enter Password";
     else pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
         
+    pPwdDlg->labelAccount->Visible = false;
+    pPwdDlg->editAccount->Visible = false;
 	pPwdDlg->labelNewPassword->Visible = false;
 	pPwdDlg->editNewPassword->Visible = false;
 	if (pPwdDlg->ShowModal() == mrOk)
@@ -713,7 +756,6 @@ void __fastcall TfrmMain::Admin1Click(TObject *Sender)
 	delete pPwdDlg;
 }
 //---------------------------------------------------------------------------
-
 
 //Other
 void __fastcall TfrmMain::SpeedButton1Click(TObject *Sender)
@@ -1172,6 +1214,7 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		N6->Enabled = false;
 		N9->Enabled = false;
 		N12->Enabled = true;
+        N15->Enabled = false;
 
 		break;
 	case 1:
@@ -1180,14 +1223,16 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		N6->Enabled = true;
 		N9->Enabled = true;
 		N12->Enabled = true;
+        N15->Enabled = false;
 
 		break;
 	case 2:
 		N1->Enabled = true;
-		N5->Enabled = true;
-		N6->Enabled = true;
-		N9->Enabled = true;
+		N5->Enabled = false;
+		N6->Enabled = false;
+		N9->Enabled = false;
 		N12->Enabled = true;
+        N15->Enabled = true;
 
 		break;
 	}
@@ -1882,6 +1927,43 @@ void __fastcall TfrmMain::RenewRadioGroup(bool bInit)
 }
 //---------------------------------------------------------------------------
 
+AnsiString __fastcall TfrmMain::CheckAccount(AnsiString Account, AnsiString Password)
+{
+    AnsiString result = "";
+    SQLITE3IF *g_AccountLog = new SQLITE3IF(2, "C:\\C74 Log\\AccountLog");
+
+    switch (g_AccountLog->checkAccountPass(Account, Password))
+    {
+    case 0:
+        result = "准許通過";
+        break;
+    case 1:
+        result = "帳號錯誤";
+        break;
+    case 2:
+        result = "密碼錯誤";
+        break;
+    default:
+        break;
+    }
+
+    delete g_AccountLog;
+    return result;
+}
+//---------------------------------------------------------------------------
+
+AnsiString __fastcall TfrmMain::ChangePWD(AnsiString Account, AnsiString OldPassword, AnsiString NewPassword)
+{
+    AnsiString result = "";
+    SQLITE3IF *g_AccountLog = new SQLITE3IF(2, "C:\\C74 Log\\AccountLog");
+
+    (g_AccountLog->changeAccountPass(Account, OldPassword, NewPassword)) ? result = "修改成功" : result = "修改失敗";
+
+    delete g_AccountLog;
+    return result;
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TfrmMain::btnStartMotor0Click(TObject *Sender)
 {
     if (btnStartMotor0->Down == true)
@@ -1999,4 +2081,6 @@ void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
     g_pMainThread->m_bResetAgain = true;
 }
 //---------------------------------------------------------------------------
+
+
 

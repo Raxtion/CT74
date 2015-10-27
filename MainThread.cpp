@@ -1208,7 +1208,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		{
 			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]);
 			g_Motion.ChangeSpeed(nAxisLifter, 10.0);
-			m_dLamTimer[bFront] = 0;
+			m_dLamTimer[bFront] = 0.0;
 			nThreadIndex++;
 		}
 		break;
@@ -1549,17 +1549,17 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				//--自動情況與手動皆判斷誤差容許值------------------------------------------------------------------------------------
 				//if (nTimes != 0)//--------------------------------------------------------------------------------------------------------
 				//{
-					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * g_IniFile.m_dAutoStopTimes) ||
-						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * g_IniFile.m_dAutoStopTimes))
+					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dAutoStopRange / 100.0) * 1.0) ||
+						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dAutoStopRange / 100.0) * 1.0))
 					{
-						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopTimes) + "，必須停機");
+						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopRange) + "，必須停機");
 						g_IniFile.m_nErrorCode = 74;
                         m_bPrassNeedReCal = false;
 					}
 					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * 1.0) ||
 								dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * 1.0))
 					{
-						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopTimes) + "，必須重新校正");
+						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
                         m_bPrassNeedReCal = true;
 					}
 				//}

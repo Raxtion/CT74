@@ -527,7 +527,7 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_dLamThirdTime1","mm","F4","0","1000",
 
 		"m_dAutoInterval","mm","F4","0","1000",
-		"m_dAutoStopTimes","mm","F4","0","1000",
+		"m_dAutoStopRange","mm","F4","0","1000",
 		"m_nAutoInterval","mm","F4","0","1000",
 		"m_dAutoRunTempRange","mm","F4","0","1000",
 		"m_dVacDelayTime","mm","F4","0","1000",

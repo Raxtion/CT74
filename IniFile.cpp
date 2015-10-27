@@ -39,6 +39,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_String(bRead,pIniFile,System_Section,"ARTPassword",m_strARTPassword,"CLARE");
   DDXFile_String(bRead,pIniFile,System_Section,"ENGPassword",m_strENGPassword,"123");
   DDXFile_String(bRead,pIniFile,System_Section,"LastFileName",m_strLastFileName,"C:\\Product Data\\Default.ini");
+  DDXFile_String(bRead,pIniFile,System_Section,"LogInENGAccount",m_strLogInENGAccount,"");
 
   //Machine
   DDXFile_Float(bRead,pIniFile,Machine_Section,"JogSpeed1",m_dJogSpeed[0],30.0);
@@ -134,7 +135,7 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamThirdTime1",m_dLamThirdTime[1],60.0);
 
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nAutoInterval",m_nAutoInterval,3);
-  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dAutoStopTimes",m_dAutoStopTimes,2.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dAutoStopRange",m_dAutoStopRange,2.0);
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamTime0",m_dLamTime[0],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamTemp0",m_dLamTemp[0],0.0);

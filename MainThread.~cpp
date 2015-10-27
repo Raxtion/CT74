@@ -235,7 +235,7 @@ void __fastcall CMainThread::Execute()
 		if (g_DIO.ReadDIBit(DI::ResetBtn) && m_bResetAgain)
 		{
 			g_IniFile.m_nErrorCode = 0;
-            if (m_bResetAgain == true) m_listLog.push_back("機台重置");
+            if (m_bResetAgain == true && bHomeDone) m_listLog.push_back("機台重置");
 			g_DIO.SetDO(DO::RedLamp, false);
 			g_DIO.SetDO(DO::Buzzer, false);
             m_bResetAgain = false;
@@ -1549,17 +1549,17 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				//--自動情況與手動皆判斷誤差容許值------------------------------------------------------------------------------------
 				//if (nTimes != 0)//--------------------------------------------------------------------------------------------------------
 				//{
-					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * g_IniFile.m_dAutoStopTimes) ||
-						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * g_IniFile.m_dAutoStopTimes))
+					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dAutoStopRange / 100.0) * 1.0) ||
+						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dAutoStopRange / 100.0) * 1.0))
 					{
-						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopTimes) + "，必須停機");
+						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopRange) + "，必須停機");
 						g_IniFile.m_nErrorCode = 74;
                         m_bPrassNeedReCal = false;
 					}
 					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * 1.0) ||
 								dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * 1.0))
 					{
-						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopTimes) + "，必須重新校正");
+						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
                         m_bPrassNeedReCal = true;
 					}
 				//}
