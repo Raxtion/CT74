@@ -78,6 +78,9 @@ public:
 	double m_dDownLaserRealTime;            //The result of g_ModBus get DownLaser in UI
 	double m_dFrontTempRealTime;            //The result of g_ModBus get FrontTemp in UI
 	double m_dRearTempRealTime;             //The result of g_ModBus get RearTemp in UI
+    double m_dForntPressloseRealTime;       //The result of g_ModBus get FrontPresslose in UI
+    double m_dRearPressloseRealTime;        //The result of g_ModBus get RearPresslose in UI
+
 
 	//Thread HandShake
 	bool m_bLamReady[2];            //1: front 0:Rear

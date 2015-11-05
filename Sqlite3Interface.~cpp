@@ -228,7 +228,6 @@ void __fastcall SQLITE3IF::insertSQL(AnsiString SQL_INSERT)
 //---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::updateSQL(AnsiString SQL_UPDATE)
 {
-    //sqlite3_get_table(db ,SQL_UPDATE.c_str(), &result , &rows, &cols, &errMsg);
     sqlite3_exec(db, SQL_UPDATE.c_str(), 0, 0, &errMsg);
     if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 }

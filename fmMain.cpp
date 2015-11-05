@@ -967,6 +967,8 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
     g_pMainThread->m_dDownLaserRealTime = g_ModBus.GetAnalogData(3, 0);
     g_pMainThread->m_dUpperLaserRealTime = g_ModBus.GetAnalogData(3, 1);
+    g_pMainThread->m_dForntPressloseRealTime = g_ModBus.GetAnalogData(3, 2);
+    g_pMainThread->m_dRearPressloseRealTime = g_ModBus.GetAnalogData(3, 3);
 
     //--- real time monitor temperature
     if (g_pMainThread->m_bIsManualFinish == true
@@ -992,6 +994,17 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
         else if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_IniFile.m_nErrorCode = 82;
         else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_IniFile.m_nErrorCode = 83;
         else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_IniFile.m_nErrorCode = 84;
+
+        if (g_pMainThread->m_dForntPressloseRealTime < 0)
+        {
+            g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(F) Value= 0.00", g_pMainThread->m_dForntPressloseRealTime));
+            g_IniFile.m_nErrorCode = 85;
+        }
+        else if(g_pMainThread->m_dRearPressloseRealTime < 0)
+        {
+            g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(R) Value= 0.00", g_pMainThread->m_dRearPressloseRealTime));
+            g_IniFile.m_nErrorCode = 86;
+        }
     }
 
     Timer2->Enabled = true;

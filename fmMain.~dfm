@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = -14
-  Top = 49
+  Left = 236
+  Top = 164
   Width = 1350
-  Height = 623
+  Height = 615
   Caption = 'frmMain'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -814,7 +814,7 @@ object frmMain: TfrmMain
     Top = 328
   end
   object timerDIOStartAgain: TTimer
-    Interval = 2000
+    Interval = 800
     OnTimer = timerDIOStartAgainTimer
     Left = 352
     Top = 296

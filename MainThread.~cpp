@@ -185,6 +185,7 @@ void __fastcall CMainThread::Execute()
 					g_IniFile.m_nErrorCode = 1003;
 					m_bIsHomingFromBtn = false;
 					m_nIsFullHoming = -1;
+                    m_nPassBoatCount1 == 0;
 				}
 				else if (m_nIsFullHoming == 2)
 				{
@@ -263,6 +264,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::LamMotorStart2, false);
 			g_DIO.SetDO(DO::EjectMotorStart1, false);
 			g_DIO.SetDO(DO::EjectMotorStart2, false);
+            g_DIO.SetDO(DO::ReadyIn1, false);
             if (m_bStopAgain == true)
             {
                 m_listLog.push_back("機台停止");
@@ -434,8 +436,8 @@ void __fastcall CMainThread::Execute()
 
 					SetWorkSpeed();
 
-					nThreadIndex[12] = 0;
-					nThreadIndex[13] = 0;
+					//nThreadIndex[12] = 0;
+					//nThreadIndex[13] = 0;
 					if (g_eqpXML.m_CIMStatus == "1") g_eqpXML.SendEventReport("115");
 				}
 				m_bIsStartProcessbyCIM = false;
@@ -1208,7 +1210,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		{
 			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]);
 			g_Motion.ChangeSpeed(nAxisLifter, 10.0);
-			m_dLamTimer[bFront] = 0;
+			m_dLamTimer[bFront] = 0.0;
 			nThreadIndex++;
 		}
 		break;
@@ -1552,14 +1554,14 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dAutoStopRange / 100.0) * 1.0) ||
 						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dAutoStopRange / 100.0) * 1.0))
 					{
-						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopRange) + "，必須停機");
+						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.0000 %", g_IniFile.m_dAutoStopRange) + "，必須停機");
 						g_IniFile.m_nErrorCode = 74;
                         m_bPrassNeedReCal = false;
 					}
 					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * 1.0) ||
 								dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * 1.0))
 					{
-						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 倍", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
+						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 %", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
                         m_bPrassNeedReCal = true;
 					}
 				//}
@@ -1574,10 +1576,10 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				/*新設定值增加值採用曲線增加，當開始校正時bPassCal為F，代表該Unit尚未通過第一次PressCal，
 				當第一次進入容許值之後，bPassCal為T，就進入微調設定值，而不重新由0.1逼近，一直微調到連續通過3次;或動作25次還過不去，就出現Error並跳出.*/
                 /*將校正標準提高2倍以防止自動走位校正會一直在校正(機構問題:第一次量測下數值偏高,容易超出容許範圍*/
-				//if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 100.0) ||
-				//	dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 100.0))
-                if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 200.0) ||
-					dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 200.0))
+				if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 100.0) ||
+					dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 100.0))
+                //if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 150.0) ||
+				//	dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 150.0))
 				{
 					m_listLog.push_back("NG-->Try Again");
 					nTryTimes++;
@@ -1587,6 +1589,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 						//dNewValue=dNewValue*dNewValue/dLoadCellValue;
 						//dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]);
 						//dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2));
+                        //if (((g_IniFile.m_dLamPress[bFront]* (1.0 + g_IniFile.m_dPressCalRange / 100.0)) - dLoadCellValue) < 0) dNewValue = 0.1;
                         if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) < 0) dNewValue = 0.1;
                         else dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]), 0.9));
                         
@@ -1721,6 +1724,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)
 	{
 		//nMoveIndex = 0;
+        bPassCal = false;
 		nThreadIndex = 0;
 		nTryTimes = 0;
 		m_bStartAutoCal[bFront] = false;

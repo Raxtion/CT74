@@ -63,7 +63,7 @@ void __fastcall SQLITE3IF::open(int DBtype)
             break;
         case 1:
             /* «Ø¥ß Action Table */
-            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), action VARCHAR(30));", 0, 0, &errMsg);
+            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), action VARCHAR(50));", 0, 0, &errMsg);
             if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         case 2:
