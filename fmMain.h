@@ -161,6 +161,7 @@ __published:	// IDE-managed Components
     void __fastcall ServerCIMClientRead(TObject *Sender,
           TCustomWinSocket *Socket);
     void __fastcall timerDIOStartAgainTimer(TObject *Sender);
+    void __fastcall N15Click(TObject *Sender);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;

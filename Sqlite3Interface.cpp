@@ -8,6 +8,7 @@
 #include "dir.h"
 #include "MainThread.h"
 #include "DeltaPLC.h"
+#include "GlobalFunction.h"
 
 extern CMainThread *g_pMainThread;
 extern CDeltaPLC g_ModBus;
@@ -212,6 +213,79 @@ int __fastcall SQLITE3IF::changeAccountPass(AnsiString Account, AnsiString OldPa
 }
 
 //---------------------------------------------------------------------------
+AnsiString __fastcall SQLITE3IF::queryAccountPass()
+{
+    AnsiString Result = "";
+
+    open(2);
+    selectSQL("SELECT account, password FROM C74Log;");
+
+    if (rows != 0)
+    {
+        for (int i=0;i<rows+1;i++)
+        {
+            Result.cat_sprintf("%s    %s\r\n", result[i*2], result[i*2+1]);
+        }
+    }
+    else Result = "";
+
+    free();
+    close();
+    return Result;
+}
+
+//---------------------------------------------------------------------------
+AnsiString __fastcall SQLITE3IF::updateAccountPass(AnsiString Input)
+{
+    AnsiString Result = "";
+
+    TStringList* strRowsList= SplitString(Input, "\r\n");
+
+    open(2);
+    /* 刪除 Account Table*/
+    sqlite3_exec(db, "DELETE FROM C74Log;", 0, 0, &errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+
+    for (int i=1;i<(strRowsList->Count);i++)
+    {
+        /* Take Account and Password */
+        TStringList* strDataList = SplitString(strRowsList->operator[](i) , "    ");
+
+        try
+        {
+            /* INSERT Account Data */
+            AnsiString strLastrowid = IntToStr(i-1);
+            AnsiString insertsql = "INSERT INTO C74Log VALUES( "+strLastrowid
+                                                        +" ,'"+strDataList->operator[](0)
+                                                        +"','"+strDataList->operator[](1)+"');";
+            /* 新增一筆資料 */
+            sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
+            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+        }
+        catch (...)
+        {
+            Result = "falure";
+            delete strDataList;
+            break;
+        }
+        delete strDataList;
+    }
+
+    /* 確認 */
+    selectSQL("SELECT account, password FROM C74Log;");
+    if (rows != 0 && Result != "falure")
+    {
+        Result = "succeed";
+    }
+    else Result = "falure";
+
+    free();
+    close();
+    delete strRowsList;
+    return Result;
+}
+
+//---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::selectSQL(AnsiString SQL_SELECT)
 {
     sqlite3_get_table(db ,SQL_SELECT.c_str(), &result , &rows, &cols, &errMsg);
@@ -231,3 +305,4 @@ void __fastcall SQLITE3IF::updateSQL(AnsiString SQL_UPDATE)
     sqlite3_exec(db, SQL_UPDATE.c_str(), 0, 0, &errMsg);
     if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 }
+

@@ -29,6 +29,7 @@
 #include "fmOffset.h"
 #include "Sqlite3Interface.h"
 #include "EQPXML.h"
+#include "fmAccountManual.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -757,6 +758,25 @@ void __fastcall TfrmMain::Admin1Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfrmMain::N15Click(TObject *Sender)
+{
+    TfrmAccountManual *pAccountManual = new TfrmAccountManual(this);
+
+    SQLITE3IF *g_AccountLog = new SQLITE3IF(2, "C:\\C74 Log\\AccountLog");
+
+    AnsiString strQueryResult = g_AccountLog->queryAccountPass();
+    pAccountManual->Memo1->Text = strQueryResult;
+
+    if (pAccountManual->ShowModal() == mrOk)
+	{
+        AnsiString Result = g_AccountLog->updateAccountPass(pAccountManual->Memo1->Text);
+        Application->MessageBox(Result.c_str(), "ป{รา", MB_OK);
+    }
+    delete pAccountManual;
+    delete g_AccountLog;
+}
+//---------------------------------------------------------------------------
+
 //Other
 void __fastcall TfrmMain::SpeedButton1Click(TObject *Sender)
 {
@@ -839,7 +859,6 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 		g_eqpXML.m_strCIMMsgLog.pop_front();
 	}
 
-
 	//---Error Code
 	if (g_IniFile.m_nErrorCode>0 && (nErrorCode != g_IniFile.m_nErrorCode))
 	{
@@ -871,7 +890,6 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 	//---Refresh
 	if (g_pMainThread->m_bRefresh)
 	{
-
 		g_pMainThread->m_bRefresh = false;
 	}
 
@@ -994,7 +1012,11 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
         else if (g_Motion.GetActualPos(2) < -2.9 || abs(g_Motion.GetActualPos(2) > 549.0)) g_IniFile.m_nErrorCode = 82;
         else if (g_Motion.GetActualPos(4) < g_IniFile.m_dNLimitF || abs(g_Motion.GetActualPos(4) > g_IniFile.m_dPLimitF)) g_IniFile.m_nErrorCode = 83;
         else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_IniFile.m_nErrorCode = 84;
+    }
 
+    //--- real time detect Front and Rear Gas Pressure leaky
+    if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true)
+    {
         if (g_pMainThread->m_dForntPressloseRealTime < 0)
         {
             g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(F) Value= 0.00", g_pMainThread->m_dForntPressloseRealTime));
@@ -1029,9 +1051,7 @@ void __fastcall TfrmMain::Timer3Timer(TObject *Sender)
     }
 
     //--Add tempLog---
-    //g_TempLog.open(0);
     g_TempLog.insertTemp();
-    //g_TempLog.close();
 
     Timer3->Enabled = true;
 }
@@ -1241,9 +1261,9 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		break;
 	case 2:
 		N1->Enabled = true;
-		N5->Enabled = false;
-		N6->Enabled = false;
-		N9->Enabled = false;
+		N5->Enabled = true;
+		N6->Enabled = true;
+		N9->Enabled = true;
 		N12->Enabled = true;
         N15->Enabled = true;
 
@@ -2094,6 +2114,5 @@ void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
     g_pMainThread->m_bResetAgain = true;
 }
 //---------------------------------------------------------------------------
-
 
 

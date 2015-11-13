@@ -29,6 +29,9 @@ public:
     void __fastcall insertAccount(AnsiString Account, AnsiString Password);
     int __fastcall checkAccountPass(AnsiString Account, AnsiString Password);   //"准許通過"=0; "帳號錯誤"=1; "密碼錯誤"=2
     int __fastcall changeAccountPass(AnsiString Account, AnsiString OldPassword, AnsiString NewPassword);  //"修改失敗"=0; "修改成功"=1
+    AnsiString __fastcall queryAccountPass();                                   //retrun select * form C74log
+    AnsiString __fastcall updateAccountPass(AnsiString Input);                  //return "succeed" "falure"
+
     void __fastcall selectSQL(AnsiString SQL_SELECT);
     void __fastcall insertSQL(AnsiString SQL_INSERT);
     void __fastcall updateSQL(AnsiString SQL_UPDATE);

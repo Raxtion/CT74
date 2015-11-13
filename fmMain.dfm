@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 93
-  Top = 190
+  Left = 0
+  Top = 10
   Width = 1350
   Height = 615
   Caption = 'frmMain'
@@ -743,6 +743,7 @@ object frmMain: TfrmMain
     end
     object N15: TMenuItem
       Caption = #24115#34399#31649#29702
+      OnClick = N15Click
     end
     object N12: TMenuItem
       Caption = #27402#38480

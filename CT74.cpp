@@ -14,6 +14,7 @@ USEFORM("fmAD.cpp", frmAD);
 USEFORM("fmManual.cpp", frmManual);
 USEFORM("fmOffset.cpp", frmOffser);
 USEFORM("fmHeadScalModify.cpp", frmHeadScalModify);
+USEFORM("fmAccountManual.cpp", frmAccountManual);
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -22,6 +23,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                  Application->Initialize();
                  Application->CreateForm(__classid(TfrmMain), &frmMain);
          Application->CreateForm(__classid(TfrmHeadScalModify), &frmHeadScalModify);
+         Application->CreateForm(__classid(TfrmAccountManual), &frmAccountManual);
          Application->Run();
         }
         catch (Exception &exception)

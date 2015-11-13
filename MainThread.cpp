@@ -114,8 +114,6 @@ void __fastcall CMainThread::Execute()
 		//Status
 		m_bIsHomeDone = bHomeDone;
 		m_bIsAutoMode = bAutoMode;
-		//
-
 		g_Motion.m_bAutoMode = m_bIsAutoMode;
 
 

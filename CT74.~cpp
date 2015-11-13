@@ -13,6 +13,7 @@ USEFORM("fmMotorCheck.cpp", frmMotorCheck);
 USEFORM("fmAD.cpp", frmAD);
 USEFORM("fmManual.cpp", frmManual);
 USEFORM("fmOffset.cpp", frmOffser);
+USEFORM("fmHeadScalModify.cpp", frmHeadScalModify);
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -20,6 +21,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         {
                  Application->Initialize();
                  Application->CreateForm(__classid(TfrmMain), &frmMain);
+         Application->CreateForm(__classid(TfrmHeadScalModify), &frmHeadScalModify);
          Application->Run();
         }
         catch (Exception &exception)
