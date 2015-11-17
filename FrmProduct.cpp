@@ -23,7 +23,8 @@ __fastcall TfmProduct::TfmProduct(TComponent* Owner)
 void __fastcall TfmProduct::FormCreate(TObject *Sender)
 {
     RenewRadioGroup();
-    RenewCmbHeadScal();
+    RenewCmbScal("HeadScal");
+    RenewCmbScal("ModuleScal");
 }
 //---------------------------------------------------------------------------
 void __fastcall TfmProduct::RenewRadioGroup()
@@ -49,25 +50,38 @@ void __fastcall TfmProduct::RenewRadioGroup()
 }
 
 //---------------------------------------------------------------------------
-void __fastcall TfmProduct::RenewCmbHeadScal()
+void __fastcall TfmProduct::RenewCmbScal(AnsiString Hint)
 {
-    this->m_cmbHeadScal->Clear();
+    TComboBox* pCmb;
+    if (Hint == "HeadScal") pCmb = this->m_cmbHeadScal;
+    else if (Hint == "ModuleScal") pCmb = this->m_cmbModuleScal;
+    else return;
 
-    TStringList* strList = SplitString(g_IniFile.m_strHeadScals, "/");
+    pCmb->Clear();
+
+    TStringList* strList;
+    if (Hint == "HeadScal") strList = SplitString(g_IniFile.m_strHeadScals, "/");
+    else if (Hint == "ModuleScal") strList = SplitString(g_IniFile.m_strModuleScals, "/");
+    else return;
+
     for (int i=0;i<strList->Count;i++)
     {
-        this->m_cmbHeadScal->AddItem(strList->Strings[i], NULL);
+        pCmb->AddItem(strList->Strings[i], NULL);
     }
-    this->m_cmbHeadScal->ItemIndex = 0;
+    pCmb->ItemIndex = 0;
     delete strList;
 }
 
 //---------------------------------------------------------------------------
-void __fastcall TfmProduct::btnHeadScalModifyClick(TObject *Sender)
+void __fastcall TfmProduct::btnScalModifyClick(TObject *Sender)
 {
+    TButton* pbtn = (TButton*)Sender;
     TfrmHeadScalModify *pHeadScalModifyDlg = new TfrmHeadScalModify(this);
 
-    TStringList* strList = SplitString(g_IniFile.m_strHeadScals, "/");
+    TStringList* strList;
+    if (pbtn->Hint == "HeadScal") strList = SplitString(g_IniFile.m_strHeadScals, "/");
+    else if (pbtn->Hint == "ModuleScal") strList = SplitString(g_IniFile.m_strModuleScals, "/");
+    else return;
 
     pHeadScalModifyDlg->cmbSelectData->AddItem("", NULL);
     for (int i=0;i<strList->Count;i++)
@@ -90,7 +104,8 @@ void __fastcall TfmProduct::btnHeadScalModifyClick(TObject *Sender)
         }
         if (bIsInputINstrList == false && pHeadScalModifyDlg->cmbSelectData->Text != "")
         {
-            g_IniFile.m_strHeadScals += (pHeadScalModifyDlg->cmbSelectData->Text+"/");
+            if (pbtn->Hint == "HeadScal") g_IniFile.m_strHeadScals += (pHeadScalModifyDlg->cmbSelectData->Text+"/");
+            else if (pbtn->Hint == "ModuleScal") g_IniFile.m_strModuleScals += (pHeadScalModifyDlg->cmbSelectData->Text+"/");
             g_IniFile.MachineFile(false);
         }
 	}
@@ -108,13 +123,15 @@ void __fastcall TfmProduct::btnHeadScalModifyClick(TObject *Sender)
         }
         if (bIsInputINstrList == true && pHeadScalModifyDlg->cmbSelectData->Text != "")
         {
-            ReplaceString(&g_IniFile.m_strHeadScals, pHeadScalModifyDlg->cmbSelectData->Items->Strings[pHeadScalModifyDlg->cmbSelectData->ItemIndex]+"/", "");
+            if (pbtn->Hint == "HeadScal") ReplaceString(&g_IniFile.m_strHeadScals, pHeadScalModifyDlg->cmbSelectData->Items->Strings[pHeadScalModifyDlg->cmbSelectData->ItemIndex]+"/", "");
+            else if (pbtn->Hint == "ModuleScal") ReplaceString(&g_IniFile.m_strModuleScals, pHeadScalModifyDlg->cmbSelectData->Items->Strings[pHeadScalModifyDlg->cmbSelectData->ItemIndex]+"/", "");
             g_IniFile.MachineFile(false);
         }
     }
-    RenewCmbHeadScal();
+    RenewCmbScal(pbtn->Hint);
     delete strList;
     delete pHeadScalModifyDlg;
 }
 //---------------------------------------------------------------------------
+
 

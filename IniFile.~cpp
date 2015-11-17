@@ -39,7 +39,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_String(bRead,pIniFile,System_Section,"ARTPassword",m_strARTPassword,"CLARE");
   DDXFile_String(bRead,pIniFile,System_Section,"ENGPassword",m_strENGPassword,"123");
   DDXFile_String(bRead,pIniFile,System_Section,"LastFileName",m_strLastFileName,"C:\\Product Data\\Default.ini");
-  DDXFile_String(bRead,pIniFile,System_Section,"LogInENGAccount",m_strLogInENGAccount,"")
+  DDXFile_String(bRead,pIniFile,System_Section,"LogInENGAccount",m_strLogInENGAccount,"OP");
 
   //Machine
   DDXFile_Float(bRead,pIniFile,Machine_Section,"JogSpeed1",m_dJogSpeed[0],30.0);
@@ -102,6 +102,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLastLamPress1",m_dLastLamPress[1],0.0);
 
   DDXFile_String(bRead,pIniFile,Machine_Section,"m_strHeadScals",m_strHeadScals,"2x2/3x3/4x4/");
+  DDXFile_String(bRead,pIniFile,Machine_Section,"m_strModuleScals",m_strModuleScals,"2x2/3x3/4x4/");
   delete pIniFile;
 }
 //---------------------------------------------------------------------------
@@ -192,9 +193,11 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
 
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nHeadType",m_nHeadType,0);
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strHeadScal",m_strHeadScal,0);
+  DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleScal",m_strModuleScal,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nVacummOn",m_nVacummOn,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nPressCheck",m_nPressCheck,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDummyCheck",m_nDummyCheck,0);
+  DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleNum",m_strModuleNum,"");
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strSetupEENum",m_strSetupEENum,"");
 
   delete pIniFile;
@@ -207,6 +210,25 @@ AnsiString __fastcall CIniFile::GetErrorString(char *SectionName,int nCode)
 
   if(m_nLanguageMode==0) strErrName=ErrorMessageFileName;
   else strErrName=ErrorMessageEngFileName;
+
+  strFileName.sprintf("%s%s%s",IniFile_Dir,ErrorMessage_Dir,strErrName);
+  pIniFile = new TIniFile(strFileName);
+
+  strCode.sprintf("E%04d",nCode);
+  if(m_nLanguageMode==0) strErrMsg=pIniFile->ReadString(SectionName,strCode,"¥¼©w¸q¿ù»~½X!!");
+  else strErrMsg=pIniFile->ReadString(SectionName,strCode,"Not Defined Error Code!!!");
+  strErrMsg1.sprintf("[%s] %s=%s",SectionName,strCode,strErrMsg);
+  delete pIniFile;
+
+  return strErrMsg1+"\n";
+}
+//---------------------------------------------------------------------------
+AnsiString __fastcall CIniFile::GetErrorStringENG(char *SectionName,int nCode)
+{
+  AnsiString strFileName,strErrMsg,strErrMsg1,strCode,strErrName;
+  TIniFile *pIniFile;
+
+  strErrName=ErrorMessageEngFileName;
 
   strFileName.sprintf("%s%s%s",IniFile_Dir,ErrorMessage_Dir,strErrName);
   pIniFile = new TIniFile(strFileName);

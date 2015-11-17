@@ -1,10 +1,10 @@
 object fmProduct: TfmProduct
-  Left = 756
-  Top = 32
+  Left = 27
+  Top = 12
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 588
-  ClientWidth = 1105
+  ClientWidth = 1301
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -45,35 +45,35 @@ object fmProduct: TfmProduct
     Caption = #177' '
   end
   object Label88: TLabel
-    Left = 528
+    Left = 688
     Top = 552
     Width = 16
     Height = 16
     Caption = #31186
   end
   object Label87: TLabel
-    Left = 336
+    Left = 496
     Top = 552
     Width = 144
     Height = 16
     Caption = #31532#20108#27425#30495#31354#27298#28204#24310#36978
   end
   object Label92: TLabel
-    Left = 592
+    Left = 784
     Top = 552
     Width = 57
     Height = 16
     Caption = 'Setup EE'
   end
   object Label93: TLabel
-    Left = 792
+    Left = 984
     Top = 552
     Width = 42
     Height = 16
     Caption = '('#32232#34399')'
   end
   object m_bNotLam: TCheckBox
-    Left = 232
+    Left = 288
     Top = 552
     Width = 73
     Height = 17
@@ -81,7 +81,7 @@ object fmProduct: TfmProduct
     TabOrder = 13
   end
   object BitBtn1: TBitBtn
-    Left = 856
+    Left = 1088
     Top = 544
     Width = 97
     Height = 33
@@ -89,7 +89,7 @@ object fmProduct: TfmProduct
     Kind = bkOK
   end
   object BitBtn2: TBitBtn
-    Left = 960
+    Left = 1192
     Top = 544
     Width = 97
     Height = 33
@@ -726,7 +726,7 @@ object fmProduct: TfmProduct
     Left = 536
     Top = 272
     Width = 273
-    Height = 81
+    Height = 89
     Caption = #24460#22739#21512'['#19979#27169#28204#39640']'#36215#22987#20301#32622
     TabOrder = 8
     object Label42: TLabel
@@ -930,7 +930,7 @@ object fmProduct: TfmProduct
     Left = 816
     Top = 272
     Width = 273
-    Height = 81
+    Height = 89
     Caption = #21069#22739#21512'['#19979#27169#28204#39640']'#36215#22987#20301#32622
     TabOrder = 11
     object Label54: TLabel
@@ -1219,7 +1219,7 @@ object fmProduct: TfmProduct
     Text = 'm_dAutoRunTempRange'
   end
   object m_dVacDelayTime: TEdit
-    Left = 488
+    Left = 648
     Top = 548
     Width = 33
     Height = 24
@@ -1229,7 +1229,7 @@ object fmProduct: TfmProduct
   object GroupBox14: TGroupBox
     Left = 896
     Top = 368
-    Width = 193
+    Width = 393
     Height = 169
     Caption = #20854#20182
     TabOrder = 19
@@ -1249,24 +1249,31 @@ object fmProduct: TfmProduct
     end
     object Label89: TLabel
       Left = 8
-      Top = 68
+      Top = 92
       Width = 64
       Height = 16
       Caption = #30495#31354#38283#21855
     end
     object Label90: TLabel
       Left = 8
-      Top = 92
+      Top = 116
       Width = 64
       Height = 16
       Caption = #22739#21147#39511#35657
     end
-    object Label91: TLabel
+    object Label94: TLabel
       Left = 8
-      Top = 116
-      Width = 51
+      Top = 68
+      Width = 64
       Height = 16
-      Caption = 'Dummy'
+      Caption = #19979#27169#23610#23544
+    end
+    object Label109: TLabel
+      Left = 8
+      Top = 140
+      Width = 64
+      Height = 16
+      Caption = #27169#20855#32232#34399
     end
     object m_cmbHeadType: TComboBox
       Left = 96
@@ -1282,7 +1289,7 @@ object fmProduct: TfmProduct
     end
     object m_cmbVacummOn: TComboBox
       Left = 96
-      Top = 64
+      Top = 88
       Width = 89
       Height = 24
       Style = csDropDownList
@@ -1294,24 +1301,12 @@ object fmProduct: TfmProduct
     end
     object m_cmbPressCheck: TComboBox
       Left = 96
-      Top = 88
-      Width = 89
-      Height = 24
-      Style = csDropDownList
-      ItemHeight = 16
-      TabOrder = 2
-      Items.Strings = (
-        'Fail'
-        'True')
-    end
-    object m_cmbDummyCheck: TComboBox
-      Left = 96
       Top = 112
       Width = 89
       Height = 24
       Style = csDropDownList
       ItemHeight = 16
-      TabOrder = 3
+      TabOrder = 2
       Items.Strings = (
         'Fail'
         'True')
@@ -1323,24 +1318,332 @@ object fmProduct: TfmProduct
       Height = 24
       Style = csDropDownList
       ItemHeight = 16
-      TabOrder = 4
+      TabOrder = 3
     end
     object btnHeadScalModify: TButton
-      Left = 40
-      Top = 144
+      Left = 248
+      Top = 40
       Width = 121
       Height = 25
+      Hint = 'HeadScal'
       Caption = #22739#38957#23610#23544#20462#25913
+      TabOrder = 4
+      OnClick = btnScalModifyClick
+    end
+    object m_cmbModuleScal: TComboBox
+      Left = 96
+      Top = 64
+      Width = 89
+      Height = 24
+      Style = csDropDownList
+      ItemHeight = 16
       TabOrder = 5
-      OnClick = btnHeadScalModifyClick
+    end
+    object btnModuleScalModify: TButton
+      Left = 248
+      Top = 88
+      Width = 121
+      Height = 25
+      Hint = 'ModuleScal'
+      Caption = #19979#27169#23610#23544#20462#25913
+      TabOrder = 6
+      OnClick = btnScalModifyClick
+    end
+    object m_strModuleNum: TEdit
+      Left = 96
+      Top = 136
+      Width = 289
+      Height = 24
+      TabOrder = 7
+      Text = 'm_strModuleNum'
     end
   end
   object m_strSetupEENum: TEdit
-    Left = 656
+    Left = 848
     Top = 548
     Width = 129
     Height = 24
     Enabled = False
     TabOrder = 20
+  end
+  object GroupBox15: TGroupBox
+    Left = 1096
+    Top = 8
+    Width = 193
+    Height = 217
+    Caption = 'Dummy Check'
+    TabOrder = 21
+    object Label91: TLabel
+      Left = 8
+      Top = 20
+      Width = 51
+      Height = 16
+      Caption = 'Dummy'
+    end
+    object Label95: TLabel
+      Left = 56
+      Top = 44
+      Width = 85
+      Height = 16
+      Caption = 'Dummy(1~5)'
+    end
+    object Label96: TLabel
+      Left = 32
+      Top = 68
+      Width = 28
+      Height = 16
+      Caption = 'BLT'
+    end
+    object Label97: TLabel
+      Left = 92
+      Top = 68
+      Width = 21
+      Height = 16
+      Caption = 'Tilt'
+    end
+    object Label98: TLabel
+      Left = 144
+      Top = 68
+      Width = 26
+      Height = 16
+      Caption = 'Gap'
+    end
+    object Label99: TLabel
+      Left = 8
+      Top = 92
+      Width = 8
+      Height = 16
+      Caption = '1'
+    end
+    object Label100: TLabel
+      Left = 8
+      Top = 116
+      Width = 8
+      Height = 16
+      Caption = '2'
+    end
+    object Label101: TLabel
+      Left = 8
+      Top = 140
+      Width = 8
+      Height = 16
+      Caption = '3'
+    end
+    object Label102: TLabel
+      Left = 8
+      Top = 164
+      Width = 8
+      Height = 16
+      Caption = '4'
+    end
+    object Label103: TLabel
+      Left = 8
+      Top = 188
+      Width = 8
+      Height = 16
+      Caption = '5'
+    end
+    object m_cmbDummyCheck: TComboBox
+      Left = 96
+      Top = 16
+      Width = 89
+      Height = 24
+      Style = csDropDownList
+      ItemHeight = 16
+      TabOrder = 0
+      Items.Strings = (
+        'Fail'
+        'True')
+    end
+    object m_dBLT1: TEdit
+      Left = 24
+      Top = 88
+      Width = 49
+      Height = 24
+      TabOrder = 1
+    end
+    object m_dBLT2: TEdit
+      Left = 24
+      Top = 112
+      Width = 49
+      Height = 24
+      TabOrder = 2
+    end
+    object m_dBLT3: TEdit
+      Left = 24
+      Top = 136
+      Width = 49
+      Height = 24
+      TabOrder = 3
+    end
+    object m_dBLT4: TEdit
+      Left = 24
+      Top = 160
+      Width = 49
+      Height = 24
+      TabOrder = 4
+    end
+    object m_dBLT5: TEdit
+      Left = 24
+      Top = 184
+      Width = 49
+      Height = 24
+      TabOrder = 5
+    end
+    object m_dTilt1: TEdit
+      Left = 80
+      Top = 88
+      Width = 49
+      Height = 24
+      TabOrder = 6
+    end
+    object m_dTilt2: TEdit
+      Left = 80
+      Top = 112
+      Width = 49
+      Height = 24
+      TabOrder = 7
+    end
+    object m_dTilt3: TEdit
+      Left = 80
+      Top = 136
+      Width = 49
+      Height = 24
+      TabOrder = 8
+    end
+    object m_dTilt4: TEdit
+      Left = 80
+      Top = 160
+      Width = 49
+      Height = 24
+      TabOrder = 9
+    end
+    object m_dTilt5: TEdit
+      Left = 80
+      Top = 184
+      Width = 49
+      Height = 24
+      TabOrder = 10
+    end
+    object m_dGap1: TEdit
+      Left = 136
+      Top = 88
+      Width = 49
+      Height = 24
+      TabOrder = 11
+    end
+    object m_dGap2: TEdit
+      Left = 136
+      Top = 112
+      Width = 49
+      Height = 24
+      TabOrder = 12
+    end
+    object m_dGap3: TEdit
+      Left = 136
+      Top = 136
+      Width = 49
+      Height = 24
+      TabOrder = 13
+    end
+    object m_dGap4: TEdit
+      Left = 136
+      Top = 160
+      Width = 49
+      Height = 24
+      TabOrder = 14
+    end
+    object m_dGap5: TEdit
+      Left = 136
+      Top = 184
+      Width = 49
+      Height = 24
+      TabOrder = 15
+    end
+  end
+  object GroupBox16: TGroupBox
+    Left = 1096
+    Top = 232
+    Width = 193
+    Height = 129
+    Caption = 'Tempture Check ('#8451')'
+    TabOrder = 22
+    object Label104: TLabel
+      Left = 8
+      Top = 84
+      Width = 12
+      Height = 16
+      Caption = 'F '
+    end
+    object Label105: TLabel
+      Left = 8
+      Top = 52
+      Width = 10
+      Height = 16
+      Caption = 'R'
+    end
+    object Label106: TLabel
+      Left = 40
+      Top = 28
+      Width = 8
+      Height = 16
+      Caption = '1'
+    end
+    object Label107: TLabel
+      Left = 96
+      Top = 28
+      Width = 8
+      Height = 16
+      Caption = '2'
+    end
+    object Label108: TLabel
+      Left = 152
+      Top = 28
+      Width = 8
+      Height = 16
+      Caption = '3'
+    end
+    object m_dKeyTemp11: TEdit
+      Left = 24
+      Top = 81
+      Width = 49
+      Height = 24
+      TabOrder = 0
+    end
+    object m_dKeyTemp12: TEdit
+      Left = 80
+      Top = 81
+      Width = 49
+      Height = 24
+      TabOrder = 1
+    end
+    object m_dKeyTemp13: TEdit
+      Left = 136
+      Top = 81
+      Width = 49
+      Height = 24
+      TabOrder = 2
+    end
+    object m_dKeyTemp01: TEdit
+      Left = 24
+      Top = 49
+      Width = 49
+      Height = 24
+      TabOrder = 3
+    end
+    object m_dKeyTemp02: TEdit
+      Left = 80
+      Top = 49
+      Width = 49
+      Height = 24
+      TabOrder = 4
+    end
+    object m_dKeyTemp03: TEdit
+      Left = 136
+      Top = 49
+      Width = 49
+      Height = 24
+      TabOrder = 5
+    end
   end
 end

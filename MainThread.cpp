@@ -119,7 +119,7 @@ void __fastcall CMainThread::Execute()
 
 		//---Start Homing
 		if (g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset) tmReset.timeStart(3000);
-		if (bLastReset && tmReset.timeUp())
+		if (m_bIsAutoMode==false && bLastReset && tmReset.timeUp())
 		{
 			bStartMachineInit = true;
 			bHomeDone = false;
@@ -250,7 +250,7 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//--Stop Auto
-		if ((g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain) || m_bIsStopProcessbyCIM)
+		if ((g_eqpXML.m_CIMStatus.ToInt()!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
 		{
 			bAutoMode = false;
 			SetManualSpeed();
@@ -382,20 +382,26 @@ void __fastcall CMainThread::Execute()
 			switch (g_eqpXML.m_CIMStatus.ToInt())
 			{
 			case 0:                                                                              //Offline
+				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
+				{
+					m_listLog.push_back("機台啟動");
+					m_bIsStartProcessbyDIO = true;
+					m_bStartAgain = false;
+				}
+				break;
 			case 1:                                                                              //online/local
 				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
                 {
-                    m_listLog.push_back("機台啟動");
-                    m_bIsStartProcessbyDIO = true;
-                    m_bStartAgain = false;
+					g_eqpXML.SendEventReport("115");
+					m_listLog.push_back("發送啟動請求，等待CIM回應...");
+					m_bStartAgain = false;
                 }
 				break;
 			case 2:                                                                             //online/remote
 				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
                 {
-                    g_eqpXML.SendEventReport("115");
-                    m_listLog.push_back("發送啟動請求，等待CIM回應...");
-                    m_bStartAgain = false;
+					m_listLog.push_back("CIM online/remote啟動無效...");
+					m_bStartAgain = false;
                 }
 				break;
 			default:
@@ -406,7 +412,17 @@ void __fastcall CMainThread::Execute()
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
 
-				if (g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0] || g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
+                
+				if ((g_IniFile.m_nRailOption == 0 && g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])||
+                    (g_IniFile.m_nRailOption == 0 && g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0])  )
+                {
+                    g_IniFile.m_nErrorCode = 75;
+                }
+                else if (g_IniFile.m_nRailOption == 1 && g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
+                {
+                    g_IniFile.m_nErrorCode = 75;
+                }
+                else if (g_IniFile.m_nRailOption == 2 && g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0])
 				{
 					g_IniFile.m_nErrorCode = 75;
 				}
@@ -433,10 +449,6 @@ void __fastcall CMainThread::Execute()
 					g_Motion.WaitMotionDone(AXIS_RL, 30000);
 
 					SetWorkSpeed();
-
-					//nThreadIndex[12] = 0;
-					//nThreadIndex[13] = 0;
-					if (g_eqpXML.m_CIMStatus == "1") g_eqpXML.SendEventReport("115");
 				}
 				m_bIsStartProcessbyCIM = false;
 				m_bIsStartProcessbyDIO = false;
@@ -1824,7 +1836,8 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	switch (nThreadIndex)
 	{
 	case 0:
-		if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
+		//if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
+        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamGetPos[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamGetPos[1]) g_IniFile.m_nErrorCode = 69;
 		else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 		//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;      //don't need
 		{
@@ -1922,7 +1935,11 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                     {
                         double *maxValue = std::max_element(vecTempDown.begin(), vecTempDown.end());
                         double *minValue = std::min_element(vecTempDown.begin(), vecTempDown.end());
-                        p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub)] = (*maxValue - *minValue);
+                        //p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub)] = (*maxValue - *minValue);
+                        for (int i=0;i<50;i++)
+                        {
+                            p_dLaserValueDiff[i] = (*maxValue - *minValue);
+                        }
                         vecTempDown.clear();
                         m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
                     }
@@ -2235,6 +2252,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		nThreadIndex = 0;
 	}
 }
+
 
 
 

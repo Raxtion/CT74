@@ -63,6 +63,7 @@ public:
   double m_dLastLamPress[2];  //Record for LastPressCal. Protect Wrong press Lamination in AutoRun
   
   AnsiString m_strHeadScals;
+  AnsiString m_strModuleScals;
 
   //-----------------Product-----------------
   int m_nCols;
@@ -106,9 +107,11 @@ public:
   double m_dAutoRunTempRange;
   double m_dVacDelayTime;
 
+  AnsiString m_strModuleNum;
   AnsiString m_strSetupEENum;
   int m_nHeadType;                    //0=實心; 1=空心;
   AnsiString m_strHeadScal;           //(43X43/31X31)
+  AnsiString m_strModuleScal;         //(43X43/31X31)
   int m_nVacummOn;                    //0=FAIL; 1=TRUE
   int m_nPressCheck;                  //0=FAIL; 1=TRUE
   int m_nDummyCheck;                  //0=FAIL; 1=TRUE
@@ -119,6 +122,7 @@ public:
   void __fastcall MachineFile(bool bRead);
   void __fastcall ProductFile(char *strFileName,bool bRead);
   AnsiString __fastcall GetErrorString(char *SectionName,int nCode);
+  AnsiString __fastcall GetErrorStringENG(char *SectionName,int nCode);
   void __fastcall StoreHistory(int nYear,int nMonth,int nDate,AnsiString strMessage);
   void __fastcall StoreHistoryNew();
   bool __fastcall SearchFile(AnsiString strBarCode,AnsiString &strFileName);

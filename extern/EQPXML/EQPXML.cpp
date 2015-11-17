@@ -139,8 +139,9 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     strcpy(SVIDIndex[25], "313");
     strcpy(SVIDIndex[26], "314");
     strcpy(SVIDIndex[27], "315");
+    strcpy(SVIDIndex[28], "316");
 
-    char SVID[28][100] = { 0 };
+    char SVID[29][100] = { 0 };
     strcpy(SVID[0], FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime).c_str());
     strcpy(SVID[1], FormatFloat("0.0", g_IniFile.m_dLamTemp[0]).c_str());
     strcpy(SVID[2], FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime).c_str());
@@ -169,8 +170,9 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     strcpy(SVID[25], strVacummOn.c_str());
     strcpy(SVID[26], strPressCheck.c_str());
     strcpy(SVID[27], strDummyCheck.c_str());
+    strcpy(SVID[28], g_IniFile.m_strModuleScal.c_str());
 
-	for (int nIndex = 0; nIndex<28; nIndex++)
+	for (int nIndex = 0; nIndex<29; nIndex++)
 	{
 		pSVID = new TiXmlElement("SVID");
 		pID = new TiXmlElement("ID");
@@ -533,9 +535,14 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_dVacDelayTime","mm","F4","0","1000",
         "m_nHeadType","mm","F4","0","1000",
         "m_strHeadScal","mm","F4","0","1000",
+        "m_strModuleScal","mm","F4","0","1000",
         "m_nVacummOn","mm","F4","0","1",
         "m_nPressCheck","mm","F4","0","1",
         "m_nDummyCheck","mm","F4","0","1",
+        
+        "m_strModuleNum","mm","F4","0","1000",
+        "m_strSetupEENum","mm","F4","0","1000",
+        "m_strLogInENGAccount","mm","F4","0","1000",
 		"END"};           //E:End
 
 
@@ -588,6 +595,18 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                 AnsiString strDummyCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
 		        pProperty->LinkEndChild(new TiXmlText(strDummyCheck.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_strSetupEENum")==0)
+            {
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(g_IniFile.m_strSetupEENum.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_strLogInENGAccount")==0)
+            {
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(g_IniFile.m_strLogInENGAccount.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else
@@ -650,7 +669,10 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
 
 		SendXML("SET_PPBODY", "ACK", "ACK", "0");
 	}
-	else SendXML("SET_PPBODY", "ACK", "ACK", "3");
+	else //SendXML("SET_PPBODY", "ACK", "ACK", "3");
+    {
+
+    }
 	delete pIniFile;
 }
 //---------------------------------------------------------------------------

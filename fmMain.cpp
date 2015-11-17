@@ -389,9 +389,11 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
     DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
     DDX_String(bRead, g_IniFile.m_strHeadScal, pWnd->m_cmbHeadScal, g_IniFile.m_strHeadScals);
+    DDX_String(bRead, g_IniFile.m_strModuleScal, pWnd->m_cmbModuleScal, g_IniFile.m_strModuleScals);
     DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
     DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
     DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
+    DDX_String(bRead, g_IniFile.m_strModuleNum, pWnd->m_strModuleNum);
     pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
     while (1)
@@ -506,9 +508,11 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
         DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
         DDX_String(bRead, g_IniFile.m_strHeadScal, pWnd->m_cmbHeadScal, g_IniFile.m_strHeadScals);
+        DDX_String(bRead, g_IniFile.m_strModuleScal, pWnd->m_cmbModuleScal, g_IniFile.m_strModuleScals);
         DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
         DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
         DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
+        DDX_String(bRead, g_IniFile.m_strModuleNum, pWnd->m_strModuleNum);
         DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
 
         Label22->Caption = g_IniFile.m_dLamTime[0];
@@ -652,7 +656,6 @@ void __fastcall TfrmMain::N11Click(TObject *Sender)
 void __fastcall TfrmMain::OP1Click(TObject *Sender)
 {
 	SetPrivilege(0);
-    g_IniFile.m_strLogInENGAccount = "";
 }
 //---------------------------------------------------------------------------
 
@@ -694,7 +697,7 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
         }
         else
         {
-            g_IniFile.m_strLogInENGAccount = "";
+            g_IniFile.m_strLogInENGAccount = "OP";
             m_nUserLevel = 0;
             break;
         }
@@ -864,10 +867,15 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 	{
 		//if(m_pMessageDlg) 
 		{
+            //process in Machine
 			AnsiString strMsg = g_IniFile.GetErrorString("SYSTEM", g_IniFile.m_nErrorCode);
 			AddList(strMsg);
 			g_IniFile.AddLog(strMsg.c_str(), strMsg.Length());
-
+            //process in CIM
+            AnsiString strMsgCIM = g_IniFile.GetErrorStringENG("SYSTEM", g_IniFile.m_nErrorCode);
+            AnsiString strCode;
+            strCode.sprintf("E%04d",g_IniFile.m_nErrorCode);
+            g_eqpXML.SendAlarmMessage(strCode.c_str(), strMsgCIM.c_str());
 		}
 	}
 
@@ -969,6 +977,25 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
             g_eqpXML.m_EqpStatus='I';
             g_eqpXML.SendEventReport("1");
         }
+    }
+
+    //--CIM Remote Disable mainFromBtn---
+    {
+        radioPosOption->Enabled = !g_pMainThread->m_bIsAutoMode;
+        checkStopLC->Enabled = !g_pMainThread->m_bIsAutoMode;
+        SpeedButton1->Enabled = !g_pMainThread->m_bIsAutoMode;
+        SpeedButton2->Enabled = !g_pMainThread->m_bIsAutoMode;
+        GroupBox1->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnStartPressCal0->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnLaserUp0->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnLaserDown0->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnStartPressCal1->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnLaserUp1->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnLaserDown1->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnHoming->Enabled = !g_pMainThread->m_bIsAutoMode;
+        cmbRange->Enabled = !g_pMainThread->m_bIsAutoMode;
+        cmbFirstLoc->Enabled = !g_pMainThread->m_bIsAutoMode;
+        cmbTimes->Enabled = !g_pMainThread->m_bIsAutoMode;
     }
 
 	Timer1->Enabled = true;
@@ -1091,8 +1118,8 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg ", g_DNPort0.GetSetKg(nIndex)) + FormatFloat("0.00kg", g_DNPort0.GetKg(nIndex)));
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][0]) + FormatFloat("0.00mm", g_pMainThread->m_dFrontUpperLaser[nIndex][1]));
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dFrontUpperLaser[nIndex][3]));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm", g_pMainThread->m_dFrontDownLaser[nIndex][0]));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.00kg", g_pMainThread->m_dFrontPressCal[nIndex]));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm ", g_pMainThread->m_dFrontDownLaser[nIndex][0]) + FormatFloat("0.00kg", g_pMainThread->m_dFrontPressCal[nIndex]));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.000mm ", g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0]) + FormatFloat("0.000mm ", g_pMainThread->m_dFrontDownLaserDiff[nIndex][0]));
 	}
 
 }
@@ -1131,8 +1158,8 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg", g_DNPort1.GetSetKg(nIndex)) + FormatFloat("0.00kg", g_DNPort1.GetKg(nIndex)));
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][0]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][1]));
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][3]));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm", g_pMainThread->m_dRearDownLaser[nIndex][0]));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.00Kg", g_pMainThread->m_dRearPressCal[nIndex]));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm ", g_pMainThread->m_dRearDownLaser[nIndex][0]) + FormatFloat("0.00Kg", g_pMainThread->m_dRearPressCal[nIndex]));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.000mm ", g_pMainThread->m_dRearUpperLaserDiff[nIndex][0]) + FormatFloat("0.000mm ", g_pMainThread->m_dRearDownLaserDiff[nIndex][0]));
     }
 
 }
@@ -1248,7 +1275,7 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		N9->Enabled = false;
 		N12->Enabled = true;
         N15->Enabled = false;
-
+        g_IniFile.m_strLogInENGAccount = "OP";
 		break;
 	case 1:
 		N1->Enabled = true;
@@ -1266,7 +1293,7 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		N9->Enabled = true;
 		N12->Enabled = true;
         N15->Enabled = true;
-
+        g_IniFile.m_strLogInENGAccount = "Admin";
 		break;
 	}
 
