@@ -107,6 +107,7 @@ public:
   double m_dAutoRunTempRange;
   double m_dVacDelayTime;
 
+  AnsiString m_strModuleNum;
   AnsiString m_strSetupEENum;
   int m_nHeadType;                    //0=實心; 1=空心;
   AnsiString m_strHeadScal;           //(43X43/31X31)
@@ -115,6 +116,10 @@ public:
   int m_nPressCheck;                  //0=FAIL; 1=TRUE
   int m_nDummyCheck;                  //0=FAIL; 1=TRUE
 
+  double m_dBLT[5];                   //for product param keyin
+  double m_dTilt[5];                  //for product param keyin
+  double m_dGap[5];                   //for product param keyin
+  double m_dKeyTemp[2][3];            //for product param keyin
 
 //Function
 public:

@@ -440,3 +440,50 @@ void ReplaceString(AnsiString *Original, AnsiString OldStr, AnsiString NewStr)
     }
 }
 
+//---------------------------------------------------------------------------
+//DirExplore(path) To find all files in path. Files are in <liststrFileName>. Directorys are in <liststrForderName>
+void DirExplore(AnsiString path, std::list<AnsiString> &g_liststrForderName, std::list<AnsiString> &g_liststrFileName)
+{     //使用遞迴搜索所有目錄
+    std::list<AnsiString> liststrForderNameForEachFunction;
+    TSearchRec sr;
+	int nRes = FindFirst(path+"\\*", faDirectory, sr);
+	if (nRes == 0)
+	{
+		do
+		{
+			if (sr.Attr == faDirectory)
+			{
+				if (sr.Name != "." && sr.Name != "..")
+				{
+                    liststrForderNameForEachFunction.push_back(sr.Name);
+                    g_liststrForderName.push_back(path+"\\"+sr.Name);
+				}
+			}
+		} while (FindNext(sr) == 0);
+	}
+    FindClose(sr);
+
+    while (true)
+    {
+        if (liststrForderNameForEachFunction.size()==0) break;
+        DirExplore(path+"\\"+liststrForderNameForEachFunction.front(), g_liststrForderName, g_liststrFileName);
+        liststrForderNameForEachFunction.pop_front();
+    }
+
+    TSearchRec sr2;
+	int nRes2 = FindFirst(path+"\\*", faAnyFile, sr2);
+	if (nRes2 == 0)
+	{
+		do
+		{
+			if (sr2.Attr == faArchive)
+			{
+				if (sr2.Name != "." && sr2.Name != "..")
+				{
+                    g_liststrFileName.push_back(path+"\\"+sr2.Name);
+				}
+			}
+		} while (FindNext(sr2) == 0);
+	}
+    FindClose(sr2);
+}

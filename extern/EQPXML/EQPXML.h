@@ -12,6 +12,14 @@
 #include <ScktComp.hpp>
 #include <vector>
 #include <list>
+struct LaserDiff
+{
+    AnsiString strRDLD;
+    AnsiString strFDLD;
+    AnsiString strRULD;
+    AnsiString strFULD;
+};
+
 //---------------------------------------------------------------------------
 class CEQPXML
 {
@@ -29,11 +37,14 @@ private:
 	void __fastcall doRCMD(char *pRx);
 	void __fastcall doQueryPPID(char *pRx);
 	void __fastcall doQueryPPIDNew(char *pRx);
+    void __fastcall doQueryPPIDFullPath(char *pRx);
 	void __fastcall doQueryPPBody(char *pRx);
 	void __fastcall doSetPPBody(char *pRx);
 
 	void __fastcall SendXML(char *pMSGID, char *pType, char *pName, char *pValue, char *pTID = "TID");    //同下 只送特定的MsgID
 	void __fastcall SendXML(TiXmlDocument &theDoc);                                                //利用m_pSocket->SendBuf() 送出xml資料
+
+    void __fastcall generateLaserDiff(LaserDiff &Inp);
 
 public:
     std::list<AnsiString> m_strCIMMsgLog;
@@ -43,6 +54,8 @@ public:
 	AnsiString m_CIMStatus;                                                                        //0:Offline 1:online/local 2:online/remote
 	AnsiString m_strSubstrate2DCode;
 	AnsiString m_strCurrentSchedule;
+    std::list<AnsiString> m_liststrForderName;
+    std::list<AnsiString> m_liststrFileName;
 
 public:
 	__fastcall CEQPXML();

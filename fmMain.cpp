@@ -394,6 +394,30 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
     DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
     DDX_String(bRead, g_IniFile.m_strModuleNum, pWnd->m_strModuleNum);
+
+    DDX_Float(bRead, g_IniFile.m_dBLT[0], pWnd->m_dBLT1);
+    DDX_Float(bRead, g_IniFile.m_dBLT[1], pWnd->m_dBLT2);
+    DDX_Float(bRead, g_IniFile.m_dBLT[2], pWnd->m_dBLT3);
+    DDX_Float(bRead, g_IniFile.m_dBLT[3], pWnd->m_dBLT4);
+    DDX_Float(bRead, g_IniFile.m_dBLT[4], pWnd->m_dBLT5);
+    DDX_Float(bRead, g_IniFile.m_dTilt[0], pWnd->m_dTilt1);
+    DDX_Float(bRead, g_IniFile.m_dTilt[1], pWnd->m_dTilt2);
+    DDX_Float(bRead, g_IniFile.m_dTilt[2], pWnd->m_dTilt3);
+    DDX_Float(bRead, g_IniFile.m_dTilt[3], pWnd->m_dTilt4);
+    DDX_Float(bRead, g_IniFile.m_dTilt[4], pWnd->m_dTilt5);
+    DDX_Float(bRead, g_IniFile.m_dGap[0], pWnd->m_dGap1);
+    DDX_Float(bRead, g_IniFile.m_dGap[1], pWnd->m_dGap2);
+    DDX_Float(bRead, g_IniFile.m_dGap[2], pWnd->m_dGap3);
+    DDX_Float(bRead, g_IniFile.m_dGap[3], pWnd->m_dGap4);
+    DDX_Float(bRead, g_IniFile.m_dGap[4], pWnd->m_dGap5);
+
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][0], pWnd->m_dKeyTemp01);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][1], pWnd->m_dKeyTemp02);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][2], pWnd->m_dKeyTemp03);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][0], pWnd->m_dKeyTemp11);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWnd->m_dKeyTemp12);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
+
     pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
     while (1)
@@ -513,6 +537,30 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
         DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
         DDX_String(bRead, g_IniFile.m_strModuleNum, pWnd->m_strModuleNum);
+
+        DDX_Float(bRead, g_IniFile.m_dBLT[0], pWnd->m_dBLT1);
+        DDX_Float(bRead, g_IniFile.m_dBLT[1], pWnd->m_dBLT2);
+        DDX_Float(bRead, g_IniFile.m_dBLT[2], pWnd->m_dBLT3);
+        DDX_Float(bRead, g_IniFile.m_dBLT[3], pWnd->m_dBLT4);
+        DDX_Float(bRead, g_IniFile.m_dBLT[4], pWnd->m_dBLT5);
+        DDX_Float(bRead, g_IniFile.m_dTilt[0], pWnd->m_dTilt1);
+        DDX_Float(bRead, g_IniFile.m_dTilt[1], pWnd->m_dTilt2);
+        DDX_Float(bRead, g_IniFile.m_dTilt[2], pWnd->m_dTilt3);
+        DDX_Float(bRead, g_IniFile.m_dTilt[3], pWnd->m_dTilt4);
+        DDX_Float(bRead, g_IniFile.m_dTilt[4], pWnd->m_dTilt5);
+        DDX_Float(bRead, g_IniFile.m_dGap[0], pWnd->m_dGap1);
+        DDX_Float(bRead, g_IniFile.m_dGap[1], pWnd->m_dGap2);
+        DDX_Float(bRead, g_IniFile.m_dGap[2], pWnd->m_dGap3);
+        DDX_Float(bRead, g_IniFile.m_dGap[3], pWnd->m_dGap4);
+        DDX_Float(bRead, g_IniFile.m_dGap[4], pWnd->m_dGap5);
+
+        DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][0], pWnd->m_dKeyTemp01);
+        DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][1], pWnd->m_dKeyTemp02);
+        DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][2], pWnd->m_dKeyTemp03);
+        DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][0], pWnd->m_dKeyTemp11);
+        DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWnd->m_dKeyTemp12);
+        DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
+
         DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
 
         Label22->Caption = g_IniFile.m_dLamTime[0];

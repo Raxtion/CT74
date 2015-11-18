@@ -206,62 +206,16 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
 
     //---------------------------------------------------------------------------
     //Add DVID
-    AnsiString strRDLD = "";
-    AnsiString strFDLD = "";
-    AnsiString strRULD = "";
-    AnsiString strFULD = "";
-    int m_nCalCol = 0;
-    int m_nCalRow = 0;
-
-    TStringList *strStrings = new TStringList;
-    for (int i=0;i<50;i++)
-    {
-        if (i == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
-        {
-            strStrings->Add(FormatFloat("0.00", g_pMainThread->m_dRearDownLaserDiff[i][0]).c_str());
-        }
-    }
-    strStrings->Delimiter = '/';
-    strRDLD = strStrings->DelimitedText;
-    strStrings->Clear();
-
-    for (int i=0;i<50;i++)
-    {
-        if (i == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
-        {
-            strStrings->Add(FormatFloat("0.00", g_pMainThread->m_dFrontDownLaserDiff[i][0]).c_str());
-        }
-    }
-    strStrings->Delimiter = '/';
-    strFDLD = strStrings->DelimitedText;
-    strStrings->Clear();
-
-    for (int i=0;i<50;i++)
-    {
-        m_nCalCol = i % 10;
-        m_nCalRow = i / 10;
-        if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
-        {
-            strStrings->Add(FormatFloat("0.00", g_pMainThread->m_dRearUpperLaserDiff[i][0]).c_str());
-        }
-    }
-    strStrings->Delimiter = '/';
-    strRULD = strStrings->DelimitedText;
-    strStrings->Clear();
-
-    for (int i=0;i<50;i++)
-    {
-        m_nCalCol = i % 10;
-        m_nCalRow = i / 10;
-        if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
-        {
-            strStrings->Add(FormatFloat("0.00", g_pMainThread->m_dFrontUpperLaserDiff[i][0]).c_str());
-        }
-    }
-    strStrings->Delimiter = '/';
-    strFULD = strStrings->DelimitedText;
-    strStrings->Clear();
-    delete strStrings;
+    LaserDiff m_strLaserDiff;
+    m_strLaserDiff.strRDLD = "";
+    m_strLaserDiff.strFDLD = "";
+    m_strLaserDiff.strRULD = "";
+    m_strLaserDiff.strFULD = "";
+    generateLaserDiff(m_strLaserDiff);
+    AnsiString strRDLD = m_strLaserDiff.strRDLD;
+    AnsiString strFDLD = m_strLaserDiff.strFDLD;
+    AnsiString strRULD = m_strLaserDiff.strRULD;
+    AnsiString strFULD = m_strLaserDiff.strFULD;
 
 	char DVID[5][100] = { 0 };
 	strcpy(DVID[0], g_IniFile.m_strSetupEENum.c_str());
@@ -329,10 +283,11 @@ void __fastcall CEQPXML::doRCMD(char *pRx)
 	else if (strSub == "PAUSE") bRet = StartProcess(false);
 	else if (strSub == "PPSELECT")
 	{
-		AnsiString strName = strData.SubString(10, strData.Length() - 9);
-		AnsiString strFile;
-		strFile.sprintf("C:\\Product Data\\%s\\%s.ini", strName, strName);
-		bRet = OpenFile(strFile);
+		//AnsiString strName = strData.SubString(10, strData.Length() - 9);
+		//AnsiString strFile;
+		//strFile.sprintf("C:\\Product Data\\%s\\%s.ini", strName, strName);
+		//bRet = OpenFile(strFile);
+        bRet = OpenFile(strData);
 	}
 	else if (strSub == "LOCAL")
 	{
@@ -394,6 +349,7 @@ void __fastcall CEQPXML::doQueryPPID(char *pRx)
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doQueryPPIDNew(char *pRx)
 {
+    /*
 	TiXmlDocument doc;
 	TiXmlElement *pRoot;
 	TiXmlElement *pIDE;
@@ -405,8 +361,6 @@ void __fastcall CEQPXML::doQueryPPIDNew(char *pRx)
 	pRoot->SetAttribute("TYPE", "ACK");
 
 	TSearchRec sr;
-	//int iAttributes = 0;
-
 	int nRes = FindFirst("C:\\Product Data\\*", faDirectory, sr);
 	if (nRes == 0)
 	{
@@ -433,6 +387,50 @@ void __fastcall CEQPXML::doQueryPPIDNew(char *pRx)
 
 	doc.LinkEndChild(pRoot);
 	SendXML(doc);
+    */
+}
+//---------------------------------------------------------------------------
+void __fastcall CEQPXML::doQueryPPIDFullPath(char *pRx)
+{
+    TiXmlDocument doc;
+	TiXmlElement *pRoot;
+	TiXmlElement *pIDE;
+	AnsiString strName;
+	WIN32_FIND_DATA FindFileData;
+
+	pRoot = new TiXmlElement("Root");
+	pRoot->SetAttribute("MSGID", "QUERY_PPID");
+	pRoot->SetAttribute("TYPE", "ACK");
+
+    m_liststrFileName.clear();
+    m_liststrForderName.clear();
+    DirExplore("C:\\Product Data", m_liststrForderName, m_liststrFileName);
+
+    while (true)
+    {
+        if (m_liststrFileName.size()==0)
+        {
+            pIDE = new TiXmlElement("PPID");
+		    pIDE->LinkEndChild(new TiXmlText(""));
+		    pRoot->LinkEndChild(pIDE);
+            break;
+        }
+
+        TStringList* strSplitPath = SplitString(m_liststrFileName.front(), "\\");
+        if (strSplitPath->operator [](2) != "Error Message" && strSplitPath->Count != 3)
+        {
+            pIDE = new TiXmlElement("PPID");
+            pIDE->LinkEndChild(new TiXmlText(m_liststrFileName.front().c_str()));
+            pRoot->LinkEndChild(pIDE);
+        }
+        delete strSplitPath;
+        m_liststrFileName.pop_front();
+
+        if (m_liststrFileName.size()==0) break;
+    }
+
+    doc.LinkEndChild(pRoot);
+	SendXML(doc);
 }
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::doQueryPPBody(char *pRx)
@@ -445,7 +443,8 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 	AnsiString strData=pData1->GetText();           //Recipe Name
 	AnsiString strSxFx=pData1->Attribute("SxFy");
 
-	TIniFile *pIniFile = new TIniFile("C:\\Product Data\\"+strData+"\\"+strData+".ini");
+	//TIniFile *pIniFile = new TIniFile("C:\\Product Data\\"+strData+"\\"+strData+".ini");
+    TIniFile *pIniFile = new TIniFile(strData);
 
 	TiXmlDocument doc;
 	TiXmlElement* pRoot;
@@ -465,8 +464,8 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 	pData->SetAttribute("SxFy",strSxFx.c_str());
 
 	char *ParamItem[]={
-        "m_nCols","mm","F4","0","10",
-		"m_nRows","mm","F4","0","5",
+        "m_nCols","mm","F4","0","10",                                      //on Paper
+		"m_nRows","mm","F4","0","5",                                       //on Paper
 		"m_dColPitch","mm","F4","0","1000",
 		"m_dRowPitch","mm","F4","0","1000",
 
@@ -479,12 +478,12 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_dLamVacHeight0","mm","F4","0","200",
 		"m_dLamVacHeight1","mm","F4","0","200",
 
-		"m_dLamTime0","s","F4","0","1000",
-		"m_dLamTemp0","c","F4","0","1000",
-		"m_dLamPress0","kg","F4","0","20",
-		"m_dLamTime1","s","F4","0","1000",
-		"m_dLamTemp1","c","F4","0","1000",
-		"m_dLamPress1","kg","F4","0","20",
+		"m_dLamTime0","s","F4","0","1000",                                 //on Paper
+		"m_dLamTemp0","c","F4","0","1000",                                 //on Paper
+		"m_dLamPress0","kg","F4","0","20",                                 //on Paper
+		"m_dLamTime1","s","F4","0","1000",                                 //on Paper
+		"m_dLamTemp1","c","F4","0","1000",                                 //on Paper
+		"m_dLamPress1","kg","F4","0","20",                                 //on Paper
 
 		"m_dLoadCellPosX0","mm","F4","0","1000",
 		"m_dLoadCellPosY0","mm","F4","0","1000",
@@ -533,20 +532,39 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_nAutoInterval","mm","F4","0","1000",
 		"m_dAutoRunTempRange","mm","F4","0","1000",
 		"m_dVacDelayTime","mm","F4","0","1000",
-        "m_nHeadType","mm","F4","0","1000",
-        "m_strHeadScal","mm","F4","0","1000",
-        "m_strModuleScal","mm","F4","0","1000",
-        "m_nVacummOn","mm","F4","0","1",
-        "m_nPressCheck","mm","F4","0","1",
-        "m_nDummyCheck","mm","F4","0","1",
-        
-        "m_strModuleNum","mm","F4","0","1000",
-        "m_strSetupEENum","mm","F4","0","1000",
+
+        "m_nHeadType","mm","F4","0","1000",                                //on Paper
+        "m_strHeadScal","mm","F4","0","1000",                              //on Paper
+        "m_strModuleScal","mm","F4","0","1000",                            //on Paper
+        "m_nVacummOn","mm","F4","0","1",                                   //on Paper
+        "m_nPressCheck","mm","F4","0","1",                                 //on Paper
+        "m_nDummyCheck","mm","F4","0","1",                                 //on Paper
+        "m_strModuleNum","mm","F4","0","1000",                             //on Paper
+        "m_strSetupEENum","mm","F4","0","1000",                            //on Paper
+
+        "m_dBLT","mm","F4","0","1000",                                     //on Paper
+        "m_dTilt","mm","F4","0","1000",                                    //on Paper
+        "m_dGap","mm","F4","0","1000",                                     //on Paper
+        "m_dKeyTemp0","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp1","mm","F4","0","1000",                                //on Paper
+        //以上為產品參數
+
+        //以下為機台變數
+        "LastFilePath","mm","F4","0","1000",                               //on Paper
+        "LastFileName","mm","F4","0","1000",                               //on Paper
+
+        "FrontPressCal","mm","F4","0","1000",                              //on Paper
+        "RearPressCal","mm","F4","0","1000",                               //on Paper
+
+        "FrontDownLaserDiff","mm","F4","0","1000",                         //on Paper
+        "RearDownLaserDiff","mm","F4","0","1000",                          //on Paper
+        "FrontUpperLaserDiff","mm","F4","0","1000",                        //on Paper
+        "RearUpperLaserDiff","mm","F4","0","1000",                         //on Paper
+
         "m_strLogInENGAccount","mm","F4","0","1000",
 		"END"};           //E:End
 
-
-    if (FileExists("C:\\Product Data\\"+strData+"\\"+strData+".ini"))
+    if (FileExists(strData))
 	{
 	    int nX=0;
 	    while(1)
@@ -603,6 +621,140 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		        pProperty->LinkEndChild(new TiXmlText(g_IniFile.m_strSetupEENum.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
+            //-------------------------------------------------------------------------------------------------------------------------
+            else if (strcmp(ParamItem[nX*5],"LastFilePath")==0)
+            {
+                TStringList *strList = SplitString(g_IniFile.m_strLastFileName, "\\");
+                AnsiString strLastFilePath = "";
+                for (int i=0;i<strList->Count-1;i++)
+                {
+                    strLastFilePath += strList->Strings[i] + "\\";
+                }
+                delete strList;
+
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strLastFilePath.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"LastFileName")==0)
+            {
+                TStringList *strList = SplitString(g_IniFile.m_strLastFileName, "\\");
+                AnsiString strLastFileName = strList->operator [](strList->Count-1);
+                delete strList;
+
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strLastFileName.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            //-------------------------------------------------------------------------------------------------------------------------
+            else if (strcmp(ParamItem[nX*5],"FrontPressCal")==0)
+            {
+                AnsiString strFrontPressCal = "";
+                for (int i=0;i<50;i++)
+                {
+                    strFrontPressCal += FormatFloat("0.000", g_pMainThread->m_dFrontPressCal[i])+"/";
+                }
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strFrontPressCal.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"RearPressCal")==0)
+            {
+                AnsiString strRearPressCal = "";
+                for (int i=0;i<50;i++)
+                {
+                    strRearPressCal += FormatFloat("0.000", g_pMainThread->m_dRearPressCal[i])+"/";
+                }
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strRearPressCal.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            //-------------------------------------------------------------------------------------------------------------------------
+            else if (strcmp(ParamItem[nX*5],"FrontDownLaserDiff")==0)
+            {
+                TStringList *strStrings = new TStringList;
+                for (int i=0;i<50;i++)
+                {
+                    if (i == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
+                    {
+                        strStrings->Add(FormatFloat("0.000", g_pMainThread->m_dFrontDownLaserDiff[i][0]).c_str());
+                    }
+                }
+                strStrings->Delimiter = '/';
+                AnsiString strFDLD = strStrings->DelimitedText;
+                strStrings->Clear();
+                delete strStrings;
+
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strFDLD.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"RearDownLaserDiff")==0)
+            {
+                TStringList *strStrings = new TStringList;
+                for (int i=0;i<50;i++)
+                {
+                    if (i == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
+                    {
+                        strStrings->Add(FormatFloat("0.000", g_pMainThread->m_dRearDownLaserDiff[i][0]).c_str());
+                    }
+                }
+                strStrings->Delimiter = '/';
+                AnsiString strRDLD = strStrings->DelimitedText;
+                strStrings->Clear();
+                delete strStrings;
+
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strRDLD.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"FrontUpperLaserDiff")==0)
+            {
+                int m_nCalCol = 0;
+                int m_nCalRow = 0;
+                TStringList *strStrings = new TStringList;
+                for (int i=0;i<50;i++)
+                {
+                    m_nCalCol = i % 10;
+                    m_nCalRow = i / 10;
+                    if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
+                    {
+                        strStrings->Add(FormatFloat("0.000", g_pMainThread->m_dFrontUpperLaserDiff[i][0]).c_str());
+                    }
+                }
+                strStrings->Delimiter = '/';
+                AnsiString strFULD = strStrings->DelimitedText;
+                strStrings->Clear();
+                delete strStrings;
+
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strFULD.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"RearUpperLaserDiff")==0)
+            {
+                int m_nCalCol = 0;
+                int m_nCalRow = 0;
+                TStringList *strStrings = new TStringList;
+                for (int i=0;i<50;i++)
+                {
+                    m_nCalCol = i % 10;
+                    m_nCalRow = i / 10;
+                    if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
+                    {
+                        strStrings->Add(FormatFloat("0.000", g_pMainThread->m_dRearUpperLaserDiff[i][0]).c_str());
+                    }
+                }
+                strStrings->Delimiter = '/';
+                AnsiString strRULD = strStrings->DelimitedText;
+                strStrings->Clear();
+                delete strStrings;
+
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strRULD.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            //-------------------------------------------------------------------------------------------------------------------------
             else if (strcmp(ParamItem[nX*5],"m_strLogInENGAccount")==0)
             {
                 pProperty=new TiXmlElement("PROPERTY");
@@ -650,20 +802,26 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
 
 	AnsiString strData = pData1->Attribute("PPID");
 
-	TIniFile *pIniFile = new TIniFile("C:\\Product Data\\"+strData+"\\"+strData+".ini");
-	if (FileExists("C:\\Product Data\\"+strData+"\\"+strData+".ini"))
+    TIniFile *pIniFile = new TIniFile(strData);
+    if (FileExists(strData))
 	{
 		TiXmlElement *pParam = pData1->FirstChildElement("PARAMETER");
 
 		while (1)
 		{
 			if (pParam == NULL) break;
-			AnsiString strParam = pParam->GetText();
-			int nPos = strParam.Pos(",");
-			AnsiString strA = strParam.SubString(1, nPos - 1);
-			AnsiString strB = strParam.SubString(nPos + 1, strParam.Length() - strA.Length() + 1);
-			pIniFile->WriteString(Product_Section, strA, strB);
-
+            AnsiString strParam = pParam->GetText();
+            int nPos = strParam.Pos(",");
+            AnsiString strA = strParam.SubString(1, nPos - 1);
+            AnsiString strB = strParam.SubString(nPos + 1, strParam.Length() - strA.Length() + 1);
+            //if (strA == "m_strSetupEENum")
+            //{
+            //    pIniFile->WriteString(Product_Section, strA, "CIM");
+            //}
+            //else
+            //{
+			//    pIniFile->WriteString(Product_Section, strA, strB);
+            //}
 			pParam = pParam->NextSiblingElement("PARAMETER");
 		}
 
@@ -772,22 +930,20 @@ void __fastcall CEQPXML::EndComm()
 void __fastcall CEQPXML::ProcessCIM()
 {
     long nSize = 0;
-    //char *receiveRx;
-    //char *receive;
 
     try
     {
         //receiveRx=(char *)VirtualAlloc(NULL, 30000, MEM_COMMIT, PAGE_READWRITE);//(char *)malloc(30000);//new char[30000];
         //receive=(char *)VirtualAlloc(NULL, 30000, MEM_COMMIT, PAGE_READWRITE);///(char *)malloc(30000);//new char[30000];
 
-        //char receive[30000];
         if (receive==NULL || receiveRx==NULL) return;
 
         memset(receiveRx,0x00,30000);
         memset(receive,0x00,30000);
 
         m_pSocket->ReceiveBuf(receiveRx,30000);
-        //AddLog(receiveRx,30000);
+
+        //g_IniFile.AddLog(receiveRx,30000);
 
         TiXmlDocument doc;
         int nIndex = 0;
@@ -799,22 +955,22 @@ void __fastcall CEQPXML::ProcessCIM()
                 
             if(nIndex>=30000) break;
 
-            nSize = (receiveRx[0+nIndex]<<24)+(receiveRx[1+nIndex]<<16)+(receiveRx[2+nIndex]<<8)+receiveRx[3+nIndex]+4;//+5;
+            nSize=(receiveRx[0+nIndex]<<24)+(receiveRx[1+nIndex]<<16)+(receiveRx[2+nIndex]<<8)+receiveRx[3+nIndex]+4;//+5;
             if(nSize<=5 || nSize>=30000)
-				break;
+                break;
 
-			AnsiString strXX=FormatFloat("Size=0",nSize);
+            AnsiString strXX=FormatFloat("Size=0",nSize);
             //AddLog(strXX.c_str(),strXX.Length());
 
             memcpy(receive,receiveRx+nIndex,nSize);
             nIndex+=nSize;
-            if (nIndex>=30000) break;
+            if(nIndex>=30000) break;
 
             //AddLog(receive,nSize);
 
             doc.Parse(receive+5);
             TiXmlElement* pRoot = doc.FirstChildElement("Root");
-            if (pRoot==NULL) break;
+            if(pRoot==NULL) break;
             //TiXmlElement* pData=pRoot->FirstChildElement("DATA");
         
             AnsiString strMsgID(pRoot->Attribute("MSGID"));
@@ -827,15 +983,11 @@ void __fastcall CEQPXML::ProcessCIM()
             else if (strMsgID=="EVENT_REPORT") doEventReportAck(receive+5);               //Local Rise ECID 1,3,115
             else if (strMsgID=="ALARM") doAlarmAck(receive+5);                            // no used
             else if (strMsgID=="RCMD") doRCMD(receive+5);                                 //Secs/Gem S2F21,S2F41 CIM send RCMD, change machine /RUN/STOP/PAUSE/RESUME/PPSELECT,PPID/LOCAL/REMOTE
-            else if (strMsgID=="QUERY_PPID") doQueryPPIDNew(receive+5);                   //Secs/Gem S7F19   CIM Find Recipe folder and file name
+            else if (strMsgID=="QUERY_PPID") doQueryPPIDFullPath(receive+5);              //Secs/Gem S7F19   CIM Find Recipe folder and file name
             else if (strMsgID=="QUERY_PPBODY") doQueryPPBody(receive+5);                  //Secs/Gem S7F25   CIM Use Recipe file name get all recipe param
             else if (strMsgID=="SET_PPBODY") doSetPPBody(receive+5);                      //Secs/Gem S7F23   CIM Use param and value modify recipe, not add a new recipy
 
         }
-
-		//delete receive;
-		//delete receiveRx;
-       
 	}
 	catch(const EAccessViolation &e)
 	{
@@ -899,3 +1051,70 @@ void __fastcall CEQPXML::SendAlarmMessage(char *pID,char *pText)
 </CMD>
 */
 
+
+//---------------------------------------------------------------------------
+//common function
+void __fastcall CEQPXML::generateLaserDiff(LaserDiff &Inp)
+{
+    AnsiString strRDLD = "";
+    AnsiString strFDLD = "";
+    AnsiString strRULD = "";
+    AnsiString strFULD = "";
+    int m_nCalCol = 0;
+    int m_nCalRow = 0;
+
+    TStringList *strStrings = new TStringList;
+    for (int i=0;i<50;i++)
+    {
+        if (i == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
+        {
+            strStrings->Add(FormatFloat("0.000", g_pMainThread->m_dRearDownLaserDiff[i][0]).c_str());
+        }
+    }
+    strStrings->Delimiter = '/';
+    strRDLD = strStrings->DelimitedText;
+    strStrings->Clear();
+
+    for (int i=0;i<50;i++)
+    {
+        if (i == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
+        {
+            strStrings->Add(FormatFloat("0.000", g_pMainThread->m_dFrontDownLaserDiff[i][0]).c_str());
+        }
+    }
+    strStrings->Delimiter = '/';
+    strFDLD = strStrings->DelimitedText;
+    strStrings->Clear();
+
+    for (int i=0;i<50;i++)
+    {
+        m_nCalCol = i % 10;
+        m_nCalRow = i / 10;
+        if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
+        {
+            strStrings->Add(FormatFloat("0.000", g_pMainThread->m_dRearUpperLaserDiff[i][0]).c_str());
+        }
+    }
+    strStrings->Delimiter = '/';
+    strRULD = strStrings->DelimitedText;
+    strStrings->Clear();
+
+    for (int i=0;i<50;i++)
+    {
+        m_nCalCol = i % 10;
+        m_nCalRow = i / 10;
+        if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
+        {
+            strStrings->Add(FormatFloat("0.000", g_pMainThread->m_dFrontUpperLaserDiff[i][0]).c_str());
+        }
+    }
+    strStrings->Delimiter = '/';
+    strFULD = strStrings->DelimitedText;
+    strStrings->Clear();
+    delete strStrings;
+
+    Inp.strRDLD = strRDLD;
+    Inp.strFDLD = strFDLD;
+    Inp.strRULD = strRULD;
+    Inp.strFULD = strFULD;
+}

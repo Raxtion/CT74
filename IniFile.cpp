@@ -157,7 +157,6 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosX03",m_dLaserUpPosX[0][3],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosY03",m_dLaserUpPosY[0][3],0.0);
 
-
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosX0",m_dLaserDownPosX[0],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosY0",m_dLaserDownPosY[0],0.0);
 
@@ -199,6 +198,29 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDummyCheck",m_nDummyCheck,0);
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleNum",m_strModuleNum,"");
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strSetupEENum",m_strSetupEENum,"");
+
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dBLT0",m_dBLT[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dBLT1",m_dBLT[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dBLT2",m_dBLT[2],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dBLT3",m_dBLT[3],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dBLT4",m_dBLT[4],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTilt0",m_dTilt[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTilt1",m_dTilt[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTilt2",m_dTilt[2],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTilt3",m_dTilt[3],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTilt4",m_dTilt[4],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dGap0",m_dGap[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dGap1",m_dGap[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dGap2",m_dGap[2],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dGap3",m_dGap[3],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dGap4",m_dGap[4],0.0);
+
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dKeyTemp00",g_IniFile.m_dKeyTemp[0][0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dKeyTemp01",g_IniFile.m_dKeyTemp[0][1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dKeyTemp02",g_IniFile.m_dKeyTemp[0][2],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dKeyTemp10",g_IniFile.m_dKeyTemp[1][0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dKeyTemp11",g_IniFile.m_dKeyTemp[1][1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dKeyTemp12",g_IniFile.m_dKeyTemp[1][2],0.0);
 
   delete pIniFile;
 }

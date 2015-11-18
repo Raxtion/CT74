@@ -6,6 +6,7 @@
 #include <vcl.h>
 #include <ComCtrls.hpp>
 #include <IniFiles.hpp>
+#include <list>
 
 enum {LoaderSection=0,FluxToolSection,BallToolSection,
   LifterSection,InspecSection,LaneChangeSection,RailSection,BallPoolSection};
@@ -61,5 +62,10 @@ void FindFileName(char *strSource,char *strDest);
 
 TStringList* SplitString(AnsiString Original, AnsiString Delim);
 void ReplaceString(AnsiString *Original, AnsiString OldStr, AnsiString NewStr);
+
+//DirExplore(path) To find all files in path. Files are in <liststrFileName>. Directorys are in <liststrForderName>
+//std::list<AnsiString> g_liststrForderName;
+//std::list<AnsiString> g_liststrFileName;
+void DirExplore(AnsiString path,std::list<AnsiString> &g_liststrForderName,std::list<AnsiString> &g_liststrFileName);
 
 #endif
