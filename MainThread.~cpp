@@ -83,6 +83,8 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_bIsStartProcessbyDIO = false;
 	m_bIsStartProcessbyCIM = false;
 	m_bIsStopProcessbyCIM = false;
+
+    m_bLaserGoNext = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -118,8 +120,8 @@ void __fastcall CMainThread::Execute()
 
 
 		//---Start Homing
-		if (m_bIsAutoMode==false && (g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset)) tmReset.timeStart(3000);
-		if (bLastReset && tmReset.timeUp())
+		if (g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset) tmReset.timeStart(3000);
+		if (m_bIsAutoMode==false && bLastReset && tmReset.timeUp())
 		{
 			bStartMachineInit = true;
 			bHomeDone = false;
@@ -1506,6 +1508,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					if (m_bAutoRetry == true)
 					{
 						dNewValue = g_IniFile.m_dLamPress[bFront];
+                        m_bLaserGoNext = true;
 					}
 					else
 					{
@@ -1518,6 +1521,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 
 				g_Motion.AbsMove(AXIS_X, dStartX + m_nCalCol*g_IniFile.m_dColPitch);
 				g_Motion.AbsMove(AXIS_Y, dStartY - m_nCalRow*g_IniFile.m_dRowPitch);
+
 				nThreadIndex++;
 			}
 			else
@@ -1599,12 +1603,23 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 						//dNewValue=dNewValue*dNewValue/dLoadCellValue;
 						//dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]);
 						//dNewValue = dNewValue*(1 + (g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2));
+                        //if (dNewValue <= 0)  dNewValue = 0.1;
                         //if (((g_IniFile.m_dLamPress[bFront]* (1.0 + g_IniFile.m_dPressCalRange / 100.0)) - dLoadCellValue) < 0) dNewValue = 0.1;
-                        if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) < 0) dNewValue = 0.1;
-                        else dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]), 0.9));
-                        
-                        //else dNewValue = dNewValue*(1 - pow((abs((g_IniFile.m_dLamPress[bFront] - dLoadCellValue)) / g_IniFile.m_dLamPress[bFront]), 0.9));
-						//if (dNewValue <= 0)  dNewValue = 0.1;
+                        //if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) < 0) dNewValue = 0.1;
+                        //if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) < 0) dNewValue = (((g_IniFile.m_dLamPress[bFront]-0.9)/3)*0.9);
+                        //else dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]), 0.9));
+                        if (m_bLaserGoNext==true)
+                        {
+                            dNewValue = (((g_IniFile.m_dLamPress[bFront]-0.9)/3)*0.9);
+                            m_bLaserGoNext = false;
+                        }
+                        else
+                        {
+                            if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) > 0)
+                            dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.9));
+                            else
+						    dNewValue = dNewValue*(1 - pow(((dLoadCellValue - g_IniFile.m_dLamPress[bFront]) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.9));
+                        }
 						m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
 						pDNPort->SetKg(nMoveIndex, dNewValue);
 						pDNPort->WriteAllData();
@@ -1646,7 +1661,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					    pLoadCellValue[nMoveIndex] = dLoadCellValue;
 					    m_listLog.push_back("數值合格,OK");
 
-						if (nManualRange == 0) nMoveIndex++;                                                                  //0=整盤,1=單顆
+						if (nManualRange == 0) {nMoveIndex++; m_bLaserGoNext = true;}                                           //0=整盤,1=單顆
 					    nTryTimes = 0;
                         m_nPressCalPassCount = 0;
 					    nThreadIndex = nTagA;
@@ -1729,11 +1744,13 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		m_bStartAutoCal[bFront] = false;
 		nThreadIndex = 0;
 		nTryTimes = 0;
+        m_bLaserGoNext = false;
 	}
 
 	if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)
 	{
 		//nMoveIndex = 0;
+        m_bLaserGoNext = false;
         bPassCal = false;
 		nThreadIndex = 0;
 		nTryTimes = 0;
@@ -1870,7 +1887,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			if (/*g_DIO.ReadDIBit(DI::LaserCheck)*/false) g_IniFile.m_nErrorCode = 9;         //bypass
 			else
 			{
-				tm1MS.timeStart(1000);
+				tm1MS.timeStart(2000);
 				nThreadIndex++;
 			}
 		}
@@ -1938,7 +1955,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                         //p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub)] = (*maxValue - *minValue);
                         for (int i=0;i<50;i++)
                         {
-                            p_dLaserValueDiff[i] = (*maxValue - *minValue);
+                            p_dLaserValueDiff[i*4] = (*maxValue - *minValue);
                         }
                         vecTempDown.clear();
                         m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));

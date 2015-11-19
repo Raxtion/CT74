@@ -979,9 +979,6 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 	    if (g_pMainThread->m_bStartLaserUpCal[0]==false) btnLaserUp0->Down = false;
 	    if (g_pMainThread->m_bStartLaserDownCal[1]==false) btnLaserDown1->Down = false;
 	    if (g_pMainThread->m_bStartLaserDownCal[0]==false) btnLaserDown0->Down = false;
-        SetPrivilege(m_nUserLevel);
-        PaintBox1Paint(this);
-        PaintBox2Paint(this);
     }
 
     //---Renew UPH
@@ -1164,10 +1161,18 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 
 		int nTextHeight = PaintBox1->Canvas->TextHeight("1");
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg ", g_DNPort0.GetSetKg(nIndex)) + FormatFloat("0.00kg", g_DNPort0.GetKg(nIndex)));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][0]) + FormatFloat("0.00mm", g_pMainThread->m_dFrontUpperLaser[nIndex][1]));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dFrontUpperLaser[nIndex][3]));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm ", g_pMainThread->m_dFrontDownLaser[nIndex][0]) + FormatFloat("0.00kg", g_pMainThread->m_dFrontPressCal[nIndex]));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.000mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][0]) + FormatFloat("0.000mm", g_pMainThread->m_dFrontUpperLaser[nIndex][1]));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.000mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][2]) + FormatFloat("0.000mm", g_pMainThread->m_dFrontUpperLaser[nIndex][3]));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.000mm ", g_pMainThread->m_dFrontDownLaser[nIndex][0]) + FormatFloat("0.00kg", g_pMainThread->m_dFrontPressCal[nIndex]));
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.000mm ", g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0]) + FormatFloat("0.000mm ", g_pMainThread->m_dFrontDownLaserDiff[nIndex][0]));
+
+        /*
+        if (fabs(g_DNPort0.GetSetKg(nIndex)-g_DNPort0.GetKg(nIndex)) > 0.1)
+        {
+            g_IniFile.m_nErrorCode = 87;
+            PaintBox1->Canvas->Brush->Color = clRed;
+        }
+        */
 	}
 
 }
@@ -1204,10 +1209,18 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 
 		int nTextHeight = PaintBox2->Canvas->TextHeight("1");
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg", g_DNPort1.GetSetKg(nIndex)) + FormatFloat("0.00kg", g_DNPort1.GetKg(nIndex)));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][0]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][1]));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][3]));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm ", g_pMainThread->m_dRearDownLaser[nIndex][0]) + FormatFloat("0.00Kg", g_pMainThread->m_dRearPressCal[nIndex]));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.000mm ", g_pMainThread->m_dRearUpperLaser[nIndex][0]) + FormatFloat("0.000mm", g_pMainThread->m_dRearUpperLaser[nIndex][1]));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.000mm ", g_pMainThread->m_dRearUpperLaser[nIndex][2]) + FormatFloat("0.000mm", g_pMainThread->m_dRearUpperLaser[nIndex][3]));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.000mm ", g_pMainThread->m_dRearDownLaser[nIndex][0]) + FormatFloat("0.00Kg", g_pMainThread->m_dRearPressCal[nIndex]));
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.000mm ", g_pMainThread->m_dRearUpperLaserDiff[nIndex][0]) + FormatFloat("0.000mm ", g_pMainThread->m_dRearDownLaserDiff[nIndex][0]));
+
+        /*
+        if (fabs(g_DNPort1.GetSetKg(nIndex)-g_DNPort1.GetKg(nIndex)) > 0.1)
+        {
+            g_IniFile.m_nErrorCode = 87;
+            PaintBox2->Canvas->Brush->Color = clRed;
+        }
+        */
     }
 
 }
@@ -1885,7 +1898,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	SetAllDevice();
     RenewRadioGroup(true);
 
-	Timer1->Enabled = true;
+	//Timer1->Enabled = true;
     Timer2->Enabled = true;
 	timerPressure->Enabled = true;
 
