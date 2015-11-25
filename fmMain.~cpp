@@ -48,6 +48,48 @@ extern CDeltaPLC g_ModBus;
 extern CTA5Serial g_Balance;
 extern CEQPXML g_eqpXML;
 
+//CGetRealTimeValueThread.h start
+//---------------------------------------------------------------------------
+class CGetRealTimeValueThread : public TThread
+{
+private:
+protected:
+	void __fastcall Execute();
+public:
+	__fastcall CGetRealTimeValueThread(bool CreateSuspended);
+};
+
+CGetRealTimeValueThread *g_pGetRealTimeValueThread;
+bool g_bStopGetRealTimeValueThread = false;
+
+//CGetRealTimeValueThread.cpp start
+//---------------------------------------------------------------------------
+__fastcall CGetRealTimeValueThread::CGetRealTimeValueThread(bool CreateSuspended)
+	: TThread(CreateSuspended)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall CGetRealTimeValueThread::Execute()
+{
+    g_bStopGetRealTimeValueThread = false;
+    
+    while (true)
+	{
+		if (g_bStopGetRealTimeValueThread) break;
+        //--- renew Temperature and LaserValue
+        g_pMainThread->m_dRearTempRealTime = g_ModBus.GetPV(1);
+        g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
+        g_pMainThread->m_dDownLaserRealTime = g_ModBus.GetAnalogData(3, 0);
+        g_pMainThread->m_dUpperLaserRealTime = g_ModBus.GetAnalogData(3, 1);
+        g_pMainThread->m_dForntPressloseRealTime = g_ModBus.GetAnalogData(3, 2);
+        g_pMainThread->m_dRearPressloseRealTime = g_ModBus.GetAnalogData(3, 3);
+
+        ::Sleep(200);
+    }
+}
+//---------------------------------------------------------------------------
+
+//TfmMain start
 //---------------------------------------------------------------------------
 __fastcall TfrmMain::TfrmMain(TComponent* Owner)
 	: TForm(Owner)
@@ -890,7 +932,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 {
 	static int nErrorCode = 0;
 
-	//Timer1->Enabled=false;
+	Timer1->Enabled=false;
 
 	if (tm1MSLogOut.timeDevEnd()>300000) SetPrivilege(0);
 	//--Thread Log---
@@ -1024,7 +1066,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         }
     }
 
-    //--CIM Remote Disable mainFromBtn---
+    //--CIM Remote Disable MainFromBtn---
     {
         radioPosOption->Enabled = !g_pMainThread->m_bIsAutoMode;
         checkStopLC->Enabled = !g_pMainThread->m_bIsAutoMode;
@@ -1051,14 +1093,6 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 {
     Timer2->Enabled = false;
-
-    //--- renew Temperature and LaserValue
-    g_pMainThread->m_dRearTempRealTime = g_ModBus.GetPV(1);
-    g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
-    g_pMainThread->m_dDownLaserRealTime = g_ModBus.GetAnalogData(3, 0);
-    g_pMainThread->m_dUpperLaserRealTime = g_ModBus.GetAnalogData(3, 1);
-    g_pMainThread->m_dForntPressloseRealTime = g_ModBus.GetAnalogData(3, 2);
-    g_pMainThread->m_dRearPressloseRealTime = g_ModBus.GetAnalogData(3, 3);
 
     //--- real time monitor temperature
     if (g_pMainThread->m_bIsManualFinish == true
@@ -1898,9 +1932,10 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	SetAllDevice();
     RenewRadioGroup(true);
 
-	//Timer1->Enabled = true;
+	Timer1->Enabled = true;
     Timer2->Enabled = true;
 	timerPressure->Enabled = true;
+    g_pGetRealTimeValueThread = new CGetRealTimeValueThread(false);
 
     g_TempLog.open(0);
     g_ActionLog.open(1);
@@ -1931,6 +1966,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 {
 	g_bStopMainThread = true;
+    g_bStopGetRealTimeValueThread = true;
     g_TempLog.close();
     g_ActionLog.close();
 }
@@ -2191,7 +2227,7 @@ void __fastcall TfrmMain::ServerCIMClientRead(TObject *Sender,
     //AddList("CIM Read");
     g_pMainThread->m_ActionLog.push_back(g_pMainThread->AddTimeString("[ServerCIM]CIM Read"));
     Shape3->Brush->Color = clYellow;
-    g_eqpXML.ProcessCIM();
+    g_eqpXML.ProcessCIMstr();
 }
 //---------------------------------------------------------------------------
 

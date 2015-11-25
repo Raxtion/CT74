@@ -56,6 +56,8 @@ public:
 	AnsiString m_strCurrentSchedule;
     std::list<AnsiString> m_liststrForderName;
     std::list<AnsiString> m_liststrFileName;
+    AnsiString m_strBuffer;
+    int m_nSizeBuffer;
 
 public:
 	__fastcall CEQPXML();
@@ -63,7 +65,8 @@ public:
 
 	void __fastcall StartComm( TCustomWinSocket *pSocket);                                         //將外部*pSocket轉入,m_pSocket
 	void __fastcall EndComm();                                                                     //m_pSocket = NULL
-	void __fastcall ProcessCIM();                                                                  //處理來自CIM的資料，取得strMsgID 依對應的function動作
+	void __fastcall ProcessCIM();
+    void __fastcall ProcessCIMstr();                                                                  //處理來自CIM的資料，取得strMsgID 依對應的function動作
 	void __fastcall SendEventReport(char *pEvent,char *pTID="TID");                                //SendXML("EVENT_REPORT","RPT","CEID",pEvent,pTID);
 	void __fastcall SendAlarmMessage(char *pID,char *pText);                                       //SendAlarmMessage("E0051","LoadCell is not at Safe Location") 實作在Timer1 Error Code
 

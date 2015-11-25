@@ -283,11 +283,11 @@ void __fastcall CEQPXML::doRCMD(char *pRx)
 	else if (strSub == "PAUSE") bRet = StartProcess(false);
 	else if (strSub == "PPSELECT")
 	{
-		//AnsiString strName = strData.SubString(10, strData.Length() - 9);
+		AnsiString strName = strData.SubString(10, strData.Length() - 9);
 		//AnsiString strFile;
 		//strFile.sprintf("C:\\Product Data\\%s\\%s.ini", strName, strName);
 		//bRet = OpenFile(strFile);
-        bRet = OpenFile(strData);
+        bRet = OpenFile(strName);
 	}
 	else if (strSub == "LOCAL")
 	{
@@ -814,14 +814,14 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
             int nPos = strParam.Pos(",");
             AnsiString strA = strParam.SubString(1, nPos - 1);
             AnsiString strB = strParam.SubString(nPos + 1, strParam.Length() - strA.Length() + 1);
-            //if (strA == "m_strSetupEENum")
-            //{
-            //    pIniFile->WriteString(Product_Section, strA, "CIM");
-            //}
-            //else
-            //{
-			//    pIniFile->WriteString(Product_Section, strA, strB);
-            //}
+            if (strA == "m_strSetupEENum")
+            {
+                pIniFile->WriteString(Product_Section, strA, "CIM");
+            }
+            else
+            {
+			    pIniFile->WriteString(Product_Section, strA, strB);
+            }
 			pParam = pParam->NextSiblingElement("PARAMETER");
 		}
 
@@ -908,6 +908,7 @@ __fastcall CEQPXML::CEQPXML()
     receive = (char *)malloc(30000);//new char[30000];
 
     m_strSubstrate2DCode = "SSID";
+    m_strBuffer = "";
 }
 //---------------------------------------------------------------------------
 __fastcall CEQPXML::~CEQPXML()
@@ -926,9 +927,11 @@ void __fastcall CEQPXML::EndComm()
 {
      m_pSocket = NULL;
 }
+
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::ProcessCIM()
 {
+    /*
     long nSize = 0;
 
     try
@@ -943,36 +946,31 @@ void __fastcall CEQPXML::ProcessCIM()
 
         m_pSocket->ReceiveBuf(receiveRx,30000);
 
-        //g_IniFile.AddLog(receiveRx,30000);
-
         TiXmlDocument doc;
         int nIndex = 0;
 
         while(1)
         {
+
             doc.Clear();
             memset(receive,0x00,30000);
-                
+
             if(nIndex>=30000) break;
 
             nSize=(receiveRx[0+nIndex]<<24)+(receiveRx[1+nIndex]<<16)+(receiveRx[2+nIndex]<<8)+receiveRx[3+nIndex]+4;//+5;
             if(nSize<=5 || nSize>=30000)
                 break;
 
-            AnsiString strXX=FormatFloat("Size=0",nSize);
-            //AddLog(strXX.c_str(),strXX.Length());
-
             memcpy(receive,receiveRx+nIndex,nSize);
             nIndex+=nSize;
             if(nIndex>=30000) break;
 
-            //AddLog(receive,nSize);
 
             doc.Parse(receive+5);
             TiXmlElement* pRoot = doc.FirstChildElement("Root");
             if(pRoot==NULL) break;
             //TiXmlElement* pData=pRoot->FirstChildElement("DATA");
-        
+
             AnsiString strMsgID(pRoot->Attribute("MSGID"));
             //AnsiString strData=pData->GetText();
 
@@ -994,6 +992,84 @@ void __fastcall CEQPXML::ProcessCIM()
 		//Application->MessageBox(e.Message.c_str(), "Look", MB_OK);
 		g_IniFile.AddLog("catch ProcessCIM",16);
 		//delete receive;
+    }
+    */
+}
+
+//---------------------------------------------------------------------------
+void __fastcall CEQPXML::ProcessCIMstr()
+{
+    try
+    {
+        TiXmlDocument doc;
+        //-------------------------------------------------------------
+        AnsiString strGet = m_pSocket->ReceiveText();
+
+        while (true)
+        {
+            doc.Clear();
+
+            if (m_strBuffer != "")
+            {
+                m_strBuffer += strGet;
+                if (m_nSizeBuffer > m_strBuffer.Length())
+                {
+                    break;
+                }
+                else
+                {
+                    strGet = m_strBuffer;
+                    m_strBuffer = "";
+                    m_nSizeBuffer = 0;
+                }
+            }
+
+            AnsiString strSize = strGet.SubString(0,5);
+            int nSize0; ((int)strSize.c_str()[0]>=0) ? nSize0 = (int)strSize.c_str()[0]: nSize0 = (256+(int)strSize.c_str()[0]);
+            int nSize1; ((int)strSize.c_str()[1]>=0) ? nSize1 = (int)strSize.c_str()[1]: nSize1 = (256+(int)strSize.c_str()[1]);
+            int nSize2; ((int)strSize.c_str()[2]>=0) ? nSize2 = (int)strSize.c_str()[2]: nSize2 = (256+(int)strSize.c_str()[2]);
+            int nSize3; ((int)strSize.c_str()[3]>=0) ? nSize3 = (int)strSize.c_str()[3]: nSize3 = (256+(int)strSize.c_str()[3]);
+            int nSize4; ((int)strSize.c_str()[4]>=0) ? nSize4 = (int)strSize.c_str()[4]: nSize4 = (256+(int)strSize.c_str()[4]);
+            int nSize = (nSize0<<24)+(nSize1<<16)+(nSize2<<8)+(nSize3<<0)+nSize4+4;
+
+            if (strGet.Length()<nSize)
+            {
+                m_nSizeBuffer = nSize;
+                m_strBuffer += strGet;
+                break;
+            }
+
+            AnsiString strSubGet = strGet.SubString(6, nSize-7);
+
+            doc.Parse(strSubGet.c_str());
+            TiXmlElement* pRoot = doc.FirstChildElement("Root");
+            if(pRoot==NULL) break;
+            AnsiString strMsgID(pRoot->Attribute("MSGID"));
+            if (strMsgID=="HOST_STATUS") doHostStatus(strSubGet.c_str());                         //Local realtime renew CIMAP status
+            else if (strMsgID=="DTSET") doDTSet(strSubGet.c_str());                               // no used
+            else if (strMsgID=="CIMMSG") doCIMMsg(strSubGet.c_str());                             //Secs/Gem S10F3   CIM show TEXT to machine
+            else if (strMsgID=="QUERY_VID") doQueryVID(strSubGet.c_str());                        //Secs/Gem S1F3,S2F13  CIM Use SCID,ECID,DVID get machine param
+            else if (strMsgID=="EVENT_REPORT") doEventReportAck(strSubGet.c_str());               //Local Rise ECID 1,3,115
+            else if (strMsgID=="ALARM") doAlarmAck(strSubGet.c_str());                            // no used
+            else if (strMsgID=="RCMD") doRCMD(strSubGet.c_str());                                 //Secs/Gem S2F21,S2F41 CIM send RCMD, change machine /RUN/STOP/PAUSE/RESUME/PPSELECT,PPID/LOCAL/REMOTE
+            else if (strMsgID=="QUERY_PPID") doQueryPPIDFullPath(strSubGet.c_str());              //Secs/Gem S7F19   CIM Find Recipe folder and file name
+            else if (strMsgID=="QUERY_PPBODY") doQueryPPBody(strSubGet.c_str());                  //Secs/Gem S7F25   CIM Use Recipe file name get all recipe param
+            else if (strMsgID=="SET_PPBODY") doSetPPBody(strSubGet.c_str());                      //Secs/Gem S7F23   CIM Use param and value modify recipe, not add a new recipy
+
+
+            strGet = strGet.SubString(nSize+1, strGet.Length()-nSize);
+            //g_IniFile.AddLog("--------------------",20);
+            //g_IniFile.AddLog(strGet.c_str(),strGet.Length());
+            //g_IniFile.AddLog(IntToStr(strGet.Length()).c_str(),IntToStr(strGet.Length()).Length());
+            //g_IniFile.AddLog("--------------------",20);
+            if (strGet == "")
+                break;
+        }
+	}
+	catch(const EAccessViolation &e)
+	{
+		//Application->MessageBox(e.Message.c_str(), "Look", MB_OK);
+		g_IniFile.AddLog("catch ProcessCIM",16);
     }
 
 }

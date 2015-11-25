@@ -19,7 +19,6 @@ private:
 	C_GetTime tmUPHFront;                        //tm for count UPH font.
 	C_GetTime tmUPHRear;                         //tm for count UPH rear.
 	int m_nPassUnit;                         //Record for Pass Units (2x4 = 8 unit = 1 plate)
-    bool m_bLaserGoNext;                      //Record for LaserCal more to Next Cell
 protected:
     void __fastcall Execute();	
 public:

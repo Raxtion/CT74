@@ -1586,6 +1586,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			else
 			{
                 //--加入壓力補償---------------------------------------------------------------------------------------------------
+                /*修改重量校正流程:先以(((g_IniFile.m_dLamPress[bFront]-0.2)/4))公式計算出接近值,在多退少補*/
 				/*新設定值增加值採用曲線增加，當開始校正時bPassCal為F，代表該Unit尚未通過第一次PressCal，
 				當第一次進入容許值之後，bPassCal為T，就進入微調設定值，而不重新由0.1逼近，一直微調到連續通過3次;或動作25次還過不去，就出現Error並跳出.*/
                 /*將校正標準提高2倍以防止自動走位校正會一直在校正(機構問題:第一次量測下數值偏高,容易超出容許範圍*/
@@ -1625,7 +1626,6 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
                             dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 4)), 0.9));
                         else
 						    dNewValue = dNewValue*(1 - pow(((dLoadCellValue - g_IniFile.m_dLamPress[bFront]) / (g_IniFile.m_dLamPress[bFront] * 4)), 0.9));
-						//if (dNewValue <= 0)
 
 						m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
 						pDNPort->SetKg(nMoveIndex, dNewValue);
