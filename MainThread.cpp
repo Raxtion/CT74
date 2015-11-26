@@ -1909,13 +1909,17 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                 if (bUp)
                 {
                     p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = m_dFirstLaserValueUp-dLaserData;
+                    m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", m_dFirstLaserValueUp-dLaserData));
                 }
                 else
                 {
                     p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = m_dFirstLaserValueDown-dLaserData;
+                    m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", m_dFirstLaserValueDown-dLaserData));
                 }
+
 				//p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
-				m_listLog.push_back("高度=" + FormatFloat("0.00 mm", dLaserData));
+				//m_listLog.push_back("高度=" + FormatFloat("0.00 mm", dLaserData));
+
 			}
 			else
 			{
@@ -1939,7 +1943,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                         double *minValue = std::min_element(vecTempUp.begin(), vecTempUp.end());
                         p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub) - 3] = (*maxValue - *minValue);
                         vecTempUp.clear();
-                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.00 mm", (*maxValue - *minValue)));
+                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
                     }
                     else
                     {
@@ -1970,7 +1974,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                             p_dLaserValueDiff[i*4] = (*maxValue - *minValue);
                         }
                         vecTempDown.clear();
-                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.00 mm", (*maxValue - *minValue)));
+                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
                     }
                     else
                     {

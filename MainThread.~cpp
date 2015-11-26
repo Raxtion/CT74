@@ -1901,7 +1901,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
             //do first laser value Cal
             if (nMoveIndex == 0)
             {
-                if (bUp) ? m_dFirstLaserValueUp = dLaserData : m_dFirstLaserValueDown = dLaserData ;
+                (bUp) ? m_dFirstLaserValueUp = dLaserData : m_dFirstLaserValueDown = dLaserData ;
             }
 
 			if (g_ModBus.m_bInitOK)
@@ -1909,13 +1909,17 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                 if (bUp)
                 {
                     p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = m_dFirstLaserValueUp-dLaserData;
+                    m_listLog.push_back("값プ=" + FormatFloat("0.00 mm", m_dFirstLaserValueUp-dLaserData));
                 }
                 else
                 {
                     p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = m_dFirstLaserValueDown-dLaserData;
+                    m_listLog.push_back("값プ=" + FormatFloat("0.00 mm", m_dFirstLaserValueDown-dLaserData));
                 }
+
 				//p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
-				m_listLog.push_back("값プ=" + FormatFloat("0.00 mm", dLaserData));
+				//m_listLog.push_back("값プ=" + FormatFloat("0.00 mm", dLaserData));
+
 			}
 			else
 			{

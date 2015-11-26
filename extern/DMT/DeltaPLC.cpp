@@ -586,8 +586,9 @@ double __fastcall CDeltaPLC::GetAnalogData(int nID,int nChannel)
 
         dData=22.55-nData*3.06/1331.0;
 
-        AnsiString stry = FormatFloat("0.00",dData);
-        dData = stry.ToDouble();
+        //AnsiString stry = FormatFloat("0.000",dData);
+        //stry = stry.SubString(0,4);
+        //dData = stry.ToDouble();
 
         return dData;
 }
