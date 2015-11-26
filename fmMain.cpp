@@ -167,6 +167,13 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 	OpenDialog1->DefaultExt = "ini";
 	if (OpenDialog1->Execute())
 	{
+        timerRenewPainBox->Enabled = false;
+        //先清除比例閥資料等2秒
+        g_DNPort0.ClearOutData();
+        g_DNPort0.WriteAllData();
+        ::Sleep(1000);
+
+        //再寫入產品參數
 		Caption = OpenDialog1->FileName;
 		g_IniFile.m_strLastFileName = Caption;
 
@@ -183,6 +190,7 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
         TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
         GroupBox2->Caption = StrList->Strings[StrList->Count-1];
         delete StrList;
+        timerRenewPainBox->Enabled = true;
 	}
     PaintBox1Paint(this);
     PaintBox2Paint(this);
@@ -1032,10 +1040,6 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //---Auto active LC no function
     if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55) checkStopLC->Checked = true;
 
-    //--Renew PaintBox
-    PaintBox1Paint(this);
-    PaintBox2Paint(this);
-
     //--Add ActionLog---
 	if (g_pMainThread->m_ActionLog.size()>0)
 	{
@@ -1085,6 +1089,9 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         cmbTimes->Enabled = !g_pMainThread->m_bIsAutoMode;
     }
 
+    //--Keep renew Privilege
+    SetPrivilege(m_nUserLevel);
+
 	Timer1->Enabled = true;
 
 }
@@ -1121,7 +1128,8 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     }
 
     //--- real time detect Front and Rear Gas Pressure leaky
-    if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true)
+    if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true &&
+        (g_pMainThread->m_bStartLamSub[0] == false && g_pMainThread->m_bStartLamSub[1] == false))
     {
         if (g_pMainThread->m_dForntPressloseRealTime < 0)
         {
@@ -1163,6 +1171,14 @@ void __fastcall TfrmMain::Timer3Timer(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfrmMain::timerRenewPainBoxTimer(TObject *Sender)
+{
+    timerRenewPainBox->Enabled = false;
+    PaintBox1Paint(this);
+    PaintBox2Paint(this);
+    timerRenewPainBox->Enabled = true;
+}
+//---------------------------------------------------------------------------
 
 //PaintBox
 void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
@@ -1193,20 +1209,25 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 
 		PaintBox1->Canvas->Rectangle(m_vectRect[nIndex]);
 
-		int nTextHeight = PaintBox1->Canvas->TextHeight("1");
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg ", g_DNPort0.GetSetKg(nIndex)) + FormatFloat("0.00kg", g_DNPort0.GetKg(nIndex)));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.000mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][0]) + FormatFloat("0.000mm", g_pMainThread->m_dFrontUpperLaser[nIndex][1]));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.000mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][2]) + FormatFloat("0.000mm", g_pMainThread->m_dFrontUpperLaser[nIndex][3]));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.000mm ", g_pMainThread->m_dFrontDownLaser[nIndex][0]) + FormatFloat("0.00kg", g_pMainThread->m_dFrontPressCal[nIndex]));
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.000mm ", g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0]) + FormatFloat("0.000mm ", g_pMainThread->m_dFrontDownLaserDiff[nIndex][0]));
+        double dGetSetKgValue = g_DNPort0.GetSetKg(nIndex);
+        double dGetKgValue = g_DNPort0.GetKg(nIndex);
 
-        /*
-        if (fabs(g_DNPort0.GetSetKg(nIndex)-g_DNPort0.GetKg(nIndex)) > 0.1)
+		int nTextHeight = PaintBox1->Canvas->TextHeight("1");
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg ", dGetSetKgValue) + FormatFloat("0.00kg", dGetKgValue));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][0]) + FormatFloat("0.00mm", g_pMainThread->m_dFrontUpperLaser[nIndex][1]));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dFrontUpperLaser[nIndex][3]));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm ", g_pMainThread->m_dFrontDownLaser[nIndex][0]) + FormatFloat("0.00kg", g_pMainThread->m_dFrontPressCal[nIndex]));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0]) + FormatFloat("0.00mm ", g_pMainThread->m_dFrontDownLaserDiff[nIndex][0]));
+
+        if (g_pMainThread->m_bStartPressCal[0] == false && g_pMainThread->m_bStartPressCal[1] == false)
         {
-            g_IniFile.m_nErrorCode = 87;
-            PaintBox1->Canvas->Brush->Color = clRed;
+            if (fabs(dGetSetKgValue-dGetKgValue) > 0.1)
+            {
+                g_IniFile.m_nErrorCode = 87;
+                PaintBox1->Canvas->Brush->Color = clRed;
+            }
         }
-        */
+
 	}
 
 }
@@ -1241,20 +1262,25 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 
 		PaintBox2->Canvas->Rectangle(m_vectRect[nIndex]);
 
-		int nTextHeight = PaintBox2->Canvas->TextHeight("1");
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg", g_DNPort1.GetSetKg(nIndex)) + FormatFloat("0.00kg", g_DNPort1.GetKg(nIndex)));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.000mm ", g_pMainThread->m_dRearUpperLaser[nIndex][0]) + FormatFloat("0.000mm", g_pMainThread->m_dRearUpperLaser[nIndex][1]));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.000mm ", g_pMainThread->m_dRearUpperLaser[nIndex][2]) + FormatFloat("0.000mm", g_pMainThread->m_dRearUpperLaser[nIndex][3]));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.000mm ", g_pMainThread->m_dRearDownLaser[nIndex][0]) + FormatFloat("0.00Kg", g_pMainThread->m_dRearPressCal[nIndex]));
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.000mm ", g_pMainThread->m_dRearUpperLaserDiff[nIndex][0]) + FormatFloat("0.000mm ", g_pMainThread->m_dRearDownLaserDiff[nIndex][0]));
+        double dGetSetKgValue = g_DNPort1.GetSetKg(nIndex);
+        double dGetKgValue = g_DNPort1.GetKg(nIndex);
 
-        /*
-        if (fabs(g_DNPort1.GetSetKg(nIndex)-g_DNPort1.GetKg(nIndex)) > 0.1)
+		int nTextHeight = PaintBox2->Canvas->TextHeight("1");
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg", dGetSetKgValue) + FormatFloat("0.00kg", dGetKgValue));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][0]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][1]));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][3]));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm ", g_pMainThread->m_dRearDownLaser[nIndex][0]) + FormatFloat("0.00Kg", g_pMainThread->m_dRearPressCal[nIndex]));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 4, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaserDiff[nIndex][0]) + FormatFloat("0.00mm ", g_pMainThread->m_dRearDownLaserDiff[nIndex][0]));
+
+        if (g_pMainThread->m_bStartPressCal[0] == false && g_pMainThread->m_bStartPressCal[1] == false)
         {
-            g_IniFile.m_nErrorCode = 87;
-            PaintBox2->Canvas->Brush->Color = clRed;
+            if (fabs(dGetSetKgValue-dGetKgValue) > 0.1)
+            {
+                g_IniFile.m_nErrorCode = 87;
+                PaintBox2->Canvas->Brush->Color = clRed;
+            }
         }
-        */
+
     }
 
 }
@@ -2172,6 +2198,13 @@ bool TfrmMain::StartProcess(bool bStart)
 //---------------------------------------------------------------------------
 bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 {
+    frmMain->timerRenewPainBox->Enabled = false;
+    //先清除比例閥資料等2秒
+    g_DNPort0.ClearOutData();
+    g_DNPort0.WriteAllData();
+    ::Sleep(1000);
+
+    //再寫入產品參數
 	frmMain->Caption = strFileName;
 	g_IniFile.m_strLastFileName = strFileName;
 
@@ -2194,6 +2227,7 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 
 	g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
 	g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
+    frmMain->timerRenewPainBox->Enabled = true;
 	return true;
 }
 //---------------------------------------------------------------------------
@@ -2238,5 +2272,7 @@ void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
     g_pMainThread->m_bResetAgain = true;
 }
 //---------------------------------------------------------------------------
+
+
 
 

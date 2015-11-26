@@ -123,6 +123,9 @@ double __fastcall CTA5Serial::GetKg(int nID)
         
         double y=a*x+m_dY[1]-a*m_dX[1];
 
+        AnsiString stry = FormatFloat("0.00",y);
+        y = stry.ToDouble();
+
         return y;
 }
 

@@ -80,6 +80,9 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dFrontTempRealTime = 0.0;
     m_dRearTempRealTime = 0.0;
 
+    m_dFirstLaserValueUp = 0.0;
+    m_dFirstLaserValueDown = 0.0;
+
 	m_bIsStartProcessbyDIO = false;
 	m_bIsStartProcessbyCIM = false;
 	m_bIsStopProcessbyCIM = false;
@@ -413,7 +416,7 @@ void __fastcall CMainThread::Execute()
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
 
-                
+                /*
 				if ((g_IniFile.m_nRailOption == 0 && g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])||
                     (g_IniFile.m_nRailOption == 0 && g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0])  )
                 {
@@ -429,6 +432,7 @@ void __fastcall CMainThread::Execute()
 				}
 				else
 				{
+                */
 					//nThreadIndex[1]=0;       //some thread need to start from zero
 					bAutoMode = true;
 
@@ -450,7 +454,9 @@ void __fastcall CMainThread::Execute()
 					g_Motion.WaitMotionDone(AXIS_RL, 30000);
 
 					SetWorkSpeed();
+                /*
 				}
+                */
 				m_bIsStartProcessbyCIM = false;
 				m_bIsStartProcessbyDIO = false;
 			}
@@ -1557,7 +1563,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		{
 			//Get Load Cell Value
 			double dLoadCellValue = g_Balance.GetKg(1);       //Kg
-			m_listLog.push_back("重量=" + FormatFloat("0.0000 Kg", dLoadCellValue));
+			m_listLog.push_back("重量=" + FormatFloat("0.00 Kg", dLoadCellValue));
 
 			if (m_bAutoRetry == false)
 			{
@@ -1567,14 +1573,14 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dAutoStopRange / 100.0) * 1.0) ||
 						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dAutoStopRange / 100.0) * 1.0))
 					{
-						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.0000 %", g_IniFile.m_dAutoStopRange) + "，必須停機");
+						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0.00 %", g_IniFile.m_dAutoStopRange) + "，必須停機");
 						g_IniFile.m_nErrorCode = 74;
                         m_bPrassNeedReCal = false;
 					}
 					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dPressCalRange / 100.0) * 1.0) ||
 								dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dPressCalRange / 100.0) * 1.0))
 					{
-						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.0000 %", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
+						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.00 %", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
                         m_bPrassNeedReCal = true;
 					}
 				//}
@@ -1891,10 +1897,25 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
             if (bUp) dLaserData = m_dUpperLaserRealTime;
             else dLaserData = m_dDownLaserRealTime;
 			//dLaserData = g_ModBus.GetAnalogData(3, bUp);
+
+            //do first laser value Cal
+            if (nMoveIndex == 0)
+            {
+                (bUp) ? m_dFirstLaserValueUp = dLaserData : m_dFirstLaserValueDown = dLaserData ;
+            }
+
 			if (g_ModBus.m_bInitOK)
 			{
-				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
-				m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", dLaserData));
+                if (bUp)
+                {
+                    p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = m_dFirstLaserValueUp-dLaserData;
+                }
+                else
+                {
+                    p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = m_dFirstLaserValueDown-dLaserData;
+                }
+				//p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
+				m_listLog.push_back("高度=" + FormatFloat("0.00 mm", dLaserData));
 			}
 			else
 			{
@@ -1918,7 +1939,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                         double *minValue = std::min_element(vecTempUp.begin(), vecTempUp.end());
                         p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub) - 3] = (*maxValue - *minValue);
                         vecTempUp.clear();
-                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
+                        m_listLog.push_back("上模高度誤差= " + FormatFloat("0.00 mm", (*maxValue - *minValue)));
                     }
                     else
                     {
@@ -1949,7 +1970,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                             p_dLaserValueDiff[i*4] = (*maxValue - *minValue);
                         }
                         vecTempDown.clear();
-                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
+                        m_listLog.push_back("下模高度誤差= " + FormatFloat("0.00 mm", (*maxValue - *minValue)));
                     }
                     else
                     {

@@ -114,6 +114,7 @@ __published:	// IDE-managed Components
     TShape *Shape3;
     TTimer *timerDIOStartAgain;
     TMenuItem *N15;
+    TTimer *timerRenewPainBox;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -162,6 +163,7 @@ __published:	// IDE-managed Components
           TCustomWinSocket *Socket);
     void __fastcall timerDIOStartAgainTimer(TObject *Sender);
     void __fastcall N15Click(TObject *Sender);
+    void __fastcall timerRenewPainBoxTimer(TObject *Sender);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;

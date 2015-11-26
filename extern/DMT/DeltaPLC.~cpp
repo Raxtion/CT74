@@ -575,7 +575,7 @@ double __fastcall CDeltaPLC::GetPV(int nID)                //Get Current Tempera
 //---------------------------------------------------------------------------
 void __fastcall CDeltaPLC::SetSV(int nID,double dValue)    //Set Target Temperature
 {
-        SetWordDevice(nID,0x4701,dValue/0.1);
+        SetWordDevice(nID,0x4701,dValue*10);
 }
 //---------------------------------------------------------------------------
 double __fastcall CDeltaPLC::GetAnalogData(int nID,int nChannel)

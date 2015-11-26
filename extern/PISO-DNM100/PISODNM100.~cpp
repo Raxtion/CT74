@@ -177,6 +177,7 @@ int __fastcall CPISODNM100::ReadPollData(int nMacID,int nChannel)
 void __fastcall CPISODNM100::SetKg(int nIndex,double dKg)
 {
         __int16 nData;
+        if(dKg<0) dKg=0.0;
         double dData=(dKg/(10.2*0.5))*4096;      //0.5Mpa
         m_nOutputData[nIndex]=dData;//0xfff     //
 }

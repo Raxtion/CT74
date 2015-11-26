@@ -44,7 +44,9 @@ public:
 	int m_nIsFullHoming;                    //Record for Homing button should go fullhoming. (-1=normal, 1=true, 0=false, 2=cancel)
 	double m_dUnitPerHour1;                 //The result of UPH Front.
 	double m_dUnitPerHour0;                 //The result of UPH Rear.
-	int m_nPressCalPassCount;               //Record for succeed PressCal times. (default 2 times)
+	int m_nPressCalPassCount;               //Record for succeed PressCal times. (default 2 times) ·L½Õ®Õ¥¿
+    double m_dFirstLaserValueUp;            //Record for use to Cal. up laser
+    double m_dFirstLaserValueDown;          //Record for use to Cal. down laser
 
 	int m_nTrayRowIndex;
 
