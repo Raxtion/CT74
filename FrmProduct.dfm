@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 106
-  Top = 97
+  Left = 64
+  Top = 73
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 449
@@ -51,8 +51,8 @@ object fmProduct: TfmProduct
     Top = 0
     Width = 1081
     Height = 401
-    ActivePage = TabSheet1
-    TabIndex = 0
+    ActivePage = TabSheet2
+    TabIndex = 1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Common Page'
@@ -85,14 +85,14 @@ object fmProduct: TfmProduct
         Caption = #177' '
       end
       object Label88: TLabel
-        Left = 600
+        Left = 576
         Top = 338
         Width = 16
         Height = 16
         Caption = #31186
       end
       object Label87: TLabel
-        Left = 408
+        Left = 384
         Top = 338
         Width = 144
         Height = 16
@@ -687,7 +687,7 @@ object fmProduct: TfmProduct
         Text = 'm_dAutoRunTempRange'
       end
       object m_dVacDelayTime: TEdit
-        Left = 560
+        Left = 536
         Top = 335
         Width = 33
         Height = 24
@@ -804,6 +804,20 @@ object fmProduct: TfmProduct
     object TabSheet2: TTabSheet
       Caption = 'Detail Page'
       ImageIndex = 1
+      object Label110: TLabel
+        Left = 230
+        Top = 338
+        Width = 260
+        Height = 16
+        Caption = '% ('#38477#20302#27773#32568#32568#21185#35492#24046' '#35531#36664#20837'0~100%)'
+      end
+      object Label111: TLabel
+        Left = 24
+        Top = 338
+        Width = 144
+        Height = 16
+        Caption = #22739#21512#21069#32233#34909#22739#21147#19979#38477
+      end
       object GroupBox3: TGroupBox
         Left = 8
         Top = 16
@@ -1166,54 +1180,54 @@ object fmProduct: TfmProduct
         Left = 8
         Top = 249
         Width = 489
-        Height = 112
+        Height = 80
         Caption = 'Tray Layout'
         TabOrder = 2
         object Label1: TLabel
           Left = 16
-          Top = 29
+          Top = 27
           Width = 32
           Height = 16
           Caption = #34892#25976
         end
         object Label2: TLabel
           Left = 16
-          Top = 54
+          Top = 52
           Width = 32
           Height = 16
           Caption = #21015#25976
         end
         object Label11: TLabel
           Left = 176
-          Top = 28
+          Top = 26
           Width = 48
           Height = 16
           Caption = #34892#38291#36317
         end
         object Label12: TLabel
           Left = 176
-          Top = 52
+          Top = 50
           Width = 48
           Height = 16
           Caption = #21015#38291#36317
         end
         object Label13: TLabel
           Left = 310
-          Top = 28
+          Top = 26
           Width = 24
           Height = 16
           Caption = 'mm'
         end
         object Label14: TLabel
           Left = 310
-          Top = 52
+          Top = 50
           Width = 24
           Height = 16
           Caption = 'mm'
         end
         object m_nCols: TEdit
           Left = 72
-          Top = 24
+          Top = 22
           Width = 73
           Height = 24
           TabOrder = 0
@@ -1221,7 +1235,7 @@ object fmProduct: TfmProduct
         end
         object m_nRows: TEdit
           Left = 72
-          Top = 48
+          Top = 46
           Width = 73
           Height = 24
           TabOrder = 1
@@ -1229,7 +1243,7 @@ object fmProduct: TfmProduct
         end
         object m_dColPitch: TEdit
           Left = 232
-          Top = 24
+          Top = 22
           Width = 73
           Height = 24
           TabOrder = 2
@@ -1237,7 +1251,7 @@ object fmProduct: TfmProduct
         end
         object m_dRowPitch: TEdit
           Left = 232
-          Top = 48
+          Top = 46
           Width = 73
           Height = 24
           TabOrder = 3
@@ -1651,6 +1665,13 @@ object fmProduct: TfmProduct
           TabOrder = 7
           Text = 'Edit1'
         end
+      end
+      object m_nDownPercent: TEdit
+        Left = 176
+        Top = 335
+        Width = 49
+        Height = 24
+        TabOrder = 9
       end
     end
   end

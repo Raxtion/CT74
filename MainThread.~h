@@ -47,6 +47,7 @@ public:
 	int m_nPressCalPassCount;               //Record for succeed PressCal times. (default 2 times) ·L½Õ®Õ¥¿
     double m_dFirstLaserValueUp;            //Record for use to Cal. up laser
     double m_dFirstLaserValueDown;          //Record for use to Cal. down laser
+    double m_dFirstNewValue;                //Record for first Press Cal. input value that used to Cal. next.
 
 	int m_nTrayRowIndex;
 

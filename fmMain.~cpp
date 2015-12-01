@@ -470,6 +470,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWnd->m_dKeyTemp12);
     DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
 
+    DDX_Int(bRead, g_IniFile.m_nDownPercent, pWnd->m_nDownPercent);
+
     pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
     while (1)
@@ -613,6 +615,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWnd->m_dKeyTemp12);
         DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
 
+        DDX_Int(bRead, g_IniFile.m_nDownPercent, pWnd->m_nDownPercent);
         DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
 
         Label22->Caption = g_IniFile.m_dLamTime[0];
@@ -1230,9 +1233,7 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
                 tm1MS.timeStart(5000);
             else if (tm1MS.timeUp() && fabs(dGetSetKgValue-dGetKgValue) > 0.1)
             {
-                //if (fabs(dGetSetKgValue-dGetKgValue) > 0.1)
                 {
-
                     g_IniFile.m_nErrorCode = 87;
                     PaintBox1->Canvas->Brush->Color = clRed;
                 }
@@ -1290,7 +1291,6 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
                 tm1MS.timeStart(5000);
             else if (!tm1MS.timeUp() && fabs(dGetSetKgValue-dGetKgValue) > 0.1)
             {
-                //if (fabs(dGetSetKgValue-dGetKgValue) > 0.1)
                 {
                     g_IniFile.m_nErrorCode = 87;
                     PaintBox2->Canvas->Brush->Color = clRed;

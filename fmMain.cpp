@@ -470,6 +470,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWnd->m_dKeyTemp12);
     DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
 
+    DDX_Int(bRead, g_IniFile.m_nDownPercent, pWnd->m_nDownPercent);
+
     pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
     while (1)
@@ -613,6 +615,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWnd->m_dKeyTemp12);
         DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
 
+        DDX_Int(bRead, g_IniFile.m_nDownPercent, pWnd->m_nDownPercent);
         DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
 
         Label22->Caption = g_IniFile.m_dLamTime[0];

@@ -13,10 +13,6 @@
 #define Product_Section "Product"
 
 
-
-
-
-
 //---------------------------------------------------------------------------
 class CIniFile
 {
@@ -38,7 +34,7 @@ public:
   __fastcall CIniFile();
 
   //-----------------Machine-----------------
-   double m_dACCSpeed[8];
+  double m_dACCSpeed[8];
   double m_dDECSpeed[8];
   double m_dJogSpeed[8];
   double m_dWorkSpeed[8];

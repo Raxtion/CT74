@@ -87,6 +87,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_bIsStartProcessbyCIM = false;
 	m_bIsStopProcessbyCIM = false;
 
+    m_dFirstNewValue = 0.5;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -1046,6 +1047,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 
 	C_GetTime *tm1MS;
 	C_GetTime *tm2MS;
+	CPISODNM100 *pDNPort;
 
 	int nLamInp, nLamEntry, nLamWarp, nEjectEntry, nLifterVacGauge, nEjectInp;
 	int nLamMotorStart, nLifterVac;
@@ -1066,7 +1068,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 
 		tm1MS = &tm1MSFront;
 		tm2MS = &tm2MSFront;
-
+        pDNPort = &g_DNPort0;
 	}
 	else
 	{
@@ -1083,6 +1085,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 
 		tm1MS = &tm1MSRear;
 		tm2MS = &tm2MSRear;
+        pDNPort = &g_DNPort1;
 	}
 
 	switch (nThreadIndex)
@@ -1123,6 +1126,14 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空開啟"));
 			    g_DIO.SetDO(nLifterVac, true);
             }
+            // add PressDownPercent
+            for (int nIndex = 0; nIndex<50; nIndex++)
+            {
+        	    if (bFront) pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex])*(100-g_IniFile.m_nDownPercent)/100);
+                else pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[0] + g_IniFile.m_dScaleOffsetRear[nIndex])*(100-g_IniFile.m_nDownPercent)/100);
+            }
+            pDNPort->WriteAllData();
+
 			tm1MS->timeStart(2000);
 			nThreadIndex++;
 		}
@@ -1163,20 +1174,16 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 
 			tm1MS->timeStart(g_IniFile.m_dLamTime[bFront] * 1000);
 
-            if (m_bFirstVacSuccessed == false)
-			//if (g_IniFile.m_nErrorCode > 2000)
-			{
-				//g_IniFile.m_nErrorCode = 0;
-				g_DIO.SetDO(DO::Buzzer, false);
-
-				//g_DIO.SetDO(DO::StopBtnLamp, false);
-				//g_DIO.SetDO(DO::StartBtnLamp, true);
-				//g_DIO.SetDO(DO::GreenLamp, true);
-				//g_DIO.SetDO(DO::YellowLamp, false);
-				//g_DIO.SetDO(DO::RedLamp, false);
-			}
-
+            if (m_bFirstVacSuccessed == false) g_DIO.SetDO(DO::Buzzer, false);
 			tm2MS->timeStart(g_IniFile.m_dVacDelayTime * 1000);
+
+            // add Reload PressDownPercent
+            for (int nIndex = 0; nIndex<50; nIndex++)
+            {
+        	    if (bFront) pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex]));
+                else pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[0] + g_IniFile.m_dScaleOffsetRear[nIndex]));
+            }
+            pDNPort->WriteAllData();
 
 			nThreadIndex++;
 		}
@@ -1241,7 +1248,6 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			g_Motion.Stop(nAxisLifter);
 			nThreadIndex++;
 		}
-		else g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]);
 		break;
 	case 11:
 		if (tm1MS->timeUp())
@@ -1250,6 +1256,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			m_dLamTimer[bFront] = 0.0;
 			nThreadIndex++;
 		}
+        break;
 	case 12:
 		if (g_Motion.GetActualPos(nAxisLifter)<(g_IniFile.m_dLamGetPos[bFront] + 5.0))
 		{
@@ -1257,7 +1264,6 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-
 	case 13:
 		if (g_Motion.IsPosDone(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]))
 		{
@@ -1513,15 +1519,16 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					if (m_bAutoRetry == true)
 					{
 						//dNewValue = g_IniFile.m_dLamPress[bFront];
-                        dNewValue = (((g_IniFile.m_dLamPress[bFront]-0.2)/4));
+                        //dNewValue = (((g_IniFile.m_dLamPress[bFront]-0.2)/4)); use previous PressCal value is more efficient then pre-function
+                        dNewValue = m_dFirstNewValue;
 					}
 					else
 					{
 						dNewValue = pOffset[nMoveIndex] + g_IniFile.m_dLamPress[bFront];
 					}
-					m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
-					pDNPort->SetKg(nMoveIndex, dNewValue);
-					pDNPort->WriteAllData();
+					//m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
+					//pDNPort->SetKg(nMoveIndex, dNewValue);
+					//pDNPort->WriteAllData();
 				}
 
 				g_Motion.AbsMove(AXIS_X, dStartX + m_nCalCol*g_IniFile.m_dColPitch);
@@ -1540,19 +1547,25 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		if (g_Motion.IsPosDone(AXIS_X, dStartX + m_nCalCol*g_IniFile.m_dColPitch) && g_Motion.IsPosDone(AXIS_Y, dStartY - m_nCalRow*g_IniFile.m_dRowPitch))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][1]LoadCell XY移動就位"));
-			if (/*g_DIO.ReadDIBit(DI::LaserCheck)*/false) g_IniFile.m_nErrorCode = 9;      //bypass
-			else
-			{
-				g_DIO.SetDO(DO::LoadCellValve, true);
-				tm1MS.timeStart(3000);
-				nThreadIndex++;
-			}
+
+            m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2 * ", dNewValue) + FormatFloat("0.00 %", (100-g_IniFile.m_nDownPercent)));
+            pDNPort->SetKg(nMoveIndex, dNewValue*(100-g_IniFile.m_nDownPercent)/100);
+            pDNPort->WriteAllData();
+
+            g_DIO.SetDO(DO::LoadCellValve, true);
+            tm1MS.timeStart(3000);
+            nThreadIndex++;
 		}
 		break;
 	case 2:
 		if (g_DIO.ReadDIBit(DI::LoadCellUp))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][2]LoadCell 上推到位讀值"));
+
+            m_listLog.push_back("Set Data=" + FormatFloat("ReLoad 0.00 %", 100-g_IniFile.m_nDownPercent));
+			pDNPort->SetKg(nMoveIndex, dNewValue);
+			pDNPort->WriteAllData();
+
 			tm1MS.timeStart(g_IniFile.m_dPressCalTime * 1000);          //Stable Time
 			nThreadIndex++;
 		}
@@ -1664,6 +1677,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					    nTryTimes = 0;
                         m_nPressCalPassCount = 0;
 					    nThreadIndex = nTagA;
+                        m_dFirstNewValue = dNewValue;
 						bPassCal = false;
                     }
 				}
