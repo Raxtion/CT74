@@ -1126,13 +1126,15 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空開啟"));
 			    g_DIO.SetDO(nLifterVac, true);
             }
-            // add PressDownPercent
-            for (int nIndex = 0; nIndex<50; nIndex++)
+
+            // add PressDownPercent  (slowdown)
+            /*for (int nIndex = 0; nIndex<50; nIndex++)
             {
         	    if (bFront) pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex])*(100-g_IniFile.m_nDownPercent)/100);
                 else pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[0] + g_IniFile.m_dScaleOffsetRear[nIndex])*(100-g_IniFile.m_nDownPercent)/100);
             }
             pDNPort->WriteAllData();
+            */
 
 			tm1MS->timeStart(2000);
 			nThreadIndex++;
@@ -1177,14 +1179,14 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
             if (m_bFirstVacSuccessed == false) g_DIO.SetDO(DO::Buzzer, false);
 			tm2MS->timeStart(g_IniFile.m_dVacDelayTime * 1000);
 
-            // add Reload PressDownPercent
-            for (int nIndex = 0; nIndex<50; nIndex++)
+            // add Reload PressDownPercent (slowdown)
+            /*for (int nIndex = 0; nIndex<50; nIndex++)
             {
         	    if (bFront) pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex]));
                 else pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[0] + g_IniFile.m_dScaleOffsetRear[nIndex]));
             }
             pDNPort->WriteAllData();
-
+            */
 			nThreadIndex++;
 		}
 		break;

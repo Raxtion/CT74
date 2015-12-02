@@ -1548,8 +1548,8 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][1]LoadCell XY移動就位"));
 
-            m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2 * ", dNewValue) + FormatFloat("0.00 %", (100-m_dDownPercent)));
-            pDNPort->SetKg(nMoveIndex, dNewValue*(100-m_dDownPercent)/100);
+            m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2 * ", dNewValue) + FormatFloat("0.00 %", (100-g_IniFile.m_nDownPercent)));
+            pDNPort->SetKg(nMoveIndex, dNewValue*(100-g_IniFile.m_nDownPercent)/100);
             pDNPort->WriteAllData();
 
             g_DIO.SetDO(DO::LoadCellValve, true);
@@ -1562,7 +1562,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][2]LoadCell 上推到位讀值"));
 
-            m_listLog.push_back("Set Data=" + FormatFloat("ReLoad 0.00 %", 100-g_IniFile.m_dDownPercent));
+            m_listLog.push_back("Set Data=" + FormatFloat("ReLoad 0.00 %", 100-g_IniFile.m_nDownPercent));
 			pDNPort->SetKg(nMoveIndex, dNewValue);
 			pDNPort->WriteAllData();
 
