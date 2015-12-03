@@ -144,7 +144,7 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
     //start the btn also update the value of cmb
     g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
     g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
-    g_pMainThread->m_nManualTimes = cmbTimes->ItemIndex;
+    g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
     }
     // update AutoRetry
     g_pMainThread->m_bAutoRetry = checkAutoRetry->Checked;
@@ -1105,6 +1105,9 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 
 void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 {
+    static C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
+    static C_GetTime tm2MS(EX_SCALE::TIME_1MS, false);
+
     Timer2->Enabled = false;
 
     //--- real time monitor temperature
@@ -1134,19 +1137,26 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     }
 
     //--- real time detect Front and Rear Gas Pressure leaky
-    if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true &&
-        (g_pMainThread->m_bStartLamSub[0] == false && g_pMainThread->m_bStartLamSub[1] == false))
+    if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true)
     {
-        if (g_pMainThread->m_dForntPressloseRealTime < 0)
+        //---Detect GassLeaky keep over 5 second then allarm
+        if (g_pMainThread->m_dForntPressloseRealTime < 0 && !m_bLastGassLeakyFront) tm1MS.timeStart(5000);
+        if (m_bLastGassLeakyFront && tm1MS.timeUp())
         {
-            g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(F) Value= 0.00", g_pMainThread->m_dForntPressloseRealTime));
+        	g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(F) Value= 0.00", g_pMainThread->m_dForntPressloseRealTime));
             g_IniFile.m_nErrorCode = 85;
         }
-        else if(g_pMainThread->m_dRearPressloseRealTime < 0)
+        if (g_pMainThread->m_dForntPressloseRealTime < 0) m_bLastGassLeakyFront = true;
+        else m_bLastGassLeakyFront = false;
+        //---Detect GassLeaky keep over 5 second then allarm
+        if (g_pMainThread->m_dRearPressloseRealTime < 0 && !m_bLastGassLeakyRear) tm2MS.timeStart(5000);
+        if (m_bLastGassLeakyRear && tm2MS.timeUp())
         {
-            g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(R) Value= 0.00", g_pMainThread->m_dRearPressloseRealTime));
+	        g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(R) Value= 0.00", g_pMainThread->m_dRearPressloseRealTime));
             g_IniFile.m_nErrorCode = 86;
         }
+        if (g_pMainThread->m_dRearPressloseRealTime < 0) m_bLastGassLeakyRear = true;
+        else m_bLastGassLeakyRear = false;
     }
 
     Timer2->Enabled = true;
@@ -1229,17 +1239,16 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 
         if (g_pMainThread->m_bIsHomeDone == true && (g_pMainThread->m_bStartPressCal[0] == false && g_pMainThread->m_bStartPressCal[1] == false))
         {
-            if (!tm1MS.timeUp())
-                tm1MS.timeStart(5000);
-            else if (tm1MS.timeUp() && fabs(dGetSetKgValue-dGetKgValue) > 0.1)
+            //---Detect GassPusherIO are different 5 second then allarm
+            if (fabs(dGetSetKgValue-dGetKgValue) > 0.1 && !m_bLastPusherIOErrorFront) tm1MS.timeStart(5000);
+            if (m_bLastPusherIOErrorFront && tm1MS.timeUp())
             {
-                {
-                    g_IniFile.m_nErrorCode = 87;
-                    PaintBox1->Canvas->Brush->Color = clRed;
-                }
+            	g_IniFile.m_nErrorCode = 87;
+            	PaintBox1->Canvas->Brush->Color = clRed;
             }
+            if (fabs(dGetSetKgValue-dGetKgValue) > 0.1) m_bLastPusherIOErrorFront = true;
+            else m_bLastPusherIOErrorFront = false;
         }
-
 	}
 
 }
@@ -1287,16 +1296,15 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 
         if (g_pMainThread->m_bIsHomeDone == true && (g_pMainThread->m_bStartPressCal[0] == false && g_pMainThread->m_bStartPressCal[1] == false))
         {
-            if (!tm1MS.timeUp())
-                tm1MS.timeStart(5000);
-            else if (!tm1MS.timeUp() && fabs(dGetSetKgValue-dGetKgValue) > 0.1)
+            //---Detect GassPusherIO are different 5 second then allarm
+            if (fabs(dGetSetKgValue-dGetKgValue) > 0.1 && !m_bLastPusherIOErrorRear) tm1MS.timeStart(5000);
+            if (m_bLastPusherIOErrorRear && tm1MS.timeUp())
             {
-                {
-                    g_IniFile.m_nErrorCode = 87;
-                    PaintBox2->Canvas->Brush->Color = clRed;
-                }
+            	g_IniFile.m_nErrorCode = 87;
+            	PaintBox1->Canvas->Brush->Color = clRed;
             }
-
+            if (fabs(dGetSetKgValue-dGetKgValue) > 0.1) m_bLastPusherIOErrorRear = true;
+            else m_bLastPusherIOErrorRear = false;
         }
 
     }
@@ -2004,6 +2012,11 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
         AddList("CIM Stop!");
         g_eqpXML.m_CIMStatus = "0";
     }
+
+    m_bLastGassLeakyFront = false;
+    m_bLastGassLeakyRear = false;
+    m_bLastPusherIOErrorFront = false;
+    m_bLastPusherIOErrorRear = false;
 }
 //---------------------------------------------------------------------------
 
@@ -2040,7 +2053,7 @@ void __fastcall TfrmMain::cmbFirstLocChange(TObject *Sender)
 
 void __fastcall TfrmMain::cmbTimesChange(TObject *Sender)
 {
-    g_pMainThread->m_nManualTimes = cmbTimes->ItemIndex;
+    g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
 }
 //---------------------------------------------------------------------------
 

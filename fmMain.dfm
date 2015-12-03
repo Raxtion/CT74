@@ -1,9 +1,10 @@
 object frmMain: TfrmMain
-  Left = 1
-  Top = 202
+  Left = 18
+  Top = 30
   Width = 1350
   Height = 615
-  VertScrollBar.Position = 292
+  HorzScrollBar.Position = 244
+  VertScrollBar.Position = 21
   Caption = 'frmMain'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +20,8 @@ object frmMain: TfrmMain
   PixelsPerInch = 96
   TextHeight = 13
   object PaintBox2: TPaintBox
-    Left = 176
-    Top = -276
+    Left = -68
+    Top = -5
     Width = 1161
     Height = 350
     Color = clBtnFace
@@ -29,8 +30,8 @@ object frmMain: TfrmMain
     OnPaint = PaintBox2Paint
   end
   object btnStartPressCal0: TSpeedButton
-    Left = 1352
-    Top = -252
+    Left = 1108
+    Top = 19
     Width = 116
     Height = 73
     AllowAllUp = True
@@ -39,16 +40,16 @@ object frmMain: TfrmMain
     OnClick = btnStartPressCal0Click
   end
   object Label1: TLabel
-    Left = 1352
-    Top = 12
+    Left = 1108
+    Top = 283
     Width = 145
     Height = 13
     AutoSize = False
     Caption = #30446#21069#28331#24230': 0.0 '#24230
   end
   object Label2: TLabel
-    Left = 1352
-    Top = 396
+    Left = 1108
+    Top = 667
     Width = 233
     Height = 25
     AutoSize = False
@@ -62,8 +63,8 @@ object frmMain: TfrmMain
   end
   object PaintBox1: TPaintBox
     Tag = 1
-    Left = 176
-    Top = 84
+    Left = -68
+    Top = 355
     Width = 1161
     Height = 350
     Color = clBtnFace
@@ -72,16 +73,16 @@ object frmMain: TfrmMain
     OnPaint = PaintBox1Paint
   end
   object Label4: TLabel
-    Left = 1352
-    Top = 364
+    Left = 1108
+    Top = 635
     Width = 145
     Height = 13
     AutoSize = False
     Caption = #30446#21069#28331#24230': 0.0 '#24230
   end
   object Label5: TLabel
-    Left = 1352
-    Top = 44
+    Left = 1108
+    Top = 315
     Width = 225
     Height = 25
     AutoSize = False
@@ -94,8 +95,8 @@ object frmMain: TfrmMain
     ParentFont = False
   end
   object btnStartPressCal1: TSpeedButton
-    Left = 1352
-    Top = 100
+    Left = 1108
+    Top = 371
     Width = 116
     Height = 73
     AllowAllUp = True
@@ -104,8 +105,8 @@ object frmMain: TfrmMain
     OnClick = btnStartPressCal0Click
   end
   object btnLaserUp0: TSpeedButton
-    Left = 1352
-    Top = -156
+    Left = 1108
+    Top = 115
     Width = 116
     Height = 73
     AllowAllUp = True
@@ -114,8 +115,8 @@ object frmMain: TfrmMain
     OnClick = btnStartPressCal0Click
   end
   object btnLaserDown0: TSpeedButton
-    Left = 1352
-    Top = -76
+    Left = 1108
+    Top = 195
     Width = 116
     Height = 73
     AllowAllUp = True
@@ -124,8 +125,8 @@ object frmMain: TfrmMain
     OnClick = btnStartPressCal0Click
   end
   object btnLaserUp1: TSpeedButton
-    Left = 1352
-    Top = 196
+    Left = 1108
+    Top = 467
     Width = 116
     Height = 73
     AllowAllUp = True
@@ -134,8 +135,8 @@ object frmMain: TfrmMain
     OnClick = btnStartPressCal0Click
   end
   object btnLaserDown1: TSpeedButton
-    Left = 1352
-    Top = 276
+    Left = 1108
+    Top = 547
     Width = 116
     Height = 73
     AllowAllUp = True
@@ -144,67 +145,67 @@ object frmMain: TfrmMain
     OnClick = btnStartPressCal0Click
   end
   object Shape1: TShape
-    Left = 136
-    Top = 84
+    Left = -108
+    Top = 355
     Width = 25
     Height = 25
     Shape = stCircle
   end
   object Shape2: TShape
-    Left = 136
-    Top = 52
+    Left = -108
+    Top = 323
     Width = 25
     Height = 25
     Shape = stCircle
   end
   object SpeedButton1: TSpeedButton
-    Left = 32
-    Top = 156
+    Left = -212
+    Top = 427
     Width = 97
     Height = 41
     Caption = 'Load Cell UP'
     OnClick = SpeedButton1Click
   end
   object SpeedButton2: TSpeedButton
-    Left = 32
-    Top = 204
+    Left = -212
+    Top = 475
     Width = 97
     Height = 41
     Caption = 'Load Cell DOWN'
     OnClick = SpeedButton2Click
   end
   object Label3: TLabel
-    Left = 40
-    Top = 76
+    Left = -204
+    Top = 347
     Width = 89
     Height = 13
     AutoSize = False
     Caption = 'XY '#23433#20840#20301#32622
   end
   object Label6: TLabel
-    Left = 1483
-    Top = -252
+    Left = 1239
+    Top = 19
     Width = 24
     Height = 13
     Caption = #31684#22285
   end
   object Label10: TLabel
-    Left = 1483
-    Top = -196
+    Left = 1239
+    Top = 75
     Width = 48
     Height = 13
     Caption = #36215#22987#20301#32622
   end
   object Label11: TLabel
-    Left = 1483
-    Top = -143
+    Left = 1239
+    Top = 128
     Width = 48
     Height = 13
     Caption = #20597#28204#27425#25976
   end
   object btnStartMotor1: TSpeedButton
-    Left = 1487
-    Top = 140
+    Left = 1243
+    Top = 411
     Width = 81
     Height = 38
     AllowAllUp = True
@@ -214,8 +215,8 @@ object frmMain: TfrmMain
     OnClick = btnStartMotor1Click
   end
   object btnStartMotor0: TSpeedButton
-    Left = 1487
-    Top = 89
+    Left = 1243
+    Top = 360
     Width = 81
     Height = 41
     AllowAllUp = True
@@ -225,8 +226,8 @@ object frmMain: TfrmMain
     OnClick = btnStartMotor0Click
   end
   object Shape3: TShape
-    Left = 1565
-    Top = -284
+    Left = 1321
+    Top = -13
     Width = 17
     Height = 17
     Brush.Color = clLime
@@ -235,8 +236,8 @@ object frmMain: TfrmMain
     Visible = False
   end
   object listHistory: TListBox
-    Left = 0
-    Top = 434
+    Left = -244
+    Top = 705
     Width = 1586
     Height = 110
     Align = alBottom
@@ -253,8 +254,8 @@ object frmMain: TfrmMain
     TabOrder = 0
   end
   object radioPosOption: TRadioGroup
-    Left = 8
-    Top = -116
+    Left = -236
+    Top = 155
     Width = 161
     Height = 161
     BiDiMode = bdLeftToRight
@@ -272,8 +273,8 @@ object frmMain: TfrmMain
     OnClick = radioPosOptionClick
   end
   object GroupBox1: TGroupBox
-    Left = 8
-    Top = 260
+    Left = -236
+    Top = 531
     Width = 161
     Height = 107
     Caption = 'Value Monitor'
@@ -312,8 +313,8 @@ object frmMain: TfrmMain
     end
   end
   object checkRestartCal: TCheckBox
-    Left = 1360
-    Top = -284
+    Left = 1116
+    Top = -13
     Width = 158
     Height = 17
     Caption = #27599#27425#37117#24478#38957#38283#22987
@@ -324,8 +325,8 @@ object frmMain: TfrmMain
     TabOrder = 3
   end
   object cmbRange: TComboBox
-    Left = 1483
-    Top = -236
+    Left = 1239
+    Top = 35
     Width = 81
     Height = 21
     ItemHeight = 13
@@ -338,8 +339,8 @@ object frmMain: TfrmMain
       #21934#38982)
   end
   object cmbFirstLoc: TComboBox
-    Left = 1483
-    Top = -180
+    Left = 1239
+    Top = 91
     Width = 81
     Height = 21
     ItemHeight = 13
@@ -400,12 +401,11 @@ object frmMain: TfrmMain
       '50')
   end
   object cmbTimes: TComboBox
-    Left = 1483
-    Top = -124
+    Left = 1239
+    Top = 147
     Width = 81
     Height = 21
     ItemHeight = 13
-    ItemIndex = 0
     TabOrder = 6
     Text = '1'
     OnChange = cmbTimesChange
@@ -419,11 +419,12 @@ object frmMain: TfrmMain
       '7'
       '8'
       '9'
-      '10')
+      '10'
+      '100')
   end
   object checkAutoRetry: TCheckBox
-    Left = 1480
-    Top = -84
+    Left = 1236
+    Top = 187
     Width = 106
     Height = 25
     Caption = #23531#20837#35036#20767#25976#20540
@@ -431,8 +432,8 @@ object frmMain: TfrmMain
     OnClick = checkAutoRetryClick
   end
   object GroupBox2: TGroupBox
-    Left = 8
-    Top = -284
+    Left = -236
+    Top = -13
     Width = 161
     Height = 161
     Caption = #29986#21697#21443#25976
@@ -592,8 +593,8 @@ object frmMain: TfrmMain
     end
   end
   object btnHoming: TButton
-    Left = 1486
-    Top = 273
+    Left = 1242
+    Top = 544
     Width = 89
     Height = 73
     Caption = #24489#27512
@@ -601,8 +602,8 @@ object frmMain: TfrmMain
     OnClick = btnHomingClick
   end
   object checkStopLC: TCheckBox
-    Left = 24
-    Top = 116
+    Left = -220
+    Top = 387
     Width = 121
     Height = 25
     Caption = 'LC Boat '#19981#36865#20837
@@ -618,8 +619,8 @@ object frmMain: TfrmMain
     OnClick = checkStopLCClick
   end
   object GroupBox3: TGroupBox
-    Left = 8
-    Top = 366
+    Left = -236
+    Top = 637
     Width = 161
     Height = 65
     Caption = 'Boat Finished'
@@ -657,8 +658,8 @@ object frmMain: TfrmMain
     end
   end
   object GroupBox4: TGroupBox
-    Left = 8
-    Top = 366
+    Left = -236
+    Top = 637
     Width = 161
     Height = 65
     Caption = 'UPH'
