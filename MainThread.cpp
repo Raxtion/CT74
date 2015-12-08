@@ -1502,7 +1502,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	switch (nThreadIndex)
 	{
 	case 0:
-		if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
+		if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
 		else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 		//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;    //don't need
 		else
@@ -1564,7 +1564,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][2]LoadCell 上推到位讀值"));
 
-            m_listLog.push_back("Set Data=" + FormatFloat("ReLoad 0.00 %", 100-g_IniFile.m_nDownPercent));
+            m_listLog.push_back("Set Data=" + FormatFloat("ReLoad 0.00 %", g_IniFile.m_nDownPercent));
 			pDNPort->SetKg(nMoveIndex, dNewValue);
 			pDNPort->WriteAllData();
 
@@ -1866,8 +1866,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	switch (nThreadIndex)
 	{
 	case 0:
-		//if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
-        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamGetPos[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamGetPos[1]) g_IniFile.m_nErrorCode = 69;
+        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
 		else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 		//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;      //don't need
 		{
@@ -1914,6 +1913,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
             else dLaserData = m_dDownLaserRealTime;
 			//dLaserData = g_ModBus.GetAnalogData(3, bUp);
 
+            /*
             //do first laser value Cal
             if (nMoveIndex == 0)
             {
@@ -1943,6 +1943,21 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = 999;
 				m_listLog.push_back("高度=N/A");
 			}
+            */
+
+            //Not do first laser value Cal
+            if (g_ModBus.m_bInitOK)
+			{
+				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
+				m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", dLaserData));
+			}
+			else
+			{
+				g_ModBus.m_bInitOK = true;
+				p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = 999;
+				m_listLog.push_back("高度=N/A");
+			}
+
 
             if (bUp)
             {

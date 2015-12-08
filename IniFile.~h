@@ -117,6 +117,8 @@ public:
   double m_dGap[5];                   //for product param keyin
   double m_dKeyTemp[2][3];            //for product param keyin
 
+  int m_nDownPercent;                 //for downPress to decrease cylinder friction
+
 //Function
 public:
   void __fastcall MachineFile(bool bRead);

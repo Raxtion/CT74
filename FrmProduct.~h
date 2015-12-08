@@ -234,6 +234,9 @@ __published:	// IDE-managed Components
     TLabel *Label82;
     TEdit *m_nAutoInterval;
     TEdit *m_dAutoStopRange;
+    TEdit *m_nDownPercent;
+    TLabel *Label110;
+    TLabel *Label111;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbScal(AnsiString Hint);

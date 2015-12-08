@@ -545,8 +545,12 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
         "m_dBLT","mm","F4","0","1000",                                     //on Paper
         "m_dTilt","mm","F4","0","1000",                                    //on Paper
         "m_dGap","mm","F4","0","1000",                                     //on Paper
-        "m_dKeyTemp0","mm","F4","0","1000",                                //on Paper
-        "m_dKeyTemp1","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp00","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp01","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp02","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp10","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp11","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp12","mm","F4","0","1000",                                //on Paper
         //以上為產品參數
 
         //以下為機台變數

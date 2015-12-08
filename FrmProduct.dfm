@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 64
-  Top = 73
+  Left = 332
+  Top = 31
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 449
@@ -51,8 +51,8 @@ object fmProduct: TfmProduct
     Top = 0
     Width = 1081
     Height = 401
-    ActivePage = TabSheet2
-    TabIndex = 1
+    ActivePage = TabSheet1
+    TabIndex = 0
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Common Page'

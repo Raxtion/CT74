@@ -222,7 +222,7 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dKeyTemp11",g_IniFile.m_dKeyTemp[1][1],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dKeyTemp12",g_IniFile.m_dKeyTemp[1][2],0.0);
 
-  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDownPercent",m_nDownPercent,70);
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDownPercent",m_nDownPercent,30);
 
   delete pIniFile;
 }

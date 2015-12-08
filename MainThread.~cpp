@@ -1126,13 +1126,15 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空開啟"));
 			    g_DIO.SetDO(nLifterVac, true);
             }
-            // add PressDownPercent
-            for (int nIndex = 0; nIndex<50; nIndex++)
+
+            // add PressDownPercent  (slowdown)
+            /*for (int nIndex = 0; nIndex<50; nIndex++)
             {
         	    if (bFront) pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex])*(100-g_IniFile.m_nDownPercent)/100);
                 else pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[0] + g_IniFile.m_dScaleOffsetRear[nIndex])*(100-g_IniFile.m_nDownPercent)/100);
             }
             pDNPort->WriteAllData();
+            */
 
 			tm1MS->timeStart(2000);
 			nThreadIndex++;
@@ -1177,14 +1179,14 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
             if (m_bFirstVacSuccessed == false) g_DIO.SetDO(DO::Buzzer, false);
 			tm2MS->timeStart(g_IniFile.m_dVacDelayTime * 1000);
 
-            // add Reload PressDownPercent
-            for (int nIndex = 0; nIndex<50; nIndex++)
+            // add Reload PressDownPercent (slowdown)
+            /*for (int nIndex = 0; nIndex<50; nIndex++)
             {
         	    if (bFront) pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex]));
                 else pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[0] + g_IniFile.m_dScaleOffsetRear[nIndex]));
             }
             pDNPort->WriteAllData();
-
+            */
 			nThreadIndex++;
 		}
 		break;
@@ -1500,7 +1502,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	switch (nThreadIndex)
 	{
 	case 0:
-		if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
+		if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
 		else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 		//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;    //don't need
 		else
@@ -1562,7 +1564,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][2]LoadCell 上推到位讀值"));
 
-            m_listLog.push_back("Set Data=" + FormatFloat("ReLoad 0.00 %", 100-g_IniFile.m_nDownPercent));
+            m_listLog.push_back("Set Data=" + FormatFloat("ReLoad 0.00 %", g_IniFile.m_nDownPercent));
 			pDNPort->SetKg(nMoveIndex, dNewValue);
 			pDNPort->WriteAllData();
 
@@ -1864,8 +1866,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	switch (nThreadIndex)
 	{
 	case 0:
-		//if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
-        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamGetPos[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamGetPos[1]) g_IniFile.m_nErrorCode = 69;
+        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[1]) g_IniFile.m_nErrorCode = 69;
 		else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 		//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;      //don't need
 		{
