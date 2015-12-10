@@ -2239,6 +2239,8 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 {
     if (FileExists(strFileName))
     {
+        g_IniFile.MachineFile(true);
+
         //先清除比例閥資料等2秒
         g_DNPort0.ClearOutData();
         g_DNPort0.WriteAllData();

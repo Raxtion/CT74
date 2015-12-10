@@ -517,10 +517,6 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_bNotLam","mm","F4","0","1",
 		"m_dPressCalRange","mm","F4","0","100",
 		"m_dPressCalTime","mm","F4","0","100",
-		"m_dLaserUpPosX0","mm","F4","0","1000",
-		"m_dLaserUpPosY0","mm","F4","0","1000",
-		"m_dLaserUpPosX1","mm","F4","0","1000",
-		"m_dLaserUpPosY1","mm","F4","0","1000",
 		"m_dLamSecondHeight0","mm","F4","0","200",
 		"m_dLamSecondHeight1","mm","F4","0","200",
 		"m_dLamSecondTime0","mm","F4","0","1000",
@@ -530,13 +526,13 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_dLamThirdTime0","mm","F4","0","1000",
 		"m_dLamThirdTime1","mm","F4","0","1000",
 
-		"m_dAutoInterval","mm","F4","0","1000",
 		"m_dAutoStopRange","mm","F4","0","1000",
 		"m_nAutoInterval","mm","F4","0","1000",
 		"m_dAutoRunTempRange","mm","F4","0","1000",
 		"m_dVacDelayTime","mm","F4","0","1000",
         "m_dScaleOffsetFront","mm","F4","0","1000",
         "m_dScaleOffsetRear","mm","F4","0","1000",
+        "m_nDownPercent","mm","F4","0","1000",
 
         "m_nHeadType","mm","F4","0","1000",                                //on Paper
         "m_strHeadScal","mm","F4","0","1000",                              //on Paper
@@ -835,110 +831,106 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
 	AnsiString strData = pData1->Attribute("PPID");
 
     char *ParamItem[]={
-        "m_nCols","mm","F4","0","10",                                      //on Paper
-		"m_nRows","mm","F4","0","5",                                       //on Paper
-		"m_dColPitch","mm","F4","0","1000",
-		"m_dRowPitch","mm","F4","0","1000",
+        "m_nCols","mm","F4","0","10",                 //Layout行數                     //on Paper
+		"m_nRows","mm","F4","0","5",                  //Layout列數                     //on Paper
+		"m_dColPitch","mm","F4","0","1000",           //Layout行間距
+		"m_dRowPitch","mm","F4","0","1000",           //Layout列間距
 
-		"m_dLamHeight0","mm","F4","0","200",
-		"m_dLamHeight1","mm","F4","0","200",
-		"m_dLamStop0","mm","F4","0","200",
-		"m_dLamStop1","mm","F4","0","200",
-		"m_dLamGetPos0","mm","F4","0","200",
-		"m_dLamGetPos1","mm","F4","0","200",
-		"m_dLamVacHeight0","mm","F4","0","200",
-		"m_dLamVacHeight1","mm","F4","0","200",
+		"m_dLamHeight0","mm","F4","0","200",          //後流道 壓合高度
+		"m_dLamHeight1","mm","F4","0","200",          //前流道 壓合高度
+		"m_dLamStop0","mm","F4","0","200",            //後流道 接片高度
+		"m_dLamStop1","mm","F4","0","200",            //前流道 接片高度
+		"m_dLamGetPos0","mm","F4","0","200",          //後流道 出片高度
+		"m_dLamGetPos1","mm","F4","0","200",          //前流道 出片高度
+		"m_dLamVacHeight0","mm","F4","0","200",       // no used
+		"m_dLamVacHeight1","mm","F4","0","200",       // no used
 
-		"m_dLamTime0","s","F4","0","1000",                                 //on Paper
-		"m_dLamTemp0","c","F4","0","1000",                                 //on Paper
-		"m_dLamPress0","kg","F4","0","20",                                 //on Paper
-		"m_dLamTime1","s","F4","0","1000",                                 //on Paper
-		"m_dLamTemp1","c","F4","0","1000",                                 //on Paper
-		"m_dLamPress1","kg","F4","0","20",                                 //on Paper
+		"m_dLamTime0","s","F4","0","1000",            //後流道 壓合時間                     //on Paper
+		"m_dLamTemp0","c","F4","0","1000",            //後流道 壓合溫度                    //on Paper
+		"m_dLamPress0","kg","F4","0","20",            //後流道 壓合力量                    //on Paper
+		"m_dLamTime1","s","F4","0","1000",            //前流道 壓合時間                    //on Paper
+		"m_dLamTemp1","c","F4","0","1000",            //前流道 壓合溫度                    //on Paper
+		"m_dLamPress1","kg","F4","0","20",            //前流道 壓合力量                    //on Paper
 
-		"m_dLoadCellPosX0","mm","F4","0","1000",
-		"m_dLoadCellPosY0","mm","F4","0","1000",
-		"m_dLaserUpPosX00","mm","F4","0","1000",
-		"m_dLaserUpPosY00","mm","F4","0","1000",
-		"m_dLaserUpPosX01","mm","F4","0","1000",
-		"m_dLaserUpPosY01","mm","F4","0","1000",
-		"m_dLaserUpPosX02","mm","F4","0","1000",
-		"m_dLaserUpPosY02","mm","F4","0","1000",
-		"m_dLaserUpPosX03","mm","F4","0","1000",
-		"m_dLaserUpPosY03","mm","F4","0","1000",
-		"m_dLaserDownPosX0","mm","F4","0","1000",
-		"m_dLaserDownPosY0","mm","F4","0","1000",
-		"m_dLoadCellPosX1","mm","F4","0","1000",
-		"m_dLoadCellPosY1","mm","F4","0","1000",
-		"m_dLaserUpPosX10","mm","F4","0","1000",
-		"m_dLaserUpPosY10","mm","F4","0","1000",
-		"m_dLaserUpPosX11","mm","F4","0","1000",
-		"m_dLaserUpPosY11","mm","F4","0","1000",
-		"m_dLaserUpPosX12","mm","F4","0","1000",
-		"m_dLaserUpPosY12","mm","F4","0","1000",
-		"m_dLaserUpPosX13","mm","F4","0","1000",
-		"m_dLaserUpPosY13","mm","F4","0","1000",
-		"m_dLaserDownPosX1","mm","F4","0","1000",
-		"m_dLaserDownPosY1","mm","F4","0","1000",
+		"m_dLoadCellPosX0","mm","F4","0","1000",      //後流道 測重起始X
+		"m_dLoadCellPosY0","mm","F4","0","1000",      //後流道 測重起始Y
+		"m_dLaserUpPosX00","mm","F4","0","1000",      //後流道 上模測高X1
+		"m_dLaserUpPosY00","mm","F4","0","1000",      //後流道 上模測高Y1
+		"m_dLaserUpPosX01","mm","F4","0","1000",      //後流道 上模測高X2
+		"m_dLaserUpPosY01","mm","F4","0","1000",      //後流道 上模測高Y2
+		"m_dLaserUpPosX02","mm","F4","0","1000",      //後流道 上模測高X3
+		"m_dLaserUpPosY02","mm","F4","0","1000",      //後流道 上模測高Y3
+		"m_dLaserUpPosX03","mm","F4","0","1000",      //後流道 上模測高X4
+		"m_dLaserUpPosY03","mm","F4","0","1000",      //後流道 上模測高Y4
+		"m_dLaserDownPosX0","mm","F4","0","1000",     //後流道 下模測高X
+		"m_dLaserDownPosY0","mm","F4","0","1000",     //後流道 下模測高Y
+		"m_dLoadCellPosX1","mm","F4","0","1000",      //前流道 測重起始X
+		"m_dLoadCellPosY1","mm","F4","0","1000",      //前流道 測重起始Y
+		"m_dLaserUpPosX10","mm","F4","0","1000",      //前流道 上模測高X1
+		"m_dLaserUpPosY10","mm","F4","0","1000",      //前流道 上模測高Y1
+		"m_dLaserUpPosX11","mm","F4","0","1000",      //前流道 上模測高X2
+		"m_dLaserUpPosY11","mm","F4","0","1000",      //前流道 上模測高Y2
+		"m_dLaserUpPosX12","mm","F4","0","1000",      //前流道 上模測高X3
+		"m_dLaserUpPosY12","mm","F4","0","1000",      //前流道 上模測高Y3
+		"m_dLaserUpPosX13","mm","F4","0","1000",      //前流道 上模測高X4
+		"m_dLaserUpPosY13","mm","F4","0","1000",      //前流道 上模測高Y4
+		"m_dLaserDownPosX1","mm","F4","0","1000",     //前流道 下模測高X
+		"m_dLaserDownPosY1","mm","F4","0","1000",     //前流道 下模測高Y
 
-		"m_nRailOption","mm","F4","0","2",
-		"m_bNotLam","mm","F4","0","1",
-		"m_dPressCalRange","mm","F4","0","100",
-		"m_dPressCalTime","mm","F4","0","100",
-		"m_dLaserUpPosX0","mm","F4","0","1000",
-		"m_dLaserUpPosY0","mm","F4","0","1000",
-		"m_dLaserUpPosX1","mm","F4","0","1000",
-		"m_dLaserUpPosY1","mm","F4","0","1000",
-		"m_dLamSecondHeight0","mm","F4","0","200",
-		"m_dLamSecondHeight1","mm","F4","0","200",
-		"m_dLamSecondTime0","mm","F4","0","1000",
-		"m_dLamSecondTime1","mm","F4","0","1000",
-		"m_dLamThirdHeight0","mm","F4","0","200",
-		"m_dLamThirdHeight1","mm","F4","0","200",
-		"m_dLamThirdTime0","mm","F4","0","1000",
-		"m_dLamThirdTime1","mm","F4","0","1000",
+		"m_nRailOption","mm","F4","0","2",            //流到選擇 0=全開;1=前流道;2=後流道
+		"m_bNotLam","mm","F4","0","1",                //不壓合 0=false;1=true
+		"m_dPressCalRange","mm","F4","0","100",       //容許誤差(%)
+		"m_dPressCalTime","mm","F4","0","100",        //穩定時間
+		"m_dLamSecondHeight0","mm","F4","0","200",    //後流道 第二段高度
+		"m_dLamSecondHeight1","mm","F4","0","200",    //前流道 第二段高度
+		"m_dLamSecondTime0","mm","F4","0","1000",     //後流道 第二段速度(秒)
+		"m_dLamSecondTime1","mm","F4","0","1000",     //前流道 第二段速度(秒)
+		"m_dLamThirdHeight0","mm","F4","0","200",     //後流道 第三段高度
+		"m_dLamThirdHeight1","mm","F4","0","200",     //前流道 第三段高度
+		"m_dLamThirdTime0","mm","F4","0","1000",      //後流道 第三段速度(秒)
+		"m_dLamThirdTime1","mm","F4","0","1000",      //前流道 第三段速度(秒)
 
-		"m_dAutoInterval","mm","F4","0","1000",
-		"m_dAutoStopRange","mm","F4","0","1000",
-		"m_nAutoInterval","mm","F4","0","1000",
-		"m_dAutoRunTempRange","mm","F4","0","1000",
-		"m_dVacDelayTime","mm","F4","0","1000",
-        "m_dScaleOffsetFront","mm","F4","0","1000",
-        "m_dScaleOffsetRear","mm","F4","0","1000",
+		"m_dAutoStopRange","mm","F4","0","1000",      //自動校正 自動停機誤差(%)
+		"m_nAutoInterval","mm","F4","0","1000",       //自動校正 間隔盤數
+		"m_dAutoRunTempRange","mm","F4","0","1000",   //自動模式 容許溫度
+		"m_dVacDelayTime","mm","F4","0","1000",       //第二次真空檢測延遲時間
+        "m_dScaleOffsetFront","mm","F4","0","1000",   //前流道 壓力補償表
+        "m_dScaleOffsetRear","mm","F4","0","1000",    //後流道 壓力補償表
+        "m_nDownPercent","mm","F4","0","1000",        //緩衝壓力下降(%)
 
-        "m_nHeadType","mm","F4","0","1000",                                //on Paper
-        "m_strHeadScal","mm","F4","0","1000",                              //on Paper
-        "m_strModuleScal","mm","F4","0","1000",                            //on Paper
-        "m_nVacummOn","mm","F4","0","1",                                   //on Paper
-        "m_nPressCheck","mm","F4","0","1",                                 //on Paper
-        "m_nDummyCheck","mm","F4","0","1",                                 //on Paper
-        "m_strModuleNum","mm","F4","0","1000",                             //on Paper
-        "m_strSetupEENum","mm","F4","0","1000",                            //on Paper
+        "m_nHeadType","mm","F4","0","1000",           //熱壓頭型式                     //on Paper
+        "m_strHeadScal","mm","F4","0","1000",         //熱壓頭尺寸                     //on Paper
+        "m_strModuleScal","mm","F4","0","1000",       //下模尺寸                       //on Paper
+        "m_nVacummOn","mm","F4","0","1",              //真空開啟                       //on Paper
+        "m_nPressCheck","mm","F4","0","1",            //壓力認證                       //on Paper
+        "m_nDummyCheck","mm","F4","0","1",            //DummyCheck                     //on Paper
+        "m_strModuleNum","mm","F4","0","1000",        //模具編號                       //on Paper
+        "m_strSetupEENum","mm","F4","0","1000",       //SetupEE                        //on Paper
 
-        "m_dBLT","mm","F4","0","1000",                                     //on Paper
-        "m_dTilt","mm","F4","0","1000",                                    //on Paper
-        "m_dGap","mm","F4","0","1000",                                     //on Paper
-        "m_dKeyTemp00","mm","F4","0","1000",                                //on Paper
-        "m_dKeyTemp01","mm","F4","0","1000",                                //on Paper
-        "m_dKeyTemp02","mm","F4","0","1000",                                //on Paper
-        "m_dKeyTemp10","mm","F4","0","1000",                                //on Paper
-        "m_dKeyTemp11","mm","F4","0","1000",                                //on Paper
-        "m_dKeyTemp12","mm","F4","0","1000",                                //on Paper
+        "m_dBLT","mm","F4","0","1000",                //BLT                   //on Paper
+        "m_dTilt","mm","F4","0","1000",               //Tilt                  //on Paper
+        "m_dGap","mm","F4","0","1000",                //Gap                   //on Paper
+        "m_dKeyTemp00","mm","F4","0","1000",          //後 手key溫度1         //on Paper
+        "m_dKeyTemp01","mm","F4","0","1000",          //後 手key溫度2         //on Paper
+        "m_dKeyTemp02","mm","F4","0","1000",          //後 手key溫度3         //on Paper
+        "m_dKeyTemp10","mm","F4","0","1000",          //前 手key溫度1         //on Paper
+        "m_dKeyTemp11","mm","F4","0","1000",          //前 手key溫度2         //on Paper
+        "m_dKeyTemp12","mm","F4","0","1000",          //前 手key溫度3         //on Paper
         //以上為產品參數
 
         //以下為機台變數
-        "LastFilePath","mm","F4","0","1000",                               //on Paper
-        "LastFileName","mm","F4","0","1000",                               //on Paper
+        "LastFilePath","mm","F4","0","1000",          //機台當下 FilePath                      //on Paper
+        "LastFileName","mm","F4","0","1000",          //機台當下 FileName                      //on Paper
 
-        "FrontPressCal","mm","F4","0","1000",                              //on Paper
-        "RearPressCal","mm","F4","0","1000",                               //on Paper
+        "FrontPressCal","mm","F4","0","1000",         //機台當下 前流道 量測壓力                    //on Paper
+        "RearPressCal","mm","F4","0","1000",          //機台當下 後流道 量測壓力                    //on Paper
 
-        "FrontDownLaserDiff","mm","F4","0","1000",                         //on Paper
-        "RearDownLaserDiff","mm","F4","0","1000",                          //on Paper
-        "FrontUpperLaserDiff","mm","F4","0","1000",                        //on Paper
-        "RearUpperLaserDiff","mm","F4","0","1000",                         //on Paper
+        "FrontDownLaserDiff","mm","F4","0","1000",    //機台當下 前流道 下模誤差                   //on Paper
+        "RearDownLaserDiff","mm","F4","0","1000",     //機台當下 後流道 下模誤差                   //on Paper
+        "FrontUpperLaserDiff","mm","F4","0","1000",   //機台當下 前流道 上模誤差                   //on Paper
+        "RearUpperLaserDiff","mm","F4","0","1000",    //機台當下 後流道 上模誤差                   //on Paper
 
-        "m_strLogInENGAccount","mm","F4","0","1000",
+        "m_strLogInENGAccount","mm","F4","0","1000",  //機台當下 登入者
 		"END"};           //E:End
 
 
@@ -959,7 +951,7 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
         nX++;
         pParam = pParam->NextSiblingElement("PARAMETER");
     }
-    if (nSize != 91) bResult = false;
+    if (nSize != 87) bResult = false;
 
     if (bResult == true)
     {

@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 427
-  Top = 30
+  Left = 544
+  Top = 125
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 449
@@ -997,185 +997,6 @@ object fmProduct: TfmProduct
           Text = 'm_dLamHeight0'
         end
       end
-      object GroupBox2: TGroupBox
-        Left = 256
-        Top = 16
-        Width = 241
-        Height = 225
-        Caption = #21069#22739#21512#27969#36947
-        TabOrder = 1
-        object Label5: TLabel
-          Left = 24
-          Top = 32
-          Width = 64
-          Height = 16
-          Caption = #22739#21512#39640#24230
-        end
-        object Label6: TLabel
-          Left = 24
-          Top = 80
-          Width = 64
-          Height = 16
-          Caption = #25509#29255#39640#24230
-        end
-        object Label7: TLabel
-          Left = 190
-          Top = 36
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label8: TLabel
-          Left = 190
-          Top = 84
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label15: TLabel
-          Left = 4
-          Top = 120
-          Width = 90
-          Height = 16
-          Caption = '('#21560#30495#31354#39640#24230')'
-        end
-        object Label59: TLabel
-          Left = 24
-          Top = 56
-          Width = 64
-          Height = 16
-          Caption = #20986#29255#39640#24230
-        end
-        object Label60: TLabel
-          Left = 190
-          Top = 60
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label45: TLabel
-          Left = 190
-          Top = 148
-          Width = 20
-          Height = 16
-          Caption = 'sec'
-        end
-        object Label51: TLabel
-          Left = 190
-          Top = 172
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label52: TLabel
-          Left = 8
-          Top = 104
-          Width = 80
-          Height = 16
-          Caption = #31532#20108#27573#39640#24230
-        end
-        object Label53: TLabel
-          Left = 190
-          Top = 196
-          Width = 20
-          Height = 16
-          Caption = 'sec'
-        end
-        object Label75: TLabel
-          Left = 8
-          Top = 144
-          Width = 80
-          Height = 16
-          Caption = #31532#20108#27573#36895#24230
-        end
-        object Label76: TLabel
-          Left = 8
-          Top = 168
-          Width = 80
-          Height = 16
-          Caption = #31532#19977#27573#39640#24230
-        end
-        object Label77: TLabel
-          Left = 190
-          Top = 116
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label78: TLabel
-          Left = 8
-          Top = 192
-          Width = 80
-          Height = 16
-          Caption = #31532#19977#27573#36895#24230
-        end
-        object m_dLamStop1: TEdit
-          Left = 104
-          Top = 80
-          Width = 73
-          Height = 24
-          TabOrder = 1
-          Text = 'Edit1'
-        end
-        object m_dLamVacHeight1: TEdit
-          Left = 104
-          Top = 32
-          Width = 73
-          Height = 24
-          Enabled = False
-          TabOrder = 2
-          Text = 'm_dLamVacHeight1'
-          Visible = False
-        end
-        object m_dLamGetPos1: TEdit
-          Left = 104
-          Top = 56
-          Width = 73
-          Height = 24
-          TabOrder = 3
-          Text = 'm_dLamGetPos1'
-        end
-        object m_dLamSecondHeight1: TEdit
-          Left = 104
-          Top = 112
-          Width = 73
-          Height = 24
-          TabOrder = 4
-          Text = 'Edit1'
-        end
-        object m_dLamSecondTime1: TEdit
-          Left = 104
-          Top = 144
-          Width = 73
-          Height = 24
-          TabOrder = 5
-          Text = 'Edit1'
-        end
-        object m_dLamThirdHeight1: TEdit
-          Left = 104
-          Top = 168
-          Width = 73
-          Height = 24
-          TabOrder = 6
-          Text = 'Edit1'
-        end
-        object m_dLamThirdTime1: TEdit
-          Left = 104
-          Top = 192
-          Width = 73
-          Height = 24
-          TabOrder = 7
-          Text = 'Edit1'
-        end
-        object m_dLamHeight1: TEdit
-          Left = 104
-          Top = 32
-          Width = 73
-          Height = 24
-          TabOrder = 0
-          Text = 'm_dLamHeight0'
-        end
-      end
       object GroupBox1: TGroupBox
         Left = 8
         Top = 249
@@ -1672,6 +1493,185 @@ object fmProduct: TfmProduct
         Width = 49
         Height = 24
         TabOrder = 9
+      end
+      object GroupBox2: TGroupBox
+        Left = 256
+        Top = 16
+        Width = 241
+        Height = 225
+        Caption = #21069#22739#21512#27969#36947
+        TabOrder = 1
+        object Label5: TLabel
+          Left = 24
+          Top = 32
+          Width = 64
+          Height = 16
+          Caption = #22739#21512#39640#24230
+        end
+        object Label6: TLabel
+          Left = 24
+          Top = 80
+          Width = 64
+          Height = 16
+          Caption = #25509#29255#39640#24230
+        end
+        object Label7: TLabel
+          Left = 190
+          Top = 36
+          Width = 24
+          Height = 16
+          Caption = 'mm'
+        end
+        object Label8: TLabel
+          Left = 190
+          Top = 84
+          Width = 24
+          Height = 16
+          Caption = 'mm'
+        end
+        object Label15: TLabel
+          Left = 4
+          Top = 120
+          Width = 90
+          Height = 16
+          Caption = '('#21560#30495#31354#39640#24230')'
+        end
+        object Label59: TLabel
+          Left = 24
+          Top = 56
+          Width = 64
+          Height = 16
+          Caption = #20986#29255#39640#24230
+        end
+        object Label60: TLabel
+          Left = 190
+          Top = 60
+          Width = 24
+          Height = 16
+          Caption = 'mm'
+        end
+        object Label45: TLabel
+          Left = 190
+          Top = 148
+          Width = 20
+          Height = 16
+          Caption = 'sec'
+        end
+        object Label51: TLabel
+          Left = 190
+          Top = 172
+          Width = 24
+          Height = 16
+          Caption = 'mm'
+        end
+        object Label52: TLabel
+          Left = 8
+          Top = 104
+          Width = 80
+          Height = 16
+          Caption = #31532#20108#27573#39640#24230
+        end
+        object Label53: TLabel
+          Left = 190
+          Top = 196
+          Width = 20
+          Height = 16
+          Caption = 'sec'
+        end
+        object Label75: TLabel
+          Left = 8
+          Top = 144
+          Width = 80
+          Height = 16
+          Caption = #31532#20108#27573#36895#24230
+        end
+        object Label76: TLabel
+          Left = 8
+          Top = 168
+          Width = 80
+          Height = 16
+          Caption = #31532#19977#27573#39640#24230
+        end
+        object Label77: TLabel
+          Left = 190
+          Top = 116
+          Width = 24
+          Height = 16
+          Caption = 'mm'
+        end
+        object Label78: TLabel
+          Left = 8
+          Top = 192
+          Width = 80
+          Height = 16
+          Caption = #31532#19977#27573#36895#24230
+        end
+        object m_dLamStop1: TEdit
+          Left = 104
+          Top = 80
+          Width = 73
+          Height = 24
+          TabOrder = 1
+          Text = 'Edit1'
+        end
+        object m_dLamVacHeight1: TEdit
+          Left = 104
+          Top = 32
+          Width = 73
+          Height = 24
+          Enabled = False
+          TabOrder = 2
+          Text = 'm_dLamVacHeight1'
+          Visible = False
+        end
+        object m_dLamGetPos1: TEdit
+          Left = 104
+          Top = 56
+          Width = 73
+          Height = 24
+          TabOrder = 3
+          Text = 'm_dLamGetPos1'
+        end
+        object m_dLamSecondHeight1: TEdit
+          Left = 104
+          Top = 112
+          Width = 73
+          Height = 24
+          TabOrder = 4
+          Text = 'Edit1'
+        end
+        object m_dLamSecondTime1: TEdit
+          Left = 104
+          Top = 144
+          Width = 73
+          Height = 24
+          TabOrder = 5
+          Text = 'Edit1'
+        end
+        object m_dLamThirdHeight1: TEdit
+          Left = 104
+          Top = 168
+          Width = 73
+          Height = 24
+          TabOrder = 6
+          Text = 'Edit1'
+        end
+        object m_dLamThirdTime1: TEdit
+          Left = 104
+          Top = 192
+          Width = 73
+          Height = 24
+          TabOrder = 7
+          Text = 'Edit1'
+        end
+        object m_dLamHeight1: TEdit
+          Left = 104
+          Top = 32
+          Width = 73
+          Height = 24
+          TabOrder = 0
+          Text = 'm_dLamHeight0'
+        end
       end
     end
   end
