@@ -180,6 +180,8 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
         //先清除比例閥資料等2秒
         g_DNPort0.ClearOutData();
         g_DNPort0.WriteAllData();
+        g_DNPort1.ClearOutData();
+        g_DNPort1.WriteAllData();
         ::Sleep(2000);
 
         //再寫入產品參數
@@ -1395,8 +1397,8 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 				else
 				{
 					g_DNPort1.ClearOutData();
-					g_DNPort1.SetKg(nIndex, g_IniFile.m_dLamPress[1]);
-					g_DNPort0.WriteAllData();
+					g_DNPort1.SetKg(nIndex, g_IniFile.m_dLamPress[0]);
+					g_DNPort1.WriteAllData();
 				}
 			}
 		}
@@ -2235,37 +2237,44 @@ bool TfrmMain::StartProcess(bool bStart)
 //---------------------------------------------------------------------------
 bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 {
+    if (FileExists(strFileName))
+    {
+        g_IniFile.MachineFile(true);
 
-    //先清除比例閥資料等2秒
-    g_DNPort0.ClearOutData();
-    g_DNPort0.WriteAllData();
-    ::Sleep(2000);
+        //先清除比例閥資料等2秒
+        g_DNPort0.ClearOutData();
+        g_DNPort0.WriteAllData();
+        g_DNPort1.ClearOutData();
+        g_DNPort1.WriteAllData();
+        ::Sleep(2000);
 
-    //再寫入產品參數
-	frmMain->Caption = strFileName;
-	g_IniFile.m_strLastFileName = strFileName;
+        //再寫入產品參數
+	    frmMain->Caption = strFileName;
+	    g_IniFile.m_strLastFileName = strFileName;
 
-	g_IniFile.ProductFile(strFileName.c_str(), true);
+	    g_IniFile.ProductFile(strFileName.c_str(), true);
 
-	frmMain->SetAllDevice();
+	    frmMain->SetAllDevice();
 
-	frmMain->Label22->Caption = g_IniFile.m_dLamTime[0];
-	frmMain->Label25->Caption = g_IniFile.m_dLamTemp[0];
-	frmMain->Label28->Caption = g_IniFile.m_dLamPress[0];
-	frmMain->Label17->Caption = g_IniFile.m_dLamTime[1];
-	frmMain->Label13->Caption = g_IniFile.m_dLamTemp[1];
-	frmMain->Label14->Caption = g_IniFile.m_dLamPress[1];
-	TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
-    frmMain->GroupBox2->Caption = StrList->Strings[StrList->Count-1];
-    delete StrList;
+	    frmMain->Label22->Caption = g_IniFile.m_dLamTime[0];
+	    frmMain->Label25->Caption = g_IniFile.m_dLamTemp[0];
+	    frmMain->Label28->Caption = g_IniFile.m_dLamPress[0];
+	    frmMain->Label17->Caption = g_IniFile.m_dLamTime[1];
+	    frmMain->Label13->Caption = g_IniFile.m_dLamTemp[1];
+	    frmMain->Label14->Caption = g_IniFile.m_dLamPress[1];
+	    TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+        frmMain->GroupBox2->Caption = StrList->Strings[StrList->Count-1];
+        delete StrList;
 
-	frmMain->PaintBox1Paint(frmMain);
-	frmMain->PaintBox2Paint(frmMain);
+	    frmMain->PaintBox1Paint(frmMain);
+	    frmMain->PaintBox2Paint(frmMain);
 
-	g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
-	g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
+	    g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
+	    g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
 
-	return true;
+	    return true;
+    }
+    else return false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::ServerCIMClientConnect(TObject *Sender,

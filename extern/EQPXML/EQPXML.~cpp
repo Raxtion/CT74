@@ -283,11 +283,14 @@ void __fastcall CEQPXML::doRCMD(char *pRx)
 	else if (strSub == "PAUSE") bRet = StartProcess(false);
 	else if (strSub == "PPSELECT")
 	{
-		AnsiString strName = strData.SubString(10, strData.Length() - 9);
+        TStringList *StrList = SplitString(strData, ",");
+        //AnsiString strName = strData.SubString(10, strData.Length() - 9);
 		//AnsiString strFile;
 		//strFile.sprintf("C:\\Product Data\\%s\\%s.ini", strName, strName);
 		//bRet = OpenFile(strFile);
-        bRet = OpenFile(strName);
+        bRet = OpenFile(StrList->Strings[1]);
+
+        delete StrList;
 	}
 	else if (strSub == "LOCAL")
 	{
@@ -532,6 +535,8 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		"m_nAutoInterval","mm","F4","0","1000",
 		"m_dAutoRunTempRange","mm","F4","0","1000",
 		"m_dVacDelayTime","mm","F4","0","1000",
+        "m_dScaleOffsetFront","mm","F4","0","1000",
+        "m_dScaleOffsetRear","mm","F4","0","1000",
 
         "m_nHeadType","mm","F4","0","1000",                                //on Paper
         "m_strHeadScal","mm","F4","0","1000",                              //on Paper
@@ -591,30 +596,53 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 			    pParam->LinkEndChild(pProperty);
 		    }
 
-            if (strcmp(ParamItem[nX*5],"m_nHeadType")==0)
+
+            if (strcmp(ParamItem[nX*5],"m_dScaleOffsetFront")==0)
             {
-                AnsiString strHeadType; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
+                AnsiString strScaleOffset = "";
+                for (int nx=0;nx<50;nx++)
+                {
+                    strScaleOffset += pIniFile->ReadString("Offset_Table","m_dScaleOffsetFront"+FormatFloat("0", nx),"0") + "/";
+                }
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strScaleOffset.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_dScaleOffsetRear")==0)
+            {
+                AnsiString strScaleOffset = "";
+                for (int nx=0;nx<50;nx++)
+                {
+                    strScaleOffset += pIniFile->ReadString("Offset_Table","m_dScaleOffsetRear"+FormatFloat("0", nx),"0") + "/";
+                }
+                pProperty=new TiXmlElement("PROPERTY");
+		        pProperty->LinkEndChild(new TiXmlText(strScaleOffset.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_nHeadType")==0)
+            {
+                AnsiString strHeadType; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == "0") ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
                 pProperty=new TiXmlElement("PROPERTY");
 		        pProperty->LinkEndChild(new TiXmlText(strHeadType.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_nVacummOn")==0)
             {
-                AnsiString strVacummOn; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
+                AnsiString strVacummOn; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == "0") ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
 		        pProperty->LinkEndChild(new TiXmlText(strVacummOn.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_nPressCheck")==0)
             {
-                AnsiString strPressCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strPressCheck = "FAIL" : strPressCheck = "TRUE";
+                AnsiString strPressCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == "0") ? strPressCheck = "FAIL" : strPressCheck = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
 		        pProperty->LinkEndChild(new TiXmlText(strPressCheck.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_nDummyCheck")==0)
             {
-                AnsiString strDummyCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == 0) ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
+                AnsiString strDummyCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == "0") ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
 		        pProperty->LinkEndChild(new TiXmlText(strDummyCheck.c_str()));
 		        pParam->LinkEndChild(pProperty);
@@ -806,36 +834,215 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
 
 	AnsiString strData = pData1->Attribute("PPID");
 
-    TIniFile *pIniFile = new TIniFile(strData);
-    if (FileExists(strData))
-	{
-		TiXmlElement *pParam = pData1->FirstChildElement("PARAMETER");
+    char *ParamItem[]={
+        "m_nCols","mm","F4","0","10",                                      //on Paper
+		"m_nRows","mm","F4","0","5",                                       //on Paper
+		"m_dColPitch","mm","F4","0","1000",
+		"m_dRowPitch","mm","F4","0","1000",
 
-		while (1)
-		{
-			if (pParam == NULL) break;
+		"m_dLamHeight0","mm","F4","0","200",
+		"m_dLamHeight1","mm","F4","0","200",
+		"m_dLamStop0","mm","F4","0","200",
+		"m_dLamStop1","mm","F4","0","200",
+		"m_dLamGetPos0","mm","F4","0","200",
+		"m_dLamGetPos1","mm","F4","0","200",
+		"m_dLamVacHeight0","mm","F4","0","200",
+		"m_dLamVacHeight1","mm","F4","0","200",
+
+		"m_dLamTime0","s","F4","0","1000",                                 //on Paper
+		"m_dLamTemp0","c","F4","0","1000",                                 //on Paper
+		"m_dLamPress0","kg","F4","0","20",                                 //on Paper
+		"m_dLamTime1","s","F4","0","1000",                                 //on Paper
+		"m_dLamTemp1","c","F4","0","1000",                                 //on Paper
+		"m_dLamPress1","kg","F4","0","20",                                 //on Paper
+
+		"m_dLoadCellPosX0","mm","F4","0","1000",
+		"m_dLoadCellPosY0","mm","F4","0","1000",
+		"m_dLaserUpPosX00","mm","F4","0","1000",
+		"m_dLaserUpPosY00","mm","F4","0","1000",
+		"m_dLaserUpPosX01","mm","F4","0","1000",
+		"m_dLaserUpPosY01","mm","F4","0","1000",
+		"m_dLaserUpPosX02","mm","F4","0","1000",
+		"m_dLaserUpPosY02","mm","F4","0","1000",
+		"m_dLaserUpPosX03","mm","F4","0","1000",
+		"m_dLaserUpPosY03","mm","F4","0","1000",
+		"m_dLaserDownPosX0","mm","F4","0","1000",
+		"m_dLaserDownPosY0","mm","F4","0","1000",
+		"m_dLoadCellPosX1","mm","F4","0","1000",
+		"m_dLoadCellPosY1","mm","F4","0","1000",
+		"m_dLaserUpPosX10","mm","F4","0","1000",
+		"m_dLaserUpPosY10","mm","F4","0","1000",
+		"m_dLaserUpPosX11","mm","F4","0","1000",
+		"m_dLaserUpPosY11","mm","F4","0","1000",
+		"m_dLaserUpPosX12","mm","F4","0","1000",
+		"m_dLaserUpPosY12","mm","F4","0","1000",
+		"m_dLaserUpPosX13","mm","F4","0","1000",
+		"m_dLaserUpPosY13","mm","F4","0","1000",
+		"m_dLaserDownPosX1","mm","F4","0","1000",
+		"m_dLaserDownPosY1","mm","F4","0","1000",
+
+		"m_nRailOption","mm","F4","0","2",
+		"m_bNotLam","mm","F4","0","1",
+		"m_dPressCalRange","mm","F4","0","100",
+		"m_dPressCalTime","mm","F4","0","100",
+		"m_dLaserUpPosX0","mm","F4","0","1000",
+		"m_dLaserUpPosY0","mm","F4","0","1000",
+		"m_dLaserUpPosX1","mm","F4","0","1000",
+		"m_dLaserUpPosY1","mm","F4","0","1000",
+		"m_dLamSecondHeight0","mm","F4","0","200",
+		"m_dLamSecondHeight1","mm","F4","0","200",
+		"m_dLamSecondTime0","mm","F4","0","1000",
+		"m_dLamSecondTime1","mm","F4","0","1000",
+		"m_dLamThirdHeight0","mm","F4","0","200",
+		"m_dLamThirdHeight1","mm","F4","0","200",
+		"m_dLamThirdTime0","mm","F4","0","1000",
+		"m_dLamThirdTime1","mm","F4","0","1000",
+
+		"m_dAutoInterval","mm","F4","0","1000",
+		"m_dAutoStopRange","mm","F4","0","1000",
+		"m_nAutoInterval","mm","F4","0","1000",
+		"m_dAutoRunTempRange","mm","F4","0","1000",
+		"m_dVacDelayTime","mm","F4","0","1000",
+        "m_dScaleOffsetFront","mm","F4","0","1000",
+        "m_dScaleOffsetRear","mm","F4","0","1000",
+
+        "m_nHeadType","mm","F4","0","1000",                                //on Paper
+        "m_strHeadScal","mm","F4","0","1000",                              //on Paper
+        "m_strModuleScal","mm","F4","0","1000",                            //on Paper
+        "m_nVacummOn","mm","F4","0","1",                                   //on Paper
+        "m_nPressCheck","mm","F4","0","1",                                 //on Paper
+        "m_nDummyCheck","mm","F4","0","1",                                 //on Paper
+        "m_strModuleNum","mm","F4","0","1000",                             //on Paper
+        "m_strSetupEENum","mm","F4","0","1000",                            //on Paper
+
+        "m_dBLT","mm","F4","0","1000",                                     //on Paper
+        "m_dTilt","mm","F4","0","1000",                                    //on Paper
+        "m_dGap","mm","F4","0","1000",                                     //on Paper
+        "m_dKeyTemp00","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp01","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp02","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp10","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp11","mm","F4","0","1000",                                //on Paper
+        "m_dKeyTemp12","mm","F4","0","1000",                                //on Paper
+        //以上為產品參數
+
+        //以下為機台變數
+        "LastFilePath","mm","F4","0","1000",                               //on Paper
+        "LastFileName","mm","F4","0","1000",                               //on Paper
+
+        "FrontPressCal","mm","F4","0","1000",                              //on Paper
+        "RearPressCal","mm","F4","0","1000",                               //on Paper
+
+        "FrontDownLaserDiff","mm","F4","0","1000",                         //on Paper
+        "RearDownLaserDiff","mm","F4","0","1000",                          //on Paper
+        "FrontUpperLaserDiff","mm","F4","0","1000",                        //on Paper
+        "RearUpperLaserDiff","mm","F4","0","1000",                         //on Paper
+
+        "m_strLogInENGAccount","mm","F4","0","1000",
+		"END"};           //E:End
+
+
+    TiXmlElement *pParam = pData1->FirstChildElement("PARAMETER");
+    bool bResult = false;
+    int nSize = 0;
+    int nX=0;
+    while (true)
+    {
+        if (pParam == NULL) break;
+        AnsiString strParam = pParam->GetText();
+        int nPos = strParam.Pos(",");
+        AnsiString strA = strParam.SubString(1, nPos - 1);
+        if (strcmp(ParamItem[nX*5],"END")==0) {bResult = true; break;}
+        else if (strcmp(ParamItem[nX*5],strA.c_str())!=0) {bResult = false; break;}
+        else bResult = true;
+        nSize++;
+        nX++;
+        pParam = pParam->NextSiblingElement("PARAMETER");
+    }
+    if (nSize != 94) bResult = false;
+
+    if (bResult == true)
+    {
+        TIniFile *pIniFile = new TIniFile(strData);
+
+        TiXmlElement *pParam = pData1->FirstChildElement("PARAMETER");
+
+        while (1)
+        {
+            if (pParam == NULL) break;
             AnsiString strParam = pParam->GetText();
             int nPos = strParam.Pos(",");
             AnsiString strA = strParam.SubString(1, nPos - 1);
             AnsiString strB = strParam.SubString(nPos + 1, strParam.Length() - strA.Length() + 1);
-            if (strA == "m_strSetupEENum")
+
+            if (strA == "m_dScaleOffsetFront")
+            {
+                TStringList *StrList = SplitString(strB, '/');
+                for (int nx=0;nx<StrList->Count;nx++)
+                {
+                    pIniFile->WriteString("Offset_Table", strA+FormatFloat("0",nx), StrList->Strings[nx]);
+                }
+                delete StrList;
+            }
+            else if (strA == "m_dScaleOffsetRear")
+            {
+                TStringList *StrList = SplitString(strB, '/');
+                for (int nx=0;nx<StrList->Count;nx++)
+                {
+                    pIniFile->WriteString("Offset_Table", strA+FormatFloat("0",nx), StrList->Strings[nx]);
+                }
+                delete StrList;
+            }
+            else if (strA == "m_nHeadType")
+            {
+                if (strB == "SOLID") pIniFile->WriteString(Product_Section, strA, "0");
+                else if (strB == "HOLLOW") pIniFile->WriteString(Product_Section, strA, "1");
+                else pIniFile->WriteString(Product_Section, strA, "0");
+            }
+            else if (strA == "m_nVacummOn")
+            {
+                if (strB == "FAIL") pIniFile->WriteString(Product_Section, strA, "0");
+                else if (strB == "TRUE") pIniFile->WriteString(Product_Section, strA, "1");
+                else pIniFile->WriteString(Product_Section, strA, "0");
+            }
+            else if (strA == "m_nPressCheck")
+            {
+                if (strB == "FAIL") pIniFile->WriteString(Product_Section, strA, "0");
+                else if (strB == "TRUE") pIniFile->WriteString(Product_Section, strA, "1");
+                else pIniFile->WriteString(Product_Section, strA, "0");
+            }
+            else if (strA == "m_nDummyCheck")
+            {
+                if (strB == "FAIL") pIniFile->WriteString(Product_Section, strA, "0");
+                else if (strB == "TRUE") pIniFile->WriteString(Product_Section, strA, "1");
+                else pIniFile->WriteString(Product_Section, strA, "0");
+            }
+            else if (strA == "m_strSetupEENum")
             {
                 pIniFile->WriteString(Product_Section, strA, "CIM");
             }
+            else if (strA == "LastFilePath") {}
+            else if (strA == "LastFileName") {}
+            else if (strA == "FrontPressCal") {}
+            else if (strA == "RearPressCal") {}
+            else if (strA == "FrontDownLaserDiff") {}
+            else if (strA == "RearDownLaserDiff") {}
+            else if (strA == "FrontUpperLaserDiff") {}
+            else if (strA == "RearUpperLaserDiff") {}
+            else if (strA == "m_strLogInENGAccount") {}
             else
             {
-			    pIniFile->WriteString(Product_Section, strA, strB);
+                pIniFile->WriteString(Product_Section, strA, strB);
             }
-			pParam = pParam->NextSiblingElement("PARAMETER");
-		}
+            pParam = pParam->NextSiblingElement("PARAMETER");
+        }
 
-		SendXML("SET_PPBODY", "ACK", "ACK", "0");
-	}
-	else //SendXML("SET_PPBODY", "ACK", "ACK", "3");
-    {
-
+        SendXML("SET_PPBODY", "ACK", "ACK", "0");
+        
+	    delete pIniFile;
     }
-	delete pIniFile;
+    else SendXML("SET_PPBODY", "ACK", "ACK", "3");
+
 }
 //---------------------------------------------------------------------------
 void __fastcall CEQPXML::SendXML(char *pMSGID, char *pType, char *pTextName, char *pValue, char *pTID)
