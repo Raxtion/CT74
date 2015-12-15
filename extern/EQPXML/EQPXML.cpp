@@ -6,6 +6,7 @@
 #include "EQPXML.h"
 #include "IniFile.h"
 #include "MainThread.h"
+#include "dir.h"
 CEQPXML g_eqpXML;
 extern CIniFile g_IniFile;
 extern CMainThread *g_pMainThread;
@@ -601,7 +602,9 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                     strScaleOffset += pIniFile->ReadString("Offset_Table","m_dScaleOffsetFront"+FormatFloat("0", nx),"0") + "/";
                 }
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strScaleOffset.c_str()));
+                AnsiString strResult = strScaleOffset;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_dScaleOffsetRear")==0)
@@ -612,41 +615,96 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                     strScaleOffset += pIniFile->ReadString("Offset_Table","m_dScaleOffsetRear"+FormatFloat("0", nx),"0") + "/";
                 }
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strScaleOffset.c_str()));
+                AnsiString strResult = strScaleOffset;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_nHeadType")==0)
             {
                 AnsiString strHeadType; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == "0") ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strHeadType.c_str()));
+                AnsiString strResult = strHeadType;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_nVacummOn")==0)
             {
                 AnsiString strVacummOn; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == "0") ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strVacummOn.c_str()));
+                AnsiString strResult = strVacummOn;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_nPressCheck")==0)
             {
                 AnsiString strPressCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == "0") ? strPressCheck = "FAIL" : strPressCheck = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strPressCheck.c_str()));
+                AnsiString strResult = strPressCheck;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_nDummyCheck")==0)
             {
                 AnsiString strDummyCheck; (pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0") == "0") ? strDummyCheck = "FAIL" : strDummyCheck = "TRUE";
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strDummyCheck.c_str()));
+                AnsiString strResult = strDummyCheck;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"m_strSetupEENum")==0)
             {
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(g_IniFile.m_strSetupEENum.c_str()));
+                AnsiString strResult = g_IniFile.m_strSetupEENum;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            //-------------------------------------------------------------------------------------------------------------------------
+            else if (strcmp(ParamItem[nX*5],"m_dBLT")==0)
+            {
+                AnsiString strBLT = "";
+                strBLT += pIniFile->ReadString(Product_Section,"m_dBLT0","0") + "/";
+                strBLT += pIniFile->ReadString(Product_Section,"m_dBLT1","0") + "/";
+                strBLT += pIniFile->ReadString(Product_Section,"m_dBLT2","0") + "/";
+                strBLT += pIniFile->ReadString(Product_Section,"m_dBLT3","0") + "/";
+                strBLT += pIniFile->ReadString(Product_Section,"m_dBLT4","0") + "/";
+                pProperty=new TiXmlElement("PROPERTY");
+                AnsiString strResult = strBLT;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_dTilt")==0)
+            {
+                AnsiString m_dTilt = "";
+                m_dTilt += pIniFile->ReadString(Product_Section,"m_dTilt0","0") + "/";
+                m_dTilt += pIniFile->ReadString(Product_Section,"m_dTilt1","0") + "/";
+                m_dTilt += pIniFile->ReadString(Product_Section,"m_dTilt2","0") + "/";
+                m_dTilt += pIniFile->ReadString(Product_Section,"m_dTilt3","0") + "/";
+                m_dTilt += pIniFile->ReadString(Product_Section,"m_dTilt4","0") + "/";
+                pProperty=new TiXmlElement("PROPERTY");
+                AnsiString strResult = m_dTilt;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
+		        pParam->LinkEndChild(pProperty);
+            }
+            else if (strcmp(ParamItem[nX*5],"m_dGap")==0)
+            {
+                AnsiString m_dGap = "";
+                m_dGap += pIniFile->ReadString(Product_Section,"m_dGap0","0") + "/";
+                m_dGap += pIniFile->ReadString(Product_Section,"m_dGap1","0") + "/";
+                m_dGap += pIniFile->ReadString(Product_Section,"m_dGap2","0") + "/";
+                m_dGap += pIniFile->ReadString(Product_Section,"m_dGap3","0") + "/";
+                m_dGap += pIniFile->ReadString(Product_Section,"m_dGap4","0") + "/";
+                pProperty=new TiXmlElement("PROPERTY");
+                AnsiString strResult = m_dGap;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             //-------------------------------------------------------------------------------------------------------------------------
@@ -661,7 +719,9 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                 delete strList;
 
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strLastFilePath.c_str()));
+                AnsiString strResult = strLastFilePath;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"LastFileName")==0)
@@ -671,7 +731,9 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                 delete strList;
 
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strLastFileName.c_str()));
+                AnsiString strResult = strLastFileName;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             //-------------------------------------------------------------------------------------------------------------------------
@@ -683,7 +745,9 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                     strFrontPressCal += FormatFloat("0.000", g_pMainThread->m_dFrontPressCal[i])+"/";
                 }
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strFrontPressCal.c_str()));
+                AnsiString strResult = strFrontPressCal;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"RearPressCal")==0)
@@ -694,7 +758,9 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                     strRearPressCal += FormatFloat("0.000", g_pMainThread->m_dRearPressCal[i])+"/";
                 }
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strRearPressCal.c_str()));
+                AnsiString strResult = strRearPressCal;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             //-------------------------------------------------------------------------------------------------------------------------
@@ -714,7 +780,9 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                 delete strStrings;
 
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strFDLD.c_str()));
+                AnsiString strResult = strFDLD;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"RearDownLaserDiff")==0)
@@ -733,7 +801,9 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                 delete strStrings;
 
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strRDLD.c_str()));
+                AnsiString strResult = strRDLD;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"FrontUpperLaserDiff")==0)
@@ -756,7 +826,9 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                 delete strStrings;
 
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strFULD.c_str()));
+                AnsiString strResult = strFULD;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else if (strcmp(ParamItem[nX*5],"RearUpperLaserDiff")==0)
@@ -779,20 +851,26 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
                 delete strStrings;
 
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(strRULD.c_str()));
+                AnsiString strResult = strRULD;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             //-------------------------------------------------------------------------------------------------------------------------
             else if (strcmp(ParamItem[nX*5],"m_strLogInENGAccount")==0)
             {
                 pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(g_IniFile.m_strLogInENGAccount.c_str()));
+                AnsiString strResult = g_IniFile.m_strLogInENGAccount;
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
             else
             {
 		        pProperty=new TiXmlElement("PROPERTY");
-		        pProperty->LinkEndChild(new TiXmlText(pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0").c_str()));
+                AnsiString strResult = pIniFile->ReadString(Product_Section,ParamItem[nX*5],"0");
+                if (strResult.IsEmpty()) strResult = "NULL";
+		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
 
@@ -955,6 +1033,17 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
 
     if (bResult == true)
     {
+        //If there is no following path, to add new folder
+        TStringList* strSplitPath = SplitString(strData, "\\");
+        AnsiString strPath = strSplitPath->operator [](0) + "\\";
+        for (int nX=0;nX<strSplitPath->Count-2;nX++)
+        {
+            strPath += strSplitPath->operator [](nX+1) + "\\";
+            if (!FileExists(strPath.c_str())) _mkdir(strPath.c_str());
+        }
+        delete strSplitPath;
+
+        //new IniFile
         TIniFile *pIniFile = new TIniFile(strData);
 
         TiXmlElement *pParam = pData1->FirstChildElement("PARAMETER");
@@ -1059,6 +1148,33 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
             else if (strA == "m_strSetupEENum")
             {
                 pIniFile->WriteString(Product_Section, strA, "CIM");
+            }
+            else if (strA == "m_dBLT")
+            {
+                TStringList* strInp = SplitString(strB, "/");
+                for (int nX=0;nX<strInp->Count-1;nX++)
+                {
+                    pIniFile->WriteString(Product_Section, "m_dBLT"+IntToStr(nX), strInp->operator [](nX));
+                }
+                delete strInp;
+            }
+            else if (strA == "m_dTilt")
+            {
+                TStringList* strInp = SplitString(strB, "/");
+                for (int nX=0;nX<strInp->Count-1;nX++)
+                {
+                    pIniFile->WriteString(Product_Section, "m_dTilt"+IntToStr(nX), strInp->operator [](nX));
+                }
+                delete strInp;
+            }
+            else if (strA == "m_dGap")
+            {
+                TStringList* strInp = SplitString(strB, "/");
+                for (int nX=0;nX<strInp->Count-1;nX++)
+                {
+                    pIniFile->WriteString(Product_Section, "m_dGap"+IntToStr(nX), strInp->operator [](nX));
+                }
+                delete strInp;
             }
             else if (strA == "LastFilePath") {}
             else if (strA == "LastFileName") {}
