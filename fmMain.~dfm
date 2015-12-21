@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 132
-  Top = 149
+  Left = 107
+  Top = 145
   Width = 1350
   Height = 615
   HorzScrollBar.Position = 244
