@@ -938,13 +938,13 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 
     if (g_IniFile.m_nLanguageMode>0)
     {
-        Label2->Caption = "Lam.RemainTime:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
-        Label5->Caption = "Lam.RemainTime:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "Sec";
+        Label2->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
+        Label5->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "Sec";
     }
     else
     {
-        Label2->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
-        Label5->Caption = "壓合剩餘時間:" + FormatFloat("0.0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
+        Label2->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
+        Label5->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
     }
 	timerPressure->Enabled = true;
 

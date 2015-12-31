@@ -1028,8 +1028,19 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //---Detect temp. if fail then stop
     if (g_pMainThread->m_bIsAutoMode)
     {
-        if (fabs(g_IniFile.m_dLamTemp[0] - g_pMainThread->m_dRearTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 32;
-        if (fabs(g_IniFile.m_dLamTemp[1] - g_pMainThread->m_dFrontTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 31;
+        if (g_IniFile.m_nRailOption == 0)
+        {
+            if (fabs(g_IniFile.m_dLamTemp[0] - g_pMainThread->m_dRearTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 32;
+            if (fabs(g_IniFile.m_dLamTemp[1] - g_pMainThread->m_dFrontTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 31;
+        }
+        else if (g_IniFile.m_nRailOption == 1)
+        {
+            if (fabs(g_IniFile.m_dLamTemp[1] - g_pMainThread->m_dFrontTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 31;
+        }
+        else if (g_IniFile.m_nRailOption == 2)
+        {
+            if (fabs(g_IniFile.m_dLamTemp[0] - g_pMainThread->m_dRearTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 32;
+        }
         editBoatFinishNow->Text = (AnsiString)g_pMainThread->m_nPassBoatCount1;
         editBoatFinishStart->Enabled = false;
     }
