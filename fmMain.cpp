@@ -213,7 +213,7 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 
 void __fastcall TfrmMain::N3Click(TObject *Sender)
 {
-    if (!FileExists("C:\\Product Data\\")) _mkdir("C:\\Product Data\\");
+    if (!FileExists("C:\\Product_Data\\")) _mkdir("C:\\Product_Data\\");
 	g_IniFile.MachineFile(false);
 	g_IniFile.ProductFile(Caption.c_str(), false);
 
@@ -244,7 +244,7 @@ void __fastcall TfrmMain::N4Click(TObject *Sender)
 	if (SaveDialog1->Execute())
 	{
 
-        if (!FileExists("C:\\Product Data\\")) _mkdir("C:\\Product Data\\");
+        if (!FileExists("C:\\Product_Data\\")) _mkdir("C:\\Product_Data\\");
 		g_IniFile.m_strLastFileName = SaveDialog1->FileName;
 		Caption = SaveDialog1->FileName;
 		g_IniFile.MachineFile(false);

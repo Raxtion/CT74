@@ -287,7 +287,7 @@ void __fastcall CEQPXML::doRCMD(char *pRx)
         TStringList *StrList = SplitString(strData, ",");
         //AnsiString strName = strData.SubString(10, strData.Length() - 9);
 		//AnsiString strFile;
-		//strFile.sprintf("C:\\Product Data\\%s\\%s.ini", strName, strName);
+		//strFile.sprintf("C:\\Product_Data\\%s\\%s.ini", strName, strName);
 		//bRet = OpenFile(strFile);
         bRet = OpenFile(StrList->Strings[1]);
 
@@ -365,7 +365,7 @@ void __fastcall CEQPXML::doQueryPPIDNew(char *pRx)
 	pRoot->SetAttribute("TYPE", "ACK");
 
 	TSearchRec sr;
-	int nRes = FindFirst("C:\\Product Data\\*", faDirectory, sr);
+	int nRes = FindFirst("C:\\Product_Data\\*", faDirectory, sr);
 	if (nRes == 0)
 	{
 		do
@@ -408,7 +408,7 @@ void __fastcall CEQPXML::doQueryPPIDFullPath(char *pRx)
 
     m_liststrFileName.clear();
     m_liststrForderName.clear();
-    DirExplore("C:\\Product Data", m_liststrForderName, m_liststrFileName);
+    DirExplore("C:\\Product_Data", m_liststrForderName, m_liststrFileName);
 
     while (true)
     {
@@ -447,7 +447,7 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 	AnsiString strData=pData1->GetText();           //Recipe Name
 	AnsiString strSxFx=pData1->Attribute("SxFy");
 
-	//TIniFile *pIniFile = new TIniFile("C:\\Product Data\\"+strData+"\\"+strData+".ini");
+	//TIniFile *pIniFile = new TIniFile("C:\\Product_Data\\"+strData+"\\"+strData+".ini");
     TIniFile *pIniFile = new TIniFile(strData);
 
 	TiXmlDocument doc;

@@ -1149,28 +1149,28 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
             {
                 pIniFile->WriteString(Product_Section, strA, "CIM");
             }
-            else if (strcmp(ParamItem[nX*5],"m_dBLT")==0)
+            else if (strA == "m_dBLT")
             {
                 TStringList* strInp = SplitString(strB, "/");
-                for (int nX=0;nX<strInp.Count-1;nX++)
+                for (int nX=0;nX<strInp->Count-1;nX++)
                 {
                     pIniFile->WriteString(Product_Section, "m_dBLT"+IntToStr(nX), strInp->operator [](nX));
                 }
                 delete strInp;
             }
-            else if (strcmp(ParamItem[nX*5],"m_dTilt")==0)
+            else if (strA == "m_dTilt")
             {
                 TStringList* strInp = SplitString(strB, "/");
-                for (int nX=0;nX<strInp.Count-1;nX++)
+                for (int nX=0;nX<strInp->Count-1;nX++)
                 {
                     pIniFile->WriteString(Product_Section, "m_dTilt"+IntToStr(nX), strInp->operator [](nX));
                 }
                 delete strInp;
             }
-            else if (strcmp(ParamItem[nX*5],"m_dGap")==0)
+            else if (strA == "m_dGap")
             {
                 TStringList* strInp = SplitString(strB, "/");
-                for (int nX=0;nX<strInp.Count-1;nX++)
+                for (int nX=0;nX<strInp->Count-1;nX++)
                 {
                     pIniFile->WriteString(Product_Section, "m_dGap"+IntToStr(nX), strInp->operator [](nX));
                 }

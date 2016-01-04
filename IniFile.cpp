@@ -15,7 +15,7 @@
 #define ErrorMessageEngFileName "C74ErrorMessageEng.ini"
 #define UserName "User.sis"
 
-#define IniFile_Dir "C:\\Product Data\\"
+#define IniFile_Dir "C:\\Product_Data\\"
 #define MachineFileName "C74Machine.sis"
 
 CIniFile g_IniFile;
@@ -38,7 +38,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Int(bRead,pIniFile,System_Section,"Priviledge",m_nPriviledge);
   DDXFile_String(bRead,pIniFile,System_Section,"ARTPassword",m_strARTPassword,"CLARE");
   DDXFile_String(bRead,pIniFile,System_Section,"ENGPassword",m_strENGPassword,"123");
-  DDXFile_String(bRead,pIniFile,System_Section,"LastFileName",m_strLastFileName,"C:\\Product Data\\Default.ini");
+  DDXFile_String(bRead,pIniFile,System_Section,"LastFileName",m_strLastFileName,"C:\\Product_Data\\Default.ini");
   DDXFile_String(bRead,pIniFile,System_Section,"LogInENGAccount",m_strLogInENGAccount,"OP");
 
   //Machine
