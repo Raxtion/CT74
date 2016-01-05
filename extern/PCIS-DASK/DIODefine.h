@@ -64,9 +64,9 @@ Y055	,
 Y056	,
 Y057	,
 Y058	,
-Y059	,
-Y060	,
 SafetyDoorByPass	,
+ReadyOutF	,
+ReadyOutR	,
 ReadyIn1	,
 ReadyIn2 };
 }

@@ -1296,7 +1296,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 
 	C_GetTime *tm1MS;
 
-	int nEjectInp, nEjectEntry, nEjectExit, nEjectExist, nEjectStopUp, nEjectStopDown, nReadyOut;
+	int nEjectInp, nEjectEntry, nEjectExit, nEjectExist, nEjectStopUp, nEjectStopDown, nReadyOut, nReadyOutY;
 	int nEjectMotorStart, nEjectStop;
 
 	double dPassTimeFront;
@@ -1311,6 +1311,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		nEjectStopUp = DI::EjectStopUp1;
 		nEjectStopDown = DI::EjectStopDown1;
 		nReadyOut = DI::ReadyOut1;
+        nReadyOutY = DO::ReadyOutF;
 
 		nEjectMotorStart = DO::EjectMotorStart1;
 		nEjectStop = DO::EjectStop1;
@@ -1326,6 +1327,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		nEjectStopUp = DI::EjectStopUp2;
 		nEjectStopDown = DI::EjectStopDown2;
 		nReadyOut = DI::ReadyOut2;
+        nReadyOutY = DO::ReadyOutR;
 
 		nEjectMotorStart = DO::EjectMotorStart2;
 		nEjectStop = DO::EjectStop2;
@@ -1379,6 +1381,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		if (tm1MS->timeUp())
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][3]EjectLane 進料區進料成功"));
+            g_DIO.SetDO(nReadyOutY, true);
 			g_DIO.SetDO(nEjectMotorStart, false);
 			nThreadIndex++;
 		}
@@ -1420,6 +1423,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][6]EjectLane 出料區出料完成"));
+            g_DIO.SetDO(nReadyOutY, false);
 			g_DIO.SetDO(nEjectMotorStart, false);
 			g_DIO.SetDO(nEjectStop, true);
 			tm1MS->timeStart(3000);
