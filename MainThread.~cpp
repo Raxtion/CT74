@@ -767,7 +767,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		{
 			g_DIO.SetDO(DO::ReadyIn1, false);
 			g_DIO.SetDO(DO::LCMotorStart, true);
-			tm1MS.timeStart(5000);
+			tm1MS.timeStart(10000);
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][2]LC 接料區進料開始"));
 			nThreadIndex++;
 		}
@@ -783,8 +783,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
         {
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][3]LC 接料區進料失敗重試"));
             g_DIO.SetDO(DO::LCMotorStart, true);
-			tm1MS.timeStart(5000);
-			//nThreadIndex++;
+			tm1MS.timeStart(10000);
             break;
 		}
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 43;
@@ -1311,7 +1310,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		nEjectStopUp = DI::EjectStopUp1;
 		nEjectStopDown = DI::EjectStopDown1;
 		nReadyOut = DI::ReadyOut1;
-        nReadyOutY = DI::ReadyOutF;
+        nReadyOutY = DO::ReadyOutF;
 
 		nEjectMotorStart = DO::EjectMotorStart1;
 		nEjectStop = DO::EjectStop1;
@@ -1327,7 +1326,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		nEjectStopUp = DI::EjectStopUp2;
 		nEjectStopDown = DI::EjectStopDown2;
 		nReadyOut = DI::ReadyOut2;
-        nReadyOutY = DI::ReadyOutR;
+        nReadyOutY = DO::ReadyOutR;
 
 		nEjectMotorStart = DO::EjectMotorStart2;
 		nEjectStop = DO::EjectStop2;
@@ -1422,22 +1421,35 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 	case 6:
 		if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
 		{
-            m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][6]EjectLane 出料區出料完成"));
-            g_DIO.SetDO(nReadyOutY, false);
-			g_DIO.SetDO(nEjectMotorStart, false);
-			g_DIO.SetDO(nEjectStop, true);
 			tm1MS->timeStart(3000);
 			nThreadIndex++;
-
 		}
         else if (!g_DIO.ReadDOBit(nEjectMotorStart))
         {
             g_DIO.SetDO(nEjectMotorStart, true);
 			tm1MS->timeStart(10000);
-			nThreadIndex++;
         }
 		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 67 : g_IniFile.m_nErrorCode = 66;
 		break;
+    case 7:
+        if (tm1MS->timeUp())
+        {
+            if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
+            {
+                m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][6]EjectLane 出料區出料完成"));
+                g_DIO.SetDO(nReadyOutY, false);
+			    g_DIO.SetDO(nEjectMotorStart, false);
+			    g_DIO.SetDO(nEjectStop, true);
+                nThreadIndex++;
+            }
+            else
+            {
+                g_DIO.SetDO(nEjectMotorStart, true);
+			    tm1MS->timeStart(10000);
+                nThreadIndex--;
+            }
+        }
+        break;
 	case 7:
 		if (g_DIO.ReadDIBit(nEjectStopUp))
 		{
