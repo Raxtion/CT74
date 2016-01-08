@@ -773,7 +773,6 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		}
 		break;
 	case 3:
-		g_DIO.SetDO(DO::LCMotorStart, true);     //for alarm->restart
 		if (g_DIO.ReadDIBit(DI::LCInp) && !g_DIO.ReadDIBit(DI::LCEntry))    //g_DIO.ReadDIBit(DI::LCExist)
 		{
 			tm1MS.timeStart(300);

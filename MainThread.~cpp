@@ -1450,7 +1450,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
             }
         }
         break;
-	case 7:
+	case 8:
 		if (g_DIO.ReadDIBit(nEjectStopUp))
 		{
 			nThreadIndex++;
