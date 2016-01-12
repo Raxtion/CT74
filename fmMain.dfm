@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 4
-  Top = 112
+  Left = 8
+  Top = 195
   Width = 1597
   Height = 745
   VertScrollBar.Position = 145
@@ -237,7 +237,7 @@ object frmMain: TfrmMain
   object listHistory: TListBox
     Left = 0
     Top = 581
-    Width = 1589
+    Width = 1586
     Height = 110
     Align = alBottom
     Color = clBlack

@@ -417,47 +417,49 @@ void __fastcall CMainThread::Execute()
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
 
-                /*
-				if ((g_IniFile.m_nRailOption == 0 && g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])||
-                    (g_IniFile.m_nRailOption == 0 && g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0])  )
+                if (m_bStopLC == true && g_IniFile.m_nRailOption == 0
+                    && !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
+                    && !g_DIO.ReadDIBit(DI::EjectInp1) && !g_DIO.ReadDIBit(DI::EjectEntry1) && !g_DIO.ReadDIBit(DI::EjectExit1)
+                    && !g_DIO.ReadDIBit(DI::LamInp2) && !g_DIO.ReadDIBit(DI::LamEntry2) && !g_DIO.ReadDIBit(DI::LamWarp2)
+                    && !g_DIO.ReadDIBit(DI::EjectInp2) && !g_DIO.ReadDIBit(DI::EjectEntry2) && !g_DIO.ReadDIBit(DI::EjectExit2))
                 {
-                    g_IniFile.m_nErrorCode = 75;
+                    g_IniFile.m_nErrorCode = 33;
                 }
-                else if (g_IniFile.m_nRailOption == 1 && g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
+                else if (m_bStopLC == true && g_IniFile.m_nRailOption == 1
+                        && !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
+                        && !g_DIO.ReadDIBit(DI::EjectInp1) && !g_DIO.ReadDIBit(DI::EjectEntry1) && !g_DIO.ReadDIBit(DI::EjectExit1))
                 {
-                    g_IniFile.m_nErrorCode = 75;
+                    g_IniFile.m_nErrorCode = 33;
                 }
-                else if (g_IniFile.m_nRailOption == 2 && g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0])
-				{
-					g_IniFile.m_nErrorCode = 75;
-				}
-				else
-				{
-                */
-					//nThreadIndex[1]=0;       //some thread need to start from zero
-					bAutoMode = true;
+                else if (m_bStopLC == true && g_IniFile.m_nRailOption == 2
+                        && !g_DIO.ReadDIBit(DI::LamInp2) && !g_DIO.ReadDIBit(DI::LamEntry2) && !g_DIO.ReadDIBit(DI::LamWarp2)
+                        && !g_DIO.ReadDIBit(DI::EjectInp2) && !g_DIO.ReadDIBit(DI::EjectEntry2) && !g_DIO.ReadDIBit(DI::EjectExit2))
+                {
+                    g_IniFile.m_nErrorCode = 33;
+                }
 
-					//m_nPassBoatCount0 = m_nPassBoatStart;                           //If auto 從0開始
-					//m_nPassBoatCount1 = m_nPassBoatStart;
-					m_nPassBoatCount0 = 0;
-					m_nPassBoatCount1 = 0;
+                //nThreadIndex[1]=0;       //some thread need to start from zero
+                bAutoMode = true;
 
-					//g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
-					//g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
-					g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
-					//g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
-					//g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
-					::Sleep(300);
-					g_Motion.WaitMotionDone(AXIS_X, 30000);
-					g_Motion.WaitMotionDone(AXIS_Y, 30000);
-					g_Motion.WaitMotionDone(AXIS_LC, 30000);
-					g_Motion.WaitMotionDone(AXIS_FL, 30000);
-					g_Motion.WaitMotionDone(AXIS_RL, 30000);
+                //m_nPassBoatCount0 = m_nPassBoatStart;                           //If auto 從0開始
+                //m_nPassBoatCount1 = m_nPassBoatStart;
+                m_nPassBoatCount0 = 0;
+                m_nPassBoatCount1 = 0;
 
-					SetWorkSpeed();
-                /*
-				}
-                */
+                //g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
+                //g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
+                g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
+                //g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
+                //g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
+                ::Sleep(300);
+                g_Motion.WaitMotionDone(AXIS_X, 30000);
+                g_Motion.WaitMotionDone(AXIS_Y, 30000);
+                g_Motion.WaitMotionDone(AXIS_LC, 30000);
+                g_Motion.WaitMotionDone(AXIS_FL, 30000);
+                g_Motion.WaitMotionDone(AXIS_RL, 30000);
+
+                SetWorkSpeed();
+
 				m_bIsStartProcessbyCIM = false;
 				m_bIsStartProcessbyDIO = false;
 			}

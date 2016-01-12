@@ -417,47 +417,51 @@ void __fastcall CMainThread::Execute()
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
 
-                /*
-				if ((g_IniFile.m_nRailOption == 0 && g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])||
-                    (g_IniFile.m_nRailOption == 0 && g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0])  )
-                {
-                    g_IniFile.m_nErrorCode = 75;
-                }
-                else if (g_IniFile.m_nRailOption == 1 && g_IniFile.m_dLastLamPress[1] != g_IniFile.m_dLamPress[1])
-                {
-                    g_IniFile.m_nErrorCode = 75;
-                }
-                else if (g_IniFile.m_nRailOption == 2 && g_IniFile.m_dLastLamPress[0] != g_IniFile.m_dLamPress[0])
-				{
-					g_IniFile.m_nErrorCode = 75;
-				}
-				else
-				{
-                */
-					//nThreadIndex[1]=0;       //some thread need to start from zero
-					bAutoMode = true;
 
-					//m_nPassBoatCount0 = m_nPassBoatStart;                           //If auto 從0開始
-					//m_nPassBoatCount1 = m_nPassBoatStart;
-					m_nPassBoatCount0 = 0;
-					m_nPassBoatCount1 = 0;
 
-					//g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
-					//g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
-					g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
-					//g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
-					//g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
-					::Sleep(300);
-					g_Motion.WaitMotionDone(AXIS_X, 30000);
-					g_Motion.WaitMotionDone(AXIS_Y, 30000);
-					g_Motion.WaitMotionDone(AXIS_LC, 30000);
-					g_Motion.WaitMotionDone(AXIS_FL, 30000);
-					g_Motion.WaitMotionDone(AXIS_RL, 30000);
 
-					SetWorkSpeed();
-                /*
-				}
-                */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+                //nThreadIndex[1]=0;       //some thread need to start from zero
+                bAutoMode = true;
+
+                //m_nPassBoatCount0 = m_nPassBoatStart;                           //If auto 從0開始
+                //m_nPassBoatCount1 = m_nPassBoatStart;
+                m_nPassBoatCount0 = 0;
+                m_nPassBoatCount1 = 0;
+
+                //g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
+                //g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
+                g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
+                //g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
+                //g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
+                ::Sleep(300);
+                g_Motion.WaitMotionDone(AXIS_X, 30000);
+                g_Motion.WaitMotionDone(AXIS_Y, 30000);
+                g_Motion.WaitMotionDone(AXIS_LC, 30000);
+                g_Motion.WaitMotionDone(AXIS_FL, 30000);
+                g_Motion.WaitMotionDone(AXIS_RL, 30000);
+
+                SetWorkSpeed();
+
 				m_bIsStartProcessbyCIM = false;
 				m_bIsStartProcessbyDIO = false;
 			}
@@ -773,7 +777,6 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		}
 		break;
 	case 3:
-		g_DIO.SetDO(DO::LCMotorStart, true);     //for alarm->restart
 		if (g_DIO.ReadDIBit(DI::LCInp) && !g_DIO.ReadDIBit(DI::LCEntry))    //g_DIO.ReadDIBit(DI::LCExist)
 		{
 			tm1MS.timeStart(300);
