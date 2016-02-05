@@ -417,29 +417,27 @@ void __fastcall CMainThread::Execute()
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
 
+                if (m_bStopLC == true && g_IniFile.m_nRailOption == 0
+                    && !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
+                    && !g_DIO.ReadDIBit(DI::EjectInp1) && !g_DIO.ReadDIBit(DI::EjectEntry1) && !g_DIO.ReadDIBit(DI::EjectExit1)
+                    && !g_DIO.ReadDIBit(DI::LamInp2) && !g_DIO.ReadDIBit(DI::LamEntry2) && !g_DIO.ReadDIBit(DI::LamWarp2)
+                    && !g_DIO.ReadDIBit(DI::EjectInp2) && !g_DIO.ReadDIBit(DI::EjectEntry2) && !g_DIO.ReadDIBit(DI::EjectExit2))
+                {
+                    g_IniFile.m_nErrorCode = 33;
+                }
+                else if (m_bStopLC == true && g_IniFile.m_nRailOption == 1
+                        && !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
+                        && !g_DIO.ReadDIBit(DI::EjectInp1) && !g_DIO.ReadDIBit(DI::EjectEntry1) && !g_DIO.ReadDIBit(DI::EjectExit1))
+                {
+                    g_IniFile.m_nErrorCode = 33;
+                }
+                else if (m_bStopLC == true && g_IniFile.m_nRailOption == 2
+                        && !g_DIO.ReadDIBit(DI::LamInp2) && !g_DIO.ReadDIBit(DI::LamEntry2) && !g_DIO.ReadDIBit(DI::LamWarp2)
+                        && !g_DIO.ReadDIBit(DI::EjectInp2) && !g_DIO.ReadDIBit(DI::EjectEntry2) && !g_DIO.ReadDIBit(DI::EjectExit2))
+                {
+                    g_IniFile.m_nErrorCode = 33;
+                }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
                 //nThreadIndex[1]=0;       //some thread need to start from zero
                 bAutoMode = true;
 
@@ -775,6 +773,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][2]LC 接料區進料開始"));
 			nThreadIndex++;
 		}
+        else if (!g_DIO.GetDO(DO::ReadyIn1)) g_DIO.SetDO(DO::ReadyIn1, true);
 		break;
 	case 3:
 		if (g_DIO.ReadDIBit(DI::LCInp) && !g_DIO.ReadDIBit(DI::LCEntry))    //g_DIO.ReadDIBit(DI::LCExist)
@@ -1443,6 +1442,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
                 g_DIO.SetDO(nReadyOutY, false);
 			    g_DIO.SetDO(nEjectMotorStart, false);
 			    g_DIO.SetDO(nEjectStop, true);
+                tm1MS->timeStart(3000);
                 nThreadIndex++;
             }
             else
@@ -1454,7 +1454,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
         }
         break;
 	case 8:
-		if (g_DIO.ReadDIBit(nEjectStopUp))
+		if (tm1MS->timeUp() && g_DIO.ReadDIBit(nEjectStopUp))
 		{
 			nThreadIndex++;
 		}

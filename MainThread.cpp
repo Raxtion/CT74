@@ -773,6 +773,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][2]LC 接料區進料開始"));
 			nThreadIndex++;
 		}
+        else if (!g_DIO.ReadDOBit(DO::ReadyIn1)) g_DIO.SetDO(DO::ReadyIn1, true);
 		break;
 	case 3:
 		if (g_DIO.ReadDIBit(DI::LCInp) && !g_DIO.ReadDIBit(DI::LCEntry))    //g_DIO.ReadDIBit(DI::LCExist)
@@ -1441,6 +1442,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
                 g_DIO.SetDO(nReadyOutY, false);
 			    g_DIO.SetDO(nEjectMotorStart, false);
 			    g_DIO.SetDO(nEjectStop, true);
+                tm1MS->timeStart(3000);
                 nThreadIndex++;
             }
             else
@@ -1452,7 +1454,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
         }
         break;
 	case 8:
-		if (g_DIO.ReadDIBit(nEjectStopUp))
+		if (tm1MS->timeUp() && g_DIO.ReadDIBit(nEjectStopUp))
 		{
 			nThreadIndex++;
 		}

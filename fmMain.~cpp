@@ -1028,7 +1028,6 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //---Detect temp. if fail then stop
     if (g_pMainThread->m_bIsAutoMode)
     {
-        if (checkStopLC->Checked == true) g_IniFile.m_nErrorCode = 32;
         if (g_IniFile.m_nRailOption == 0)
         {
             if (fabs(g_IniFile.m_dLamTemp[0] - g_pMainThread->m_dRearTempRealTime)>g_IniFile.m_dAutoRunTempRange) g_IniFile.m_nErrorCode = 32;
