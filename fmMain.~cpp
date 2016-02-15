@@ -484,7 +484,12 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Int(bRead, g_IniFile.m_nDownPercent, pWnd->m_nDownPercent);
 
     pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
-    
+
+    if (g_IniFile.m_strLogInENGAccount != "Admin")
+    {
+        pWnd->PageControl1->Pages[1]->Enabled = false;
+    }
+    pWnd->PageControl1->ActivePageIndex = 0;
 
     while (1)
     {
@@ -892,6 +897,19 @@ void __fastcall TfrmMain::N15Click(TObject *Sender)
     delete g_AccountLog;
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::N17Click(TObject *Sender)
+{
+    if(Application->MessageBoxA("變更系統語系為 中文?","Confirm",MB_ICONQUESTION|MB_OKCANCEL)!=IDOK) return;
+    bool bRead = false;
+    g_IniFile.m_nLanguageMode = 0;
+    //CreateCaptionFile(this);
+    ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
+    //CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
+    ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
+}
+//---------------------------------------------------------------------------
+
 
 //Other
 void __fastcall TfrmMain::SpeedButton1Click(TObject *Sender)
@@ -1451,6 +1469,9 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		N9->Enabled = true;
 		N12->Enabled = true;
         N15->Enabled = false;
+        N7->Enabled = false;
+        N14->Enabled = false;
+        N11->Enabled = false;
 
 		break;
 	case 2:
@@ -2329,7 +2350,5 @@ void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
     g_pMainThread->m_bResetAgain = true;
 }
 //---------------------------------------------------------------------------
-
-
 
 

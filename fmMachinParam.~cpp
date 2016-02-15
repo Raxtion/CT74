@@ -32,6 +32,7 @@ void __fastcall TfrmMachineParam::m_bIsUseCIMClick(TObject *Sender)
     {
         frmMain->ServerCIM->Active = false;
         frmMain->AddList("CIM Stop!");
+        frmMain->Shape3->Visible = false;
         g_eqpXML.m_CIMStatus = "0";
     }
 }

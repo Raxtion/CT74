@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 606
-  Top = 131
+  Left = 621
+  Top = 161
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 449
@@ -51,8 +51,8 @@ object fmProduct: TfmProduct
     Top = 0
     Width = 1081
     Height = 401
-    ActivePage = TabSheet2
-    TabIndex = 1
+    ActivePage = TabSheet1
+    TabIndex = 0
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Common Page'
@@ -310,7 +310,7 @@ object fmProduct: TfmProduct
         object m_cmbHeadType: TComboBox
           Left = 96
           Top = 16
-          Width = 89
+          Width = 153
           Height = 24
           Style = csDropDownList
           ItemHeight = 16
@@ -322,7 +322,7 @@ object fmProduct: TfmProduct
         object m_cmbVacummOn: TComboBox
           Left = 96
           Top = 136
-          Width = 89
+          Width = 153
           Height = 24
           Style = csDropDownList
           ItemHeight = 16
@@ -334,7 +334,7 @@ object fmProduct: TfmProduct
         object m_cmbPressCheck: TComboBox
           Left = 96
           Top = 176
-          Width = 89
+          Width = 153
           Height = 24
           Style = csDropDownList
           ItemHeight = 16
@@ -346,7 +346,7 @@ object fmProduct: TfmProduct
         object m_cmbHeadScal: TComboBox
           Left = 96
           Top = 56
-          Width = 89
+          Width = 153
           Height = 24
           Style = csDropDownList
           ItemHeight = 16
@@ -365,7 +365,7 @@ object fmProduct: TfmProduct
         object m_cmbModuleScal: TComboBox
           Left = 96
           Top = 96
-          Width = 89
+          Width = 153
           Height = 24
           Style = csDropDownList
           ItemHeight = 16
@@ -384,7 +384,7 @@ object fmProduct: TfmProduct
         object m_strModuleNum: TEdit
           Left = 96
           Top = 216
-          Width = 161
+          Width = 153
           Height = 24
           TabOrder = 7
           Text = 'm_strModuleNum'

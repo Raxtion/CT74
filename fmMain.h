@@ -115,6 +115,9 @@ __published:	// IDE-managed Components
     TTimer *timerDIOStartAgain;
     TMenuItem *N15;
     TTimer *timerRenewPainBox;
+    TMenuItem *N16;
+    TMenuItem *N17;
+    TMenuItem *N18;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -164,6 +167,8 @@ __published:	// IDE-managed Components
     void __fastcall timerDIOStartAgainTimer(TObject *Sender);
     void __fastcall N15Click(TObject *Sender);
     void __fastcall timerRenewPainBoxTimer(TObject *Sender);
+    void __fastcall N17Click(TObject *Sender);
+    void __fastcall N18Click(TObject *Sender);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;
