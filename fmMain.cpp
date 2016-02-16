@@ -1491,6 +1491,9 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		N9->Enabled = true;
 		N12->Enabled = true;
         N15->Enabled = true;
+        N7->Enabled = true;
+        N14->Enabled = true;
+        N11->Enabled = true;
         g_IniFile.m_strLogInENGAccount = "Admin";
 		break;
 	}

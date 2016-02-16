@@ -901,8 +901,18 @@ void __fastcall TfrmMain::N15Click(TObject *Sender)
 void __fastcall TfrmMain::N17Click(TObject *Sender)
 {
     if(Application->MessageBoxA("變更系統語系為 中文?","Confirm",MB_ICONQUESTION|MB_OKCANCEL)!=IDOK) return;
-    bool bRead = false;
     g_IniFile.m_nLanguageMode = 0;
+    //CreateCaptionFile(this);
+    ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
+    //CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
+    ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::N18Click(TObject *Sender)
+{
+    if(Application->MessageBoxA("Change Language to English?","Confirm",MB_ICONQUESTION|MB_OKCANCEL)!=IDOK) return;
+    g_IniFile.m_nLanguageMode = 1;
     //CreateCaptionFile(this);
     ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
     //CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
@@ -1481,6 +1491,9 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		N9->Enabled = true;
 		N12->Enabled = true;
         N15->Enabled = true;
+        N7->Enabled = true;
+        N14->Enabled = true;
+        N11->Enabled = true;
         g_IniFile.m_strLogInENGAccount = "Admin";
 		break;
 	}
@@ -2350,5 +2363,6 @@ void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
     g_pMainThread->m_bResetAgain = true;
 }
 //---------------------------------------------------------------------------
+
 
 
