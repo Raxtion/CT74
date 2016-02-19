@@ -2018,7 +2018,6 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                     {
                         double *maxValue = std::max_element(vecTempDown.begin(), vecTempDown.end());
                         double *minValue = std::min_element(vecTempDown.begin(), vecTempDown.end());
-                        //p_dLaserValueDiff[(nMoveIndex * 4 + nMoveIndexSub)] = (*maxValue - *minValue);
                         for (int i=0;i<50;i++)
                         {
                             p_dLaserValueDiff[i*4] = (*maxValue - *minValue);

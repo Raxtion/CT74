@@ -25,6 +25,20 @@ void __fastcall TfmProduct::FormCreate(TObject *Sender)
     RenewRadioGroup();
     RenewCmbScal("HeadScal");
     RenewCmbScal("ModuleScal");
+
+    //Let the image1 do not show background color
+    Image1->Transparent=true;
+    Graphics::TBitmap *Bmp = new Graphics::TBitmap();
+    Bmp->Assign(Image1->Picture->Bitmap);
+    Bmp->Transparent = true;
+    Bmp->TransparentColor = Bmp->Canvas->Pixels[1][1];
+    Image1->Picture->Assign(Bmp);
+
+    Bmp->Assign(Image2->Picture->Bitmap);
+    Bmp->Transparent = true;
+    Bmp->TransparentColor = Bmp->Canvas->Pixels[1][1];
+    Image2->Picture->Assign(Bmp);
+    delete Bmp;
 }
 //---------------------------------------------------------------------------
 void __fastcall TfmProduct::RenewRadioGroup()

@@ -1269,6 +1269,7 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 			if (nIndex == g_pMainThread->m_nPressCalMoveIndex[1] && btnStartPressCal1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[1] && btnLaserUp1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[1] && btnLaserDown1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
+            else if (g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0] > 0.2 || g_pMainThread->m_dFrontDownLaserDiff[nIndex][0] > 0.2) PaintBox1->Canvas->Brush->Color = clRed;
 			else PaintBox1->Canvas->Brush->Color = clGreen;
 		}
 		else PaintBox1->Canvas->Brush->Color = clGray;
@@ -1326,6 +1327,7 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 			if (nIndex == g_pMainThread->m_nPressCalMoveIndex[0] && btnStartPressCal0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[0] && btnLaserUp0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[0] && btnLaserDown0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
+            else if (g_pMainThread->m_dRearUpperLaserDiff[nIndex][0] > 0.2 || g_pMainThread->m_dRearDownLaserDiff[nIndex][0] > 0.2) PaintBox2->Canvas->Brush->Color = clRed;
 			else PaintBox2->Canvas->Brush->Color = clGreen;
 		}
 		else PaintBox2->Canvas->Brush->Color = clGray;
@@ -1354,7 +1356,6 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
             if (fabs(dGetSetKgValue-dGetKgValue) > 0.1) m_bLastPusherIOErrorRear = true;
             else m_bLastPusherIOErrorRear = false;
         }
-
     }
 
 }

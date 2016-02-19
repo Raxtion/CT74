@@ -11,6 +11,7 @@
 #include <ExtCtrls.hpp>
 #include <Menus.hpp>
 #include <ComCtrls.hpp>
+#include <Graphics.hpp>
 //---------------------------------------------------------------------------
 class TfmProduct : public TForm
 {
@@ -237,6 +238,16 @@ __published:	// IDE-managed Components
     TEdit *m_nDownPercent;
     TLabel *Label110;
     TLabel *Label111;
+    TImage *Image1;
+    TImage *Image2;
+    TLabel *Label112;
+    TLabel *Label113;
+    TLabel *Label114;
+    TLabel *Label115;
+    TLabel *Label116;
+    TLabel *Label118;
+    TLabel *Label119;
+    TLabel *Label117;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbScal(AnsiString Hint);

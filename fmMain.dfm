@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 4
-  Top = 168
+  Left = 2
+  Top = 119
   Width = 1597
   Height = 745
   Caption = 'frmMain'
@@ -236,7 +236,7 @@ object frmMain: TfrmMain
   object listHistory: TListBox
     Left = 0
     Top = 726
-    Width = 1586
+    Width = 1589
     Height = 110
     Align = alBottom
     Color = clBlack
