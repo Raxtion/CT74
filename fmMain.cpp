@@ -314,6 +314,8 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	}
 
 	DDX_Float(bRead, g_IniFile.m_dSafePos, pMachineDlg->m_dSafePos);
+        DDX_Float(bRead, g_IniFile.m_dUpperLaserAlarm, pMachineDlg->m_dUpperLaserAlarm);
+        DDX_Float(bRead, g_IniFile.m_dDownLaserAlarm, pMachineDlg->m_dDownLaserAlarm);
     DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
     DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
     DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
@@ -340,6 +342,8 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		}
 
 		DDX_Float(bRead, g_IniFile.m_dSafePos, pMachineDlg->m_dSafePos);
+                DDX_Float(bRead, g_IniFile.m_dUpperLaserAlarm, pMachineDlg->m_dUpperLaserAlarm);
+                DDX_Float(bRead, g_IniFile.m_dDownLaserAlarm, pMachineDlg->m_dDownLaserAlarm);
         DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
         DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
         DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
@@ -1269,7 +1273,7 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 			if (nIndex == g_pMainThread->m_nPressCalMoveIndex[1] && btnStartPressCal1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[1] && btnLaserUp1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[1] && btnLaserDown1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
-            else if (g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0] > 0.2 || g_pMainThread->m_dFrontDownLaserDiff[nIndex][0] > 0.2) PaintBox1->Canvas->Brush->Color = clRed;
+            else if (g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0] > g_IniFile.m_dUpperLaserAlarm || g_pMainThread->m_dFrontDownLaserDiff[nIndex][0] > g_IniFile.m_dDownLaserAlarm) PaintBox1->Canvas->Brush->Color = clRed;
 			else PaintBox1->Canvas->Brush->Color = clGreen;
 		}
 		else PaintBox1->Canvas->Brush->Color = clGray;
@@ -1280,7 +1284,7 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
         double dGetKgValue = g_DNPort0.GetKg(nIndex);
 
 		int nTextHeight = PaintBox1->Canvas->TextHeight("1");
-		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg ", dGetSetKgValue) + FormatFloat("0.00kg", dGetKgValue));
+		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1)); //+ FormatFloat("0.00kg ", dGetSetKgValue) + FormatFloat("0.00kg", dGetKgValue));
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][0]) + FormatFloat("0.00mm", g_pMainThread->m_dFrontUpperLaser[nIndex][1]));
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dFrontUpperLaser[nIndex][3]));
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm ", g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0]) + FormatFloat("0.00kg", g_pMainThread->m_dFrontPressCal[nIndex]));
@@ -1327,7 +1331,7 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 			if (nIndex == g_pMainThread->m_nPressCalMoveIndex[0] && btnStartPressCal0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[0] && btnLaserUp0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[0] && btnLaserDown0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
-            else if (g_pMainThread->m_dRearUpperLaserDiff[nIndex][0] > 0.2 || g_pMainThread->m_dRearDownLaserDiff[nIndex][0] > 0.2) PaintBox2->Canvas->Brush->Color = clRed;
+            else if (g_pMainThread->m_dRearUpperLaserDiff[nIndex][0] > g_IniFile.m_dUpperLaserAlarm || g_pMainThread->m_dRearDownLaserDiff[nIndex][0] > g_IniFile.m_dDownLaserAlarm) PaintBox2->Canvas->Brush->Color = clRed;
 			else PaintBox2->Canvas->Brush->Color = clGreen;
 		}
 		else PaintBox2->Canvas->Brush->Color = clGray;
@@ -1338,7 +1342,7 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
         double dGetKgValue = g_DNPort1.GetKg(nIndex);
 
 		int nTextHeight = PaintBox2->Canvas->TextHeight("1");
-		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1) + FormatFloat("0.00kg", dGetSetKgValue) + FormatFloat("0.00kg", dGetKgValue));
+		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1)); //+ FormatFloat("0.00kg", dGetSetKgValue) + FormatFloat("0.00kg", dGetKgValue));
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 1, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][0]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][1]));
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 2, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaser[nIndex][2]) + FormatFloat("0.00mm", g_pMainThread->m_dRearUpperLaser[nIndex][3]));
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1 + nTextHeight * 3, FormatFloat("0.00mm ", g_pMainThread->m_dRearUpperLaserDiff[nIndex][0]) + FormatFloat("0.00Kg", g_pMainThread->m_dRearPressCal[nIndex]));

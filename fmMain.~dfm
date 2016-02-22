@@ -1,7 +1,7 @@
 object frmMain: TfrmMain
-  Left = 2
-  Top = 181
-  Width = 1597
+  Left = 12
+  Top = 255
+  Width = 1292
   Height = 745
   Caption = 'frmMain'
   Color = clBtnFace

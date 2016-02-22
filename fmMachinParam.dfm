@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 870
-  Top = 57
+  Left = 620
+  Top = 95
   Width = 594
   Height = 548
   Caption = #27231#21488#21443#25976
@@ -558,7 +558,7 @@ object frmMachineParam: TfrmMachineParam
     Text = 'm_dSafePos'
   end
   object StaticText17: TStaticText
-    Left = 211
+    Left = 212
     Top = 229
     Width = 65
     Height = 22
@@ -574,7 +574,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object GroupBox2: TGroupBox
     Left = 24
-    Top = 264
+    Top = 288
     Width = 297
     Height = 145
     Caption = 'Lane Changer'
@@ -699,7 +699,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_bForceEject: TCheckBox
     Left = 464
-    Top = 212
+    Top = 220
     Width = 97
     Height = 25
     Caption = #24375#21046#25490#38500
@@ -707,7 +707,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object GroupBox3: TGroupBox
     Left = 328
-    Top = 264
+    Top = 288
     Width = 233
     Height = 145
     Caption = 'Lifters Soft Limit'
@@ -890,11 +890,59 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_bIsUseCIM: TCheckBox
     Left = 464
-    Top = 236
+    Top = 244
     Width = 97
     Height = 25
     Caption = #21855#29992'CIM'
     TabOrder = 10
     OnClick = m_bIsUseCIMClick
+  end
+  object StaticText32: TStaticText
+    Left = 32
+    Top = 253
+    Width = 105
+    Height = 22
+    Alignment = taRightJustify
+    AutoSize = False
+    BevelInner = bvSpace
+    BevelKind = bkSoft
+    BevelOuter = bvNone
+    BorderStyle = sbsSingle
+    Caption = #19978#27169#35686#31034#35492#24046
+    Color = clSkyBlue
+    ParentColor = False
+    TabOrder = 11
+  end
+  object StaticText33: TStaticText
+    Left = 213
+    Top = 253
+    Width = 105
+    Height = 22
+    Alignment = taRightJustify
+    AutoSize = False
+    BevelInner = bvSpace
+    BevelKind = bkSoft
+    BevelOuter = bvNone
+    BorderStyle = sbsSingle
+    Caption = #19979#27169#35686#31034#35492#24046
+    Color = clSkyBlue
+    ParentColor = False
+    TabOrder = 12
+  end
+  object m_dUpperLaserAlarm: TEdit
+    Left = 139
+    Top = 252
+    Width = 65
+    Height = 24
+    TabOrder = 13
+    Text = 'm_dUpperLaserAlarm'
+  end
+  object m_dDownLaserAlarm: TEdit
+    Left = 321
+    Top = 252
+    Width = 65
+    Height = 24
+    TabOrder = 14
+    Text = 'm_dDownLaserAlarm'
   end
 end

@@ -1120,6 +1120,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront]))
 		{
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
+            /*          //bridge Delete 第一段真空 20160222確定移除第一段真空
             if (g_IniFile.m_nVacummOn == 0)
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空不開啟"));
             else
@@ -1127,6 +1128,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空開啟"));
 			    g_DIO.SetDO(nLifterVac, true);
             }
+            */
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空不開啟"));
 
             // add PressDownPercent  (slowdown)
             /*for (int nIndex = 0; nIndex<50; nIndex++)
@@ -1142,6 +1145,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		}
 		break;
 	case 4:   //20150803 加入第一次真空判別 有成功不反應 失敗時有警訊不停機
+        /*         //bridge Delete 第一段真空 20160222確定移除第一段真空
         if (g_IniFile.m_nVacummOn == 0)
         {
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空不偵測"));
@@ -1167,12 +1171,20 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			    nThreadIndex++;
 		    }
         }
+        */
+        {
+            m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空不偵測"));
+            m_bFirstVacSuccessed = true;
+            nThreadIndex++;
+        }
 		break;
 	case 5: //20150721 加入上升第三段變速  小於1mm就降速為1mm跑完需要60秒
 		//20150803 加入進入第三段 開始倒數壓合、Buzzer OFF、VacDelayTimeStart
 		if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]))
 		{
+            g_DIO.SetDO(nLifterVac, true);
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][5]LamSub lifter進入第三段"));
+
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamThirdHeight[bFront] / g_IniFile.m_dLamThirdTime[bFront]);
 
 			tm1MS->timeStart(g_IniFile.m_dLamTime[bFront] * 1000);

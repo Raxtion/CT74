@@ -44,6 +44,8 @@ public:
   double m_dLCRearPos;
 
   double m_dSafePos;           //Safe Position
+  double m_dUpperLaserAlarm;
+  double m_dDownLaserAlarm;
   bool m_bForceEject;
   bool m_bIsUseCIM;
   int m_nLanguage;

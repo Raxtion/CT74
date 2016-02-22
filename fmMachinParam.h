@@ -92,6 +92,10 @@ __published:	// IDE-managed Components
         TComboBox *m_cmbLanguage;
         TLabel *Label1;
         TCheckBox *m_bIsUseCIM;
+        TStaticText *StaticText32;
+        TStaticText *StaticText33;
+        TEdit *m_dUpperLaserAlarm;
+        TEdit *m_dDownLaserAlarm;
     void __fastcall m_bIsUseCIMClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
