@@ -99,9 +99,6 @@ void __fastcall CMainThread::Execute()
 	m_bIsDoAutoCal[0] = false;
     m_bIsDoAutoCal[1] = false;
 
-	bool bHomeDone = false;
-	bool bAutoMode = false;
-
 	bool bLastStart = false;
 	bool bLastReset = false;
 
@@ -117,8 +114,8 @@ void __fastcall CMainThread::Execute()
 		if (g_bStopMainThread) break;
 
 		//Status
-		m_bIsHomeDone = bHomeDone;
-		m_bIsAutoMode = bAutoMode;
+		m_bIsHomeDone = m_bIsHomeDone;
+		m_bIsAutoMode = m_bIsAutoMode;
 		g_Motion.m_bAutoMode = m_bIsAutoMode;
 
 
@@ -127,7 +124,6 @@ void __fastcall CMainThread::Execute()
 		if (m_bIsAutoMode==false && bLastReset && tmReset.timeUp())
 		{
 			bStartMachineInit = true;
-			bHomeDone = false;
 		}
 		bLastReset = g_DIO.ReadDIBit(DI::ResetBtn);
 		//---Start Homing from Button
@@ -145,7 +141,7 @@ void __fastcall CMainThread::Execute()
 				if (m_nIsFullHoming == 1)
 				{
 					bStartMachineInit = true;
-					bHomeDone = false;
+					m_bIsHomeDone = false;
 				}
 				else if (m_nIsFullHoming == 0)
 				{
@@ -203,7 +199,7 @@ void __fastcall CMainThread::Execute()
 		if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)
 		{
 			bStartMachineInit = false;
-			bAutoMode = false;
+			m_bIsAutoMode = false;
 
 			m_bStartPressCal[0] = false;
 			m_bStartPressCal[1] = false;
@@ -239,7 +235,7 @@ void __fastcall CMainThread::Execute()
 		if (g_DIO.ReadDIBit(DI::ResetBtn) && m_bResetAgain)
 		{
 			g_IniFile.m_nErrorCode = 0;
-            if (m_bResetAgain == true && bHomeDone) m_listLog.push_back("機台重置");
+            if (m_bResetAgain == true && m_bIsHomeDone) m_listLog.push_back("機台重置");
 			g_DIO.SetDO(DO::RedLamp, false);
 			g_DIO.SetDO(DO::Buzzer, false);
             m_bResetAgain = false;
@@ -257,7 +253,7 @@ void __fastcall CMainThread::Execute()
 		//--Stop Auto
 		if ((g_eqpXML.m_CIMStatus.ToInt()!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
 		{
-			bAutoMode = false;
+			m_bIsAutoMode = false;
 			SetManualSpeed();
 
 			//g_Motion.Stop(AXIS_FL);
@@ -283,10 +279,10 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//---Homing Process
-		if (!bHomeDone && !bAutoMode  && bStartMachineInit)
+		if (!m_bIsHomeDone && !m_bIsAutoMode  && bStartMachineInit)
 		{
-			bHomeDone = InitialMachine(nThreadIndex[0]);
-			if (bHomeDone)
+			m_bIsHomeDone = InitialMachine(nThreadIndex[0]);
+			if (m_bIsHomeDone)
 			{
 				nThreadIndex[1] = 0;
 				nThreadIndex[2] = 0;
@@ -318,7 +314,7 @@ void __fastcall CMainThread::Execute()
 			m_bIsHomingFromBtn = false;
 		}
 		//---AutoMode
-		else if (bAutoMode && bHomeDone)
+		else if (m_bIsAutoMode && m_bIsHomeDone)
 		{
 			g_DIO.SetDO(DO::StopBtnLamp, false);
 			g_DIO.SetDO(DO::StartBtnLamp, true);
@@ -371,7 +367,7 @@ void __fastcall CMainThread::Execute()
 
 		}
 		//---Manual Mode
-		else if (bHomeDone)
+		else if (m_bIsHomeDone)
 		{
 			g_DIO.SetDO(DO::StopBtnLamp, true);
 			g_DIO.SetDO(DO::StartBtnLamp, false);
@@ -439,7 +435,7 @@ void __fastcall CMainThread::Execute()
                 }
 
                 //nThreadIndex[1]=0;       //some thread need to start from zero
-                bAutoMode = true;
+                m_bIsAutoMode = true;
 
                 //m_nPassBoatCount0 = m_nPassBoatStart;                           //If auto 從0開始
                 //m_nPassBoatCount1 = m_nPassBoatStart;
@@ -473,7 +469,7 @@ void __fastcall CMainThread::Execute()
 		}
 		else
 		{
-			if (!bHomeDone && g_DIO.ReadDIBit(DI::StartBtn)) g_IniFile.m_nErrorCode = 29;
+			if (!m_bIsHomeDone && g_DIO.ReadDIBit(DI::StartBtn)) g_IniFile.m_nErrorCode = 29;
 			//Announce to Homing 
 			if (tmResetLamp.timeUp())
 			{
@@ -485,8 +481,8 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//Non Stop Process when Stop
-		if (m_bStartLamSub[1] && bHomeDone) DoLamSub(true, nThreadIndex[13]);
-		if (m_bStartLamSub[0] && bHomeDone) DoLamSub(false, nThreadIndex[12]);
+		if (m_bStartLamSub[1] && m_bIsHomeDone) DoLamSub(true, nThreadIndex[13]);
+		if (m_bStartLamSub[0] && m_bIsHomeDone) DoLamSub(false, nThreadIndex[12]);
 
 		::Sleep(10);
 	}
@@ -545,6 +541,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 		if (!g_DIO.ReadDIBit(DI::MainAir)) g_IniFile.m_nErrorCode = 6;     //debug
 		else
 		{
+			m_bIsHomeDone = false;
 			g_Motion.ServoOn(AXIS_X, true);
 			g_Motion.ServoOn(AXIS_Y, true);
 			g_Motion.ServoOn(AXIS_LC, true);
@@ -1483,8 +1480,6 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 {
 	static C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
 
-	//nManualTimes = nManualTimes + 1;                                //跳過第一次測量數據    need debug
-
 	const int nTagA = 1000;
 
 	double dStartX, dStartY;
@@ -1602,6 +1597,10 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			tm1MS.timeStart(g_IniFile.m_dPressCalTime * 1000);          //Stable Time
 			nThreadIndex++;
 		}
+        else if (!g_DIO.ReadDOBit(DO::LoadCellValve))
+        {
+            nThreadIndex--;
+        }
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 70;
 		break;
 	case 3:
@@ -1630,6 +1629,9 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
                         m_bPrassNeedReCal = true;
 					}
 				//}
+
+                //also renew fmMain
+                pLoadCellValue[nMoveIndex] = dLoadCellValue;
 
 				if (nManualRange == 0) nMoveIndex++;                                                                 //0=整盤,1=單顆
 				nTryTimes = 0;
@@ -1735,7 +1737,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				{
 					nThreadIndex = 0;
 				}
-				else if (nTimes < nManualTimes)
+				else if (nTimes < nManualTimes-1)
 				{
 					nTimes++;
 					nThreadIndex = 0;
@@ -1749,7 +1751,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			}
 			else
 			{
-				if (nTimes < nManualTimes)
+				if (nTimes < nManualTimes-1)
 				{
 					nTimes++;
 					nThreadIndex = 0;
@@ -2072,7 +2074,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 				{
 					nThreadIndex = 0;
 				}
-				else if (nTimes < nManualTimes)
+				else if (nTimes < nManualTimes-1)
 				{
 					nTimes++;
 					nThreadIndex = 0;
@@ -2092,7 +2094,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                     if (nManualRange == 0) nMoveIndex++;
                     nMoveIndexSub = 0;
 
-                    if (nTimes < nManualTimes)                                               //deside nTimes, nThreadIndex
+                    if (nTimes < nManualTimes-1)                                               //deside nTimes, nThreadIndex
                     {
     					nTimes++;
     					nThreadIndex = 0;
@@ -2111,7 +2113,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						nMoveIndexSub++;
 						nThreadIndex = 0;
 					}
-					else if (nTimes < nManualTimes)                                          //deside nTimes, nThreadIndex
+					else if (nTimes < nManualTimes-1)                                          //deside nTimes, nThreadIndex
 					{
 						nTimes++;
 						nThreadIndex = 0;
@@ -2232,14 +2234,14 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 3:
 		if (bFront == true)
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		else
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		break;
@@ -2263,14 +2265,14 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 5:
 		if (bFront == true)
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		else
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		break;
@@ -2288,14 +2290,14 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 7:
 		if (bFront == true)
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		else
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		break;

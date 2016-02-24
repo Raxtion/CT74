@@ -129,31 +129,30 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 
 	if (g_pMainThread->m_bStartPressCal[0] || g_pMainThread->m_bStartPressCal[1]) SetAllDevice();
 
-	//g_DIO.SetDO(DO::LoadCellValve,false);
+	g_DIO.SetDO(DO::LoadCellValve,false);
 
 	TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
 	if (checkRestartCal->Checked && pBtn->Down)
 	{
-	g_pMainThread->m_nPressCalMoveIndex[0] = -1;
-	g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
+	    g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+	    g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
 
-	g_pMainThread->m_nPressCalMoveIndex[1] = -1;
-	g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
-
+	    g_pMainThread->m_nPressCalMoveIndex[1] = -1;
+	    g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
     }
     if (cmbRange->ItemIndex==1)
     {
-    g_pMainThread->m_nPressCalMoveIndex[0] = -1;
-	g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
+        g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+	    g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
 
-	g_pMainThread->m_nPressCalMoveIndex[1] = -1;
-	g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
+	    g_pMainThread->m_nPressCalMoveIndex[1] = -1;
+	    g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
                 
-    //start the btn also update the value of cmb
-    g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
-    g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
-    g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
+        //start the btn also update the value of cmb
+        g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
+        g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
+        g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
     }
     // update AutoRetry
     g_pMainThread->m_bAutoRetry = checkAutoRetry->Checked;
@@ -1280,8 +1279,8 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 
 		PaintBox1->Canvas->Rectangle(m_vectRect[nIndex]);
 
-        //double dGetSetKgValue = g_DNPort0.GetSetKg(nIndex);
-        //double dGetKgValue = g_DNPort0.GetKg(nIndex);
+        double dGetSetKgValue = g_DNPort0.GetSetKg(nIndex);
+        double dGetKgValue = g_DNPort0.GetKg(nIndex);
 
 		int nTextHeight = PaintBox1->Canvas->TextHeight("1");
 		PaintBox1->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1)); //+ FormatFloat("0.00kg ", dGetSetKgValue) + FormatFloat("0.00kg", dGetKgValue));
@@ -1338,8 +1337,8 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 
 		PaintBox2->Canvas->Rectangle(m_vectRect[nIndex]);
 
-        //double dGetSetKgValue = g_DNPort1.GetSetKg(nIndex);
-        //double dGetKgValue = g_DNPort1.GetKg(nIndex);
+        double dGetSetKgValue = g_DNPort1.GetSetKg(nIndex);
+        double dGetKgValue = g_DNPort1.GetKg(nIndex);
 
 		int nTextHeight = PaintBox2->Canvas->TextHeight("1");
 		PaintBox2->Canvas->TextOutA(m_vectRect[nIndex].Left + 3, m_vectRect[nIndex].top + 1, FormatFloat("(0)", nIndex + 1)); //+ FormatFloat("0.00kg", dGetSetKgValue) + FormatFloat("0.00kg", dGetKgValue));
@@ -1671,7 +1670,6 @@ void __fastcall TfrmMain::SetAllDevice()
 			g_DNPort0.SetKg(nIndex, g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex]);
 		else  g_DNPort0.SetKg(nIndex, 0);
 	}
-
 	g_DNPort0.WriteAllData();
 
 	for (int nIndex = 0; nIndex<50; nIndex++)
@@ -1686,8 +1684,7 @@ void __fastcall TfrmMain::SetAllDevice()
 	}
 	g_DNPort1.WriteAllData();
 
-	g_Balance.SetXY(g_IniFile.m_dLoadCellX[0], g_IniFile.m_dLoadCellX[1],
-    g_IniFile.m_dLoadCellY[0], g_IniFile.m_dLoadCellY[1]);
+	g_Balance.SetXY(g_IniFile.m_dLoadCellX[0], g_IniFile.m_dLoadCellX[1], g_IniFile.m_dLoadCellY[0], g_IniFile.m_dLoadCellY[1]);
 
 }
 //---------------------------------------------------------------------------
@@ -2075,6 +2072,11 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
     m_bLastGassLeakyRear = false;
     m_bLastPusherIOErrorFront = false;
     m_bLastPusherIOErrorRear = false;
+
+    //update the value of cmb
+    g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
+    g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
+    g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
 }
 //---------------------------------------------------------------------------
 

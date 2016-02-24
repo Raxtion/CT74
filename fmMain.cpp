@@ -129,31 +129,30 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 
 	if (g_pMainThread->m_bStartPressCal[0] || g_pMainThread->m_bStartPressCal[1]) SetAllDevice();
 
-	//g_DIO.SetDO(DO::LoadCellValve,false);
+	g_DIO.SetDO(DO::LoadCellValve,false);
 
 	TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
 	if (checkRestartCal->Checked && pBtn->Down)
 	{
-	g_pMainThread->m_nPressCalMoveIndex[0] = -1;
-	g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
+	    g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+	    g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
 
-	g_pMainThread->m_nPressCalMoveIndex[1] = -1;
-	g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
-
+	    g_pMainThread->m_nPressCalMoveIndex[1] = -1;
+	    g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
     }
     if (cmbRange->ItemIndex==1)
     {
-    g_pMainThread->m_nPressCalMoveIndex[0] = -1;
-	g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
+        g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+	    g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
 
-	g_pMainThread->m_nPressCalMoveIndex[1] = -1;
-	g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
+	    g_pMainThread->m_nPressCalMoveIndex[1] = -1;
+	    g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
                 
-    //start the btn also update the value of cmb
-    g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
-    g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
-    g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
+        //start the btn also update the value of cmb
+        g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
+        g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
+        g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
     }
     // update AutoRetry
     g_pMainThread->m_bAutoRetry = checkAutoRetry->Checked;
@@ -1192,22 +1191,22 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true)
     {
         //---Detect GassLeaky keep over 5 second then allarm
-        if (g_pMainThread->m_dForntPressloseRealTime < 0 && !m_bLastGassLeakyFront) tm1MS.timeStart(5000);
+        if (g_pMainThread->m_dForntPressloseRealTime < 3.5 && !m_bLastGassLeakyFront) tm1MS.timeStart(5000);
         if (m_bLastGassLeakyFront && tm1MS.timeUp())
         {
         	g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(F) Value= 0.00", g_pMainThread->m_dForntPressloseRealTime));
             g_IniFile.m_nErrorCode = 85;
         }
-        if (g_pMainThread->m_dForntPressloseRealTime < 0) m_bLastGassLeakyFront = true;
+        if (g_pMainThread->m_dForntPressloseRealTime < 3.5) m_bLastGassLeakyFront = true;
         else m_bLastGassLeakyFront = false;
         //---Detect GassLeaky keep over 5 second then allarm
-        if (g_pMainThread->m_dRearPressloseRealTime < 0 && !m_bLastGassLeakyRear) tm2MS.timeStart(5000);
+        if (g_pMainThread->m_dRearPressloseRealTime < 3.5 && !m_bLastGassLeakyRear) tm2MS.timeStart(5000);
         if (m_bLastGassLeakyRear && tm2MS.timeUp())
         {
 	        g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(R) Value= 0.00", g_pMainThread->m_dRearPressloseRealTime));
             g_IniFile.m_nErrorCode = 86;
         }
-        if (g_pMainThread->m_dRearPressloseRealTime < 0) m_bLastGassLeakyRear = true;
+        if (g_pMainThread->m_dRearPressloseRealTime < 3.5) m_bLastGassLeakyRear = true;
         else m_bLastGassLeakyRear = false;
     }
 
@@ -1671,7 +1670,6 @@ void __fastcall TfrmMain::SetAllDevice()
 			g_DNPort0.SetKg(nIndex, g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex]);
 		else  g_DNPort0.SetKg(nIndex, 0);
 	}
-
 	g_DNPort0.WriteAllData();
 
 	for (int nIndex = 0; nIndex<50; nIndex++)
@@ -1686,8 +1684,7 @@ void __fastcall TfrmMain::SetAllDevice()
 	}
 	g_DNPort1.WriteAllData();
 
-	g_Balance.SetXY(g_IniFile.m_dLoadCellX[0], g_IniFile.m_dLoadCellX[1],
-    g_IniFile.m_dLoadCellY[0], g_IniFile.m_dLoadCellY[1]);
+	g_Balance.SetXY(g_IniFile.m_dLoadCellX[0], g_IniFile.m_dLoadCellX[1], g_IniFile.m_dLoadCellY[0], g_IniFile.m_dLoadCellY[1]);
 
 }
 //---------------------------------------------------------------------------
@@ -2075,6 +2072,11 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
     m_bLastGassLeakyRear = false;
     m_bLastPusherIOErrorFront = false;
     m_bLastPusherIOErrorRear = false;
+
+    //update the value of cmb
+    g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
+    g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
+    g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
 }
 //---------------------------------------------------------------------------
 
