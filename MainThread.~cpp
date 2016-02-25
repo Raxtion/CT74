@@ -1480,8 +1480,6 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 {
 	static C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
 
-	//nManualTimes = nManualTimes + 1;                                //跳過第一次測量數據    need debug
-
 	const int nTagA = 1000;
 
 	double dStartX, dStartY;
@@ -1739,7 +1737,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				{
 					nThreadIndex = 0;
 				}
-				else if (nTimes < nManualTimes)
+				else if (nTimes < nManualTimes-1)
 				{
 					nTimes++;
 					nThreadIndex = 0;
@@ -1753,7 +1751,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			}
 			else
 			{
-				if (nTimes < nManualTimes)
+				if (nTimes < nManualTimes-1)
 				{
 					nTimes++;
 					nThreadIndex = 0;
@@ -2076,7 +2074,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 				{
 					nThreadIndex = 0;
 				}
-				else if (nTimes < nManualTimes)
+				else if (nTimes < nManualTimes-1)
 				{
 					nTimes++;
 					nThreadIndex = 0;
@@ -2096,7 +2094,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                     if (nManualRange == 0) nMoveIndex++;
                     nMoveIndexSub = 0;
 
-                    if (nTimes < nManualTimes)                                               //deside nTimes, nThreadIndex
+                    if (nTimes < nManualTimes-1)                                               //deside nTimes, nThreadIndex
                     {
     					nTimes++;
     					nThreadIndex = 0;
@@ -2115,7 +2113,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						nMoveIndexSub++;
 						nThreadIndex = 0;
 					}
-					else if (nTimes < nManualTimes)                                          //deside nTimes, nThreadIndex
+					else if (nTimes < nManualTimes-1)                                          //deside nTimes, nThreadIndex
 					{
 						nTimes++;
 						nThreadIndex = 0;
@@ -2236,14 +2234,14 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 3:
 		if (bFront == true)
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		else
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		break;
@@ -2267,14 +2265,14 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 5:
 		if (bFront == true)
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		else
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		break;
@@ -2292,14 +2290,14 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	case 7:
 		if (bFront == true)
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(true, CMainThread::nThreadIndex[6], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		else
 		{
-			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 0;
-			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 0);
+			//m_nManualRange = 0; m_nManualFirstLoc = 0; m_nManualTimes = 1;
+			if (m_bStartAutoCal[bFront]) DoPressCal(false, CMainThread::nThreadIndex[7], 0, 0, 1);
 			else nThreadIndex++;
 		}
 		break;

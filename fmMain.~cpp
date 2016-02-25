@@ -1191,22 +1191,22 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true)
     {
         //---Detect GassLeaky keep over 5 second then allarm
-        if (g_pMainThread->m_dForntPressloseRealTime < 0 && !m_bLastGassLeakyFront) tm1MS.timeStart(5000);
+        if (g_pMainThread->m_dForntPressloseRealTime < 3.5 && !m_bLastGassLeakyFront) tm1MS.timeStart(5000);
         if (m_bLastGassLeakyFront && tm1MS.timeUp())
         {
         	g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(F) Value= 0.00", g_pMainThread->m_dForntPressloseRealTime));
             g_IniFile.m_nErrorCode = 85;
         }
-        if (g_pMainThread->m_dForntPressloseRealTime < 0) m_bLastGassLeakyFront = true;
+        if (g_pMainThread->m_dForntPressloseRealTime < 3.5) m_bLastGassLeakyFront = true;
         else m_bLastGassLeakyFront = false;
         //---Detect GassLeaky keep over 5 second then allarm
-        if (g_pMainThread->m_dRearPressloseRealTime < 0 && !m_bLastGassLeakyRear) tm2MS.timeStart(5000);
+        if (g_pMainThread->m_dRearPressloseRealTime < 3.5 && !m_bLastGassLeakyRear) tm2MS.timeStart(5000);
         if (m_bLastGassLeakyRear && tm2MS.timeUp())
         {
 	        g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(R) Value= 0.00", g_pMainThread->m_dRearPressloseRealTime));
             g_IniFile.m_nErrorCode = 86;
         }
-        if (g_pMainThread->m_dRearPressloseRealTime < 0) m_bLastGassLeakyRear = true;
+        if (g_pMainThread->m_dRearPressloseRealTime < 3.5) m_bLastGassLeakyRear = true;
         else m_bLastGassLeakyRear = false;
     }
 

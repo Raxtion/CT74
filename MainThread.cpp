@@ -123,7 +123,12 @@ void __fastcall CMainThread::Execute()
 		if (g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset) tmReset.timeStart(3000);
 		if (m_bIsAutoMode==false && bLastReset && tmReset.timeUp())
 		{
-			bStartMachineInit = true;
+            if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
+            else
+            {
+			    bStartMachineInit = true;
+                m_bIsHomeDone = false;
+            }
 		}
 		bLastReset = g_DIO.ReadDIBit(DI::ResetBtn);
 		//---Start Homing from Button
@@ -140,8 +145,12 @@ void __fastcall CMainThread::Execute()
 			{
 				if (m_nIsFullHoming == 1)
 				{
-					bStartMachineInit = true;
-					m_bIsHomeDone = false;
+					if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
+                    else
+                    {
+			            bStartMachineInit = true;
+                        m_bIsHomeDone = false;
+                    }
 				}
 				else if (m_nIsFullHoming == 0)
 				{
@@ -541,7 +550,6 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 		if (!g_DIO.ReadDIBit(DI::MainAir)) g_IniFile.m_nErrorCode = 6;     //debug
 		else
 		{
-			m_bIsHomeDone = false;
 			g_Motion.ServoOn(AXIS_X, true);
 			g_Motion.ServoOn(AXIS_Y, true);
 			g_Motion.ServoOn(AXIS_LC, true);
