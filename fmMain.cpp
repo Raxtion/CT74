@@ -112,6 +112,7 @@ __fastcall TfrmMain::TfrmMain(TComponent* Owner)
 //Control btn
 void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 {
+    TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
 	checkMonitor->Checked = false;
     g_pMainThread->m_bIsManualFinish = false;
@@ -127,11 +128,30 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 	}
 	else  SetPrivilege(m_nUserLevel);
 
+    //block function switch within one is running
+    if (pBtn->Down == true)
+    {
+        btnStartPressCal0->Enabled = false;
+        btnLaserUp0 ->Enabled = false;
+        btnLaserDown0->Enabled = false;
+        btnStartPressCal1->Enabled = false;
+        btnLaserUp1->Enabled = false;
+        btnLaserDown1->Enabled = false;
+    }
+    else
+    {
+        btnStartPressCal0->Enabled = true;
+        btnLaserUp0->Enabled = true;
+        btnLaserDown0->Enabled = true;
+        btnStartPressCal1->Enabled = true;
+        btnLaserUp1->Enabled = true;
+        btnLaserDown1->Enabled = true;
+    }
+    pBtn->Enabled = true;
+
 	if (g_pMainThread->m_bStartPressCal[0] || g_pMainThread->m_bStartPressCal[1]) SetAllDevice();
 
 	g_DIO.SetDO(DO::LoadCellValve,false);
-
-	TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
 	if (checkRestartCal->Checked && pBtn->Down)
 	{
@@ -1128,6 +1148,8 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     }
 
     //--CIM Remote Disable MainFromBtn---
+    if (btnStartPressCal0->Down == false && btnLaserUp0->Down == false && btnLaserDown0->Down == false
+        && btnStartPressCal1->Down == false && btnLaserUp1->Down == false && btnLaserDown1->Down == false)
     {
         radioPosOption->Enabled = !g_pMainThread->m_bIsAutoMode;
         checkStopLC->Enabled = !g_pMainThread->m_bIsAutoMode;
@@ -2370,6 +2392,7 @@ void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
     g_pMainThread->m_bResetAgain = true;
 }
 //---------------------------------------------------------------------------
+
 
 
 
