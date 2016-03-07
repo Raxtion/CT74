@@ -114,12 +114,6 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 {
     TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
-
-
-    //if (btnStartPressCal0->Down == true || btnLaserUp0->Down == true || btnLaserDown0->Down == true
-    //    || btnStartPressCal1->Down == true || btnLaserUp1->Down == true || btnLaserDown1->Down == true)
-    //    return;
-
 	checkMonitor->Checked = false;
     g_pMainThread->m_bIsManualFinish = false;
 
@@ -341,6 +335,9 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dSafePos, pMachineDlg->m_dSafePos);
         DDX_Float(bRead, g_IniFile.m_dUpperLaserAlarm, pMachineDlg->m_dUpperLaserAlarm);
         DDX_Float(bRead, g_IniFile.m_dDownLaserAlarm, pMachineDlg->m_dDownLaserAlarm);
+        DDX_Float(bRead, g_IniFile.m_dUpperTotalLaserAlarm, pMachineDlg->m_dUpperTotalLaserAlarm);
+        DDX_Float(bRead, g_IniFile.m_dLeftGassLeakylimit, pMachineDlg->m_dLeftGassLeakylimit);
+        DDX_Float(bRead, g_IniFile.m_dRightGassLeakylimit, pMachineDlg->m_dRightGassLeakylimit);
     DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
     DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
     DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
@@ -367,8 +364,11 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		}
 
 		DDX_Float(bRead, g_IniFile.m_dSafePos, pMachineDlg->m_dSafePos);
-                DDX_Float(bRead, g_IniFile.m_dUpperLaserAlarm, pMachineDlg->m_dUpperLaserAlarm);
-                DDX_Float(bRead, g_IniFile.m_dDownLaserAlarm, pMachineDlg->m_dDownLaserAlarm);
+        DDX_Float(bRead, g_IniFile.m_dUpperLaserAlarm, pMachineDlg->m_dUpperLaserAlarm);
+        DDX_Float(bRead, g_IniFile.m_dDownLaserAlarm, pMachineDlg->m_dDownLaserAlarm);
+        DDX_Float(bRead, g_IniFile.m_dUpperTotalLaserAlarm, pMachineDlg->m_dUpperTotalLaserAlarm);
+        DDX_Float(bRead, g_IniFile.m_dLeftGassLeakylimit, pMachineDlg->m_dLeftGassLeakylimit);
+        DDX_Float(bRead, g_IniFile.m_dRightGassLeakylimit, pMachineDlg->m_dRightGassLeakylimit);
         DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
         DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
         DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
@@ -1219,22 +1219,22 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
     if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true)
     {
         //---Detect GassLeaky keep over 5 second then allarm
-        if (g_pMainThread->m_dForntPressloseRealTime < 3.5 && !m_bLastGassLeakyFront) tm1MS.timeStart(5000);
+        if (g_pMainThread->m_dForntPressloseRealTime < g_IniFile.m_dRightGassLeakylimit && !m_bLastGassLeakyFront) tm1MS.timeStart(5000);
         if (m_bLastGassLeakyFront && tm1MS.timeUp())
         {
         	g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(F) Value= 0.00", g_pMainThread->m_dForntPressloseRealTime));
             g_IniFile.m_nErrorCode = 85;
         }
-        if (g_pMainThread->m_dForntPressloseRealTime < 3.5) m_bLastGassLeakyFront = true;
+        if (g_pMainThread->m_dForntPressloseRealTime < g_IniFile.m_dRightGassLeakylimit) m_bLastGassLeakyFront = true;
         else m_bLastGassLeakyFront = false;
         //---Detect GassLeaky keep over 5 second then allarm
-        if (g_pMainThread->m_dRearPressloseRealTime < 3.5 && !m_bLastGassLeakyRear) tm2MS.timeStart(5000);
+        if (g_pMainThread->m_dRearPressloseRealTime < g_IniFile.m_dLeftGassLeakylimit && !m_bLastGassLeakyRear) tm2MS.timeStart(5000);
         if (m_bLastGassLeakyRear && tm2MS.timeUp())
         {
 	        g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(R) Value= 0.00", g_pMainThread->m_dRearPressloseRealTime));
             g_IniFile.m_nErrorCode = 86;
         }
-        if (g_pMainThread->m_dRearPressloseRealTime < 3.5) m_bLastGassLeakyRear = true;
+        if (g_pMainThread->m_dRearPressloseRealTime < g_IniFile.m_dLeftGassLeakylimit) m_bLastGassLeakyRear = true;
         else m_bLastGassLeakyRear = false;
     }
 

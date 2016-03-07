@@ -46,6 +46,9 @@ public:
   double m_dSafePos;           //Safe Position
   double m_dUpperLaserAlarm;
   double m_dDownLaserAlarm;
+  double m_dUpperTotalLaserAlarm;
+  double m_dLeftGassLeakylimit;
+  double m_dRightGassLeakylimit;
   bool m_bForceEject;
   bool m_bIsUseCIM;
   int m_nLanguage;

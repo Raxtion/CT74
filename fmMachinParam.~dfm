@@ -1,8 +1,8 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 870
-  Top = 57
+  Left = 744
+  Top = 30
   Width = 594
-  Height = 548
+  Height = 542
   Caption = #27231#21488#21443#25976
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -15,15 +15,15 @@ object frmMachineParam: TfrmMachineParam
   PixelsPerInch = 96
   TextHeight = 16
   object Label1: TLabel
-    Left = 296
-    Top = 232
+    Left = 243
+    Top = 217
     Width = 32
     Height = 16
     Caption = #35486#31995
   end
   object BitBtn1: TBitBtn
     Left = 80
-    Top = 440
+    Top = 456
     Width = 121
     Height = 41
     TabOrder = 0
@@ -31,15 +31,15 @@ object frmMachineParam: TfrmMachineParam
   end
   object BitBtn2: TBitBtn
     Left = 368
-    Top = 440
+    Top = 456
     Width = 129
     Height = 41
     TabOrder = 1
     Kind = bkCancel
   end
   object GroupBox1: TGroupBox
-    Left = 27
-    Top = 22
+    Left = 24
+    Top = 14
     Width = 534
     Height = 187
     Caption = #39340#36948#36895#24230
@@ -534,8 +534,8 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object StaticText16: TStaticText
-    Left = 32
-    Top = 229
+    Left = 242
+    Top = 246
     Width = 105
     Height = 22
     Alignment = taRightJustify
@@ -550,16 +550,16 @@ object frmMachineParam: TfrmMachineParam
     TabOrder = 3
   end
   object m_dSafePos: TEdit
-    Left = 139
-    Top = 228
+    Left = 355
+    Top = 245
     Width = 65
     Height = 24
     TabOrder = 4
     Text = 'm_dSafePos'
   end
   object StaticText17: TStaticText
-    Left = 211
-    Top = 229
+    Left = 428
+    Top = 246
     Width = 65
     Height = 22
     AutoSize = False
@@ -574,7 +574,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object GroupBox2: TGroupBox
     Left = 24
-    Top = 264
+    Top = 304
     Width = 297
     Height = 145
     Caption = 'Lane Changer'
@@ -697,17 +697,9 @@ object frmMachineParam: TfrmMachineParam
       TabOrder = 8
     end
   end
-  object m_bForceEject: TCheckBox
-    Left = 464
-    Top = 212
-    Width = 97
-    Height = 25
-    Caption = #24375#21046#25490#38500
-    TabOrder = 7
-  end
   object GroupBox3: TGroupBox
     Left = 328
-    Top = 264
+    Top = 304
     Width = 233
     Height = 145
     Caption = 'Lifters Soft Limit'
@@ -870,8 +862,8 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object m_cmbLanguage: TComboBox
-    Left = 360
-    Top = 230
+    Left = 307
+    Top = 215
     Width = 81
     Height = 21
     Font.Charset = DEFAULT_CHARSET
@@ -889,12 +881,193 @@ object frmMachineParam: TfrmMachineParam
       'English')
   end
   object m_bIsUseCIM: TCheckBox
-    Left = 464
-    Top = 236
+    Left = 400
+    Top = 213
     Width = 97
     Height = 25
     Caption = #21855#29992'CIM'
     TabOrder = 10
     OnClick = m_bIsUseCIMClick
+  end
+  object StaticText35: TStaticText
+    Left = 241
+    Top = 280
+    Width = 88
+    Height = 22
+    Alignment = taRightJustify
+    AutoSize = False
+    BevelInner = bvSpace
+    BevelKind = bkSoft
+    BevelOuter = bvNone
+    BorderStyle = sbsSingle
+    Caption = #24038#28431#27683#38309#20540
+    Color = clSkyBlue
+    ParentColor = False
+    TabOrder = 11
+  end
+  object GroupBox4: TGroupBox
+    Left = 24
+    Top = 202
+    Width = 209
+    Height = 103
+    Caption = #35686#31034#35492#24046
+    TabOrder = 12
+    object StaticText32: TStaticText
+      Left = 11
+      Top = 46
+      Width = 73
+      Height = 22
+      Alignment = taRightJustify
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = #19978#27169
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 0
+    end
+    object m_dUpperLaserAlarm: TEdit
+      Left = 88
+      Top = 44
+      Width = 65
+      Height = 24
+      TabOrder = 1
+      Text = 'm_dUpperLaserAlarm'
+    end
+    object StaticText33: TStaticText
+      Left = 11
+      Top = 73
+      Width = 73
+      Height = 22
+      Alignment = taRightJustify
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = #19979#27169
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 2
+    end
+    object m_dDownLaserAlarm: TEdit
+      Left = 88
+      Top = 71
+      Width = 65
+      Height = 24
+      TabOrder = 3
+      Text = 'm_dDownLaserAlarm'
+    end
+    object StaticText34: TStaticText
+      Left = 11
+      Top = 19
+      Width = 73
+      Height = 22
+      Alignment = taRightJustify
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = #19978#32317#24179#38754
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 4
+    end
+    object m_dUpperTotalLaserAlarm: TEdit
+      Left = 88
+      Top = 17
+      Width = 65
+      Height = 24
+      TabOrder = 5
+      Text = 'm_dUpperTotalLaserAlarm'
+    end
+    object StaticText37: TStaticText
+      Left = 160
+      Top = 18
+      Width = 41
+      Height = 22
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = 'mm'
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 6
+    end
+    object StaticText38: TStaticText
+      Left = 160
+      Top = 44
+      Width = 41
+      Height = 22
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = 'mm'
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 7
+    end
+    object StaticText39: TStaticText
+      Left = 160
+      Top = 70
+      Width = 41
+      Height = 22
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = 'mm'
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 8
+    end
+  end
+  object m_dLeftGassLeakylimit: TEdit
+    Left = 335
+    Top = 279
+    Width = 65
+    Height = 24
+    TabOrder = 13
+    Text = 'm_dUpperLaserAlarm'
+  end
+  object m_dRightGassLeakylimit: TEdit
+    Left = 504
+    Top = 277
+    Width = 65
+    Height = 24
+    TabOrder = 14
+    Text = 'm_dUpperLaserAlarm'
+  end
+  object m_bForceEject: TCheckBox
+    Left = 488
+    Top = 213
+    Width = 97
+    Height = 25
+    Caption = #24375#21046#25490#38500
+    TabOrder = 7
+  end
+  object StaticText36: TStaticText
+    Left = 409
+    Top = 280
+    Width = 88
+    Height = 22
+    Alignment = taRightJustify
+    AutoSize = False
+    BevelInner = bvSpace
+    BevelKind = bkSoft
+    BevelOuter = bvNone
+    BorderStyle = sbsSingle
+    Caption = #21491#28431#27683#38309#20540
+    Color = clSkyBlue
+    ParentColor = False
+    TabOrder = 15
   end
 end

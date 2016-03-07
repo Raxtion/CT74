@@ -38,3 +38,6 @@ void __fastcall TfrmMachineParam::m_bIsUseCIMClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+
+

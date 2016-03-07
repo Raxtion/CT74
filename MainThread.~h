@@ -69,6 +69,8 @@ public:
     double m_dFrontDownLaserDiff[50][4];
     double m_dRearUpperLaserDiff[50][4];
     double m_dRearDownLaserDiff[50][4];
+    double m_dFrontUpperTotalLaserDiff[50][4];
+    double m_dRearUpperTotalLaserDiff[50][4];
 
 	double m_dFrontPressCal[50];
 	double m_dRearPressCal[50];
