@@ -88,6 +88,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_bIsStopProcessbyCIM = false;
 
     m_dFirstNewValue = 0.5;
+    m_dLaserKeepValue = 0.0;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -1828,6 +1829,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	int nLaserChannel;
 	double *p_dLaserValue;
     double *p_dLaserValueDiff;
+    double *p_dLaserValueDiffTotal;
     //typedef vector<double>::iterator iterator;
 
 	static int nMoveIndex = 0;
@@ -1863,6 +1865,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
 			p_dLaserValue = (double *)m_dFrontUpperLaser;
             p_dLaserValueDiff = (double *)m_dFrontUpperLaserDiff;
+            p_dLaserValueDiffTotal = (double *)m_dFrontUpperTotalLaserDiff;
 		}
 		else
 		{
@@ -1872,7 +1875,6 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
 			p_dLaserValue = (double *)m_dFrontDownLaser;
             p_dLaserValueDiff = (double *)m_dFrontDownLaserDiff;
-            p_dLaserValueDiffTotal = (double *)m_dFrontUpperTotalLaserDiff;
 		}
 
 	}
@@ -1891,7 +1893,8 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			nLaserChannel = 0;
 
 			p_dLaserValue = (double *)m_dRearUpperLaser;
-            p_dLaserValueDiff = (double *)m_dRearUpperLaserDiff;
+            p_dLaserValueDiff = (double *)m_dRearUpperLaserDiff;      
+            p_dLaserValueDiffTotal = (double *)m_dRearUpperTotalLaserDiff;
 		}
 		else
 		{
@@ -1901,7 +1904,6 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
 			p_dLaserValue = (double *)m_dRearDownLaser;
             p_dLaserValueDiff = (double *)m_dRearDownLaserDiff;
-            p_dLaserValueDiffTotal = (double *)m_dRearUpperTotalLaserDiff;
 		}
 
 
@@ -1969,14 +1971,24 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 				m_listLog.push_back("高度=N/A");
 			}
 
+            //Write To LaserKeepValue
+            if (nMoveIndex == 0 && nMoveIndexSub == 0)
+            {
+                m_dLaserKeepValue = dLaserData;
+            }
+
             //double check LaserValue
             if (bUp)
 			{
 				std::vector<double> vecTempUp;
+                                /*
 				for (int i = 0; i<nMoveIndexSub + 1; i++)
 				{
 					if (p_dLaserValue[i] != 999) vecTempUp.push_back(p_dLaserValue[(nMoveIndex * 4 + nMoveIndexSub) - 3 + i]);
 				}
+                                */
+                                vecTempUp.push_back(m_dLaserKeepValue);
+                                vecTempUp.push_back(dLaserData);
 				if (vecTempUp.size() != 0)
 				{
 					double *maxValue = std::max_element(vecTempUp.begin(), vecTempUp.end());
@@ -1992,6 +2004,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						if (g_ModBus.m_bInitOK)
 						{
 							p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
+                                                        m_dLaserKeepValue = dLaserData;
 							m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", dLaserData));
 						}
 						else
@@ -2012,6 +2025,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			else
 			{
 				std::vector<double> vecTempDown;
+                                /*
 				for (int i = 0; i<nMoveIndex+1; i++)
 				{
 					if ((i % 10)<g_IniFile.m_nCols && (i / 10)< g_IniFile.m_nRows)
@@ -2019,6 +2033,9 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[i * 4]);
 					}
 				}
+                                */
+                                vecTempDown.push_back(m_dLaserKeepValue);
+                                vecTempDown.push_back(dLaserData);
 				if (vecTempDown.size() != 0)
 				{
 					double *maxValue = std::max_element(vecTempDown.begin(), vecTempDown.end());
@@ -2034,6 +2051,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						if (g_ModBus.m_bInitOK)
 						{
 							p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
+                                                        m_dLaserKeepValue = dLaserData;
 							m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", dLaserData));
 						}
 						else
