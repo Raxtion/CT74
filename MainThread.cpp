@@ -1981,14 +1981,8 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
             if (bUp)
 			{
 				std::vector<double> vecTempUp;
-                                /*
-				for (int i = 0; i<nMoveIndexSub + 1; i++)
-				{
-					if (p_dLaserValue[i] != 999) vecTempUp.push_back(p_dLaserValue[(nMoveIndex * 4 + nMoveIndexSub) - 3 + i]);
-				}
-                                */
-                                vecTempUp.push_back(m_dLaserKeepValue);
-                                vecTempUp.push_back(dLaserData);
+                vecTempUp.push_back(m_dLaserKeepValue);
+                vecTempUp.push_back(dLaserData);
 				if (vecTempUp.size() != 0)
 				{
 					double *maxValue = std::max_element(vecTempUp.begin(), vecTempUp.end());
@@ -2004,7 +1998,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						if (g_ModBus.m_bInitOK)
 						{
 							p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
-                                                        m_dLaserKeepValue = dLaserData;
+                            m_dLaserKeepValue = dLaserData;
 							m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", dLaserData));
 						}
 						else
@@ -2025,17 +2019,8 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			else
 			{
 				std::vector<double> vecTempDown;
-                                /*
-				for (int i = 0; i<nMoveIndex+1; i++)
-				{
-					if ((i % 10)<g_IniFile.m_nCols && (i / 10)< g_IniFile.m_nRows)
-					{
-						if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[i * 4]);
-					}
-				}
-                                */
-                                vecTempDown.push_back(m_dLaserKeepValue);
-                                vecTempDown.push_back(dLaserData);
+                vecTempDown.push_back(m_dLaserKeepValue);
+                vecTempDown.push_back(dLaserData);
 				if (vecTempDown.size() != 0)
 				{
 					double *maxValue = std::max_element(vecTempDown.begin(), vecTempDown.end());
@@ -2051,7 +2036,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						if (g_ModBus.m_bInitOK)
 						{
 							p_dLaserValue[nMoveIndex * 4 + nMoveIndexSub] = dLaserData;
-                                                        m_dLaserKeepValue = dLaserData;
+                            m_dLaserKeepValue = dLaserData;
 							m_listLog.push_back("高度=" + FormatFloat("0.0000 mm", dLaserData));
 						}
 						else
@@ -2097,7 +2082,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
                 if (nMoveIndex == 10*(g_IniFile.m_nRows-1)+(g_IniFile.m_nCols-1))
                 {
-                        //Count Total Horizontal balance
+                    //Count Total Horizontal balance
 					std::vector<double> vecTempUpTotal;
 					vecTempUpTotal.push_back(p_dLaserValue[((10 * (g_IniFile.m_nRows - 1)) * 4 + (0))]);                              //point 1
 					vecTempUpTotal.push_back(p_dLaserValue[((10 * (g_IniFile.m_nRows - 1) + (g_IniFile.m_nCols - 1)) * 4 + (1))]);    //point 2
