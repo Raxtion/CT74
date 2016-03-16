@@ -87,9 +87,10 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dSafePos",m_dSafePos,0);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dUpperLaserAlarm",m_dUpperLaserAlarm,0.1);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dDownLaserAlarm",m_dDownLaserAlarm,0.2);
-  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dUpperTotalLaserAlarm",m_dUpperTotalLaserAlarm,0.2);
-  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLeftGassLeakylimit",m_dLeftGassLeakylimit,0.2);
-  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dRightGassLeakylimit",m_dRightGassLeakylimit,0.2);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dUpperTotalLaserAlarm",m_dUpperTotalLaserAlarm,0.1);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLeftGassLeakylimit",m_dLeftGassLeakylimit,3.5);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dRightGassLeakylimit",m_dRightGassLeakylimit,3.5);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLamSecondKeepTime",m_dLamSecondKeepTime,0);
 
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bForceEject",m_bForceEject,false);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseCIM",m_bIsUseCIM,false);

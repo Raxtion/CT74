@@ -341,6 +341,8 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
     DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
     DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
     DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
+    DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pMachineDlg->m_dLamSecondKeepTime);
+    DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pMachineDlg->m_bIsLamSecondStop);
 
 	DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 	DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -372,6 +374,8 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
         DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
         DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
         DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
+        DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pMachineDlg->m_dLamSecondKeepTime);
+        DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pMachineDlg->m_bIsLamSecondStop);
 
 		DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 		DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);

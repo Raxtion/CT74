@@ -54,6 +54,7 @@ public:
     bool m_bStartAgain;
     bool m_bStopAgain;
     bool m_bResetAgain;
+    bool m_bInitalAgain;
 
 	int m_nPressCalMoveIndex[2];
 	int m_nLaserCalMoveIndex[2];

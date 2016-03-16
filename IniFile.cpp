@@ -90,9 +90,11 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dUpperTotalLaserAlarm",m_dUpperTotalLaserAlarm,0.1);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLeftGassLeakylimit",m_dLeftGassLeakylimit,3.5);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dRightGassLeakylimit",m_dRightGassLeakylimit,3.5);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLamSecondKeepTime",m_dLamSecondKeepTime,0);
 
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bForceEject",m_bForceEject,false);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseCIM",m_bIsUseCIM,false);
+  DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsLamSecondStop",m_bIsLamSecondStop,false);
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dPLimitF",m_dPLimitF,0.0);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dNLimitF",m_dNLimitF,0.0);

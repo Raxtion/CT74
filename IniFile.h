@@ -51,7 +51,9 @@ public:
   double m_dRightGassLeakylimit;
   bool m_bForceEject;
   bool m_bIsUseCIM;
+  bool m_bIsLamSecondStop;
   int m_nLanguage;
+  double m_dLamSecondKeepTime;
 
   double m_dLoadCellX[2];    //For Calibrate Load Cell
   double m_dLoadCellY[2];

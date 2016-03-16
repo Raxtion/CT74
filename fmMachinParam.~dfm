@@ -1,7 +1,7 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 744
-  Top = 30
-  Width = 594
+  Left = 356
+  Top = 144
+  Width = 1093
   Height = 542
   Caption = #27231#21488#21443#25976
   Color = 13430215
@@ -1069,5 +1069,60 @@ object frmMachineParam: TfrmMachineParam
     Color = clSkyBlue
     ParentColor = False
     TabOrder = 15
+  end
+  object GroupBox5: TGroupBox
+    Left = 584
+    Top = 208
+    Width = 417
+    Height = 113
+    Caption = #22739#21512#36984#38917
+    TabOrder = 16
+    object m_bIsLamSecondStop: TCheckBox
+      Left = 80
+      Top = 48
+      Width = 145
+      Height = 25
+      Caption = #31532#20108#27573#22739#21512#20572#39376
+      TabOrder = 0
+    end
+    object StaticText40: TStaticText
+      Left = 81
+      Top = 75
+      Width = 160
+      Height = 22
+      Alignment = taRightJustify
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = #22739#21512#31532#20108#27573#32173#25345#26178#38291
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 1
+    end
+    object m_dLamSecondKeepTime: TEdit
+      Left = 256
+      Top = 73
+      Width = 65
+      Height = 24
+      TabOrder = 2
+      Text = 'm_dUpperLaserAlarm'
+    end
+    object StaticText41: TStaticText
+      Left = 336
+      Top = 75
+      Width = 41
+      Height = 22
+      AutoSize = False
+      BevelInner = bvSpace
+      BevelKind = bkSoft
+      BevelOuter = bvNone
+      BorderStyle = sbsSingle
+      Caption = 's'
+      Color = clSkyBlue
+      ParentColor = False
+      TabOrder = 3
+    end
   end
 end
