@@ -1132,7 +1132,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		//if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]))
         if (g_Motion.IsLastPosDone(nAxisLifter))
 		{
-			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
+			g_Motion.SetSpeed(nAxisLifter, g_IniFile.m_dACCSpeed[nAxisLifter], g_IniFile.m_dDECSpeed[nAxisLifter], g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
+            //g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
             /*          //bridge Delete 第一段真空 20160222確定移除第一段真空
             if (g_IniFile.m_nVacummOn == 0)
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空不開啟"));
@@ -1189,7 +1190,6 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
         {
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空不偵測"));
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 時間到開始移動"));
-            //g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
             g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamHeight[bFront]);
             m_bFirstVacSuccessed = true;
             nThreadIndex++;
