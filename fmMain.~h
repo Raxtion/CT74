@@ -10,6 +10,8 @@
 #include <Menus.hpp>
 #include <Dialogs.hpp>
 #include "C_GetTime.h"
+#include "FrmProduct.h"
+#include "Sqlite3Interface.h"
 #include <ExtCtrls.hpp>
 #include <Buttons.hpp>
 #include <ScktComp.hpp>
@@ -169,6 +171,7 @@ __published:	// IDE-managed Components
     void __fastcall timerRenewPainBoxTimer(TObject *Sender);
     void __fastcall N17Click(TObject *Sender);
     void __fastcall N18Click(TObject *Sender);
+    void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;
@@ -203,6 +206,7 @@ public:		// User declarations
 
         static bool StartProcess(bool bStart);
         static bool OpenFilebyCIM(AnsiString strFileName);
+        void __fastcall CheckParamChange(TfmProduct *pWnd, TfmProduct *pWndRecord, SQLITE3IF *g_ChangeLog, AnsiString SetupEE);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmMain *frmMain;

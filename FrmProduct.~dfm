@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 236
-  Top = 217
+  Left = 219
+  Top = 232
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 449
@@ -3362,8 +3362,8 @@ object fmProduct: TfmProduct
           Transparent = True
         end
         object Label116: TLabel
-          Left = 128
-          Top = 24
+          Left = 56
+          Top = 51
           Width = 8
           Height = 16
           Caption = '3'
@@ -3371,19 +3371,19 @@ object fmProduct: TfmProduct
           ParentColor = False
           Transparent = True
         end
-        object Label118: TLabel
-          Left = 132
+        object Label117: TLabel
+          Left = 133
           Top = 51
           Width = 8
           Height = 16
-          Caption = '2'
+          Caption = '4'
           Color = clNone
           ParentColor = False
           Transparent = True
         end
-        object Label119: TLabel
-          Left = 64
-          Top = 51
+        object Label118: TLabel
+          Left = 120
+          Top = 27
           Width = 8
           Height = 16
           Caption = '1'
@@ -3391,12 +3391,12 @@ object fmProduct: TfmProduct
           ParentColor = False
           Transparent = True
         end
-        object Label117: TLabel
-          Left = 197
-          Top = 24
+        object Label119: TLabel
+          Left = 196
+          Top = 27
           Width = 8
           Height = 16
-          Caption = '4'
+          Caption = '2'
           Color = clNone
           ParentColor = False
           Transparent = True
@@ -5673,8 +5673,8 @@ object fmProduct: TfmProduct
           Transparent = True
         end
         object Label112: TLabel
-          Left = 64
-          Top = 51
+          Left = 120
+          Top = 27
           Width = 8
           Height = 16
           Caption = '1'
@@ -5683,8 +5683,8 @@ object fmProduct: TfmProduct
           Transparent = True
         end
         object Label113: TLabel
-          Left = 132
-          Top = 51
+          Left = 196
+          Top = 27
           Width = 8
           Height = 16
           Caption = '2'
@@ -5693,8 +5693,8 @@ object fmProduct: TfmProduct
           Transparent = True
         end
         object Label114: TLabel
-          Left = 128
-          Top = 24
+          Left = 56
+          Top = 51
           Width = 8
           Height = 16
           Caption = '3'
@@ -5703,8 +5703,8 @@ object fmProduct: TfmProduct
           Transparent = True
         end
         object Label115: TLabel
-          Left = 197
-          Top = 24
+          Left = 133
+          Top = 51
           Width = 8
           Height = 16
           Caption = '4'

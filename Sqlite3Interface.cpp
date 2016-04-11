@@ -72,6 +72,11 @@ void __fastcall SQLITE3IF::open(int DBtype)
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, account VARCHAR(25), password VARCHAR(25));", 0, 0, &errMsg);
             if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
+        case 3:
+            /* 建立 Account Table*/
+            sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), ParamChange NVARCHAR(50));", 0, 0, &errMsg);
+            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+            break;
         default:
             g_pMainThread->m_listLog.push_back("open() DBType Error!");
         }
@@ -146,6 +151,28 @@ void __fastcall SQLITE3IF::insertAction(AnsiString Action)
     AnsiString insertsql = "INSERT INTO C74Log VALUES( "+strLastrowid
                                                     +" ,'"+strDateTime
                                                     +"','"+Action+"');";
+    /* 新增一筆資料 */
+    sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+
+    unique_id += 1;
+}
+
+//---------------------------------------------------------------------------
+void __fastcall SQLITE3IF::insertChange(AnsiString Change)
+{
+    AnsiString strDateTime;
+    time_t timer = time(NULL);
+    struct tm *tblock = localtime(&timer);
+    strDateTime.sprintf("[%4d:%02d:%02d:%2d:%02d:%02d]",
+        tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday
+        ,tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+
+    AnsiString strLastrowid = IntToStr(unique_id);
+
+    AnsiString insertsql = "INSERT INTO C74Log VALUES( "+strLastrowid
+                                                    +" ,'"+strDateTime
+                                                    +"','"+Change+"');";
     /* 新增一筆資料 */
     sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
     if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}

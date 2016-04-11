@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = 39
-  Top = 483
-  Width = 1561
-  Height = 731
+  Left = 15
+  Top = 168
+  Width = 1579
+  Height = 727
   Caption = 'frmMain'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,6 +14,7 @@ object frmMain: TfrmMain
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13

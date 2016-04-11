@@ -26,6 +26,7 @@ public:
     void __fastcall close();
     void __fastcall insertTemp();
     void __fastcall insertAction(AnsiString Action);
+    void __fastcall insertChange(AnsiString Change);
     void __fastcall insertAccount(AnsiString Account, AnsiString Password);
     int __fastcall checkAccountPass(AnsiString Account, AnsiString Password);   //"准許通過"=0; "帳號錯誤"=1; "密碼錯誤"=2
     int __fastcall changeAccountPass(AnsiString Account, AnsiString OldPassword, AnsiString NewPassword);  //"修改失敗"=0; "修改成功"=1

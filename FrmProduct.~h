@@ -245,9 +245,9 @@ __published:	// IDE-managed Components
     TLabel *Label114;
     TLabel *Label115;
     TLabel *Label116;
+    TLabel *Label117;
     TLabel *Label118;
     TLabel *Label119;
-    TLabel *Label117;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbScal(AnsiString Hint);

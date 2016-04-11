@@ -18,7 +18,6 @@
 #include "stdlib.h"
 #include "fmMachinParam.h"
 #include "fmManual.h"
-#include "FrmProduct.h"
 #include "PISODNM100.h"
 #include "DeltaPLC.h"
 #include "TA5Serial.h";
@@ -27,7 +26,6 @@
 #include <math.h>
 #include "fmPassword.h"
 #include "fmOffset.h"
-#include "Sqlite3Interface.h"
 #include "EQPXML.h"
 #include "fmAccountManual.h"
 //---------------------------------------------------------------------------
@@ -36,6 +34,7 @@
 TfrmMain *frmMain;
 SQLITE3IF g_TempLog(0, "C:\\C74 Log\\TempLog");
 SQLITE3IF g_ActionLog(1, "C:\\C74 Log\\ActionLog");
+SQLITE3IF g_ChangeLog(3, "C:\\C74 Log\\ChangeLog");
 extern CIniFile g_IniFile;
 
 extern CPCIM114 g_Motion;
@@ -404,6 +403,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 void __fastcall TfrmMain::N8Click(TObject *Sender)
 {
 	TfmProduct *pWnd = new TfmProduct(this);
+    TfmProduct *pWndRecord = new TfmProduct(this);
 
     //CreateCaptionFile(pWnd);
     ReadCaptionFile(pWnd, g_IniFile.m_nLanguageMode);
@@ -411,6 +411,115 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	AnsiString strCtl;
 	bool bRead = true;
 
+    //---------------------------------------------------------------------------
+    //pWndRecord ready for CheckParamChange
+	DDX_Int(bRead, g_IniFile.m_nCols, pWndRecord->m_nCols);
+	DDX_Int(bRead, g_IniFile.m_nRows, pWndRecord->m_nRows);
+	DDX_Float(bRead, g_IniFile.m_dColPitch, pWndRecord->m_dColPitch);
+	DDX_Float(bRead, g_IniFile.m_dRowPitch, pWndRecord->m_dRowPitch);
+
+	DDX_Float(bRead, g_IniFile.m_dLamHeight[0], pWndRecord->m_dLamHeight0);
+	DDX_Float(bRead, g_IniFile.m_dLamHeight[1], pWndRecord->m_dLamHeight1);
+	DDX_Float(bRead, g_IniFile.m_dLamStop[0], pWndRecord->m_dLamStop0);
+	DDX_Float(bRead, g_IniFile.m_dLamStop[1], pWndRecord->m_dLamStop1);
+	DDX_Float(bRead, g_IniFile.m_dLamGetPos[0], pWndRecord->m_dLamGetPos0);
+	DDX_Float(bRead, g_IniFile.m_dLamGetPos[1], pWndRecord->m_dLamGetPos1);
+	DDX_Float(bRead, g_IniFile.m_dLamVacHeight[0], pWndRecord->m_dLamVacHeight0);
+	DDX_Float(bRead, g_IniFile.m_dLamVacHeight[1], pWndRecord->m_dLamVacHeight1);
+
+    DDX_Float(bRead, g_IniFile.m_dLamSecondHeight[0], pWndRecord->m_dLamSecondHeight0);
+	DDX_Float(bRead, g_IniFile.m_dLamSecondHeight[1], pWndRecord->m_dLamSecondHeight1);
+	DDX_Float(bRead, g_IniFile.m_dLamSecondTime[0], pWndRecord->m_dLamSecondTime0);
+	DDX_Float(bRead, g_IniFile.m_dLamSecondTime[1], pWndRecord->m_dLamSecondTime1);
+	DDX_Float(bRead, g_IniFile.m_dLamThirdHeight[0], pWndRecord->m_dLamThirdHeight0);
+	DDX_Float(bRead, g_IniFile.m_dLamThirdHeight[1], pWndRecord->m_dLamThirdHeight1);
+	DDX_Float(bRead, g_IniFile.m_dLamThirdTime[0], pWndRecord->m_dLamThirdTime0);
+	DDX_Float(bRead, g_IniFile.m_dLamThirdTime[1], pWndRecord->m_dLamThirdTime1);
+
+    DDX_Int(bRead, g_IniFile.m_nAutoInterval, pWndRecord->m_nAutoInterval);
+	DDX_Float(bRead, g_IniFile.m_dAutoStopRange, pWndRecord->m_dAutoStopRange);
+
+	DDX_Float(bRead, g_IniFile.m_dLamTime[0], pWndRecord->m_dLamTime0);
+	DDX_Float(bRead, g_IniFile.m_dLamTemp[0], pWndRecord->m_dLamTemp0);
+	DDX_Float(bRead, g_IniFile.m_dLamPress[0], pWndRecord->m_dLamPress0);
+	DDX_Float(bRead, g_IniFile.m_dLamTime[1], pWndRecord->m_dLamTime1);
+	DDX_Float(bRead, g_IniFile.m_dLamTemp[1], pWndRecord->m_dLamTemp1);
+	DDX_Float(bRead, g_IniFile.m_dLamPress[1], pWndRecord->m_dLamPress1);
+
+	DDX_Float(bRead, g_IniFile.m_dLoadCellPosX[0], pWndRecord->m_dLoadCellPosX0);
+	DDX_Float(bRead, g_IniFile.m_dLoadCellPosY[0], pWndRecord->m_dLoadCellPosY0);
+
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][0], pWndRecord->m_dLaserUpPosX00);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][0], pWndRecord->m_dLaserUpPosY00);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][1], pWndRecord->m_dLaserUpPosX01);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][1], pWndRecord->m_dLaserUpPosY01);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][2], pWndRecord->m_dLaserUpPosX02);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][2], pWndRecord->m_dLaserUpPosY02);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][3], pWndRecord->m_dLaserUpPosX03);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][3], pWndRecord->m_dLaserUpPosY03);
+
+	DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[0], pWndRecord->m_dLaserDownPosX0);
+	DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[0], pWndRecord->m_dLaserDownPosY0);
+
+	DDX_Float(bRead, g_IniFile.m_dLoadCellPosX[1], pWndRecord->m_dLoadCellPosX1);
+	DDX_Float(bRead, g_IniFile.m_dLoadCellPosY[1], pWndRecord->m_dLoadCellPosY1);
+
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][0], pWndRecord->m_dLaserUpPosX10);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][0], pWndRecord->m_dLaserUpPosY10);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][1], pWndRecord->m_dLaserUpPosX11);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][1], pWndRecord->m_dLaserUpPosY11);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][2], pWndRecord->m_dLaserUpPosX12);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][2], pWndRecord->m_dLaserUpPosY12);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][3], pWndRecord->m_dLaserUpPosX13);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][3], pWndRecord->m_dLaserUpPosY13);
+
+	DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[1], pWndRecord->m_dLaserDownPosX1);
+	DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[1], pWndRecord->m_dLaserDownPosY1);
+
+	DDX_Radio(bRead, g_IniFile.m_nRailOption, pWndRecord->m_nRailOption);
+	DDX_Check(bRead, g_IniFile.m_bNotLam, pWndRecord->m_bNotLam);
+
+	DDX_Float(bRead, g_IniFile.m_dPressCalRange, pWndRecord->m_dPressCalRange);
+	DDX_Float(bRead, g_IniFile.m_dPressCalTime, pWndRecord->m_dPressCalTime);
+
+    DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pWndRecord->m_dAutoRunTempRange);
+    DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pWndRecord->m_dVacDelayTime);
+
+    DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWndRecord->m_cmbHeadType);
+    DDX_String(bRead, g_IniFile.m_strHeadScal, pWndRecord->m_cmbHeadScal, g_IniFile.m_strHeadScals);
+    DDX_String(bRead, g_IniFile.m_strModuleScal, pWndRecord->m_cmbModuleScal, g_IniFile.m_strModuleScals);
+    DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWndRecord->m_cmbVacummOn);
+    DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWndRecord->m_cmbPressCheck);
+    DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWndRecord->m_cmbDummyCheck);
+    DDX_String(bRead, g_IniFile.m_strModuleNum, pWndRecord->m_strModuleNum);
+
+    DDX_Float(bRead, g_IniFile.m_dBLT[0], pWndRecord->m_dBLT1);
+    DDX_Float(bRead, g_IniFile.m_dBLT[1], pWndRecord->m_dBLT2);
+    DDX_Float(bRead, g_IniFile.m_dBLT[2], pWndRecord->m_dBLT3);
+    DDX_Float(bRead, g_IniFile.m_dBLT[3], pWndRecord->m_dBLT4);
+    DDX_Float(bRead, g_IniFile.m_dBLT[4], pWndRecord->m_dBLT5);
+    DDX_Float(bRead, g_IniFile.m_dTilt[0], pWndRecord->m_dTilt1);
+    DDX_Float(bRead, g_IniFile.m_dTilt[1], pWndRecord->m_dTilt2);
+    DDX_Float(bRead, g_IniFile.m_dTilt[2], pWndRecord->m_dTilt3);
+    DDX_Float(bRead, g_IniFile.m_dTilt[3], pWndRecord->m_dTilt4);
+    DDX_Float(bRead, g_IniFile.m_dTilt[4], pWndRecord->m_dTilt5);
+    DDX_Float(bRead, g_IniFile.m_dGap[0], pWndRecord->m_dGap1);
+    DDX_Float(bRead, g_IniFile.m_dGap[1], pWndRecord->m_dGap2);
+    DDX_Float(bRead, g_IniFile.m_dGap[2], pWndRecord->m_dGap3);
+    DDX_Float(bRead, g_IniFile.m_dGap[3], pWndRecord->m_dGap4);
+    DDX_Float(bRead, g_IniFile.m_dGap[4], pWndRecord->m_dGap5);
+
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][0], pWndRecord->m_dKeyTemp01);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][1], pWndRecord->m_dKeyTemp02);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][2], pWndRecord->m_dKeyTemp03);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][0], pWndRecord->m_dKeyTemp11);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWndRecord->m_dKeyTemp12);
+    DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWndRecord->m_dKeyTemp13);
+
+    DDX_Int(bRead, g_IniFile.m_nDownPercent, pWndRecord->m_nDownPercent);
+
+    //---------------------------------------------------------------------------
+    //pWnd ready to show for user
 	DDX_Int(bRead, g_IniFile.m_nCols, pWnd->m_nCols);
 	DDX_Int(bRead, g_IniFile.m_nRows, pWnd->m_nRows);
 	DDX_Float(bRead, g_IniFile.m_dColPitch, pWnd->m_dColPitch);
@@ -564,6 +673,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     //if (pWnd->ShowModal() == mrOk)
     if (bRead == false)
 	{
+        CheckParamChange(pWnd, pWndRecord, &g_ChangeLog, g_IniFile.m_strLogInENGAccount);
+
 		bRead = false;
 
 		DDX_Int(bRead, g_IniFile.m_nCols, pWnd->m_nCols);
@@ -681,6 +792,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
 	SetAllDevice();
 	RefreshImage();
+    delete pWndRecord;
 	delete pWnd;
 }
 //---------------------------------------------------------------------------
@@ -1259,8 +1371,10 @@ void __fastcall TfrmMain::Timer3Timer(TObject *Sender)
     {
         g_TempLog.close();
         g_ActionLog.close();
+        g_ChangeLog.close();
         g_TempLog.open(0);
         g_ActionLog.open(1);
+        g_ChangeLog.open(3);
     }
 
     //--Add tempLog---
@@ -2096,6 +2210,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 
     g_TempLog.open(0);
     g_ActionLog.open(1);
+    g_ChangeLog.open(3);
     time_t timer = time(NULL);
     struct tm *tblock = localtime(&timer);
     m_strDate.sprintf("%04d_%02d_%02d",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
@@ -2136,10 +2251,35 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
     g_bStopGetRealTimeValueThread = true;
     g_TempLog.close();
     g_ActionLog.close();
+    g_ChangeLog.close();
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfrmMain::FormCloseQuery(TObject *Sender, bool &CanClose)
+{
+    CanClose = false;
+    if (g_IniFile.m_nLanguageMode>0)
+    {
+        if (Application->MessageBox("Ready To Quit?", "Confirm", MB_OKCANCEL) == IDOK)
+	    {
+		    if (Application->MessageBox("Save File Before Leave?", "Confirm", MB_OKCANCEL) == IDOK)
+			N3Click(Sender);
+            CanClose = true;
+	    }
+    }
+    else
+    {
+	    if (Application->MessageBox("是否要離開?", "注意", MB_OKCANCEL) == IDOK)
+	    {
+		    if (Application->MessageBox("離開前是否要存檔?", "注意", MB_OKCANCEL) == IDOK)
+			N3Click(Sender);
+            CanClose = true;
+	    }
+    }
+
+}
 //---------------------------------------------------------------------------
+
 void __fastcall TfrmMain::cmbRangeChange(TObject *Sender)
 {
 	g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
@@ -2421,6 +2561,20 @@ void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
+//TfmProduct Check Param Change and Write to Log
+void __fastcall TfrmMain::CheckParamChange(TfmProduct *pWnd,TfmProduct *pWndRecord, SQLITE3IF *g_ChangeLog, AnsiString SetupEE)
+{
+    TRadioGroup *m_nRailOption = (TRadioGroup *)pWnd->FindComponent("m_nRailOption");
+    TRadioGroup *m_nRailOptionRecord = (TRadioGroup *)pWndRecord->FindComponent("m_nRailOption");
+    if (m_nRailOption->ItemIndex != m_nRailOptionRecord->ItemIndex)
+    {
+        AnsiString strLog = "";
+        strLog.sprintf("流道數據修改: From %s To %s (%s)", FormatFloat("0", m_nRailOptionRecord->ItemIndex), FormatFloat("0", m_nRailOption->ItemIndex), SetupEE);
+        g_ChangeLog->insertChange(strLog);
+        AddList(strLog);      //if compare more param,this can delete. And Log it in database only.
+    }
 
+}
 
 
