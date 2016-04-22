@@ -1132,7 +1132,6 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		//if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]))
         if (g_Motion.IsLastPosDone(nAxisLifter))
 		{
-			//g_Motion.SetSpeed(nAxisLifter, g_IniFile.m_dACCSpeed[nAxisLifter], g_IniFile.m_dDECSpeed[nAxisLifter], g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
             //g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
             /*          //bridge Delete 第一段真空 20160222確定移除第一段真空
             if (g_IniFile.m_nVacummOn == 0)
@@ -1689,6 +1688,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
                         else
                             dNewValue = dNewValue*(1 - pow(((dLoadCellValue - g_IniFile.m_dLamPress[bFront]) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.9));
 
+                        if (dNewValue <= 0)  dNewValue = 0.1;
 						m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
 						pDNPort->SetKg(nMoveIndex, dNewValue);
 						pDNPort->WriteAllData();

@@ -1688,6 +1688,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
                         else
                             dNewValue = dNewValue*(1 - pow(((dLoadCellValue - g_IniFile.m_dLamPress[bFront]) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.9));
 
+                        if (dNewValue <= 0)  dNewValue = 0.1;
 						m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
 						pDNPort->SetKg(nMoveIndex, dNewValue);
 						pDNPort->WriteAllData();

@@ -1237,7 +1237,11 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     Shape3->Brush->Color = clLime;
 
     //---Auto active LC no function
-    if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55) checkStopLC->Checked = true;
+    if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55)
+    {
+        checkStopLC->Checked = true;
+        g_pMainThread->m_bStopLC = true;
+    }
 
     //--Add ActionLog---
 	if (g_pMainThread->m_ActionLog.size()>0)
@@ -2276,7 +2280,6 @@ void __fastcall TfrmMain::FormCloseQuery(TObject *Sender, bool &CanClose)
             CanClose = true;
 	    }
     }
-
 }
 //---------------------------------------------------------------------------
 
