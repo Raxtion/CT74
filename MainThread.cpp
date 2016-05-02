@@ -840,7 +840,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		}
 		break;
 	case 7:
-		if (g_DIO.ReadDIBit(DI::LCStopDown))
+		if ((m_bLamReady[0] || m_bLamReady[1]) && g_DIO.ReadDIBit(DI::LCStopDown))
 		{
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][7]LC 出料區Stop汽缸下降"));
 			g_DIO.SetDO(DO::LCMotorStart, true);
@@ -957,7 +957,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		}
 		break;
 	case 2:
-		if (g_DIO.ReadDIBit(nLamEntry))                                   //wait the for boat login
+		if (g_DIO.ReadDIBit(nLamEntry) && fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])<1) //wait the for boat login
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][2]Lane 進料區Ready"));
 			g_DIO.SetDO(nLamMotorStart, true);
@@ -965,9 +965,13 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			tm1MS->timeStart(5000);
 			nThreadIndex++;
 		}
+        else if (fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])>1)
+        {
+            m_bLamReady[bFront] = false;
+            nThreadIndex=0;
+        }
 		break;
 	case 3:
-		//g_DIO.SetDO(nLamMotorStart, true);
 		if (g_DIO.ReadDIBit(nLamInp))
 		{
 			tm1MS->timeStart(300);
@@ -978,7 +982,6 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][3]Lane 進料區進料失敗重試"));
             g_DIO.SetDO(nLamMotorStart, true);
             tm1MS->timeStart(5000);
-			//nThreadIndex++;
             break;
         }
 		else if (g_DIO.ReadDIBit(nLamWarp)) bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48;
@@ -1009,7 +1012,6 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-
 	case 7:
 		if (g_Motion.IsLastPosDone(nAxisLifter))
 		{

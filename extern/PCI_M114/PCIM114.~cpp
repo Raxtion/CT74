@@ -448,7 +448,7 @@ void CPCIM114::SetTrigger(int nAxis,bool bOnOff)
 void CPCIM114::SetSoftLimit(int nAxis,double dPLimit, double dNLimit)
 {
        _m114_disable_soft_limit(nAxis/4, nAxis % 4);
-       _m114_set_soft_limit(nAxis/4, nAxis % 4, dPLimit, dNLimit);
+       _m114_set_soft_limit(nAxis/4, nAxis % 4, dPLimit*m_dMMtoPLS[nAxis], dNLimit*m_dMMtoPLS[nAxis]);
        _m114_enable_soft_limit(nAxis/4, nAxis % 4, 1);  //Action: 0=INT only, 1=Immediately stop, 2=Slow down then stop, 3=Reserved
 }
 

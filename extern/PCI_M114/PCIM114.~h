@@ -1,4 +1,6 @@
 
+#ifndef PCIM114H
+#define PCIM114H
 // PCIM114.h: interface for the CPCIM114 class.
 //
 //////////////////////////////////////////////////////////////////////
@@ -63,6 +65,7 @@ public:
         void InitComparator(int nAxis,double dStart,double dPitch,int nCount);
         void SetTrigger(int nAxis,bool bOnOff);
         void SetSoftLimit(int nAxis,double dPLimit, double dNLimit);
+        void SetDisableSoftLimit(int nAxis);
 };
 
 #endif // !defined(AFX_PCIM114_H__A4A5E2F3_B4A2_4488_8253_908A2CA30846__INCLUDED_)

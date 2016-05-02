@@ -965,9 +965,12 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			tm1MS->timeStart(5000);
 			nThreadIndex++;
 		}
+        else if (fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])>1)
+        {
+            nThreadIndex=0;
+        }
 		break;
 	case 3:
-		//g_DIO.SetDO(nLamMotorStart, true);
 		if (g_DIO.ReadDIBit(nLamInp))
 		{
 			tm1MS->timeStart(300);
@@ -978,7 +981,6 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][3]Lane 進料區進料失敗重試"));
             g_DIO.SetDO(nLamMotorStart, true);
             tm1MS->timeStart(5000);
-			//nThreadIndex++;
             break;
         }
 		else if (g_DIO.ReadDIBit(nLamWarp)) bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48;

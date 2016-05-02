@@ -65,5 +65,6 @@ public:
         void SetSoftLimit(int nAxis,double dPLimit, double dNLimit);
         void SetDisableSoftLimit(int nAxis);
 };
-
 #endif // !defined(AFX_PCIM114_H__A4A5E2F3_B4A2_4488_8253_908A2CA30846__INCLUDED_)
+
+
