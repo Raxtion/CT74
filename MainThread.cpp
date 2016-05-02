@@ -811,7 +811,9 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		}
 		break;
 	case 5:
-		if (m_bLamReady[0] || m_bLamReady[1])
+		if ((g_IniFile.m_nRailOption == 0 && (m_bLamReady[0] || m_bLamReady[1]))
+            || (g_IniFile.m_nRailOption == 1 && m_bLamReady[1])
+            || (g_IniFile.m_nRailOption == 2 && m_bLamReady[0]))
 		{
 			if (m_bLamReady[1])
 			{
@@ -1312,7 +1314,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			m_bStartLamSub[bFront] = false;
 			nThreadIndex = 0;
 		}
-		nThreadIndex++;
+		else nThreadIndex++;
 		break;
 	default:
 		m_bStartLamSub[bFront] = false;
