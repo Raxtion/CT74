@@ -21,6 +21,7 @@
 #include "PISODNM100.h"
 #include "DeltaPLC.h"
 #include "TA5Serial.h";
+#include "SensoLinkF911.h"
 
 #include <algorithm>
 #include <math.h>
@@ -46,6 +47,7 @@ extern CPISODNM100 g_DNPort1;
 extern CDeltaPLC g_ModBus;
 extern CTA5Serial g_Balance;
 extern CEQPXML g_eqpXML;
+//extern CSensoLinkF911 g_F911ModBus;
 
 //CGetRealTimeValueThread.h start
 //---------------------------------------------------------------------------
@@ -1105,6 +1107,7 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 	if (checkMonitor->Checked)
 	{
         Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_Balance.GetKg(1));
+        //Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_F911ModBus.GetKg(1));
 		Label8->Caption = "Laser(上):" + FormatFloat("0.00", g_pMainThread->m_dUpperLaserRealTime) + "mm";
 		Label9->Caption = "Laser(下):" + FormatFloat("0.00", g_pMainThread->m_dDownLaserRealTime) + "mm";
 	}
@@ -2388,6 +2391,8 @@ void __fastcall TfrmMain::RenewRadioGroup(bool bInit)
 	        else AddList("溫控器通訊埠開啟失敗");
 	        if (g_Balance.m_bInitOK) AddList("荷重元通訊埠開啟成功");
 	        else AddList("荷重元通訊埠開啟失敗");
+            //if (g_F911ModBus.m_bInitOK) AddList("F911通訊埠開啟成功");
+	        //else AddList("F911通訊埠開啟失敗");
         }
     }
 

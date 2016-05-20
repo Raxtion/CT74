@@ -17,6 +17,7 @@
 #include "DeltaPLC.h"
 #include "time.h"
 #include "EQPXML.h"
+#include "SensoLinkF911.h"
 #include <algorithm>
 
 extern CMyPISODIO g_DIO;
@@ -27,6 +28,7 @@ extern CPISODNM100 g_DNPort1;
 extern CTA5Serial g_Balance;
 extern CDeltaPLC g_ModBus;
 extern CEQPXML g_eqpXML;
+extern CSensoLinkF911 g_F911ModBus;
 
 bool g_bStopMainThread = false;
 
@@ -1314,7 +1316,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			m_bStartLamSub[bFront] = false;
 			nThreadIndex = 0;
 		}
-		nThreadIndex++;
+		else nThreadIndex++;
 		break;
 	default:
 		m_bStartLamSub[bFront] = false;
@@ -1631,7 +1633,8 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		if (tm1MS.timeUp())
 		{
 			//Get Load Cell Value
-			double dLoadCellValue = g_Balance.GetKg(1);       //Kg
+			//double dLoadCellValue = g_Balance.GetKg(1);       //Kg
+            double dLoadCellValue = g_F911ModBus.GetKg(1);       //Kg
 			m_listLog.push_back("重量=" + FormatFloat("0.00 Kg", dLoadCellValue));
 
 			if (m_bAutoRetry == false)
@@ -1639,6 +1642,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				//--自動情況與手動皆判斷誤差容許值------------------------------------------------------------------------------------
 				//if (nTimes != 0)//--------------------------------------------------------------------------------------------------------
 				//{
+                    /*  //Persentage Mode
 					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + (g_IniFile.m_dAutoStopRange / 100.0) * 1.0) ||
 						dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - (g_IniFile.m_dAutoStopRange / 100.0) * 1.0))
 					{
@@ -1652,6 +1656,23 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0.00 %", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
                         m_bPrassNeedReCal = true;
 					}
+                    */
+
+                    //Gram Mode
+					if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] + g_IniFile.m_dAutoStopRange * 0.001 ||
+						dLoadCellValue < g_IniFile.m_dLamPress[bFront] - g_IniFile.m_dAutoStopRange * 0.001 )
+					{
+						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0000.0 g", g_IniFile.m_dAutoStopRange) + "，必須停機");
+						g_IniFile.m_nErrorCode = 74;
+                        m_bPrassNeedReCal = false;
+					}
+					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] + g_IniFile.m_dPressCalRange * 0.001 ||
+                        dLoadCellValue < g_IniFile.m_dLamPress[bFront] - g_IniFile.m_dPressCalRange * 0.001 )
+					{
+						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0000.0 g", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
+                        m_bPrassNeedReCal = true;
+					}
+
 				//}
 
                 //also renew fmMain
@@ -1668,10 +1689,14 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				/*新設定值增加值採用曲線增加，當開始校正時bPassCal為F，代表該Unit尚未通過第一次PressCal，
 				當第一次進入容許值之後，bPassCal為T，就進入微調設定值，而不重新由0.1逼近，一直微調到連續通過3次;或動作25次還過不去，就出現Error並跳出.*/
                 /*將校正標準提高2倍以防止自動走位校正會一直在校正(機構問題:第一次量測下數值偏高,容易超出容許範圍*/
-				//if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 100.0) ||
-				//	dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 100.0))
+                /*  //Persentage Mode
                 if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] * (1.0 + g_IniFile.m_dPressCalRange / 200.0) ||
 					dLoadCellValue < g_IniFile.m_dLamPress[bFront] * (1.0 - g_IniFile.m_dPressCalRange / 200.0))
+                */
+                //Gram Mode
+                if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] + (g_IniFile.m_dPressCalRange * 0.001 / 2) ||
+					dLoadCellValue < g_IniFile.m_dLamPress[bFront] - (g_IniFile.m_dPressCalRange * 0.001 / 2))
+
 				{
 					m_listLog.push_back("NG-->Try Again");
 					nTryTimes++;
@@ -1687,12 +1712,14 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
                         //if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) < 0) dNewValue = (((g_IniFile.m_dLamPress[bFront]-0.9)/3)*0.9);
                         //else dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / g_IniFile.m_dLamPress[bFront]), 0.9));
 
-                        if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) > 0)
-                            dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.9));
-                        else
-                            dNewValue = dNewValue*(1 - pow(((dLoadCellValue - g_IniFile.m_dLamPress[bFront]) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.9));
-
-                        if (dNewValue <= 0)  dNewValue = 0.1;
+                        if (g_IniFile.m_dLamPress[bFront]>0)
+                        {
+                            if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) > 0)
+                                dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.9));
+                            else
+                                dNewValue = dNewValue*(1 - pow(((dLoadCellValue - g_IniFile.m_dLamPress[bFront]) / (g_IniFile.m_dLamPress[bFront] * 2)), 0.9));
+                        }
+                        if (dNewValue <= 0 || dNewValue > 30)  dNewValue = 0.1;
 						m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
 						pDNPort->SetKg(nMoveIndex, dNewValue);
 						pDNPort->WriteAllData();
@@ -1701,11 +1728,14 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					}
 					else                                                                                                           //設定值加減微調
 					{
-                        if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) > 0)
-                            dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 4)), 0.9));
-                        else
-						    dNewValue = dNewValue*(1 - pow(((dLoadCellValue - g_IniFile.m_dLamPress[bFront]) / (g_IniFile.m_dLamPress[bFront] * 4)), 0.9));
-
+                        if (g_IniFile.m_dLamPress[bFront]>0)
+                        {
+                            if ((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) > 0)
+                                dNewValue = dNewValue*(1 + pow(((g_IniFile.m_dLamPress[bFront] - dLoadCellValue) / (g_IniFile.m_dLamPress[bFront] * 4)), 0.9));
+                            else
+						        dNewValue = dNewValue*(1 - pow(((dLoadCellValue - g_IniFile.m_dLamPress[bFront]) / (g_IniFile.m_dLamPress[bFront] * 4)), 0.9));
+                        }
+                        if (dNewValue <= 0 || dNewValue > 30) { dNewValue = 0.1; bPassCal = false; }
 						m_listLog.push_back("Set Data=" + FormatFloat("0.0000 Kg/cm2", dNewValue));
 						pDNPort->SetKg(nMoveIndex, dNewValue);
 						pDNPort->WriteAllData();

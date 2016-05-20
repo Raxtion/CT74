@@ -12,14 +12,14 @@
       temp\DeltaPLC.obj temp\TA5Serial.obj temp\SerialPort.obj temp\fmOffset.obj 
       temp\EQPXML.obj temp\tinystr.obj temp\tinyxml.obj temp\tinyxmlerror.obj 
       temp\tinyxmlparser.obj temp\sqlite3.obj temp\shell.obj 
-      temp\Sqlite3Interface.obj temp\fmHeadScalModify.obj"/>
+      temp\Sqlite3Interface.obj temp\fmHeadScalModify.obj temp\fmAccountManual.obj"/>
     <RESFILES value="CT74.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES) fmMain.dfm fmIOCheck.dfm fmPassword.dfm FrmProduct.dfm 
       fmChoiceMotor.dfm fmMachinParam.dfm fmMotorCheck.dfm fmAD.dfm fmManual.dfm 
-      fmOffset.dfm fmHeadScalModify.dfm"/>
+      fmOffset.dfm fmHeadScalModify.dfm fmAccountManual.dfm"/>
     <LIBFILES value="extern\PISO-DNM100\DNM100_BCB.lib extern\PCIS-DASK\Lib\pdask_bc.lib 
       extern\PCI_M114\lib\PCI_M114BCB.lib extern\DMT\DMT.lib 
       extern\PCOMM\Pcommb.lib"/>
@@ -42,14 +42,14 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="CT74.cpp"/>
-    <INCLUDEPATH value="extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
-    <LIBPATH value="extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
+    <INCLUDEPATH value="extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
+    <LIBPATH value="extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-Iextern\TinyXML -Iextern\SQLite3 -Iextern\EQPXML -Iextern\SerialPort 
-      -Iextern\AEP_TA5 -Iextern\DMT -Iextern\General 
+    <IDLCFLAGS value="-Iextern\SensoLink_F911 -Iextern\TinyXML -Iextern\SQLite3 -Iextern\EQPXML 
+      -Iextern\SerialPort -Iextern\AEP_TA5 -Iextern\DMT -Iextern\General 
       -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; 
       -IC:\Work\CLARE_PROGRAM\C74\CT74 -I$(BCB)\include -I$(BCB)\include\vcl 
       -Iextern\PCIS-DASK\Include -Iextern\PCI_M114\include -Iextern\PISO-DNM100 
@@ -106,6 +106,7 @@
       <FILE FILENAME="extern\SQLite3\shell.c" FORMNAME="" UNITNAME="shell.c" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="Sqlite3Interface.cpp" FORMNAME="" UNITNAME="Sqlite3Interface" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="fmHeadScalModify.cpp" FORMNAME="frmHeadScalModify" UNITNAME="fmHeadScalModify" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmAccountManual.cpp" FORMNAME="frmAccountManual" UNITNAME="fmAccountManual" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

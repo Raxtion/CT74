@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 80
-  Top = 211
+  Left = 108
+  Top = 227
   Width = 1364
   Height = 641
   Caption = 'frmMain'
@@ -243,7 +243,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 726
     Width = 1586
-    Height = 110
+    Height = 126
     Align = alBottom
     Color = clBlack
     Font.Charset = DEFAULT_CHARSET

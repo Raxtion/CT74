@@ -6,10 +6,11 @@
 #include "fmAD.h"
 #include "TA5Serial.h";
 #include "IniFile.h"
-
+#include "SensoLinkF911.h"
 
 extern CTA5Serial g_Balance;
 extern CIniFile g_IniFile;
+//extern CSensoLinkF911 g_F911ModBus;
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -34,7 +35,8 @@ void __fastcall TfrmAD::Timer1Timer(TObject *Sender)
 
 void __fastcall TfrmAD::SpeedButton1Click(TObject *Sender)
 {
-        g_Balance.EnableZero(1);        
+        g_Balance.EnableZero(1);
+        //g_F911ModBus.InitialZero(1);
 }
 //---------------------------------------------------------------------------
 
