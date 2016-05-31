@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = 108
-  Top = 227
-  Width = 1364
-  Height = 641
+  Left = 60
+  Top = 53
+  Width = 1461
+  Height = 693
   Caption = 'frmMain'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

@@ -176,6 +176,7 @@ void __fastcall CMainThread::Execute()
 					g_IniFile.m_nErrorCode = 0;
 
                     if (!g_DIO.ReadDIBit(DI::LCStopUp) && g_DIO.ReadDIBit(DI::LCExist) == false) {nThreadIndex[1] = 0; g_DIO.SetDO(DO::LCStop, true);}
+					m_listAutoCal.clear();
 					//nThreadIndex[1] = 0;               //LC動作不被清除(Boat不好拿出來)
 					nThreadIndex[2] = 0;
 					nThreadIndex[3] = 0;
@@ -199,7 +200,8 @@ void __fastcall CMainThread::Execute()
 					g_IniFile.m_nErrorCode = 1003;
 					m_bIsHomingFromBtn = false;
 					m_nIsFullHoming = -1;
-                    m_nPassBoatCount1 == 0;
+                    m_nPassBoatCount0 = 0;
+					m_nPassBoatCount1 = 0;
 				}
 				else if (m_nIsFullHoming == 2)
 				{
@@ -320,7 +322,7 @@ void __fastcall CMainThread::Execute()
 				bStartMachineInit = false;
                 m_bInitalAgain = true;
 				m_nIsFullHoming = -1;
-
+				
                 g_Motion.SetSoftLimit(0, 293.0, -1.99);
                 g_Motion.SetSoftLimit(1, 584.0, -8.0);
 				g_Motion.SetSoftLimit(2, 550.0, -3.0);
@@ -354,10 +356,11 @@ void __fastcall CMainThread::Execute()
 				if (g_IniFile.m_nAutoInterval == 0 || m_nPassBoatCount1 == 0) nRemainder = -1;
 				else nRemainder = m_nPassBoatCount1%g_IniFile.m_nAutoInterval;
 
-				if (nRemainder == 0 && m_bIsDoAutoCal[1] == true && m_bIsDoAutoCal[0] == false && nThreadIndex[2] == 2 && nThreadIndex[4] == 1 && !g_IniFile.m_bNotLam)
+				if (nRemainder == 0 && m_bIsDoAutoCal[1] == true && m_listAutoCal.size() > 0 && !g_IniFile.m_bNotLam)
 				{
 					//Do DoPressCal+detect and DoPressCal when get per Boat
-					DoAutoCal(true, nThreadIndex[14]);
+					if (m_listAutoCal.front() == "FRONT")
+						DoAutoCal(true, nThreadIndex[14]);
 				}
 				else
 				{
@@ -371,10 +374,11 @@ void __fastcall CMainThread::Execute()
 				if (g_IniFile.m_nAutoInterval == 0 || m_nPassBoatCount0 == 0) nRemainder = -1;
 				else nRemainder = m_nPassBoatCount0%g_IniFile.m_nAutoInterval;
 
-				if (nRemainder == 0 && m_bIsDoAutoCal[0] == true && m_bIsDoAutoCal[1] == false && nThreadIndex[3] == 2 && nThreadIndex[5] == 1 && !g_IniFile.m_bNotLam)
+				if (nRemainder == 0 && m_bIsDoAutoCal[0] == true && m_listAutoCal.size() > 0 && !g_IniFile.m_bNotLam)
 				{
 					//Do DoPressCal+detect and DoPressCal when get per Boat
-					DoAutoCal(false, nThreadIndex[15]);
+					if (m_listAutoCal.front() == "REAR")
+						DoAutoCal(false, nThreadIndex[15]);
 				}
 				else
 				{
@@ -382,7 +386,6 @@ void __fastcall CMainThread::Execute()
 					DoEject(false, nThreadIndex[5]);
 				}
 			}
-
 		}
 		//---Manual Mode
 		else if (m_bIsHomeDone)
@@ -426,7 +429,19 @@ void __fastcall CMainThread::Execute()
 			default:
 				break;
             }
-			if (m_bIsStartProcessbyDIO || m_bIsStartProcessbyCIM)
+
+            g_IniFile.m_nAutoInterval = 0;         //need debug
+
+			//Check LoadCell Safe
+			bool bCheckLoadCellDown;
+			if (g_DIO.ReadDIBit(DI::LoadCellUp)) bCheckLoadCellDown = true;
+			else { bCheckLoadCellDown = false; g_IniFile.m_nErrorCode = 70; }
+			bool bCheckLoadCellLocationOK;
+			if (g_DIO.ReadDIBit(DI::YAxisSafePosA) && g_DIO.ReadDIBit(DI::YAxisSafePosB)) bCheckLoadCellLocationOK = true;
+			else { bCheckLoadCellLocationOK = false; g_IniFile.m_nErrorCode = 51; }
+
+            //Get Into AutoMode
+			if ((m_bIsStartProcessbyDIO || m_bIsStartProcessbyCIM) && bCheckLoadCellDown == true && bCheckLoadCellLocationOK == true)
 			{
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
@@ -664,6 +679,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 
 			//HANDSHAKE INIT
             m_ActionLog.push_back(AddTimeString("[InitialMachine][10]機台變數初始化"));
+			m_listAutoCal.clear();
 			m_bLamReady[0] = false;
 			m_bLamReady[1] = false;
 			m_bEjectReady[0] = false;
@@ -678,6 +694,9 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 
 			m_bStartLamSub[0] = false;
 			m_bStartLamSub[1] = false;
+
+			m_nPassBoatCount0 = 0;
+			m_nPassBoatCount1 = 0;
 
 			m_dLamTimer[0] = 0;
 			m_dLamTimer[1] = 0;
@@ -817,21 +836,22 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
             || (g_IniFile.m_nRailOption == 1 && m_bLamReady[1])
             || (g_IniFile.m_nRailOption == 2 && m_bLamReady[0]))
 		{
-			if (m_bLamReady[1])
+			if (m_bLamReady[1] && !m_bIsDoAutoCal[1] && fabs(g_Motion.GetActualPos(AXIS_FL) - g_IniFile.m_dLamStop[1])<1)
 			{
                 m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 前出料區Ready"));
 				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCFrontPos);
 				nLamInp = DI::LamInp1;
 				nLamEntry = DI::LamEntry1;
+				nThreadIndex++;
 			}
-			else if (m_bLamReady[0])
+			else if (m_bLamReady[0] && !m_bIsDoAutoCal[0] && fabs(g_Motion.GetActualPos(AXIS_RL) - g_IniFile.m_dLamStop[0])<1)
 			{
                 m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 後出料區Ready"));
 				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCRearPos);
 				nLamInp = DI::LamInp2;
 				nLamEntry = DI::LamEntry2;
+				nThreadIndex++;
 			}
-			nThreadIndex++;
 		}
 		break;
 	case 6:
@@ -889,8 +909,6 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 	default:
 		nThreadIndex = 0;
 	}
-
-	//if(g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)  nThreadIndex=0;
 }
 //---------------------------------------------------------------------------
 //AutoMode壓合前動
@@ -961,7 +979,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		}
 		break;
 	case 2:
-		if (g_DIO.ReadDIBit(nLamEntry) && fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])<1) //wait the for boat login
+		if (g_Motion.IsLastPosDone(nAxisLifter) && g_DIO.ReadDIBit(nLamEntry) && fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])<1) //wait for boat login
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][2]Lane 進料區Ready"));
 			g_DIO.SetDO(nLamMotorStart, true);
@@ -969,10 +987,10 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			tm1MS->timeStart(5000);
 			nThreadIndex++;
 		}
-        else if (fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])>1)
+        else if (g_Motion.IsLastPosDone(nAxisLifter) && m_bStartLamSub[bFront] == false && fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])>=1)
         {
             m_bLamReady[bFront] = false;
-            nThreadIndex=0;
+			nThreadIndex = 0;
         }
 		break;
 	case 3:
@@ -1019,8 +1037,8 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 	case 7:
 		if (g_Motion.IsLastPosDone(nAxisLifter))
 		{
-			if (bFront) { m_nPassBoatCount1++; m_bIsDoAutoCal[1] = true; }
-			else { m_nPassBoatCount0++; m_bIsDoAutoCal[0] = true; }
+			if (bFront) { m_nPassBoatCount1++; } 
+			else { m_nPassBoatCount0++; }
 			nThreadIndex++;
 		}
 		break;
@@ -1045,13 +1063,15 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][9]Lane 出料區出料失敗重試"));
             g_DIO.SetDO(nLamMotorStart, true);
 			tm1MS->timeStart(5000);
-			//nThreadIndex++;
             break;
         }
 		else if (tm1MS->timeUp())  bFront ? g_IniFile.m_nErrorCode = 56 : g_IniFile.m_nErrorCode = 57;
 		break;
 	default:
 		nThreadIndex = 0;
+		m_bIsDoAutoCal[bFront] = true;  //DoLamination ending and can get in DoAutoCal.
+		if (m_nPassBoatCount1%g_IniFile.m_nAutoInterval == 0 && m_nPassBoatCount1 != 0) m_listAutoCal.push_back("FRONT");
+		if (m_nPassBoatCount0%g_IniFile.m_nAutoInterval == 0 && m_nPassBoatCount0 != 0) m_listAutoCal.push_back("REAR");
 	}
 }
 //---------------------------------------------------------------------------
@@ -1150,7 +1170,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
             */
             //m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段真空不開啟"));
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][3]LamSub lifter進入第二段開始計算時間"));
-            // add PressDownPercent  (slowdown)
+            // add PressDownPercent  (No need in LamSub, only in DoPressCal. For Avoiding Device Broken)
             /*for (int nIndex = 0; nIndex<50; nIndex++)
             {
         	    if (bFront) pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex])*(100-g_IniFile.m_nDownPercent)/100);
@@ -1215,7 +1235,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
             if (m_bFirstVacSuccessed == false) g_DIO.SetDO(DO::Buzzer, false);
 			tm2MS->timeStart(g_IniFile.m_dVacDelayTime * 1000);
 
-            // add Reload PressDownPercent (slowdown)
+            // add Reload PressDownPercent (No need in LamSub, only in DoPressCal. For Avoiding Device Broken)
             /*for (int nIndex = 0; nIndex<50; nIndex++)
             {
         	    if (bFront) pDNPort->SetKg(nIndex, (g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex]));
@@ -1388,7 +1408,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		}
 		break;
 	case 1:
-		if (g_DIO.ReadDIBit(nEjectEntry))
+		if (g_DIO.ReadDIBit(nEjectEntry)) //wait for boat login
 		{
 			m_bEjectReady[bFront] = false;
 			g_DIO.SetDO(nEjectMotorStart, true);
@@ -2467,31 +2487,23 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-
 	default:
 		m_bIsDoAutoCal[bFront] = false;
-        CMainThread::nThreadIndex[2] = 0;
-        CMainThread::nThreadIndex[4] = 0;
+		if (bFront) { CMainThread::nThreadIndex[2] = 0; CMainThread::nThreadIndex[4] = 0; }
+		else { CMainThread::nThreadIndex[3] = 0; CMainThread::nThreadIndex[5] = 0; }
+		m_listAutoCal.pop_front();
 		nThreadIndex = 0;
 	}
 
 	if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)
 	{	
 		m_bIsDoAutoCal[bFront] = false;
-        CMainThread::nThreadIndex[2] = 0;
-        CMainThread::nThreadIndex[4] = 0;
+		if (bFront) { CMainThread::nThreadIndex[2] = 0; CMainThread::nThreadIndex[4] = 0; }
+		else { CMainThread::nThreadIndex[3] = 0; CMainThread::nThreadIndex[5] = 0; }
+		m_listAutoCal.pop_front();
 		nThreadIndex = 0;
 	}
 }
-
-
-
-
-
-
-
-
-
 
 
 

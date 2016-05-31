@@ -122,10 +122,8 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 		btnLaserUp1->Down || btnLaserUp0->Down ||
 		btnLaserDown1->Down || btnLaserDown0->Down)
 	{
-		N1->Enabled = false;
-		N6->Enabled = false;
-		N9->Enabled = false;
-		N12->Enabled = false;
+        MotorTest1->Enabled = false;
+        N10->Enabled = false;
 	}
 	else  SetPrivilege(m_nUserLevel);
 
@@ -234,6 +232,8 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 void __fastcall TfrmMain::N3Click(TObject *Sender)
 {
     if (!FileExists("C:\\Product_Data\\")) _mkdir("C:\\Product_Data\\");
+
+    g_IniFile.AddLog("MachineFile01",13);
 	g_IniFile.MachineFile(false);
 	g_IniFile.ProductFile(Caption.c_str(), false);
 
@@ -267,6 +267,7 @@ void __fastcall TfrmMain::N4Click(TObject *Sender)
         if (!FileExists("C:\\Product_Data\\")) _mkdir("C:\\Product_Data\\");
 		g_IniFile.m_strLastFileName = SaveDialog1->FileName;
 		Caption = SaveDialog1->FileName;
+        g_IniFile.AddLog("MachineFile02",13);
 		g_IniFile.MachineFile(false);
 		g_IniFile.ProductFile(SaveDialog1->FileName.c_str(), false);
 
@@ -853,7 +854,7 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
     ReadCaptionFile(pChoiceMotorDlg, g_IniFile.m_nLanguageMode);
 
     AnsiString sPath = g_IniFile.m_strApplicationPath;
-    sPath = StringReplace(sPath, "\\exe\\", "",TReplaceFlags());
+    sPath = StringReplace(sPath, "\\exe\\", "", TReplaceFlags());
 
 	while (pChoiceMotorDlg->ShowModal() != mrCancel)
 	{
@@ -866,6 +867,23 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
         {
                 pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\right.bmp");
                 pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\left.bmp");
+                if (g_DIO.ReadDIBit(DI::LoadCellUp))
+                {
+                    Application->MessageBoxA("請確認LoadCell是否在上位!!","Confirm",MB_OK);
+                    delete pMotorCheckDlg;
+                    delete pChoiceMotorDlg;
+                    return;
+                }
+        }
+        if (pChoiceMotorDlg->m_nSelectAxis == 1)
+        {
+                if (g_DIO.ReadDIBit(DI::LoadCellUp))
+                {
+                    Application->MessageBoxA("請確認LoadCell是否在上位!!","Confirm",MB_OK);
+                    delete pMotorCheckDlg;
+                    delete pChoiceMotorDlg;
+                    return;
+                }
         }
         if (pChoiceMotorDlg->m_nSelectAxis == 4 || pChoiceMotorDlg->m_nSelectAxis == 5)
         {
@@ -1297,8 +1315,12 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         cmbTimes->Enabled = !g_pMainThread->m_bIsAutoMode;
     }
 
-    //--Keep renew Privilege
-    SetPrivilege(m_nUserLevel);
+    //--Keep renew Privilege When Idel
+    if (!btnStartPressCal0->Down && !btnStartPressCal1->Down &&
+		!btnLaserUp1->Down && !btnLaserUp0->Down &&
+		!btnLaserDown1->Down && !btnLaserDown0->Down) 
+        SetPrivilege(m_nUserLevel);
+    else { MotorTest1->Enabled = false; N10->Enabled = false; }
 
 	Timer1->Enabled = true;
 
@@ -1657,7 +1679,8 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
         N7->Enabled = false;
         N14->Enabled = false;
         N11->Enabled = false;
-
+        MotorTest1->Enabled = true;
+        N10->Enabled = true;
 		break;
 	case 2:
 		N1->Enabled = true;
@@ -1669,6 +1692,8 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
         N7->Enabled = true;
         N14->Enabled = true;
         N11->Enabled = true;
+        MotorTest1->Enabled = true;
+        N10->Enabled = true;
         g_IniFile.m_strLogInENGAccount = "Admin";
 		break;
 	}
@@ -2186,6 +2211,7 @@ void __fastcall TfrmMain::CreateCaptionFile(TForm *pForm)
 
 void __fastcall TfrmMain::FormCreate(TObject *Sender)
 {
+    g_IniFile.AddLog("MachineFile03",13);
     g_IniFile.MachineFile(true);
 	Caption = g_IniFile.m_strLastFileName;
 	g_IniFile.ProductFile(g_IniFile.m_strLastFileName.c_str(), true);
@@ -2489,6 +2515,7 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 {
     if (FileExists(strFileName))
     {
+        g_IniFile.AddLog("MachineFile04",13);
         g_IniFile.MachineFile(true);
 
         //先清除比例閥資料等2秒

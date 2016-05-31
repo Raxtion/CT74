@@ -24,6 +24,7 @@ protected:
 public:
 	std::list<AnsiString> m_listLog;
 	std::list<AnsiString> m_ActionLog;
+    std::list<AnsiString> m_listAutoCal;
 	int nThreadIndex[MAX_PROCESS];		//0:Inti 1:Start Measure
 	bool m_bRefresh;
 
