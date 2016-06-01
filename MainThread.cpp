@@ -434,7 +434,7 @@ void __fastcall CMainThread::Execute()
 
 			//Check LoadCell Safe
 			bool bCheckLoadCellDown;
-			if (g_DIO.ReadDIBit(DI::LoadCellUp)) bCheckLoadCellDown = true;
+			if (g_DIO.ReadDIBit(DI::LoadCellDown)) bCheckLoadCellDown = true;
 			else { bCheckLoadCellDown = false; g_IniFile.m_nErrorCode = 70; }
 			bool bCheckLoadCellLocationOK;
 			if (g_DIO.ReadDIBit(DI::YAxisSafePosA) && g_DIO.ReadDIBit(DI::YAxisSafePosB)) bCheckLoadCellLocationOK = true;

@@ -1,6 +1,6 @@
 object frmChoiceMotor: TfrmChoiceMotor
-  Left = 263
-  Top = 82
+  Left = 76
+  Top = 195
   BorderStyle = bsDialog
   BorderWidth = 5
   Caption = #36984#25799#39340#36948

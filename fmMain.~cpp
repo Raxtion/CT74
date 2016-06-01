@@ -867,7 +867,7 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
         {
                 pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\right.bmp");
                 pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\left.bmp");
-                if (g_DIO.ReadDIBit(DI::LoadCellUp))
+                if (!g_DIO.ReadDIBit(DI::LoadCellDown))
                 {
                     Application->MessageBoxA("請確認LoadCell是否在上位!!","Confirm",MB_OK);
                     delete pMotorCheckDlg;
@@ -877,7 +877,7 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
         }
         if (pChoiceMotorDlg->m_nSelectAxis == 1)
         {
-                if (g_DIO.ReadDIBit(DI::LoadCellUp))
+                if (!g_DIO.ReadDIBit(DI::LoadCellDown))
                 {
                     Application->MessageBoxA("請確認LoadCell是否在上位!!","Confirm",MB_OK);
                     delete pMotorCheckDlg;
