@@ -59,7 +59,6 @@ __published:	// IDE-managed Components
         TShape *Shape1;
         TShape *Shape2;
         TMenuItem *N14;
-        TRadioGroup *radioPosOption;
         TGroupBox *GroupBox1;
         TLabel *Label7;
         TLabel *Label8;
@@ -120,6 +119,7 @@ __published:	// IDE-managed Components
     TMenuItem *N16;
     TMenuItem *N17;
     TMenuItem *N18;
+    TRadioGroup *radioPosOption;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);

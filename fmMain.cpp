@@ -1086,12 +1086,14 @@ void __fastcall TfrmMain::N18Click(TObject *Sender)
 //Other
 void __fastcall TfrmMain::SpeedButton1Click(TObject *Sender)
 {
+    if (g_pMainThread->m_bIsAutoMode) return;
 	g_DIO.SetDO(DO::LoadCellValve, true);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TfrmMain::SpeedButton2Click(TObject *Sender)
 {
+    if (g_pMainThread->m_bIsAutoMode) return;
 	g_DIO.SetDO(DO::LoadCellValve, false);
 }
 //---------------------------------------------------------------------------
@@ -1556,7 +1558,7 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 
 void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-	if (radioPosOption->ItemIndex == 0) return;
+	if (radioPosOption->ItemIndex == 0 || g_pMainThread->m_bIsAutoMode) return;
 
 	if (!g_pMainThread->m_bIsHomeDone)
 	{
@@ -1664,6 +1666,7 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
 		N9->Enabled = false;
 		N12->Enabled = true;
         N15->Enabled = false;
+        radioPosOption->Enabled = false;
         g_IniFile.m_strLogInENGAccount = "OP";
 		break;
 	case 1:
@@ -1677,6 +1680,7 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
         N14->Enabled = false;
         N11->Enabled = false;
         MotorTest1->Enabled = true;
+        radioPosOption->Enabled = false;
         N10->Enabled = true;
 
 		break;
@@ -1692,6 +1696,7 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
         N11->Enabled = true;
         MotorTest1->Enabled = true;
         N10->Enabled = true;
+        radioPosOption->Enabled = true;
         g_IniFile.m_strLogInENGAccount = "Admin";
 		break;
 	}
@@ -2386,7 +2391,7 @@ void __fastcall TfrmMain::RenewRadioGroup(bool bInit)
         radioPosOption->Items->Add("MoveTo Load Cell Loc.");
         radioPosOption->Items->Add("MoveTo Up Laser Loc.");
         radioPosOption->Items->Add("MoveTo Down Laser Loc.");
-        radioPosOption->Items->Add("Only On Proportional valve");
+        //radioPosOption->Items->Add("Only On Proportional valve");
         radioPosOption->ItemIndex = 0;
         //Create cmbRange
         cmbRange->Items->Clear();
@@ -2410,7 +2415,7 @@ void __fastcall TfrmMain::RenewRadioGroup(bool bInit)
         radioPosOption->Items->Add("移動至Load Cell 位置");
         radioPosOption->Items->Add("移動至Laser 上模 位置");
         radioPosOption->Items->Add("移動至Laser 下模 位置");
-        radioPosOption->Items->Add("僅啟動此比例閥");
+        //radioPosOption->Items->Add("僅啟動此比例閥");
         radioPosOption->ItemIndex = 0;
         //Create cmbRange
         cmbRange->Items->Clear();

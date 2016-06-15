@@ -352,41 +352,13 @@ void __fastcall CMainThread::Execute()
 			}
 			if (g_IniFile.m_nRailOption == 1 || g_IniFile.m_nRailOption == 0)
 			{
-                /*
-				int nRemainder;
-				if (g_IniFile.m_nAutoInterval == 0 || m_nPassBoatCount1 == 0) nRemainder = -1;
-				else nRemainder = m_nPassBoatCount1%g_IniFile.m_nAutoInterval;
-
-				if (nRemainder == 0 && m_bIsDoAutoCal[1] == true && m_bIsDoAutoCal[0] == false && nThreadIndex[2] == 2 && nThreadIndex[4] == 1 && !g_IniFile.m_bNotLam)
-				{
-					//Do DoPressCal+detect and DoPressCal when get per Boat
-					DoAutoCal(true, nThreadIndex[14]);
-				}
-				else
-				{
-                */
 					DoLamination(true, nThreadIndex[2]);
 					DoEject(true, nThreadIndex[4]);
-				//}
 			}
 			if (g_IniFile.m_nRailOption == 2 || g_IniFile.m_nRailOption == 0)
 			{
-                /*
-				int nRemainder;
-				if (g_IniFile.m_nAutoInterval == 0 || m_nPassBoatCount0 == 0) nRemainder = -1;
-				else nRemainder = m_nPassBoatCount0%g_IniFile.m_nAutoInterval;
-
-				if (nRemainder == 0 && m_bIsDoAutoCal[0] == true && m_bIsDoAutoCal[1] == false && nThreadIndex[3] == 2 && nThreadIndex[5] == 1 && !g_IniFile.m_bNotLam)
-				{
-					//Do DoPressCal+detect and DoPressCal when get per Boat
-					DoAutoCal(false, nThreadIndex[15]);
-				}
-				else
-				{
-                */
 					DoLamination(false, nThreadIndex[3]);
 					DoEject(false, nThreadIndex[5]);
-				//}
 			}
 
 		}
@@ -439,7 +411,7 @@ void __fastcall CMainThread::Execute()
 
                 //Check LoadCell Safe
                 if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 70;
-                if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) && !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
+                if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
 
                 if (m_bStopLC == true && g_IniFile.m_nRailOption == 0
                     && !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
@@ -965,7 +937,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		else if (g_DIO.ReadDIBit(nLamInp)) bFront ? g_IniFile.m_nErrorCode = 45 : g_IniFile.m_nErrorCode = 46;
 		else if (g_DIO.ReadDIBit(nLamWarp)) bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48;
 		else if (g_DIO.ReadDIBit(nEjectEntry)) bFront ? g_IniFile.m_nErrorCode = 49 : g_IniFile.m_nErrorCode = 50;
-		else if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
+		//else if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
 		else
 		{
 			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]);
@@ -1039,8 +1011,8 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 	case 7:
 		if (g_Motion.IsLastPosDone(nAxisLifter))
 		{
-			if (bFront) { m_nPassBoatCount1++; m_bIsDoAutoCal[1] = true; }
-			else { m_nPassBoatCount0++; m_bIsDoAutoCal[0] = true; }
+			if (bFront) { m_nPassBoatCount1++; }
+			else { m_nPassBoatCount0++; }
 			nThreadIndex++;
 		}
 		break;
@@ -1102,7 +1074,12 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
         }
         break;
     case 12:
-        if (!m_bIsDoAutoCal[1] || !m_bIsDoAutoCal[0])
+        if (bFront && !m_bIsDoAutoCal[1])
+        {
+            tm1MS->timeStart(500);
+			nThreadIndex++;
+        }
+        if (!bFront && !m_bIsDoAutoCal[0])
         {
             tm1MS->timeStart(500);
 			nThreadIndex++;
@@ -1192,8 +1169,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		}
 		break;
 	case 2:
-		//if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamStop[bFront] + 5.0))                 //20160615 bypass
-        if (true)
+		if (g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamStop[bFront] + 5.0))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][2]LamSub lifter±µÄ²boat"));
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dWorkSpeed[nAxisLifter]);
@@ -1454,7 +1430,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		}
 		break;
 	case 1:
-		if (g_DIO.ReadDIBit(nEjectEntry))                                              //wait for boat login
+		if (!m_bIsDoAutoCal[bFront] && g_DIO.ReadDIBit(nEjectEntry))                   //wait for boat login
 		{
 			m_bEjectReady[bFront] = false;
 			g_DIO.SetDO(nEjectMotorStart, true);
@@ -1687,7 +1663,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			pDNPort->SetKg(nMoveIndex, dNewValue);
 			pDNPort->WriteAllData();
 
-			tm1MS.timeStart(g_IniFile.m_dPressCalTime * 1000);          //Stable Time
+			tm1MS.timeStart(g_IniFile.m_dPressCalTime * 1000);    //Stable Time
 			nThreadIndex++;
 		}
         else if (!g_DIO.ReadDOBit(DO::LoadCellValve))
@@ -1700,10 +1676,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		if (tm1MS.timeUp())
 		{
 			//Get Load Cell Value
-			//double dLoadCellValue = g_Balance.GetKg(1);       //Kg
-
-            //TEST CODE
-            double dLoadCellValue = 1.0;                                          //20160615 bypass
+			double dLoadCellValue = g_Balance.GetKg(1);            //Kg
 
             //double dLoadCellValue = g_F911ModBus.GetKg(1);       //Kg
 			m_listLog.push_back("­«¶q=" + FormatFloat("0.00 Kg", dLoadCellValue));
@@ -2410,7 +2383,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	{
 	case 0:
 		if (g_DIO.ReadDIBit(nLamEntry)) bFront ? g_IniFile.m_nErrorCode = 41 : g_IniFile.m_nErrorCode = 42;
-		else if (g_DIO.ReadDIBit(nLamInp)) bFront ? g_IniFile.m_nErrorCode = 45 : g_IniFile.m_nErrorCode = 46;
+        else if (g_DIO.ReadDIBit(nLamInp)) bFront ? g_IniFile.m_nErrorCode = 45 : g_IniFile.m_nErrorCode = 46;
 		else if (g_DIO.ReadDIBit(nLamWarp)) bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48;
 		else if (g_DIO.ReadDIBit(nEjectEntry)) bFront ? g_IniFile.m_nErrorCode = 49 : g_IniFile.m_nErrorCode = 50;
 		else if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
@@ -2544,10 +2517,6 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	default:
         m_bIsAutoCalUse = false;
 		m_bIsDoAutoCal[bFront] = false;
-        /*
-        if (bFront) { CMainThread::nThreadIndex[2] = 0; CMainThread::nThreadIndex[4] = 0; }
-		else { CMainThread::nThreadIndex[3] = 0; CMainThread::nThreadIndex[5] = 0; }
-        */
 		nThreadIndex = 0;
 	}
 
@@ -2555,10 +2524,6 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 	{
         m_bIsAutoCalUse = false;
 		m_bIsDoAutoCal[bFront] = false;
-        /*
-        if (bFront) { CMainThread::nThreadIndex[2] = 0; CMainThread::nThreadIndex[4] = 0; }
-		else { CMainThread::nThreadIndex[3] = 0; CMainThread::nThreadIndex[5] = 0; }
-        */
 		nThreadIndex = 0;
 	}
 }

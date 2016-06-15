@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 93
-  Top = 203
+  Left = 91
+  Top = 103
   Width = 1364
   Height = 641
   Caption = 'frmMain'
@@ -257,25 +257,6 @@ object frmMain: TfrmMain
     ParentFont = False
     TabOrder = 0
   end
-  object radioPosOption: TRadioGroup
-    Left = 8
-    Top = 176
-    Width = 161
-    Height = 161
-    BiDiMode = bdLeftToRight
-    Caption = #25353#19979#28369#40736#24038#37749#26178
-    Color = clGradientActiveCaption
-    Items.Strings = (
-      #19981#21205#20316
-      #31227#21205#33267'Load Cell '#20301#32622
-      #31227#21205#33267'Laser '#19978#27169' '#20301#32622
-      #31227#21205#33267'Laser '#19979#27169' '#20301#32622
-      #20677#21855#21205#27492#27604#20363#38309)
-    ParentBiDiMode = False
-    ParentColor = False
-    TabOrder = 1
-    OnClick = radioPosOptionClick
-  end
   object GroupBox1: TGroupBox
     Left = 8
     Top = 552
@@ -284,7 +265,7 @@ object frmMain: TfrmMain
     Caption = 'Value Monitor'
     Color = clMoneyGreen
     ParentColor = False
-    TabOrder = 2
+    TabOrder = 1
     object Label7: TLabel
       Left = 16
       Top = 36
@@ -326,7 +307,7 @@ object frmMain: TfrmMain
     Color = clYellow
     ParentColor = False
     State = cbChecked
-    TabOrder = 3
+    TabOrder = 2
     Visible = False
   end
   object cmbRange: TComboBox
@@ -336,7 +317,7 @@ object frmMain: TfrmMain
     Height = 21
     ItemHeight = 13
     ItemIndex = 0
-    TabOrder = 4
+    TabOrder = 3
     Text = #25972#30436
     OnChange = cmbRangeChange
     Items.Strings = (
@@ -350,7 +331,7 @@ object frmMain: TfrmMain
     Height = 21
     ItemHeight = 13
     ItemIndex = 0
-    TabOrder = 5
+    TabOrder = 4
     Text = '1'
     OnChange = cmbFirstLocChange
     Items.Strings = (
@@ -411,7 +392,7 @@ object frmMain: TfrmMain
     Width = 81
     Height = 21
     ItemHeight = 13
-    TabOrder = 6
+    TabOrder = 5
     Text = '1'
     OnChange = cmbTimesChange
     Items.Strings = (
@@ -433,7 +414,7 @@ object frmMain: TfrmMain
     Width = 106
     Height = 25
     Caption = #23531#20837#35036#20767#25976#20540
-    TabOrder = 7
+    TabOrder = 6
     OnClick = checkAutoRetryClick
   end
   object GroupBox2: TGroupBox
@@ -448,7 +429,7 @@ object frmMain: TfrmMain
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentFont = False
-    TabOrder = 8
+    TabOrder = 7
     object Label15: TLabel
       Left = 28
       Top = 40
@@ -603,7 +584,7 @@ object frmMain: TfrmMain
     Width = 89
     Height = 73
     Caption = #24489#27512
-    TabOrder = 9
+    TabOrder = 8
     OnClick = btnHomingClick
   end
   object checkStopLC: TCheckBox
@@ -620,7 +601,7 @@ object frmMain: TfrmMain
     Font.Style = []
     ParentColor = False
     ParentFont = False
-    TabOrder = 10
+    TabOrder = 9
     OnClick = checkStopLCClick
   end
   object GroupBox3: TGroupBox
@@ -629,7 +610,7 @@ object frmMain: TfrmMain
     Width = 161
     Height = 65
     Caption = 'Boat Finished'
-    TabOrder = 11
+    TabOrder = 10
     object Label32: TLabel
       Left = 32
       Top = 16
@@ -668,7 +649,7 @@ object frmMain: TfrmMain
     Width = 161
     Height = 65
     Caption = 'UPH'
-    TabOrder = 12
+    TabOrder = 11
     object Label34: TLabel
       Left = 88
       Top = 24
@@ -691,6 +672,24 @@ object frmMain: TfrmMain
       TabOrder = 0
       Text = '0'
     end
+  end
+  object radioPosOption: TRadioGroup
+    Left = 8
+    Top = 176
+    Width = 161
+    Height = 161
+    BiDiMode = bdLeftToRight
+    Caption = #25353#19979#28369#40736#24038#37749#26178
+    Color = clGradientActiveCaption
+    Items.Strings = (
+      #19981#21205#20316
+      #31227#21205#33267'Load Cell '#20301#32622
+      #31227#21205#33267'Laser '#19978#27169' '#20301#32622
+      #31227#21205#33267'Laser '#19979#27169' '#20301#32622
+      #20677#21855#21205#27492#27604#20363#38309)
+    ParentBiDiMode = False
+    ParentColor = False
+    TabOrder = 12
   end
   object MainMenu: TMainMenu
     Left = 286

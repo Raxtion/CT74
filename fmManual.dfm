@@ -1,10 +1,10 @@
 object frmManual: TfrmManual
-  Left = 554
-  Top = 63
+  Left = 530
+  Top = 32
   BorderStyle = bsDialog
   Caption = 'Manual Operation'
-  ClientHeight = 591
-  ClientWidth = 848
+  ClientHeight = 620
+  ClientWidth = 852
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
