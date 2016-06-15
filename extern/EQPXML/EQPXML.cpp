@@ -1074,7 +1074,6 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
                 if (bIsInputINstrList == false && strB != "")
                 {
                     g_IniFile.m_strHeadScals += (strB+"/");
-                    g_IniFile.AddLog("MachineFile08",13);
                     g_IniFile.MachineFile(false);
                 }
                 delete strList;
@@ -1098,7 +1097,6 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
                 if (bIsInputINstrList == false && strB != "")
                 {
                     g_IniFile.m_strModuleScals += (strB+"/");
-                    g_IniFile.AddLog("MachineFile09",13);
                     g_IniFile.MachineFile(false);
                 }
                 delete strList;

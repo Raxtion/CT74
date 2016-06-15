@@ -120,7 +120,6 @@ void __fastcall TfmProduct::btnScalModifyClick(TObject *Sender)
         {
             if (pbtn->Hint == "HeadScal") g_IniFile.m_strHeadScals += (pHeadScalModifyDlg->cmbSelectData->Text+"/");
             else if (pbtn->Hint == "ModuleScal") g_IniFile.m_strModuleScals += (pHeadScalModifyDlg->cmbSelectData->Text+"/");
-            g_IniFile.AddLog("MachineFile05",13);
             g_IniFile.MachineFile(false);
         }
 	}
@@ -140,7 +139,6 @@ void __fastcall TfmProduct::btnScalModifyClick(TObject *Sender)
         {
             if (pbtn->Hint == "HeadScal") ReplaceString(&g_IniFile.m_strHeadScals, pHeadScalModifyDlg->cmbSelectData->Items->Strings[pHeadScalModifyDlg->cmbSelectData->ItemIndex]+"/", "");
             else if (pbtn->Hint == "ModuleScal") ReplaceString(&g_IniFile.m_strModuleScals, pHeadScalModifyDlg->cmbSelectData->Items->Strings[pHeadScalModifyDlg->cmbSelectData->ItemIndex]+"/", "");
-            g_IniFile.AddLog("MachineFile06",13);
             g_IniFile.MachineFile(false);
         }
     }

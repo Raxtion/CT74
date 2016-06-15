@@ -66,7 +66,7 @@ void __fastcall TfrmManual::SpeedButton1Click(TObject *Sender)
         dPos[7]=0.0;
 
         dPos[8]=g_IniFile.m_dLamStop[1];
-        dPos[9]=g_IniFile.m_dLamVacHeight[1]-g_IniFile.m_dLamThirdHeight[1]-g_IniFile.m_dLamSecondHeight[1];
+        dPos[9]=g_IniFile.m_dLamHeight[1]-g_IniFile.m_dLamThirdHeight[1]-g_IniFile.m_dLamSecondHeight[1];
         dPos[10]=g_IniFile.m_dLamHeight[1];
         dPos[11]=0.0;
 

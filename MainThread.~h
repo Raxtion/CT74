@@ -24,7 +24,6 @@ protected:
 public:
 	std::list<AnsiString> m_listLog;
 	std::list<AnsiString> m_ActionLog;
-    std::list<AnsiString> m_listAutoCal;
 	int nThreadIndex[MAX_PROCESS];		//0:Inti 1:Start Measure
 	bool m_bRefresh;
 
@@ -41,6 +40,7 @@ public:
 	int m_nPassBoatCount0;                  //Counted how many Boats are finished (rare).
 	int m_nPassBoatCount1;                  //Counted how many Boats are finished (front).
 	bool m_bIsDoAutoCal[2];                 //Record for get into AutoCal. ([1]=fornt, [0]=rear)
+    bool m_bIsAutoCalUse;                   //Record for someone use AutoCal.
 	bool m_bIsManualFinish;                 //Record for Manual is finished then UP the btn.
 	int m_nIsFullHoming;                    //Record for Homing button should go fullhoming. (-1=normal, 1=true, 0=false, 2=cancel)
 	double m_dUnitPerHour1;                 //The result of UPH Front.

@@ -122,7 +122,7 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 		btnLaserUp1->Down || btnLaserUp0->Down ||
 		btnLaserDown1->Down || btnLaserDown0->Down)
 	{
-        MotorTest1->Enabled = false;
+		MotorTest1->Enabled = false;
         N10->Enabled = false;
 	}
 	else  SetPrivilege(m_nUserLevel);
@@ -232,8 +232,6 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 void __fastcall TfrmMain::N3Click(TObject *Sender)
 {
     if (!FileExists("C:\\Product_Data\\")) _mkdir("C:\\Product_Data\\");
-
-    g_IniFile.AddLog("MachineFile01",13);
 	g_IniFile.MachineFile(false);
 	g_IniFile.ProductFile(Caption.c_str(), false);
 
@@ -267,7 +265,6 @@ void __fastcall TfrmMain::N4Click(TObject *Sender)
         if (!FileExists("C:\\Product_Data\\")) _mkdir("C:\\Product_Data\\");
 		g_IniFile.m_strLastFileName = SaveDialog1->FileName;
 		Caption = SaveDialog1->FileName;
-        g_IniFile.AddLog("MachineFile02",13);
 		g_IniFile.MachineFile(false);
 		g_IniFile.ProductFile(SaveDialog1->FileName.c_str(), false);
 
@@ -854,7 +851,7 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
     ReadCaptionFile(pChoiceMotorDlg, g_IniFile.m_nLanguageMode);
 
     AnsiString sPath = g_IniFile.m_strApplicationPath;
-    sPath = StringReplace(sPath, "\\exe\\", "", TReplaceFlags());
+    sPath = StringReplace(sPath, "\\exe\\", "",TReplaceFlags());
 
 	while (pChoiceMotorDlg->ShowModal() != mrCancel)
 	{
@@ -1567,7 +1564,7 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
         else ShowMessage("請先執行機台原點復歸");
 		return;
 	}
-	else if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[0] || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[1])
+	else if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[1]+1 || g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[0]+1)
 	{
 		g_IniFile.m_nErrorCode = 69;
 		return;
@@ -1681,6 +1678,7 @@ void __fastcall TfrmMain::SetPrivilege(int nLevel)
         N11->Enabled = false;
         MotorTest1->Enabled = true;
         N10->Enabled = true;
+
 		break;
 	case 2:
 		N1->Enabled = true;
@@ -1882,6 +1880,16 @@ void __fastcall TfrmMain::SetAllDevice()
 
 	g_Balance.SetXY(g_IniFile.m_dLoadCellX[0], g_IniFile.m_dLoadCellX[1], g_IniFile.m_dLoadCellY[0], g_IniFile.m_dLoadCellY[1]);
 
+    if (g_IniFile.m_dLamPress[0] == 0)
+    {
+        g_DNPort1.ClearOutData();
+        g_DNPort1.WriteAllData();
+    }
+    if (g_IniFile.m_dLamPress[1] == 0)
+    {
+        g_DNPort0.ClearOutData();
+        g_DNPort0.WriteAllData();
+    }
 }
 //---------------------------------------------------------------------------
 
@@ -2211,7 +2219,6 @@ void __fastcall TfrmMain::CreateCaptionFile(TForm *pForm)
 
 void __fastcall TfrmMain::FormCreate(TObject *Sender)
 {
-    g_IniFile.AddLog("MachineFile03",13);
     g_IniFile.MachineFile(true);
 	Caption = g_IniFile.m_strLastFileName;
 	g_IniFile.ProductFile(g_IniFile.m_strLastFileName.c_str(), true);
@@ -2515,7 +2522,6 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 {
     if (FileExists(strFileName))
     {
-        g_IniFile.AddLog("MachineFile04",13);
         g_IniFile.MachineFile(true);
 
         //先清除比例閥資料等2秒
