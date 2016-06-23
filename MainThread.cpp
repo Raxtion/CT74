@@ -805,7 +805,8 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
             || (g_IniFile.m_nRailOption == 1 && m_bLamReady[1])
             || (g_IniFile.m_nRailOption == 2 && m_bLamReady[0]))
 		{
-			if (m_bLamReady[1] && !m_bIsDoAutoCal[1] && fabs(g_Motion.GetActualPos(AXIS_FL) - g_IniFile.m_dLamStop[1])<=1)
+			if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && m_bLamReady[1] && !m_bIsDoAutoCal[1]
+                && fabs(g_Motion.GetActualPos(AXIS_FL) - g_IniFile.m_dLamStop[1])<=1)
 			{
                 m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 前出料區Ready"));
 				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCFrontPos);
@@ -813,7 +814,8 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 				nLamEntry = DI::LamEntry1;
                 nThreadIndex++;
 			}
-			else if (m_bLamReady[0] && !m_bIsDoAutoCal[0] && fabs(g_Motion.GetActualPos(AXIS_RL) - g_IniFile.m_dLamStop[0])<=1)
+			else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bLamReady[0] && !m_bIsDoAutoCal[0]
+                && fabs(g_Motion.GetActualPos(AXIS_RL) - g_IniFile.m_dLamStop[0])<=1)
 			{
                 m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 後出料區Ready"));
 				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCRearPos);

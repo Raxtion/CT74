@@ -1086,12 +1086,14 @@ void __fastcall TfrmMain::N18Click(TObject *Sender)
 //Other
 void __fastcall TfrmMain::SpeedButton1Click(TObject *Sender)
 {
+    if (g_pMainThread->m_bIsAutoMode) return;
 	g_DIO.SetDO(DO::LoadCellValve, true);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TfrmMain::SpeedButton2Click(TObject *Sender)
 {
+    if (g_pMainThread->m_bIsAutoMode) return;
 	g_DIO.SetDO(DO::LoadCellValve, false);
 }
 //---------------------------------------------------------------------------

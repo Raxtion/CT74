@@ -1663,7 +1663,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			pDNPort->SetKg(nMoveIndex, dNewValue);
 			pDNPort->WriteAllData();
 
-			tm1MS.timeStart(g_IniFile.m_dPressCalTime * 1000);          //Stable Time
+			tm1MS.timeStart(g_IniFile.m_dPressCalTime * 1000);    //Stable Time
 			nThreadIndex++;
 		}
         else if (!g_DIO.ReadDOBit(DO::LoadCellValve))
