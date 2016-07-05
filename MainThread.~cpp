@@ -28,7 +28,7 @@ extern CPISODNM100 g_DNPort1;
 extern CTA5Serial g_Balance;
 extern CDeltaPLC g_ModBus;
 extern CEQPXML g_eqpXML;
-//extern CSensoLinkF911 g_F911ModBus;
+//extern CSensoLinkF911 g_F911ModBus; //RS485 used. and merge to DeltaPLC.
 
 bool g_bStopMainThread = false;
 
@@ -82,6 +82,9 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dDownLaserRealTime = 0.0;
     m_dFrontTempRealTime = 0.0;
     m_dRearTempRealTime = 0.0;
+    m_dForntPressloseRealTime = 0.0;
+    m_dRearPressloseRealTime = 0.0;
+    m_dSensoLinkF911RealTime = 0.0;
 
     m_dFirstLaserValueUp = 0.0;
     m_dFirstLaserValueDown = 0.0;
@@ -805,7 +808,8 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
             || (g_IniFile.m_nRailOption == 1 && m_bLamReady[1])
             || (g_IniFile.m_nRailOption == 2 && m_bLamReady[0]))
 		{
-			if (m_bLamReady[1] && !m_bIsDoAutoCal[1] && fabs(g_Motion.GetActualPos(AXIS_FL) - g_IniFile.m_dLamStop[1])<=1)
+			if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && m_bLamReady[1] && !m_bIsDoAutoCal[1]
+                && fabs(g_Motion.GetActualPos(AXIS_FL) - g_IniFile.m_dLamStop[1])<=1)
 			{
                 m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 前出料區Ready"));
 				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCFrontPos);
@@ -813,7 +817,8 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 				nLamEntry = DI::LamEntry1;
                 nThreadIndex++;
 			}
-			else if (m_bLamReady[0] && !m_bIsDoAutoCal[0] && fabs(g_Motion.GetActualPos(AXIS_RL) - g_IniFile.m_dLamStop[0])<=1)
+			else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bLamReady[0] && !m_bIsDoAutoCal[0]
+                && fabs(g_Motion.GetActualPos(AXIS_RL) - g_IniFile.m_dLamStop[0])<=1)
 			{
                 m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 後出料區Ready"));
 				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCRearPos);
@@ -1675,10 +1680,13 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	case 3:
 		if (tm1MS.timeUp())
 		{
-			//Get Load Cell Value
-			double dLoadCellValue = g_Balance.GetKg(1);            //Kg
+            //Get Load Cell Value
+            double dLoadCellValue = 0;
+			if (!g_IniFile.m_bIsUseF911)
+                dLoadCellValue = g_Balance.GetKg(1);            //Kg
+            else
+                dLoadCellValue = m_dSensoLinkF911RealTime;       //Kg
 
-            //double dLoadCellValue = g_F911ModBus.GetKg(1);       //Kg
 			m_listLog.push_back("重量=" + FormatFloat("0.00 Kg", dLoadCellValue));
 
 			if (m_bAutoRetry == false)

@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = 167
-  Top = 271
-  Width = 1364
-  Height = 641
+  Left = 45
+  Top = 264
+  Width = 1511
+  Height = 815
   Caption = 'frmMain'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -189,21 +189,21 @@ object frmMain: TfrmMain
   object Label6: TLabel
     Left = 1483
     Top = 40
-    Width = 28
+    Width = 24
     Height = 13
     Caption = #31684#22285
   end
   object Label10: TLabel
     Left = 1483
     Top = 96
-    Width = 56
+    Width = 48
     Height = 13
     Caption = #36215#22987#20301#32622
   end
   object Label11: TLabel
     Left = 1483
     Top = 149
-    Width = 56
+    Width = 48
     Height = 13
     Caption = #20597#28204#27425#25976
   end

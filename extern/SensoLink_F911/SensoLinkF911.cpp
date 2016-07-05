@@ -9,7 +9,7 @@
 //---------------------------------------------------------------------------
 
 #pragma package(smart_init)
-//CSensoLinkF911 g_F911ModBus(2);
+//CSensoLinkF911 g_F911ModBus(2); //RS485 used. and merge to DeltaPLC.
 //---------------------------------------------------------------------------
 __fastcall CSensoLinkF911::CSensoLinkF911(int nPort)
 {
@@ -32,6 +32,7 @@ __fastcall CSensoLinkF911::CSensoLinkF911(int nPort)
 
         if(nRes==-1) m_bInitOK=false;
         else m_bInitOK=true;
+        dTmpData = 0;
 
         m_bTerminated=true;
 }
@@ -439,6 +440,7 @@ double __fastcall CSensoLinkF911::GetKg(int nID)
     //__int16 Data=0;
     bool ret=ReadDWDDevice(nID, 0x0032, nData32);
 
+    dTmpData=(double)nData32*0.001;
     return (double)nData32*0.001;
 }
 

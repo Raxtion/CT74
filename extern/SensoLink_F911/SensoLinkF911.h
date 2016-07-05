@@ -24,6 +24,7 @@ private:
 
 public:
         bool m_bInitOK;
+        double dTmpData;
 public:
         unsigned char m_byteX[MAX_X_POINT/8];
         unsigned char m_byteY[MAX_Y_POINT/8];

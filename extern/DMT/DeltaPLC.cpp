@@ -33,7 +33,8 @@ __fastcall CDeltaPLC::CDeltaPLC(int nPort)
         if(nRes==-1) m_bInitOK=false;
         else m_bInitOK=true;
 
-        m_bTerminated=true;        
+        m_bTerminated=true;
+        dF911Data = 0.0;
 }
 //---------------------------------------------------------------------------
 __fastcall CDeltaPLC::~CDeltaPLC()
@@ -123,7 +124,7 @@ bool __fastcall CDeltaPLC::ReadWordDevice(int nID,unsigned __int16 nAddr,unsigne
 
        int nLen=RequestData(0, m_nComPort, nID, 3,Send,4);
 
-       if(nLen==-1) {m_bInitOK=false;return false;}
+       //if(nLen==-1) {m_bInitOK=false;return false;}
 
 
         /*
@@ -147,8 +148,8 @@ bool __fastcall CDeltaPLC::ReadWordDevice(int nID,unsigned __int16 nAddr,unsigne
        //memset(Data,0,nLength/8);
        nLen=ResponseData(0,m_nComPort, &nStation, &nFCode, Data);
 
-        if(nFCode!=3) {m_bInitOK=false;return false;}
-      if(nLen==-1) {m_bInitOK=false;return false;}
+        //if(nFCode!=3) {m_bInitOK=false;return false;}
+      //if(nLen==-1) {m_bInitOK=false;return false;}
 
       return true;
 }
@@ -593,3 +594,18 @@ double __fastcall CDeltaPLC::GetAnalogData(int nID,int nChannel)
         return dData;
 }
 
+//---------------------------------------------------------------------------
+void __fastcall CDeltaPLC::InitialZero(int nID)
+{
+    SetBitDevice(nID, 0x0000,true);
+}
+//---------------------------------------------------------------------------
+double __fastcall CDeltaPLC::GetKg(int nID)
+{
+    __int32 nData32=0;
+    //__int16 Data=0;
+    bool ret=ReadDWDDevice(nID, 0x0032, nData32);
+
+    dF911Data = (double)nData32*0.001;
+    return (double)nData32*0.001;
+}

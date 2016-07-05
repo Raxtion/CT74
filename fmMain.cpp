@@ -47,7 +47,7 @@ extern CPISODNM100 g_DNPort1;
 extern CDeltaPLC g_ModBus;
 extern CTA5Serial g_Balance;
 extern CEQPXML g_eqpXML;
-//extern CSensoLinkF911 g_F911ModBus;
+//extern CSensoLinkF911 g_F911ModBus; //RS485 used. and merge to DeltaPLC.
 
 //CGetRealTimeValueThread.h start
 //---------------------------------------------------------------------------
@@ -79,20 +79,22 @@ void __fastcall CGetRealTimeValueThread::Execute()
 		if (g_bStopGetRealTimeValueThread) break;
         //--- renew Temperature and LaserValue
         g_ModBus.SetSV(1, g_IniFile.m_dLamTemp[0]);
-        ::Sleep(100);
+        ::Sleep(10);
         g_ModBus.SetSV(2, g_IniFile.m_dLamTemp[1]);
-        ::Sleep(100);
+        ::Sleep(10);
         g_pMainThread->m_dRearTempRealTime = g_ModBus.GetPV(1);
-        ::Sleep(100);
+        ::Sleep(10);
         g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
-        ::Sleep(100);
+        ::Sleep(10);
         g_pMainThread->m_dDownLaserRealTime = g_ModBus.GetAnalogData(3, 0);
-        ::Sleep(100);
+        ::Sleep(10);
         g_pMainThread->m_dUpperLaserRealTime = g_ModBus.GetAnalogData(3, 1);
-        ::Sleep(100);
+        ::Sleep(10);
         g_pMainThread->m_dForntPressloseRealTime = g_ModBus.GetAnalogData(3, 2);
-        ::Sleep(100);
+        ::Sleep(10);
         g_pMainThread->m_dRearPressloseRealTime = g_ModBus.GetAnalogData(3, 3);
+        ::Sleep(10);
+        if (g_IniFile.m_bIsUseF911) g_pMainThread->m_dSensoLinkF911RealTime = g_ModBus.GetKg(4);
 
         ::Sleep(100);
     }
@@ -338,6 +340,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dLeftGassLeakylimit, pMachineDlg->m_dLeftGassLeakylimit);
         DDX_Float(bRead, g_IniFile.m_dRightGassLeakylimit, pMachineDlg->m_dRightGassLeakylimit);
     DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
+    DDX_Check(bRead, g_IniFile.m_bIsUseF911, pMachineDlg->m_bIsUseF911);
     DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
     DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
     DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pMachineDlg->m_dLamSecondKeepTime);
@@ -371,6 +374,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dLeftGassLeakylimit, pMachineDlg->m_dLeftGassLeakylimit);
         DDX_Float(bRead, g_IniFile.m_dRightGassLeakylimit, pMachineDlg->m_dRightGassLeakylimit);
         DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
+        DDX_Check(bRead, g_IniFile.m_bIsUseF911, pMachineDlg->m_bIsUseF911);
         DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
         DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
         DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pMachineDlg->m_dLamSecondKeepTime);
@@ -1118,13 +1122,13 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
         
 	RefreshImage();
 
-    //Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(1)) + "度";
-    //Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_ModBus.GetPV(2)) + "度";
+    Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "度";
+    Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "度";
 
 	if (checkMonitor->Checked)
 	{
-        Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_Balance.GetKg(1));
-        //Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_F911ModBus.GetKg(1));
+        if (!g_IniFile.m_bIsUseF911) Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_Balance.GetKg(1));
+        else Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_pMainThread->m_dSensoLinkF911RealTime);
 		Label8->Caption = "Laser(上):" + FormatFloat("0.00", g_pMainThread->m_dUpperLaserRealTime) + "mm";
 		Label9->Caption = "Laser(下):" + FormatFloat("0.00", g_pMainThread->m_dDownLaserRealTime) + "mm";
 	}
@@ -1883,7 +1887,7 @@ void __fastcall TfrmMain::SetAllDevice()
 	}
 	g_DNPort1.WriteAllData();
 
-	g_Balance.SetXY(g_IniFile.m_dLoadCellX[0], g_IniFile.m_dLoadCellX[1], g_IniFile.m_dLoadCellY[0], g_IniFile.m_dLoadCellY[1]);
+	if (!g_IniFile.m_bIsUseF911) g_Balance.SetXY(g_IniFile.m_dLoadCellX[0], g_IniFile.m_dLoadCellX[1], g_IniFile.m_dLoadCellY[0], g_IniFile.m_dLoadCellY[1]);
 
     if (g_IniFile.m_dLamPress[0] == 0)
     {
@@ -2403,8 +2407,11 @@ void __fastcall TfrmMain::RenewRadioGroup(bool bInit)
             //Control Check
             if (g_ModBus.m_bInitOK) AddList("Temp Control Start Success");
 	        else AddList("Temp Control Start Failed");
-	        if (g_Balance.m_bInitOK) AddList("LoadCell Control Start Success");
-	        else AddList("LoadCell Control Start Failed");
+            if (!g_IniFile.m_bIsUseF911)
+            {
+                if (g_Balance.m_bInitOK) AddList("LoadCell Control Start Success");
+	            else AddList("LoadCell Control Start Failed");
+            }
         }
     }
     else
@@ -2427,10 +2434,11 @@ void __fastcall TfrmMain::RenewRadioGroup(bool bInit)
 			//Control Check
 	        if (g_ModBus.m_bInitOK) AddList("溫控器通訊埠開啟成功");
 	        else AddList("溫控器通訊埠開啟失敗");
-	        if (g_Balance.m_bInitOK) AddList("荷重元通訊埠開啟成功");
-	        else AddList("荷重元通訊埠開啟失敗");
-            //if (g_F911ModBus.m_bInitOK) AddList("F911通訊埠開啟成功");
-	        //else AddList("F911通訊埠開啟失敗");
+            if (!g_IniFile.m_bIsUseF911)
+            {
+	            if (g_Balance.m_bInitOK) AddList("荷重元通訊埠開啟成功");
+	            else AddList("荷重元通訊埠開啟失敗");
+            }
         }
     }
 

@@ -50,6 +50,7 @@ public:
   double m_dLeftGassLeakylimit;
   double m_dRightGassLeakylimit;
   bool m_bForceEject;
+  bool m_bIsUseF911;
   bool m_bIsUseCIM;
   bool m_bIsLamSecondStop;
   int m_nLanguage;

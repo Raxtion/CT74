@@ -87,9 +87,10 @@ public:
 	double m_dRearTempRealTime;             //The result of g_ModBus get RearTemp in UI
     double m_dForntPressloseRealTime;       //The result of g_ModBus get FrontPresslose in UI
     double m_dRearPressloseRealTime;        //The result of g_ModBus get RearPresslose in UI
+    double m_dSensoLinkF911RealTime;        //The result of g_ModBus get F911 LoadCell data in UI
 
-        //Laser Keep Data for Deal with Error Value
-        double m_dLaserKeepValue;
+    //Laser Keep Data for Deal with Error Value
+    double m_dLaserKeepValue;
 
 	//Thread HandShake
 	bool m_bLamReady[2];            //1: front 0:Rear

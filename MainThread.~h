@@ -87,6 +87,7 @@ public:
 	double m_dRearTempRealTime;             //The result of g_ModBus get RearTemp in UI
     double m_dForntPressloseRealTime;       //The result of g_ModBus get FrontPresslose in UI
     double m_dRearPressloseRealTime;        //The result of g_ModBus get RearPresslose in UI
+    double m_dSensoLinkF911RealTime;        //The result of g_ModBus get F911 LoadCell data in UI
 
         //Laser Keep Data for Deal with Error Value
         double m_dLaserKeepValue;

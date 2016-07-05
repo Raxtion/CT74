@@ -93,6 +93,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLamSecondKeepTime",m_dLamSecondKeepTime,0);
 
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bForceEject",m_bForceEject,false);
+  DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseF911",m_bIsUseF911,true);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseCIM",m_bIsUseCIM,false);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsLamSecondStop",m_bIsLamSecondStop,false);
 

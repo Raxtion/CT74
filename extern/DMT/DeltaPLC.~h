@@ -34,7 +34,7 @@ class CDeltaPLC
 {
 private:
         int m_nComPort;
-
+        double dF911Data;
 public:
         bool m_bInitOK;
 public:
@@ -80,8 +80,11 @@ public:
 
         //---For ICPDAS M-7017Z
         double __fastcall GetAnalogData(int nID,int nChannel);
-        
-};
+
+        //---For F911
+        double __fastcall GetKg(int nID);
+        void __fastcall InitialZero(int nID);
+};                      
 
 //---------------------------------------------------------------------------
 #endif

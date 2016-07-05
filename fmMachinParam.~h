@@ -111,6 +111,7 @@ __published:	// IDE-managed Components
     TStaticText *StaticText40;
     TEdit *m_dLamSecondKeepTime;
     TStaticText *StaticText41;
+    TCheckBox *CheckBox1;
     void __fastcall m_bIsUseCIMClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations

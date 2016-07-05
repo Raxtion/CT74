@@ -1,7 +1,7 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 510
-  Top = 115
-  Width = 587
+  Left = 365
+  Top = 17
+  Width = 597
   Height = 627
   Caption = #27231#21488#21443#25976
   Color = 13430215
@@ -535,7 +535,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object StaticText16: TStaticText
     Left = 242
-    Top = 246
+    Top = 270
     Width = 105
     Height = 22
     Alignment = taRightJustify
@@ -551,7 +551,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_dSafePos: TEdit
     Left = 355
-    Top = 245
+    Top = 269
     Width = 65
     Height = 24
     TabOrder = 4
@@ -559,7 +559,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object StaticText17: TStaticText
     Left = 428
-    Top = 246
+    Top = 270
     Width = 65
     Height = 22
     AutoSize = False
@@ -881,8 +881,8 @@ object frmMachineParam: TfrmMachineParam
       'English')
   end
   object m_bIsUseCIM: TCheckBox
-    Left = 400
-    Top = 213
+    Left = 248
+    Top = 237
     Width = 97
     Height = 25
     Caption = #21855#29992'CIM'
@@ -891,7 +891,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object StaticText35: TStaticText
     Left = 241
-    Top = 280
+    Top = 304
     Width = 88
     Height = 22
     Alignment = taRightJustify
@@ -909,12 +909,12 @@ object frmMachineParam: TfrmMachineParam
     Left = 24
     Top = 202
     Width = 209
-    Height = 103
+    Height = 127
     Caption = #35686#31034#35492#24046
     TabOrder = 12
     object StaticText32: TStaticText
       Left = 11
-      Top = 46
+      Top = 58
       Width = 73
       Height = 22
       Alignment = taRightJustify
@@ -930,7 +930,7 @@ object frmMachineParam: TfrmMachineParam
     end
     object m_dUpperLaserAlarm: TEdit
       Left = 88
-      Top = 44
+      Top = 56
       Width = 65
       Height = 24
       TabOrder = 1
@@ -938,7 +938,7 @@ object frmMachineParam: TfrmMachineParam
     end
     object StaticText33: TStaticText
       Left = 11
-      Top = 73
+      Top = 93
       Width = 73
       Height = 22
       Alignment = taRightJustify
@@ -954,7 +954,7 @@ object frmMachineParam: TfrmMachineParam
     end
     object m_dDownLaserAlarm: TEdit
       Left = 88
-      Top = 71
+      Top = 91
       Width = 65
       Height = 24
       TabOrder = 3
@@ -962,7 +962,7 @@ object frmMachineParam: TfrmMachineParam
     end
     object StaticText34: TStaticText
       Left = 11
-      Top = 19
+      Top = 23
       Width = 73
       Height = 22
       Alignment = taRightJustify
@@ -978,7 +978,7 @@ object frmMachineParam: TfrmMachineParam
     end
     object m_dUpperTotalLaserAlarm: TEdit
       Left = 88
-      Top = 17
+      Top = 21
       Width = 65
       Height = 24
       TabOrder = 5
@@ -986,7 +986,7 @@ object frmMachineParam: TfrmMachineParam
     end
     object StaticText37: TStaticText
       Left = 160
-      Top = 18
+      Top = 22
       Width = 41
       Height = 22
       AutoSize = False
@@ -1001,7 +1001,7 @@ object frmMachineParam: TfrmMachineParam
     end
     object StaticText38: TStaticText
       Left = 160
-      Top = 44
+      Top = 56
       Width = 41
       Height = 22
       AutoSize = False
@@ -1016,7 +1016,7 @@ object frmMachineParam: TfrmMachineParam
     end
     object StaticText39: TStaticText
       Left = 160
-      Top = 70
+      Top = 90
       Width = 41
       Height = 22
       AutoSize = False
@@ -1032,7 +1032,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_dLeftGassLeakylimit: TEdit
     Left = 335
-    Top = 279
+    Top = 303
     Width = 65
     Height = 24
     TabOrder = 13
@@ -1040,15 +1040,15 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_dRightGassLeakylimit: TEdit
     Left = 504
-    Top = 277
+    Top = 301
     Width = 65
     Height = 24
     TabOrder = 14
     Text = 'm_dUpperLaserAlarm'
   end
   object m_bForceEject: TCheckBox
-    Left = 488
-    Top = 213
+    Left = 352
+    Top = 237
     Width = 89
     Height = 25
     Caption = #24375#21046#25490#38500
@@ -1056,7 +1056,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object StaticText36: TStaticText
     Left = 409
-    Top = 280
+    Top = 304
     Width = 88
     Height = 22
     Alignment = taRightJustify
@@ -1072,9 +1072,9 @@ object frmMachineParam: TfrmMachineParam
   end
   object GroupBox5: TGroupBox
     Left = 24
-    Top = 308
+    Top = 336
     Width = 537
-    Height = 81
+    Height = 53
     Caption = #22739#21512#36984#38917
     TabOrder = 16
     object m_bIsLamSecondStop: TCheckBox
@@ -1086,8 +1086,8 @@ object frmMachineParam: TfrmMachineParam
       TabOrder = 0
     end
     object StaticText40: TStaticText
-      Left = 25
-      Top = 46
+      Left = 193
+      Top = 14
       Width = 160
       Height = 22
       Alignment = taRightJustify
@@ -1102,16 +1102,16 @@ object frmMachineParam: TfrmMachineParam
       TabOrder = 1
     end
     object m_dLamSecondKeepTime: TEdit
-      Left = 200
-      Top = 44
+      Left = 368
+      Top = 12
       Width = 65
       Height = 24
       TabOrder = 2
       Text = 'm_dUpperLaserAlarm'
     end
     object StaticText41: TStaticText
-      Left = 280
-      Top = 46
+      Left = 448
+      Top = 14
       Width = 41
       Height = 22
       AutoSize = False
@@ -1124,5 +1124,14 @@ object frmMachineParam: TfrmMachineParam
       ParentColor = False
       TabOrder = 3
     end
+  end
+  object m_bIsUseF911: TCheckBox
+    Left = 456
+    Top = 237
+    Width = 97
+    Height = 25
+    Caption = #20351#29992'F911'
+    TabOrder = 17
+    OnClick = m_bIsUseCIMClick
   end
 end

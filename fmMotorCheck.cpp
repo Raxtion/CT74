@@ -23,7 +23,7 @@ __fastcall TfrmMotorCheck::TfrmMotorCheck(TComponent* Owner)
 {
     m_nActiveAxis=0;
     m_nMoveMode=0;
-    m_nSpeedMode=1;
+    m_nSpeedMode=3;
 }
 //---------------------------------------------------------------------------
 

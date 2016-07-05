@@ -28,7 +28,7 @@ extern CPISODNM100 g_DNPort1;
 extern CTA5Serial g_Balance;
 extern CDeltaPLC g_ModBus;
 extern CEQPXML g_eqpXML;
-//extern CSensoLinkF911 g_F911ModBus;
+//extern CSensoLinkF911 g_F911ModBus; //RS485 used. and merge to DeltaPLC.
 
 bool g_bStopMainThread = false;
 
@@ -82,6 +82,9 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dDownLaserRealTime = 0.0;
     m_dFrontTempRealTime = 0.0;
     m_dRearTempRealTime = 0.0;
+    m_dForntPressloseRealTime = 0.0;
+    m_dRearPressloseRealTime = 0.0;
+    m_dSensoLinkF911RealTime = 0.0;
 
     m_dFirstLaserValueUp = 0.0;
     m_dFirstLaserValueDown = 0.0;
@@ -1677,10 +1680,13 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 	case 3:
 		if (tm1MS.timeUp())
 		{
-			//Get Load Cell Value
-			double dLoadCellValue = g_Balance.GetKg(1);            //Kg
+            //Get Load Cell Value
+            double dLoadCellValue = 0;
+			if (!g_IniFile.m_bIsUseF911)
+                dLoadCellValue = g_Balance.GetKg(1);            //Kg
+            else
+                dLoadCellValue = m_dSensoLinkF911RealTime;       //Kg
 
-            //double dLoadCellValue = g_F911ModBus.GetKg(1);       //Kg
 			m_listLog.push_back("­«¶q=" + FormatFloat("0.00 Kg", dLoadCellValue));
 
 			if (m_bAutoRetry == false)
