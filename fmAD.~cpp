@@ -35,8 +35,8 @@ void __fastcall TfrmAD::Timer1Timer(TObject *Sender)
         }
         else
         {
-            Label2->Caption="Wiight:"+FormatFloat("0.000",g_ModBus.dTmpData)+" Kg";
-            Label1->Caption=g_ModBus.dTmpData;
+            Label2->Caption="Wiight:"+FormatFloat("0.000",g_ModBus.dF911Data)+" Kg";
+            Label1->Caption=g_ModBus.dF911Data;
         }
 
         Timer1->Enabled=true;
@@ -53,6 +53,7 @@ void __fastcall TfrmAD::SpeedButton1Click(TObject *Sender)
 
 void __fastcall TfrmAD::SpeedButton2Click(TObject *Sender)
 {
+        if (g_IniFile.m_bIsUseF911) if(Application->MessageBox("使用F911重量顯示器 無法在此校正荷重元 請於F911上操作", "Look", MB_OKCANCEL)==IDCANCEL) return;
         if(Application->MessageBox("請於荷重元上放置指定砝碼然後按下確定", "Look", MB_OKCANCEL)==IDCANCEL) return;
         
         double dWeight=editWeight->Text.ToDouble();      //g

@@ -53,6 +53,7 @@ void __fastcall TfrmAD::SpeedButton1Click(TObject *Sender)
 
 void __fastcall TfrmAD::SpeedButton2Click(TObject *Sender)
 {
+        if (g_IniFile.m_bIsUseF911) {Application->MessageBoxA("使用F911重量顯示器 無法在此校正荷重元 請於F911上操作","Confirm",MB_OK); return;}
         if(Application->MessageBox("請於荷重元上放置指定砝碼然後按下確定", "Look", MB_OKCANCEL)==IDCANCEL) return;
         
         double dWeight=editWeight->Text.ToDouble();      //g

@@ -79,24 +79,24 @@ void __fastcall CGetRealTimeValueThread::Execute()
 		if (g_bStopGetRealTimeValueThread) break;
         //--- renew Temperature and LaserValue
         g_ModBus.SetSV(1, g_IniFile.m_dLamTemp[0]);
-        ::Sleep(10);
+        ::Sleep(30);
         g_ModBus.SetSV(2, g_IniFile.m_dLamTemp[1]);
-        ::Sleep(10);
+        ::Sleep(30);
         g_pMainThread->m_dRearTempRealTime = g_ModBus.GetPV(1);
-        ::Sleep(10);
+        ::Sleep(30);
         g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
-        ::Sleep(10);
+        ::Sleep(30);
         g_pMainThread->m_dDownLaserRealTime = g_ModBus.GetAnalogData(3, 0);
-        ::Sleep(10);
+        ::Sleep(30);
         g_pMainThread->m_dUpperLaserRealTime = g_ModBus.GetAnalogData(3, 1);
-        ::Sleep(10);
+        ::Sleep(30);
         g_pMainThread->m_dForntPressloseRealTime = g_ModBus.GetAnalogData(3, 2);
-        ::Sleep(10);
+        ::Sleep(30);
         g_pMainThread->m_dRearPressloseRealTime = g_ModBus.GetAnalogData(3, 3);
-        ::Sleep(10);
+        ::Sleep(30);
         if (g_IniFile.m_bIsUseF911) g_pMainThread->m_dSensoLinkF911RealTime = g_ModBus.GetKg(4);
 
-        ::Sleep(10);
+        ::Sleep(100);
     }
 }
 //---------------------------------------------------------------------------
