@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 66
-  Top = 540
+  Left = 24
+  Top = 25
   Width = 1511
   Height = 815
   Caption = 'frmMain'
@@ -802,7 +802,7 @@ object frmMain: TfrmMain
   end
   object timerPressure: TTimer
     Enabled = False
-    Interval = 500
+    Interval = 200
     OnTimer = timerPressureTimer
     Left = 254
     Top = 296
@@ -831,16 +831,10 @@ object frmMain: TfrmMain
     Left = 256
     Top = 328
   end
-  object timerDIOStartAgain: TTimer
-    Interval = 800
-    OnTimer = timerDIOStartAgainTimer
-    Left = 352
-    Top = 296
-  end
   object timerRenewPainBox: TTimer
     Interval = 300
     OnTimer = timerRenewPainBoxTimer
-    Left = 384
+    Left = 352
     Top = 296
   end
 end

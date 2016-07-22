@@ -113,7 +113,6 @@ __published:	// IDE-managed Components
     TTimer *Timer3;
     TServerSocket *ServerCIM;
     TShape *Shape3;
-    TTimer *timerDIOStartAgain;
     TMenuItem *N15;
     TTimer *timerRenewPainBox;
     TMenuItem *N16;
@@ -166,7 +165,6 @@ __published:	// IDE-managed Components
           int &ErrorCode);
     void __fastcall ServerCIMClientRead(TObject *Sender,
           TCustomWinSocket *Socket);
-    void __fastcall timerDIOStartAgainTimer(TObject *Sender);
     void __fastcall N15Click(TObject *Sender);
     void __fastcall timerRenewPainBoxTimer(TObject *Sender);
     void __fastcall N17Click(TObject *Sender);

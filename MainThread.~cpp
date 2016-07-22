@@ -101,7 +101,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 void __fastcall CMainThread::Execute()
 {
 	//---- Place thread code here ----
-	C_GetTime tmReset, tmAlarm, tmResetLamp;
+	C_GetTime tmReset, tmAlarm, tmResetLamp, tmAgain;
 
 	g_bStopMainThread = false;
 	m_bIsDoAutoCal[0] = false;
@@ -126,6 +126,14 @@ void __fastcall CMainThread::Execute()
 		m_bIsAutoMode = m_bIsAutoMode;
 		g_Motion.m_bAutoMode = m_bIsAutoMode;
 
+        //---Start Again
+        if (tmAgain.timeUp())
+        {
+            m_bStartAgain = true;
+            m_bStopAgain = true;
+            m_bResetAgain = true;
+            tmAgain.timeStart(800);
+        }
 
 		//---Start Homing
 		if (g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset) tmReset.timeStart(3000);
@@ -259,6 +267,8 @@ void __fastcall CMainThread::Execute()
             if (m_bResetAgain == true && m_bIsHomeDone) m_listLog.push_back("¾÷¥x­«¸m");
 			g_DIO.SetDO(DO::RedLamp, false);
 			g_DIO.SetDO(DO::Buzzer, false);
+            g_Motion.ServoOn(AXIS_FL, true);
+            g_Motion.ServoOn(AXIS_RL, true);
             m_bResetAgain = false;
 		}
 
@@ -270,6 +280,14 @@ void __fastcall CMainThread::Execute()
 			bAlarmLamp = !bAlarmLamp;
 			tmAlarm.timeStart(500);
 		}
+
+        //---Safe Protect
+        if (g_IniFile.m_nErrorCode == 35)
+        {
+
+            g_Motion.ServoOn(AXIS_FL, false);
+            g_Motion.ServoOn(AXIS_RL, false);
+        }
 
 		//--Stop Auto
 		if ((g_eqpXML.m_CIMStatus.ToInt()!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)

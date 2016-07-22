@@ -2607,13 +2607,6 @@ void __fastcall TfrmMain::ServerCIMClientRead(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
-{
-    g_pMainThread->m_bStartAgain = true;
-    g_pMainThread->m_bStopAgain = true;
-    g_pMainThread->m_bResetAgain = true;
-}
-//---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 //TfmProduct Check Param Change and Write to Log

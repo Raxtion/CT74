@@ -1267,6 +1267,14 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         g_pMainThread->m_bStopLC = true;
     }
 
+    //---
+    if (g_IniFile.m_nErrorCode == 35)
+    {
+
+        g_Motion.ServoOn(AXIS_FL, false);
+        g_Motion.ServoOn(AXIS_RL, false);
+    }
+
     //--Add ActionLog---
 	if (g_pMainThread->m_ActionLog.size()>0)
 	{
@@ -2607,13 +2615,6 @@ void __fastcall TfrmMain::ServerCIMClientRead(TObject *Sender,
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TfrmMain::timerDIOStartAgainTimer(TObject *Sender)
-{
-    g_pMainThread->m_bStartAgain = true;
-    g_pMainThread->m_bStopAgain = true;
-    g_pMainThread->m_bResetAgain = true;
-}
-//---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 //TfmProduct Check Param Change and Write to Log
