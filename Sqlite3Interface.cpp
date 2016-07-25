@@ -88,8 +88,8 @@ void __fastcall SQLITE3IF::open(int DBtype)
 void __fastcall SQLITE3IF::free()
 {
     /* 釋放 */
-    //目的是釋放記憶體,所以不只是釋放來自table的result
-    //sqlite3_free_table(result);
+    //目的是釋放記憶體,也要釋放來自table的result
+    sqlite3_free_table(result);
     sqlite3_free(result);
     sqlite3_free(errMsg);
 }

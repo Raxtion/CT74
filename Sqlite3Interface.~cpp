@@ -89,7 +89,7 @@ void __fastcall SQLITE3IF::free()
 {
     /* 釋放 */
     //目的是釋放記憶體,所以不只是釋放來自table的result
-    //sqlite3_free_table(result);
+    sqlite3_free_table(result);
     sqlite3_free(result);
     sqlite3_free(errMsg);
 }
@@ -151,6 +151,28 @@ void __fastcall SQLITE3IF::insertAction(AnsiString Action)
     AnsiString insertsql = "INSERT INTO C74Log VALUES( "+strLastrowid
                                                     +" ,'"+strDateTime
                                                     +"','"+Action+"');";
+    /* 新增一筆資料 */
+    sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
+    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+
+    unique_id += 1;
+}
+
+//---------------------------------------------------------------------------
+void __fastcall SQLITE3IF::insertChange(AnsiString Change)
+{
+    AnsiString strDateTime;
+    time_t timer = time(NULL);
+    struct tm *tblock = localtime(&timer);
+    strDateTime.sprintf("[%4d:%02d:%02d:%2d:%02d:%02d]",
+        tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday
+        ,tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+
+    AnsiString strLastrowid = IntToStr(unique_id);
+
+    AnsiString insertsql = "INSERT INTO C74Log VALUES( "+strLastrowid
+                                                    +" ,'"+strDateTime
+                                                    +"','"+Change+"');";
     /* 新增一筆資料 */
     sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
     if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}

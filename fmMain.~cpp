@@ -1267,14 +1267,6 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         g_pMainThread->m_bStopLC = true;
     }
 
-    //---
-    if (g_IniFile.m_nErrorCode == 35)
-    {
-
-        g_Motion.ServoOn(AXIS_FL, false);
-        g_Motion.ServoOn(AXIS_RL, false);
-    }
-
     //--Add ActionLog---
 	if (g_pMainThread->m_ActionLog.size()>0)
 	{
@@ -1409,12 +1401,18 @@ void __fastcall TfrmMain::Timer3Timer(TObject *Sender)
     strNow.sprintf("%04d_%02d_%02d",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
     if (strNow != m_strDate)
     {
+        g_TempLog.free();
+        g_ActionLog.free();
+        g_ChangeLog.free();
         g_TempLog.close();
         g_ActionLog.close();
         g_ChangeLog.close();
         g_TempLog.open(0);
         g_ActionLog.open(1);
         g_ChangeLog.open(3);
+        time_t timer = time(NULL);
+        struct tm *tblock = localtime(&timer);
+        m_strDate.sprintf("%04d_%02d_%02d",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
     }
 
     //--Add tempLog---

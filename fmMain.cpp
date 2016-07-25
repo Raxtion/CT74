@@ -1401,12 +1401,19 @@ void __fastcall TfrmMain::Timer3Timer(TObject *Sender)
     strNow.sprintf("%04d_%02d_%02d",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
     if (strNow != m_strDate)
     {
+        g_TempLog.free();
+        g_ActionLog.free();
+        g_ChangeLog.free();
         g_TempLog.close();
         g_ActionLog.close();
         g_ChangeLog.close();
         g_TempLog.open(0);
         g_ActionLog.open(1);
         g_ChangeLog.open(3);
+        m_strDate = "";
+        time_t timer = time(NULL);
+        struct tm *tblock = localtime(&timer);
+        m_strDate.sprintf("%04d_%02d_%02d",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
     }
 
     //--Add tempLog---

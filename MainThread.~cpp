@@ -245,8 +245,8 @@ void __fastcall CMainThread::Execute()
 			g_Motion.Stop(1);
 			g_Motion.Stop(2);
 			g_Motion.Stop(3);
-			//g_Motion.Stop(4);
-			//g_Motion.Stop(5);
+			g_Motion.Stop(4);
+			g_Motion.Stop(5);
 			g_Motion.Stop(6);
 			g_Motion.Stop(7);
 
@@ -267,8 +267,6 @@ void __fastcall CMainThread::Execute()
             if (m_bResetAgain == true && m_bIsHomeDone) m_listLog.push_back("機台重置");
 			g_DIO.SetDO(DO::RedLamp, false);
 			g_DIO.SetDO(DO::Buzzer, false);
-            g_Motion.ServoOn(AXIS_FL, true);
-            g_Motion.ServoOn(AXIS_RL, true);
             m_bResetAgain = false;
 		}
 
@@ -281,14 +279,6 @@ void __fastcall CMainThread::Execute()
 			tmAlarm.timeStart(500);
 		}
 
-        //---Safe Protect
-        if (g_IniFile.m_nErrorCode == 35)
-        {
-
-            g_Motion.ServoOn(AXIS_FL, false);
-            g_Motion.ServoOn(AXIS_RL, false);
-        }
-
 		//--Stop Auto
 		if ((g_eqpXML.m_CIMStatus.ToInt()!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
 		{
@@ -296,8 +286,8 @@ void __fastcall CMainThread::Execute()
             m_bInitalAgain = true;
 			SetManualSpeed();
 
-			//g_Motion.Stop(AXIS_FL);
-			//g_Motion.Stop(AXIS_RL);
+			g_Motion.Stop(AXIS_FL);
+			g_Motion.Stop(AXIS_RL);
 			g_DIO.SetDO(DO::LCMotorStart, false);
 			g_DIO.SetDO(DO::LamMotorStart1, false);
 			g_DIO.SetDO(DO::LamMotorStart2, false);
@@ -381,6 +371,12 @@ void __fastcall CMainThread::Execute()
 					DoLamination(false, nThreadIndex[3]);
 					DoEject(false, nThreadIndex[5]);
 			}
+
+            //Non Stop Process when Stop  //20160722 Need Test for Safe Protect
+            if (m_bStartLamSub[1] && m_bIsHomeDone) DoLamSub(true, nThreadIndex[13]);
+		    if (m_bStartLamSub[0] && m_bIsHomeDone) DoLamSub(false, nThreadIndex[12]);
+            if (m_bIsDoAutoCal[1] && m_bIsHomeDone) DoAutoCal(true, nThreadIndex[14]);
+            if (m_bIsDoAutoCal[0] && m_bIsHomeDone) DoAutoCal(false, nThreadIndex[15]);
 
 		}
 		//---Manual Mode
@@ -466,8 +462,8 @@ void __fastcall CMainThread::Execute()
                 //g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
                 //g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
                 g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
-                //g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
-                //g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
+                g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //20160722 Need Test for Safe Protect//由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
+                g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
                 ::Sleep(300);
                 g_Motion.WaitMotionDone(AXIS_X, 30000);
                 g_Motion.WaitMotionDone(AXIS_Y, 30000);
@@ -500,13 +496,6 @@ void __fastcall CMainThread::Execute()
 				tmResetLamp.timeStart(500);
 			}
 		}
-
-		//Non Stop Process when Stop
-		if (m_bStartLamSub[1] && m_bIsHomeDone) DoLamSub(true, nThreadIndex[13]);
-		if (m_bStartLamSub[0] && m_bIsHomeDone) DoLamSub(false, nThreadIndex[12]);
-        if (m_bIsDoAutoCal[1] && m_bIsHomeDone) DoAutoCal(true, nThreadIndex[14]);
-        if (m_bIsDoAutoCal[0] && m_bIsHomeDone) DoAutoCal(false, nThreadIndex[15]);
-
 
 		::Sleep(10);
 	}
