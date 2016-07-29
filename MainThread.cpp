@@ -468,8 +468,8 @@ void __fastcall CMainThread::Execute()
                 g_Motion.WaitMotionDone(AXIS_X, 30000);
                 g_Motion.WaitMotionDone(AXIS_Y, 30000);
                 g_Motion.WaitMotionDone(AXIS_LC, 30000);
-                g_Motion.WaitMotionDone(AXIS_FL, 30000);
-                g_Motion.WaitMotionDone(AXIS_RL, 30000);
+                //g_Motion.WaitMotionDone(AXIS_FL, 30000);
+                //g_Motion.WaitMotionDone(AXIS_RL, 30000);
 
                 SetWorkSpeed();
 

@@ -468,8 +468,8 @@ void __fastcall CMainThread::Execute()
                 g_Motion.WaitMotionDone(AXIS_X, 30000);
                 g_Motion.WaitMotionDone(AXIS_Y, 30000);
                 g_Motion.WaitMotionDone(AXIS_LC, 30000);
-                g_Motion.WaitMotionDone(AXIS_FL, 30000);
-                g_Motion.WaitMotionDone(AXIS_RL, 30000);
+                //g_Motion.WaitMotionDone(AXIS_FL, 30000);
+                //g_Motion.WaitMotionDone(AXIS_RL, 30000);
 
                 SetWorkSpeed();
 
@@ -1507,7 +1507,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 			tm1MS->timeStart(10000);
 			nThreadIndex++;
 		}
-		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 67 : g_IniFile.m_nErrorCode = 66;
+		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 66 : g_IniFile.m_nErrorCode = 67;
 		break;
 	case 6:
 		if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
@@ -1520,7 +1520,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
             g_DIO.SetDO(nEjectMotorStart, true);
 			tm1MS->timeStart(10000);
         }
-		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 67 : g_IniFile.m_nErrorCode = 66;
+		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 66 : g_IniFile.m_nErrorCode = 67;
 		break;
     case 7:
         if (tm1MS->timeUp())
