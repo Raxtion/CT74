@@ -1,8 +1,8 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 365
-  Top = 17
+  Left = 45
+  Top = 141
   Width = 597
-  Height = 627
+  Height = 574
   Caption = #27231#21488#21443#25976
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -23,7 +23,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object BitBtn1: TBitBtn
     Left = 80
-    Top = 544
+    Top = 488
     Width = 121
     Height = 41
     TabOrder = 0
@@ -31,7 +31,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object BitBtn2: TBitBtn
     Left = 368
-    Top = 544
+    Top = 488
     Width = 129
     Height = 41
     TabOrder = 1
@@ -574,7 +574,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object GroupBox2: TGroupBox
     Left = 24
-    Top = 392
+    Top = 330
     Width = 297
     Height = 145
     Caption = 'Lane Changer'
@@ -699,7 +699,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object GroupBox3: TGroupBox
     Left = 328
-    Top = 392
+    Top = 330
     Width = 233
     Height = 145
     Caption = 'Lifters Soft Limit'
@@ -1070,68 +1070,13 @@ object frmMachineParam: TfrmMachineParam
     ParentColor = False
     TabOrder = 15
   end
-  object GroupBox5: TGroupBox
-    Left = 24
-    Top = 336
-    Width = 537
-    Height = 53
-    Caption = #22739#21512#36984#38917
-    TabOrder = 16
-    object m_bIsLamSecondStop: TCheckBox
-      Left = 24
-      Top = 16
-      Width = 145
-      Height = 25
-      Caption = #31532#20108#27573#22739#21512#20572#39376
-      TabOrder = 0
-    end
-    object StaticText40: TStaticText
-      Left = 193
-      Top = 14
-      Width = 160
-      Height = 22
-      Alignment = taRightJustify
-      AutoSize = False
-      BevelInner = bvSpace
-      BevelKind = bkSoft
-      BevelOuter = bvNone
-      BorderStyle = sbsSingle
-      Caption = #22739#21512#31532#20108#27573#32173#25345#26178#38291
-      Color = clSkyBlue
-      ParentColor = False
-      TabOrder = 1
-    end
-    object m_dLamSecondKeepTime: TEdit
-      Left = 368
-      Top = 12
-      Width = 65
-      Height = 24
-      TabOrder = 2
-      Text = 'm_dUpperLaserAlarm'
-    end
-    object StaticText41: TStaticText
-      Left = 448
-      Top = 14
-      Width = 41
-      Height = 22
-      AutoSize = False
-      BevelInner = bvSpace
-      BevelKind = bkSoft
-      BevelOuter = bvNone
-      BorderStyle = sbsSingle
-      Caption = 's'
-      Color = clSkyBlue
-      ParentColor = False
-      TabOrder = 3
-    end
-  end
   object m_bIsUseF911: TCheckBox
     Left = 456
     Top = 237
     Width = 97
     Height = 25
     Caption = #20351#29992'F911'
-    TabOrder = 17
+    TabOrder = 16
     OnClick = m_bIsUseCIMClick
   end
 end

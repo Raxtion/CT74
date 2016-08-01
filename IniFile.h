@@ -52,9 +52,7 @@ public:
   bool m_bForceEject;
   bool m_bIsUseF911;
   bool m_bIsUseCIM;
-  bool m_bIsLamSecondStop;
   int m_nLanguage;
-  double m_dLamSecondKeepTime;
 
   double m_dLoadCellX[2];    //For Calibrate Load Cell
   double m_dLoadCellY[2];
@@ -126,6 +124,8 @@ public:
   double m_dKeyTemp[2][3];            //for product param keyin
 
   int m_nDownPercent;                 //for downPress to decrease cylinder friction
+  double m_dLamSecondKeepTime;
+  bool m_bIsLamSecondStop;
 
 //Function
 public:

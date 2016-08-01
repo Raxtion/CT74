@@ -106,11 +106,6 @@ __published:	// IDE-managed Components
     TEdit *m_dLeftGassLeakylimit;
     TEdit *m_dRightGassLeakylimit;
     TStaticText *StaticText36;
-    TGroupBox *GroupBox5;
-    TCheckBox *m_bIsLamSecondStop;
-    TStaticText *StaticText40;
-    TEdit *m_dLamSecondKeepTime;
-    TStaticText *StaticText41;
     TCheckBox *m_bIsUseF911;
     void __fastcall m_bIsUseCIMClick(TObject *Sender);
 private:	// User declarations

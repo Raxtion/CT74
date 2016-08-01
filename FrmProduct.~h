@@ -248,6 +248,9 @@ __published:	// IDE-managed Components
     TLabel *Label117;
     TLabel *Label118;
     TLabel *Label119;
+    TCheckBox *m_bIsLamSecondStop;
+    TEdit *m_dLamSecondKeepTime;
+    TLabel *Label120;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbScal(AnsiString Hint);

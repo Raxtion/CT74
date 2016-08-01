@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 219
-  Top = 232
+  Left = 477
+  Top = 166
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 449
@@ -57,46 +57,53 @@ object fmProduct: TfmProduct
     object TabSheet1: TTabSheet
       Caption = 'Common Page'
       object Label83: TLabel
-        Left = 184
+        Left = 104
         Top = 330
         Width = 64
         Height = 16
         Caption = #33258#21205#27169#24335
       end
       object Label84: TLabel
-        Left = 184
+        Left = 104
         Top = 346
         Width = 64
         Height = 16
         Caption = #23481#35377#28331#24230
       end
       object Label85: TLabel
-        Left = 328
+        Left = 248
         Top = 338
         Width = 16
         Height = 16
         Caption = #24230
       end
       object Label86: TLabel
-        Left = 256
+        Left = 176
         Top = 338
         Width = 12
         Height = 16
         Caption = #177' '
       end
       object Label88: TLabel
-        Left = 576
+        Left = 488
         Top = 338
         Width = 16
         Height = 16
         Caption = #31186
       end
       object Label87: TLabel
-        Left = 384
+        Left = 296
         Top = 338
         Width = 144
         Height = 16
         Caption = #31532#20108#27425#30495#31354#27298#28204#24310#36978
+      end
+      object Label120: TLabel
+        Left = 800
+        Top = 340
+        Width = 16
+        Height = 16
+        Caption = #31186
       end
       object GroupBox4: TGroupBox
         Left = 16
@@ -671,7 +678,7 @@ object fmProduct: TfmProduct
         end
       end
       object m_bNotLam: TCheckBox
-        Left = 24
+        Left = 16
         Top = 337
         Width = 73
         Height = 17
@@ -679,7 +686,7 @@ object fmProduct: TfmProduct
         TabOrder = 6
       end
       object m_dAutoRunTempRange: TEdit
-        Left = 272
+        Left = 192
         Top = 333
         Width = 49
         Height = 24
@@ -687,7 +694,7 @@ object fmProduct: TfmProduct
         Text = 'm_dAutoRunTempRange'
       end
       object m_dVacDelayTime: TEdit
-        Left = 536
+        Left = 448
         Top = 335
         Width = 33
         Height = 24
@@ -799,6 +806,22 @@ object fmProduct: TfmProduct
           TabOrder = 1
           Text = 'm_dAutoStopRange'
         end
+      end
+      object m_bIsLamSecondStop: TCheckBox
+        Left = 536
+        Top = 334
+        Width = 201
+        Height = 25
+        Caption = #31532#20108#27573#22739#21512#20572#39376#32173#25345#26178#38291
+        TabOrder = 11
+      end
+      object m_dLamSecondKeepTime: TEdit
+        Left = 737
+        Top = 334
+        Width = 56
+        Height = 24
+        TabOrder = 12
+        Text = 'm_dUpperLaserAlarm'
       end
     end
     object TabSheet2: TTabSheet

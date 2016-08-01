@@ -78,10 +78,21 @@ void __fastcall CGetRealTimeValueThread::Execute()
 	{
 		if (g_bStopGetRealTimeValueThread) break;
         //--- renew Temperature and LaserValue
-        g_ModBus.SetSV(1, g_IniFile.m_dLamTemp[0]);
-        ::Sleep(30);
-        g_ModBus.SetSV(2, g_IniFile.m_dLamTemp[1]);
-        ::Sleep(30);
+        if (g_IniFile.m_bNotLam)
+        {
+            //If not Lam then set temp to 20 degree
+            g_ModBus.SetSV(1, 20.0);
+            ::Sleep(30);
+            g_ModBus.SetSV(2, 20.0);
+            ::Sleep(30);
+        }
+        else
+        {
+            g_ModBus.SetSV(1, g_IniFile.m_dLamTemp[0]);
+            ::Sleep(30);
+            g_ModBus.SetSV(2, g_IniFile.m_dLamTemp[1]);
+            ::Sleep(30);
+        }
         g_pMainThread->m_dRearTempRealTime = g_ModBus.GetPV(1);
         ::Sleep(30);
         g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
@@ -343,8 +354,6 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
     DDX_Check(bRead, g_IniFile.m_bIsUseF911, pMachineDlg->m_bIsUseF911);
     DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
     DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
-    DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pMachineDlg->m_dLamSecondKeepTime);
-    DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pMachineDlg->m_bIsLamSecondStop);
 
 	DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 	DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -377,8 +386,6 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
         DDX_Check(bRead, g_IniFile.m_bIsUseF911, pMachineDlg->m_bIsUseF911);
         DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
         DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
-        DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pMachineDlg->m_dLamSecondKeepTime);
-        DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pMachineDlg->m_bIsLamSecondStop);
 
 		DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 		DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -521,6 +528,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWndRecord->m_dKeyTemp13);
 
     DDX_Int(bRead, g_IniFile.m_nDownPercent, pWndRecord->m_nDownPercent);
+    DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWndRecord->m_dLamSecondKeepTime);
+    DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWndRecord->m_bIsLamSecondStop);
 
     //---------------------------------------------------------------------------
     //pWnd ready to show for user
@@ -628,6 +637,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
 
     DDX_Int(bRead, g_IniFile.m_nDownPercent, pWnd->m_nDownPercent);
+    DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWnd->m_dLamSecondKeepTime);
+    DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWnd->m_bIsLamSecondStop);
 
     pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
@@ -781,6 +792,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
 
         DDX_Int(bRead, g_IniFile.m_nDownPercent, pWnd->m_nDownPercent);
+        DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWnd->m_dLamSecondKeepTime);
+        DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWnd->m_bIsLamSecondStop);
         DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
 
         Label22->Caption = g_IniFile.m_dLamTime[0];
