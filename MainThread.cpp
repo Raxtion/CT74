@@ -1897,7 +1897,6 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			if (m_bAutoRetry == true)                                                                       //若完成校正則紀錄已校正的數據
 			{
 				g_IniFile.m_dLastLamPress[bFront] = g_IniFile.m_dLamPress[bFront];
-				//g_IniFile.MachineFile(false);
 			}
 			nThreadIndex++;
 		}

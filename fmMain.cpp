@@ -245,8 +245,9 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 void __fastcall TfrmMain::N3Click(TObject *Sender)
 {
     if (!FileExists("C:\\Product_Data\\")) _mkdir("C:\\Product_Data\\");
+
 	g_IniFile.MachineFile(false);
-	g_IniFile.ProductFile(Caption.c_str(), false);
+    g_IniFile.ProductFile(g_IniFile.m_strLastFileName.c_str(), false);
 
     g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
     g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
@@ -1337,6 +1338,17 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 		!btnLaserDown1->Down && !btnLaserDown0->Down) 
         SetPrivilege(m_nUserLevel);
     else { MotorTest1->Enabled = false; N10->Enabled = false; }
+
+    //--ShowNonLam
+    if (g_IniFile.m_bNotLam)
+    {
+        if (g_IniFile.m_nLanguageMode>0) Caption = g_IniFile.m_strLastFileName + " ( Non Lamination )";
+        else Caption = g_IniFile.m_strLastFileName + " ( ¤£À£¦X )";
+    }
+    else
+    {
+        Caption = g_IniFile.m_strLastFileName;
+    }
 
 	Timer1->Enabled = true;
 
