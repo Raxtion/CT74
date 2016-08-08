@@ -1061,7 +1061,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 
             if (bFront)
             {
-                if (g_IniFile.m_nAutoInterval == 0 || m_nPassBoatCount1 == 0) nRemainder = -1;
+                if (g_IniFile.m_nAutoInterval == 0 || m_nPassBoatCount1 == 0 || g_IniFile.m_bNotLam) nRemainder = -1;
                 else nRemainder = m_nPassBoatCount1%g_IniFile.m_nAutoInterval;
 
                 if (nRemainder == 0) nThreadIndex++;
@@ -1069,7 +1069,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             }
             else
             {
-				if (g_IniFile.m_nAutoInterval == 0 || m_nPassBoatCount0 == 0) nRemainder = -1;
+				if (g_IniFile.m_nAutoInterval == 0 || m_nPassBoatCount0 == 0 || g_IniFile.m_bNotLam) nRemainder = -1;
 				else nRemainder = m_nPassBoatCount0%g_IniFile.m_nAutoInterval;
 
                 if (nRemainder == 0) nThreadIndex++;

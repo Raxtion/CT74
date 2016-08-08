@@ -1342,7 +1342,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     //--ShowNonLam
     if (g_IniFile.m_bNotLam)
     {
-        if (g_IniFile.m_nLanguageMode>0) Caption = g_IniFile.m_strLastFileName + " ( Non Lam )";
+        if (g_IniFile.m_nLanguageMode>0) Caption = g_IniFile.m_strLastFileName + " ( Non Lamination )";
         else Caption = g_IniFile.m_strLastFileName + " ( ¤£À£¦X )";
     }
     else
