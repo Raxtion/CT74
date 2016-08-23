@@ -49,6 +49,7 @@ public:
     double m_dFirstLaserValueUp;            //Record for use to Cal. up laser
     double m_dFirstLaserValueDown;          //Record for use to Cal. down laser
     double m_dFirstNewValue;                //Record for first Press Cal. input value that used to Cal. next.
+    bool m_bIsTempMonitorFail;				//Record for get NULL value from Sqlite3Interface.
 
 	int m_nTrayRowIndex;
 

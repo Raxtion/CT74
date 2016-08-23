@@ -73,7 +73,7 @@ void __fastcall SQLITE3IF::open(int DBtype)
             if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         case 3:
-            /* 建立 Account Table*/
+            /* 建立 Change Table*/
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), ParamChange NVARCHAR(50));", 0, 0, &errMsg);
             if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
@@ -118,12 +118,14 @@ void __fastcall SQLITE3IF::insertTemp()
     {
         strRearTemp = FormatFloat("0.000", g_pMainThread->m_dRearTempRealTime);
         strFrontTemp = FormatFloat("0.000", g_pMainThread->m_dFrontTempRealTime);
+        g_pMainThread->m_bIsTempMonitorFail = false;
     }
     else
     {
         g_ModBus.m_bInitOK = true;
         strRearTemp = "NULL";
         strFrontTemp = "NULL";
+        g_pMainThread->m_bIsTempMonitorFail = true;
     }
     AnsiString insertsql = "INSERT INTO C74Log VALUES( "+strLastrowid
                                                     +" ,'"+strDateTime

@@ -96,12 +96,13 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dFirstNewValue = 0.5;
     m_dLaserKeepValue = 0.0;
     m_bIsAutoCalUse = false;
+    m_bIsTempMonitorFail = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
 {
 	//---- Place thread code here ----
-	C_GetTime tmReset, tmAlarm, tmResetLamp, tmAgain;
+	C_GetTime tmReset, tmAlarm, tmResetLamp, tmAgain, tmTempMonitor;
 
 	g_bStopMainThread = false;
 	m_bIsDoAutoCal[0] = false;
@@ -277,6 +278,13 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::Buzzer, bAlarmLamp);
 			bAlarmLamp = !bAlarmLamp;
 			tmAlarm.timeStart(500);
+		}
+
+		//--Temp Monitor
+		if (tmTempMonitor.timeUp() && m_bIsTempMonitorFail)
+		{
+			m_listLog.push_back("溫度監控器異常,請處理...");
+			tmTempMonitor.timeStart(3000);
 		}
 
 		//--Stop Auto
@@ -1889,13 +1897,10 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
             m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][7]LoadCell 回到安全位置"));
 			nMoveIndex = 0;
 			nTryTimes = 0;
-			if (m_bIsAutoMode && m_bIsHomeDone)
-            {
-                if (m_bPrassNeedReCal != true) m_bPrassNeedReCal = false;
-            }
-			else g_IniFile.m_nErrorCode = 72;
+			if (!m_bIsAutoMode) g_IniFile.m_nErrorCode = 72;
 			if (m_bAutoRetry == true)                                                                       //若完成校正則紀錄已校正的數據
 			{
+                if (m_bPrassNeedReCal == true) m_bPrassNeedReCal = false;
 				g_IniFile.m_dLastLamPress[bFront] = g_IniFile.m_dLamPress[bFront];
 			}
 			nThreadIndex++;

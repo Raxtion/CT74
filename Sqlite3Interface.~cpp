@@ -73,7 +73,7 @@ void __fastcall SQLITE3IF::open(int DBtype)
             if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         case 3:
-            /* 建立 Account Table*/
+            /* 建立 Change Table*/
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), ParamChange NVARCHAR(50));", 0, 0, &errMsg);
             if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
@@ -88,7 +88,7 @@ void __fastcall SQLITE3IF::open(int DBtype)
 void __fastcall SQLITE3IF::free()
 {
     /* 釋放 */
-    //目的是釋放記憶體,所以不只是釋放來自table的result
+    //目的是釋放記憶體,也要釋放來自table的result
     sqlite3_free_table(result);
     sqlite3_free(result);
     sqlite3_free(errMsg);
