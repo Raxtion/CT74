@@ -93,6 +93,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
 
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bForceEject",m_bForceEject,false);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseF911",m_bIsUseF911,true);
+  DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseIL030",m_bIsUseIL030,true);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseCIM",m_bIsUseCIM,false);
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dPLimitF",m_dPLimitF,0.0);
@@ -163,9 +164,19 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosY02",m_dLaserUpPosY[0][2],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosX03",m_dLaserUpPosX[0][3],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosY03",m_dLaserUpPosY[0][3],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndX00",m_dLaserUpPosEndX[0][0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndY00",m_dLaserUpPosEndY[0][0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndX01",m_dLaserUpPosEndX[0][1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndY01",m_dLaserUpPosEndY[0][1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndX02",m_dLaserUpPosEndX[0][2],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndY02",m_dLaserUpPosEndY[0][2],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndX03",m_dLaserUpPosEndX[0][3],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndY03",m_dLaserUpPosEndY[0][3],0.0);
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosX0",m_dLaserDownPosX[0],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosY0",m_dLaserDownPosY[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosEndX0",m_dLaserDownPosEndX[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosEndY0",m_dLaserDownPosEndY[0],0.0);
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLoadCellPosX1",m_dLoadCellPosX[1],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLoadCellPosY1",m_dLoadCellPosY[1],0.0);
@@ -178,9 +189,19 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosY12",m_dLaserUpPosY[1][2],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosX13",m_dLaserUpPosX[1][3],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosY13",m_dLaserUpPosY[1][3],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndX10",m_dLaserUpPosEndX[1][0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndY10",m_dLaserUpPosEndY[1][0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndX11",m_dLaserUpPosEndX[1][1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndY11",m_dLaserUpPosEndY[1][1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndX12",m_dLaserUpPosEndX[1][2],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndY12",m_dLaserUpPosEndY[1][2],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndX13",m_dLaserUpPosEndX[1][3],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserUpPosEndY13",m_dLaserUpPosEndY[1][3],0.0);
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosX1",m_dLaserDownPosX[1],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosY1",m_dLaserDownPosY[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosEndX1",m_dLaserDownPosEndX[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLaserDownPosEndY1",m_dLaserDownPosEndY[1],0.0);
 
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nRailOption",m_nRailOption,0);
   DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bNotLam",m_bNotLam,false);
@@ -232,6 +253,8 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDownPercent",m_nDownPercent,30);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamSecondKeepTime",m_dLamSecondKeepTime,0);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsLamSecondStop",m_bIsLamSecondStop,false);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamSecondCorrectTimes",m_dLamSecondCorrectTimes,1);
+  DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsLamUpDownCorrect",m_bIsLamUpDownCorrect,false);
 
   delete pIniFile;
 }

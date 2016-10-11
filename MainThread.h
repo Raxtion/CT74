@@ -53,13 +53,23 @@ public:
 
 	int m_nTrayRowIndex;
 
+	//MoveIndex
+	int m_nPressCalMoveIndex[2];
+	int m_nLaserCalMoveIndex[2];
+	double m_dFrontUpperMoveLocX[50][4];
+	double m_dFrontUpperMoveLocY[50][4];
+	double m_dFrontDownMoveLocX[50][4];
+	double m_dFrontDownMoveLocY[50][4];
+	double m_dRearUpperMoveLocX[50][4];
+	double m_dRearUpperMoveLocY[50][4];
+	double m_dRearDownMoveLocX[50][4];
+	double m_dRearDownMoveLocY[50][4];
+
+	//Button Again
     bool m_bStartAgain;
     bool m_bStopAgain;
     bool m_bResetAgain;
     bool m_bInitalAgain;
-
-	int m_nPressCalMoveIndex[2];
-	int m_nLaserCalMoveIndex[2];
 
 	//Monitor Data//
 	double m_dLamTimer[2];   //Lamination timer count down
@@ -137,4 +147,5 @@ public:
 };
 //---------------------------------------------------------------------------
 #endif
+
 

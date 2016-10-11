@@ -107,6 +107,7 @@ __published:	// IDE-managed Components
     TEdit *m_dRightGassLeakylimit;
     TStaticText *StaticText36;
     TCheckBox *m_bIsUseF911;
+    TCheckBox *m_bIsUseIL030;
     void __fastcall m_bIsUseCIMClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations

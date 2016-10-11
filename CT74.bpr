@@ -13,7 +13,7 @@
       temp\EQPXML.obj temp\tinystr.obj temp\tinyxml.obj temp\tinyxmlerror.obj 
       temp\tinyxmlparser.obj temp\sqlite3.obj temp\shell.obj 
       temp\Sqlite3Interface.obj temp\fmHeadScalModify.obj 
-      temp\fmAccountManual.obj temp\SensoLinkF911.obj"/>
+      temp\fmAccountManual.obj temp\SensoLinkF911.obj temp\KeyenceIL030.obj"/>
     <RESFILES value="CT74.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
@@ -33,7 +33,7 @@
       inetdbbde.bpi inetdbxpress.bpi inetdb.bpi nmfast.bpi webdsnap.bpi 
       bcbie.bpi websnap.bpi soaprtl.bpi dclocx.bpi dbexpress.bpi dbxcds.bpi 
       indy.bpi bcb2kaxserver.bpi"/>
-    <PATHCPP value=".;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100;extern\General;extern\DMT;extern\AEP_TA5;extern\SerialPort;extern\EQPXML;extern\TinyXML;extern\TinyXML;extern\TinyXML;extern\TinyXML;extern\SQLite3;extern\SQLite3;extern\SensoLink_F911"/>
+    <PATHCPP value=".;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100;extern\General;extern\DMT;extern\AEP_TA5;extern\SerialPort;extern\EQPXML;extern\TinyXML;extern\TinyXML;extern\TinyXML;extern\TinyXML;extern\SQLite3;extern\SQLite3;extern\SensoLink_F911;extern\Keyence_IL030"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
@@ -43,14 +43,15 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="CT74.cpp"/>
-    <INCLUDEPATH value="extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
-    <LIBPATH value="extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
+    <INCLUDEPATH value="extern\Keyence_IL030;extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
+    <LIBPATH value="extern\Keyence_IL030;extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-Iextern\SensoLink_F911 -Iextern\TinyXML -Iextern\SQLite3 -Iextern\EQPXML 
-      -Iextern\SerialPort -Iextern\AEP_TA5 -Iextern\DMT -Iextern\General 
+    <IDLCFLAGS value="-Iextern\Keyence_IL030 -Iextern\SensoLink_F911 -Iextern\TinyXML 
+      -Iextern\SQLite3 -Iextern\EQPXML -Iextern\SerialPort -Iextern\AEP_TA5 
+      -Iextern\DMT -Iextern\General 
       -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; 
       -IC:\Work\CLARE_PROGRAM\C74\CT74 -I$(BCB)\include -I$(BCB)\include\vcl 
       -Iextern\PCIS-DASK\Include -Iextern\PCI_M114\include -Iextern\PISO-DNM100 
@@ -109,6 +110,7 @@
       <FILE FILENAME="fmHeadScalModify.cpp" FORMNAME="frmHeadScalModify" UNITNAME="fmHeadScalModify" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="fmAccountManual.cpp" FORMNAME="frmAccountManual" UNITNAME="fmAccountManual" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="extern\SensoLink_F911\SensoLinkF911.cpp" FORMNAME="" UNITNAME="SensoLinkF911" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\Keyence_IL030\KeyenceIL030.cpp" FORMNAME="" UNITNAME="KeyenceIL030" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

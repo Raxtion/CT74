@@ -43,14 +43,15 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="CT74.cpp"/>
-    <INCLUDEPATH value="extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
-    <LIBPATH value="extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
+    <INCLUDEPATH value="extern\Keyence_IL030;extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\include;$(BCB)\include\vcl;extern\PCIS-DASK\Include;extern\PCI_M114\include;extern\PISO-DNM100;extern\PCIS-DASK;extern\PCI_M114;extern\PComm"/>
+    <LIBPATH value="extern\Keyence_IL030;extern\SensoLink_F911;extern\TinyXML;extern\SQLite3;extern\EQPXML;extern\SerialPort;extern\AEP_TA5;extern\DMT;extern\General;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C74\CT74;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib\Debug;$(BCB)\lib;extern\PCI_M114;extern\PCIS-DASK;extern\PISO-DNM100"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-Iextern\SensoLink_F911 -Iextern\TinyXML -Iextern\SQLite3 -Iextern\EQPXML 
-      -Iextern\SerialPort -Iextern\AEP_TA5 -Iextern\DMT -Iextern\General 
+    <IDLCFLAGS value="-Iextern\Keyence_IL030 -Iextern\SensoLink_F911 -Iextern\TinyXML 
+      -Iextern\SQLite3 -Iextern\EQPXML -Iextern\SerialPort -Iextern\AEP_TA5 
+      -Iextern\DMT -Iextern\General 
       -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; 
       -IC:\Work\CLARE_PROGRAM\C74\CT74 -I$(BCB)\include -I$(BCB)\include\vcl 
       -Iextern\PCIS-DASK\Include -Iextern\PCI_M114\include -Iextern\PISO-DNM100 

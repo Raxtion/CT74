@@ -51,6 +51,7 @@ public:
   double m_dRightGassLeakylimit;
   bool m_bForceEject;
   bool m_bIsUseF911;
+  bool m_bIsUseIL030;
   bool m_bIsUseCIM;
   int m_nLanguage;
 
@@ -93,6 +94,10 @@ public:
   double m_dLaserUpPosY[2][4];
   double m_dLaserDownPosX[2];
   double m_dLaserDownPosY[2];
+  double m_dLaserUpPosEndX[2][4];
+  double m_dLaserUpPosEndY[2][4];
+  double m_dLaserDownPosEndX[2];
+  double m_dLaserDownPosEndY[2];
 
   int m_nAutoInterval;
   double m_dAutoStopRange;
@@ -111,6 +116,7 @@ public:
 
   AnsiString m_strModuleNum;
   AnsiString m_strSetupEENum;
+  int m_nBoatType;                    //0=Old ; 1=New ;
   int m_nHeadType;                    //0=實心; 1=空心;
   AnsiString m_strHeadScal;           //(43X43/31X31)
   AnsiString m_strModuleScal;         //(43X43/31X31)
@@ -126,6 +132,8 @@ public:
   int m_nDownPercent;                 //for downPress to decrease cylinder friction
   double m_dLamSecondKeepTime;
   bool m_bIsLamSecondStop;
+  double m_dLamSecondCorrectTimes;
+  bool m_bIsLamUpDownCorrect;
 
 //Function
 public:

@@ -51,8 +51,8 @@ public:
   double m_dRightGassLeakylimit;
   bool m_bForceEject;
   bool m_bIsUseF911;
+  bool m_bIsUseIL030;
   bool m_bIsUseCIM;
-  bool m_bIsLamSecondStop;
   int m_nLanguage;
 
   double m_dLoadCellX[2];    //For Calibrate Load Cell
@@ -94,6 +94,10 @@ public:
   double m_dLaserUpPosY[2][4];
   double m_dLaserDownPosX[2];
   double m_dLaserDownPosY[2];
+  double m_dLaserUpPosEndX[2][4];
+  double m_dLaserUpPosEndY[2][4];
+  double m_dLaserDownPosEndX[2];
+  double m_dLaserDownPosEndY[2];
 
   int m_nAutoInterval;
   double m_dAutoStopRange;
@@ -126,6 +130,9 @@ public:
 
   int m_nDownPercent;                 //for downPress to decrease cylinder friction
   double m_dLamSecondKeepTime;
+  bool m_bIsLamSecondStop;
+  double m_dLamSecondCorrectTimes;
+  bool m_bIsLamUpDownCorrect;
 
 //Function
 public:
