@@ -201,31 +201,37 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
 
 	//Count MoveLocX, MoveLocY
-	int nColum = 0;
-	int nRow = 0;
-	double dPitchX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-	double dPitchY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
-	for (int nX = 0; nX<50; nX++)
-	{
-		nColum = nX % 10;
-		nRow = nX / 10;
+    int nColum = 0;
+    int nRow = 0;
+    double dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+    double dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+    double dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+    double dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+    double dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+    double dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+    double dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+    double dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
+    for (int nX=0; nX<50; nX++)
+    {
+        nColum = nX % 10;
+        nRow = nX / 10;
 
-		if (nColum < g_IniFile.m_nCols && nRow < g_IniFile.m_nRows)
-		{
-			for (int nY = 0; nY < 4; nY++)
-			{
-				g_pMainThread->m_dFrontUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[1][nY] + nColum*dPitchX;
-				g_pMainThread->m_dFrontUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[1][nY] - nRow*dPitchY;
-				g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchX;
-				g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchY;
-			}
+        if (nColum < g_IniFile.m_nCols && nRow < g_IniFile.m_nRows)
+        {
+            for (int nY = 0; nY < 4; nY++)
+            {
+                g_pMainThread->m_dFrontUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[1][nY] + nColum*dPitchFrontUpX;
+                g_pMainThread->m_dFrontUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[1][nY] - nRow*dPitchFrontUpY;
+                g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchRearUpX;
+                g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchRearUpY;
+            }
 
-			g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchX;
-			g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchY;
-			g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchX;
-			g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchY;
-		}
-	}
+            g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchFrontDownX;
+            g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchFrontDownY;
+            g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchRearDownX;
+            g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchRearDownY;
+        }
+    }
 
 
 }
@@ -1101,7 +1107,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 			//process in CIM
 			AnsiString strMsgCIM = g_IniFile.GetErrorStringENG("SYSTEM", g_IniFile.m_nErrorCode);
 			AnsiString strCode;
-			strCode.sprintf("E%04d", g_IniFile.m_nErrorCode);
+			strCode.sprintf("%04d", g_IniFile.m_nErrorCode);
 			g_eqpXML.SendAlarmMessage(strCode.c_str(), strMsgCIM.c_str());
 		}
 	}
@@ -1383,31 +1389,37 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 		SetAllDevice();
 
 		//Count MoveLocX, MoveLocY
-		int nColum = 0;
-		int nRow = 0;
-		double dPitchX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-		double dPitchY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
-		for (int nX = 0; nX<50; nX++)
-		{
-			nColum = nX % 10;
-			nRow = nX / 10;
-
+        int nColum = 0;
+        int nRow = 0;
+		double dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+		double dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+        double dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+		double dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+        double dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+        double dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+        double dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+        double dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
+        for (int nX=0; nX<50; nX++)
+        {
+            nColum = nX % 10;
+            nRow = nX / 10;
+			
 			if (nColum < g_IniFile.m_nCols && nRow < g_IniFile.m_nRows)
 			{
 				for (int nY = 0; nY < 4; nY++)
 				{
-					g_pMainThread->m_dFrontUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[1][nY] + nColum*dPitchX;
-					g_pMainThread->m_dFrontUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[1][nY] - nRow*dPitchY;
-					g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchX;
-					g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchY;
+					g_pMainThread->m_dFrontUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[1][nY] + nColum*dPitchFrontUpX;
+					g_pMainThread->m_dFrontUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[1][nY] - nRow*dPitchFrontUpY;
+					g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchRearUpX;
+					g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchRearUpY;
 				}
-
-				g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchX;
-				g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchY;
-				g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchX;
-				g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchY;
+			
+				g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchFrontDownX;
+				g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchFrontDownY;
+				g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchRearDownX;
+				g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchRearDownY;
 			}
-		}
+        }
 
 		Label22->Caption = g_IniFile.m_dLamTime[0];
 		Label25->Caption = g_IniFile.m_dLamTemp[0];
@@ -2072,8 +2084,14 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         //Count MoveLocX, MoveLocY
         int nColum = 0;
         int nRow = 0;
-		double dPitchX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-		double dPitchY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+		double dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+		double dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+        double dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+		double dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+        double dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+        double dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+        double dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+        double dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
         for (int nX=0; nX<50; nX++)
         {
             nColum = nX % 10;
@@ -2083,16 +2101,16 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 			{
 				for (int nY = 0; nY < 4; nY++)
 				{
-					g_pMainThread->m_dFrontUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[1][nY] + nColum*dPitchX;
-					g_pMainThread->m_dFrontUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[1][nY] - nRow*dPitchY;
-					g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchX;
-					g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchY;
+					g_pMainThread->m_dFrontUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[1][nY] + nColum*dPitchFrontUpX;
+					g_pMainThread->m_dFrontUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[1][nY] - nRow*dPitchFrontUpY;
+					g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchRearUpX;
+					g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchRearUpY;
 				}
 			
-				g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchX;
-				g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchY;
-				g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchX;
-				g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchY;
+				g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchFrontDownX;
+				g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchFrontDownY;
+				g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchRearDownX;
+				g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchRearDownY;
 			}
         }
 

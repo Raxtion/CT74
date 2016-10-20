@@ -1101,7 +1101,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 			//process in CIM
 			AnsiString strMsgCIM = g_IniFile.GetErrorStringENG("SYSTEM", g_IniFile.m_nErrorCode);
 			AnsiString strCode;
-			strCode.sprintf("E%04d", g_IniFile.m_nErrorCode);
+			strCode.sprintf("%04d", g_IniFile.m_nErrorCode);
 			g_eqpXML.SendAlarmMessage(strCode.c_str(), strMsgCIM.c_str());
 		}
 	}
@@ -1832,7 +1832,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pWnd->m_dAutoRunTempRange);
 	DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pWnd->m_dVacDelayTime);
 
-    DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWndRecord->m_cmbBoatType);
+    DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWnd->m_cmbBoatType);
 	DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
 	DDX_String(bRead, g_IniFile.m_strHeadScal, pWnd->m_cmbHeadScal, g_IniFile.m_strHeadScals);
 	DDX_String(bRead, g_IniFile.m_strModuleScal, pWnd->m_cmbModuleScal, g_IniFile.m_strModuleScals);

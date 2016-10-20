@@ -51,8 +51,8 @@ object fmProduct: TfmProduct
     Top = 0
     Width = 1073
     Height = 401
-    ActivePage = TabSheet1
-    TabIndex = 0
+    ActivePage = TabSheet2
+    TabIndex = 1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Common Page'
