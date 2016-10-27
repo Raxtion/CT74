@@ -1,8 +1,8 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 502
-  Top = 155
+  Left = 459
+  Top = 123
   Width = 597
-  Height = 574
+  Height = 618
   Caption = #27231#21488#21443#25976
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -23,7 +23,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object BitBtn1: TBitBtn
     Left = 80
-    Top = 488
+    Top = 528
     Width = 121
     Height = 41
     TabOrder = 0
@@ -31,7 +31,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object BitBtn2: TBitBtn
     Left = 368
-    Top = 488
+    Top = 528
     Width = 129
     Height = 41
     TabOrder = 1
@@ -1087,5 +1087,44 @@ object frmMachineParam: TfrmMachineParam
     Caption = #20351#29992'IL030'
     TabOrder = 17
     OnClick = m_bIsUseCIMClick
+  end
+  object StaticText40: TStaticText
+    Left = 24
+    Top = 486
+    Width = 105
+    Height = 22
+    Alignment = taRightJustify
+    AutoSize = False
+    BevelInner = bvSpace
+    BevelKind = bkSoft
+    BevelOuter = bvNone
+    BorderStyle = sbsSingle
+    Caption = #27969#36947#20132#25569#26178#38291
+    Color = clSkyBlue
+    ParentColor = False
+    TabOrder = 18
+  end
+  object m_dLaneTransportDelayTime: TEdit
+    Left = 136
+    Top = 485
+    Width = 65
+    Height = 24
+    TabOrder = 19
+    Text = 'm_dSafePos'
+  end
+  object StaticText41: TStaticText
+    Left = 209
+    Top = 486
+    Width = 65
+    Height = 22
+    AutoSize = False
+    BevelInner = bvSpace
+    BevelKind = bkSoft
+    BevelOuter = bvNone
+    BorderStyle = sbsSingle
+    Caption = 's'
+    Color = clSkyBlue
+    ParentColor = False
+    TabOrder = 20
   end
 end

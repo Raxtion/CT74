@@ -2320,7 +2320,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						double *maxValue = std::max_element(vecTempUpFull.begin(), vecTempUpFull.end());
 						double *minValue = std::min_element(vecTempUpFull.begin(), vecTempUpFull.end());
 						vecTempUpFull.clear();
-						m_listLog.push_back("全部壓頭高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
+						m_listLog.push_back("全部壓頭高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue))); 
 					}
 					else
 					{

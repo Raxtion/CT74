@@ -108,6 +108,9 @@ __published:	// IDE-managed Components
     TStaticText *StaticText36;
     TCheckBox *m_bIsUseF911;
     TCheckBox *m_bIsUseIL030;
+    TStaticText *StaticText40;
+    TEdit *m_dLaneTransportDelayTime;
+    TStaticText *StaticText41;
     void __fastcall m_bIsUseCIMClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations

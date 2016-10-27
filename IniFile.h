@@ -49,6 +49,7 @@ public:
   double m_dUpperTotalLaserAlarm;
   double m_dLeftGassLeakylimit;
   double m_dRightGassLeakylimit;
+  double m_dLaneTransportDelayTime;
   bool m_bForceEject;
   bool m_bIsUseF911;
   bool m_bIsUseIL030;

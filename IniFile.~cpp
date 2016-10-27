@@ -90,6 +90,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dUpperTotalLaserAlarm",m_dUpperTotalLaserAlarm,0.1);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLeftGassLeakylimit",m_dLeftGassLeakylimit,3.5);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dRightGassLeakylimit",m_dRightGassLeakylimit,3.5);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dLaneTransportDelayTime",m_dLaneTransportDelayTime,10.0);
 
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bForceEject",m_bForceEject,false);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseF911",m_bIsUseF911,true);
@@ -218,6 +219,7 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dAutoRunTempRange",m_dAutoRunTempRange,0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dVacDelayTime",m_dVacDelayTime,0.0);
 
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nBoatType",m_nBoatType,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nHeadType",m_nHeadType,0);
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strHeadScal",m_strHeadScal,0);
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleScal",m_strModuleScal,0);

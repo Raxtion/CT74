@@ -1545,6 +1545,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dUpperTotalLaserAlarm, pMachineDlg->m_dUpperTotalLaserAlarm);
 	DDX_Float(bRead, g_IniFile.m_dLeftGassLeakylimit, pMachineDlg->m_dLeftGassLeakylimit);
 	DDX_Float(bRead, g_IniFile.m_dRightGassLeakylimit, pMachineDlg->m_dRightGassLeakylimit);
+    DDX_Float(bRead, g_IniFile.m_dLaneTransportDelayTime, pMachineDlg->m_dLaneTransportDelayTime);
 	DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
 	DDX_Check(bRead, g_IniFile.m_bIsUseF911, pMachineDlg->m_bIsUseF911);
 	DDX_Check(bRead, g_IniFile.m_bIsUseIL030, pMachineDlg->m_bIsUseIL030);
@@ -1578,6 +1579,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dUpperTotalLaserAlarm, pMachineDlg->m_dUpperTotalLaserAlarm);
 		DDX_Float(bRead, g_IniFile.m_dLeftGassLeakylimit, pMachineDlg->m_dLeftGassLeakylimit);
 		DDX_Float(bRead, g_IniFile.m_dRightGassLeakylimit, pMachineDlg->m_dRightGassLeakylimit);
+        DDX_Float(bRead, g_IniFile.m_dLaneTransportDelayTime, pMachineDlg->m_dLaneTransportDelayTime);
 		DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
 		DDX_Check(bRead, g_IniFile.m_bIsUseF911, pMachineDlg->m_bIsUseF911);
 		DDX_Check(bRead, g_IniFile.m_bIsUseIL030, pMachineDlg->m_bIsUseIL030);
