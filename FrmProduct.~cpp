@@ -176,9 +176,9 @@ void __fastcall TfmProduct::btnGenerateEndLocClick(TObject *Sender)
         m_dLaserUpPosEndX03->Text = FormatFloat("0.000", m_dLaserUpPosX03->Text.ToDouble() + (m_nCols->Text.ToDouble()-1)*m_dColPitch->Text.ToDouble());
 
         m_dLaserUpPosEndY00->Text = FormatFloat("0.000", m_dLaserUpPosY00->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
-        m_dLaserUpPosEndY01->Text = FormatFloat("0.000", m_dLaserUpPosY00->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
-        m_dLaserUpPosEndY02->Text = FormatFloat("0.000", m_dLaserUpPosY00->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
-        m_dLaserUpPosEndY03->Text = FormatFloat("0.000", m_dLaserUpPosY00->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
+        m_dLaserUpPosEndY01->Text = FormatFloat("0.000", m_dLaserUpPosY01->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
+        m_dLaserUpPosEndY02->Text = FormatFloat("0.000", m_dLaserUpPosY02->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
+        m_dLaserUpPosEndY03->Text = FormatFloat("0.000", m_dLaserUpPosY03->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
     }
     else if (strHint == "10")   //Front Down
     {
@@ -193,9 +193,9 @@ void __fastcall TfmProduct::btnGenerateEndLocClick(TObject *Sender)
         m_dLaserUpPosEndX13->Text = FormatFloat("0.000", m_dLaserUpPosX13->Text.ToDouble() + (m_nCols->Text.ToDouble()-1)*m_dColPitch->Text.ToDouble());
 
         m_dLaserUpPosEndY10->Text = FormatFloat("0.000", m_dLaserUpPosY10->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
-        m_dLaserUpPosEndY11->Text = FormatFloat("0.000", m_dLaserUpPosY10->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
-        m_dLaserUpPosEndY12->Text = FormatFloat("0.000", m_dLaserUpPosY10->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
-        m_dLaserUpPosEndY13->Text = FormatFloat("0.000", m_dLaserUpPosY10->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
+        m_dLaserUpPosEndY11->Text = FormatFloat("0.000", m_dLaserUpPosY11->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
+        m_dLaserUpPosEndY12->Text = FormatFloat("0.000", m_dLaserUpPosY12->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
+        m_dLaserUpPosEndY13->Text = FormatFloat("0.000", m_dLaserUpPosY13->Text.ToDouble() - (m_nRows->Text.ToDouble()-1)*m_dRowPitch->Text.ToDouble());
     }
 }
 //---------------------------------------------------------------------------

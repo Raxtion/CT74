@@ -100,6 +100,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dLaserKeepValue = 0.0;
     m_bIsAutoCalUse = false;
     m_bIsTempMonitorFail = false;
+    m_bIsNeedReLoadProductParam = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -797,9 +798,14 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		}
 		break;
 	case 2:
-		if (g_DIO.ReadDIBit(DI::LCEntry))
+		if (fabs(g_Motion.GetActualPos(AXIS_LC) - g_IniFile.m_dLCEntryPos) >= 1)
 		{
 			g_DIO.SetDO(DO::ReadyIn1, false);
+			nThreadIndex = 0;
+		}
+		else if (g_DIO.ReadDIBit(DI::LCEntry))
+		{
+			g_DIO.SetDO(DO::ReadyIn1, false); 
 			g_DIO.SetDO(DO::LCMotorStart, true);
 			tm1MS.timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][2]LC 接料區進料開始"));
@@ -1138,7 +1144,9 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	static C_GetTime tm1MSRear(EX_SCALE::TIME_1MS, false);
 	static C_GetTime tm2MSFront(EX_SCALE::TIME_1MS, false);
 	static C_GetTime tm2MSRear(EX_SCALE::TIME_1MS, false);
+	static C_GetTime tm1MSLamSecondTime;
 	static bool bVacError = false;
+	static bool bLamSecondTimeError = false;
 	static bool bIsGoUp = true;
 	static int nGoUpIndex = 0;
 
@@ -1313,6 +1321,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
             g_Motion.SetSpeed(nAxisLifter, g_IniFile.m_dACCSpeed[nAxisLifter], g_IniFile.m_dDECSpeed[nAxisLifter], g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
 			m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][5]LamSub 不使用第二段壓合上下修正"));
 			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamHeight[bFront]);
+			bLamSecondTimeError = false;
+			tm1MSLamSecondTime.timeDevStart();
 			nThreadIndex++;
 		}
 		break;
@@ -1338,6 +1348,13 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
             }
             pDNPort->WriteAllData();
             */
+
+			//Count What time is passed, and Alarm Out
+			AnsiString strFR; bFront ? strFR = "Front" : strFR = "Rear";
+			double dLamSecondTimePass = tm1MSLamSecondTime.timeDevEnd();
+			m_listLog.push_back(strFR + " LamSecondTime Pass: " + FormatFloat("0", dLamSecondTimePass) + " sec.");
+			if (fabs(dLamSecondTimePass - (g_IniFile.m_dLamSecondTime[bFront]*1000)) >= 1) bLamSecondTimeError = true;
+
 			nThreadIndex++;
 		}
 		break;
@@ -1459,6 +1476,19 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		if (bVacError)
 		{
 			bFront ? g_IniFile.m_nErrorCode = 54 : g_IniFile.m_nErrorCode = 55;
+			m_bStartLamSub[bFront] = false;
+			nThreadIndex = 0;
+		}
+		else if (bLamSecondTimeError)
+		{
+			bFront ? g_IniFile.m_nErrorCode =  92: g_IniFile.m_nErrorCode = 93;
+			m_bStartLamSub[bFront] = false;
+			nThreadIndex = 0;
+		}
+		else if (g_IniFile.m_bIsMochineTestMode)
+		{
+			g_IniFile.m_nErrorCode = 999;
+            m_bIsNeedReLoadProductParam = true;
 			m_bStartLamSub[bFront] = false;
 			nThreadIndex = 0;
 		}
@@ -2670,6 +2700,9 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		nThreadIndex = 0;
 	}
 }
+
+
+
 
 
 

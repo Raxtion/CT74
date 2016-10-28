@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 459
-  Top = 123
+  Left = 571
+  Top = 124
   Width = 597
   Height = 618
   Caption = #27231#21488#21443#25976
@@ -1126,5 +1126,13 @@ object frmMachineParam: TfrmMachineParam
     Color = clSkyBlue
     ParentColor = False
     TabOrder = 20
+  end
+  object m_bIsMochineTestMode: TCheckBox
+    Left = 480
+    Top = 485
+    Width = 89
+    Height = 25
+    Caption = #28204#35430#35519#27231
+    TabOrder = 21
   end
 end

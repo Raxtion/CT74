@@ -1187,7 +1187,8 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 	Shape3->Brush->Color = clLime;
 
 	//---Auto active LC no function
-	if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55)
+	if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55
+        || g_IniFile.m_nErrorCode == 92 || g_IniFile.m_nErrorCode == 93)
 	{
 		checkStopLC->Checked = true;
 		g_pMainThread->m_bStopLC = true;
@@ -1551,6 +1552,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	DDX_Check(bRead, g_IniFile.m_bIsUseIL030, pMachineDlg->m_bIsUseIL030);
 	DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
 	DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
+    DDX_Check(bRead, g_IniFile.m_bIsMochineTestMode, pMachineDlg->m_bIsMochineTestMode);
 
 	DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 	DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -1585,6 +1587,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		DDX_Check(bRead, g_IniFile.m_bIsUseIL030, pMachineDlg->m_bIsUseIL030);
 		DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
 		DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
+        DDX_Check(bRead, g_IniFile.m_bIsMochineTestMode, pMachineDlg->m_bIsMochineTestMode);
 
 		DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 		DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -1937,6 +1940,13 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 			{
 				Application->MessageBoxA("壓合溫度不可以超過0~250", "Confirm", MB_OK);
 			}
+            else if (g_IniFile.m_bIsMochineTestMode)
+            {
+                if (pWnd->m_dLamTemp0->Text.ToDouble() <= 60 || pWnd->m_dLamTemp1->Text.ToDouble() <= 60)
+                {
+                    Application->MessageBoxA("壓合時間不可以小於60秒", "Confirm", MB_OK);
+                }
+            }
 			else
 			{
 				bRead = false;

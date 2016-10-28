@@ -54,6 +54,7 @@ public:
   bool m_bIsUseF911;
   bool m_bIsUseIL030;
   bool m_bIsUseCIM;
+  bool m_bIsMochineTestMode;
   int m_nLanguage;
 
   double m_dLoadCellX[2];    //For Calibrate Load Cell

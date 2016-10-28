@@ -71,6 +71,9 @@ public:
     bool m_bResetAgain;
     bool m_bInitalAgain;
 
+    //Machine Test Mode Change, Need To ReLoad ProductParam
+    bool m_bIsNeedReLoadProductParam;
+
 	//Monitor Data//
 	double m_dLamTimer[2];   //Lamination timer count down
 	double m_dFrontUpperLaser[50][4];
