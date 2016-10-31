@@ -472,7 +472,7 @@ void __fastcall CMainThread::Execute()
                 }
 
 				//Check Press Check Tag (m_bIsAutoCalPressOverAllow F&R)
-				if (m_bIsAutoCalPressOverAllowF == true || m_bIsAutoCalPressOverAllowR == true)
+				if (!g_IniFile.m_bNotLam && (m_bIsAutoCalPressOverAllowF == true || m_bIsAutoCalPressOverAllowR == true))
 				{
 					if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && m_bIsAutoCalPressOverAllowF == true) g_IniFile.m_nErrorCode = 24;
 					else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bIsAutoCalPressOverAllowR == true) g_IniFile.m_nErrorCode = 25;

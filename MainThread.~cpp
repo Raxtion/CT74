@@ -1686,9 +1686,18 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 13 : g_IniFile.m_nErrorCode = 14;
 		break;
 	case 9:
-		if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && m_bIsAutoCalPressOverAllowF) g_IniFile.m_nErrorCode = 94;
-		else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bIsAutoCalPressOverAllowR) g_IniFile.m_nErrorCode = 95;
+		if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && m_bIsAutoCalPressOverAllowF)
+		{
+			m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][9]EjectLane 偵測到AutoCal 流程失敗"));
+			g_IniFile.m_nErrorCode = 94;
+		}
+		else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bIsAutoCalPressOverAllowR)
+		{
+			m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][9]EjectLane 偵測到AutoCal 流程失敗"));
+			g_IniFile.m_nErrorCode = 95;
+		}
 		nThreadIndex++;
+		break;
 	default:
 		nThreadIndex = 0;
 	}
@@ -2047,7 +2056,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			if (m_bAutoRetry == true)                                                                       //若完成校正則紀錄已校正的數據,同時Reset m_bIsAutoCalPressOverAllow F&R
 			{
                 if (m_bPrassNeedReCal == true) m_bPrassNeedReCal = false;
-				m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][7]已完成重量校正 Reset OverAllow Tag"));
+				m_ActionLog.push_back(AddTimeString(bFront, "[DoPressCal][7]LoadCell 已完成重量校正 Reset OverAllow Tag"));
 				//AutoCal Reset here
 				if (bFront) m_bIsAutoCalPressOverAllowF = false;
 				else m_bIsAutoCalPressOverAllowR = false;

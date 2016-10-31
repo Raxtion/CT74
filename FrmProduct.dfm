@@ -51,8 +51,8 @@ object fmProduct: TfmProduct
     Top = 0
     Width = 1073
     Height = 401
-    ActivePage = TabSheet2
-    TabIndex = 1
+    ActivePage = TabSheet1
+    TabIndex = 0
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Common Page'
@@ -370,7 +370,7 @@ object fmProduct: TfmProduct
           Width = 153
           Height = 24
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 16
           TabOrder = 3
         end
         object btnHeadScalModify: TButton
@@ -389,7 +389,7 @@ object fmProduct: TfmProduct
           Width = 153
           Height = 24
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 16
           TabOrder = 5
         end
         object btnModuleScalModify: TButton
