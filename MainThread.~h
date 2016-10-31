@@ -40,7 +40,6 @@ public:
 	int m_nPassBoatCount0;                  //Counted how many Boats are finished (rare).
 	int m_nPassBoatCount1;                  //Counted how many Boats are finished (front).
 	bool m_bIsDoAutoCal[2];                 //Record for get into AutoCal. ([1]=fornt, [0]=rear)
-    bool m_bIsAutoCalUse;                   //Record for someone use AutoCal.
 	bool m_bIsManualFinish;                 //Record for Manual is finished then UP the btn.
 	int m_nIsFullHoming;                    //Record for Homing button should go fullhoming. (-1=normal, 1=true, 0=false, 2=cancel)
 	double m_dUnitPerHour1;                 //The result of UPH Front.
@@ -50,8 +49,12 @@ public:
     double m_dFirstLaserValueDown;          //Record for use to Cal. down laser
     double m_dFirstNewValue;                //Record for first Press Cal. input value that used to Cal. next.
     bool m_bIsTempMonitorFail;				//Record for get NULL value from Sqlite3Interface.
-
-	int m_nTrayRowIndex;
+	bool m_bIsNeedReLoadProductParam;		//Machine Test Mode Change, Need To ReLoad ProductParam
+    bool m_bIsAutoCalPressOverAllowF;		//Record for Need Shutdown in AutoCal Processing, when Front Lane Press detection over ErrorAllow.
+	bool m_bIsAutoCalPressOverAllowR;		//Record for Need Shutdown in AutoCal Processing, when Rear Lane Press detection over ErrorAllow.
+	
+	//Lock
+	bool m_bIsAutoCalLocked;                   //Record for someone use AutoCal.
 
 	//MoveIndex
 	int m_nPressCalMoveIndex[2];
@@ -70,9 +73,6 @@ public:
     bool m_bStopAgain;
     bool m_bResetAgain;
     bool m_bInitalAgain;
-
-    //Machine Test Mode Change, Need To ReLoad ProductParam
-    bool m_bIsNeedReLoadProductParam;
 
 	//Monitor Data//
 	double m_dLamTimer[2];   //Lamination timer count down
@@ -150,5 +150,6 @@ public:
 };
 //---------------------------------------------------------------------------
 #endif
+
 
 

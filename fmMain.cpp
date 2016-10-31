@@ -1188,7 +1188,8 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 
 	//---Auto active LC no function
 	if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55
-        || g_IniFile.m_nErrorCode == 92 || g_IniFile.m_nErrorCode == 93)
+        || g_IniFile.m_nErrorCode == 92 || g_IniFile.m_nErrorCode == 93
+        || g_pMainThread->m_bIsAutoCalPressOverAllowF || g_pMainThread->m_bIsAutoCalPressOverAllowR)
 	{
 		checkStopLC->Checked = true;
 		g_pMainThread->m_bStopLC = true;
@@ -1613,6 +1614,13 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		//CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
 		ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
 
+        //Manual mode Bypass m_bIsAutoCalPressOverAllow
+        if (g_IniFile.m_bIsMochineTestMode)
+        {
+            g_pMainThread->m_bIsAutoCalPressOverAllowF = false;
+            g_pMainThread->m_bIsAutoCalPressOverAllowR = false;
+        }
+
 		RenewRadioGroup(false);
 		this->Repaint();
 	}
@@ -1947,7 +1955,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 			{
 				Application->MessageBoxA("壓合溫度不可以超過0~250", "Confirm", MB_OK);
 			}
-            else if (g_IniFile.m_bIsMochineTestMode)
+            else if (!g_IniFile.m_bIsMochineTestMode)
             {
                 if (pWnd->m_dLamTemp0->Text.ToDouble() <= 60 || pWnd->m_dLamTemp1->Text.ToDouble() <= 60)
                 {
@@ -2237,6 +2245,13 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
 		{
 			pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath + "\\bmp\\down.bmp");
 			pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath + "\\bmp\\up.bmp");
+            if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB))
+            {
+                Application->MessageBoxA("請確認LoadCell是否在安全位置!!", "Confirm", MB_OK);
+                delete pMotorCheckDlg;
+				delete pChoiceMotorDlg;
+				return;
+            }
 		}
 
 		pMotorCheckDlg->m_nActiveAxis = pChoiceMotorDlg->m_nSelectAxis;

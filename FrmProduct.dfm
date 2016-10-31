@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 265
-  Top = 218
+  Left = 318
+  Top = 247
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 447
@@ -51,8 +51,8 @@ object fmProduct: TfmProduct
     Top = 0
     Width = 1073
     Height = 401
-    ActivePage = TabSheet1
-    TabIndex = 0
+    ActivePage = TabSheet2
+    TabIndex = 1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Common Page'
@@ -370,7 +370,7 @@ object fmProduct: TfmProduct
           Width = 153
           Height = 24
           Style = csDropDownList
-          ItemHeight = 16
+          ItemHeight = 0
           TabOrder = 3
         end
         object btnHeadScalModify: TButton
@@ -389,7 +389,7 @@ object fmProduct: TfmProduct
           Width = 153
           Height = 24
           Style = csDropDownList
-          ItemHeight = 16
+          ItemHeight = 0
           TabOrder = 5
         end
         object btnModuleScalModify: TButton
@@ -996,12 +996,15 @@ object fmProduct: TfmProduct
           Caption = 'mm'
         end
         object m_dLamStop0: TEdit
+          Tag = 5
           Left = 104
           Top = 80
           Width = 73
           Height = 24
+          Hint = 'm_dLamStop0'
           TabOrder = 1
           Text = 'Edit1'
+          OnDblClick = m_dLaserPosDblClick
         end
         object m_dLamVacHeight0: TEdit
           Left = 104
@@ -1014,12 +1017,15 @@ object fmProduct: TfmProduct
           Visible = False
         end
         object m_dLamGetPos0: TEdit
+          Tag = 5
           Left = 104
           Top = 56
           Width = 73
           Height = 24
+          Hint = 'm_dLamGetPos0'
           TabOrder = 3
           Text = 'Edit1'
+          OnDblClick = m_dLaserPosDblClick
         end
         object m_dLamSecondHeight0: TEdit
           Left = 104
@@ -1054,12 +1060,15 @@ object fmProduct: TfmProduct
           Text = 'Edit1'
         end
         object m_dLamHeight0: TEdit
+          Tag = 5
           Left = 104
           Top = 32
           Width = 73
           Height = 24
+          Hint = 'm_dLamHeight0'
           TabOrder = 0
           Text = 'm_dLamHeight0'
+          OnDblClick = m_dLaserPosDblClick
         end
       end
       object GroupBox1: TGroupBox
@@ -1170,16 +1179,21 @@ object fmProduct: TfmProduct
           Top = 32
           Width = 73
           Height = 24
+          Hint = 'm_dLoadCellPosX0'
           TabOrder = 0
           Text = 'm_dLoadCellPosX0'
+          OnDblClick = m_dLaserPosDblClick
         end
         object m_dLoadCellPosY0: TEdit
+          Tag = 1
           Left = 144
           Top = 32
           Width = 73
           Height = 24
+          Hint = 'm_dLoadCellPosY0'
           TabOrder = 1
           Text = 'Edit1'
+          OnDblClick = m_dLaserPosDblClick
         end
       end
       object GroupBox9: TGroupBox
@@ -1208,16 +1222,21 @@ object fmProduct: TfmProduct
           Top = 32
           Width = 73
           Height = 24
+          Hint = 'm_dLoadCellPosX1'
           TabOrder = 0
           Text = 'Edit1'
+          OnDblClick = m_dLaserPosDblClick
         end
         object m_dLoadCellPosY1: TEdit
+          Tag = 1
           Left = 144
           Top = 32
           Width = 73
           Height = 24
+          Hint = 'm_dLoadCellPosY1'
           TabOrder = 1
           Text = 'Edit1'
+          OnDblClick = m_dLaserPosDblClick
         end
       end
       object m_nDownPercent: TEdit
@@ -1340,12 +1359,15 @@ object fmProduct: TfmProduct
           Caption = #31532#19977#27573#36895#24230
         end
         object m_dLamStop1: TEdit
+          Tag = 4
           Left = 104
           Top = 80
           Width = 73
           Height = 24
+          Hint = 'm_dLamStop1'
           TabOrder = 1
           Text = 'Edit1'
+          OnDblClick = m_dLaserPosDblClick
         end
         object m_dLamVacHeight1: TEdit
           Left = 104
@@ -1358,12 +1380,15 @@ object fmProduct: TfmProduct
           Visible = False
         end
         object m_dLamGetPos1: TEdit
+          Tag = 4
           Left = 104
           Top = 56
           Width = 73
           Height = 24
+          Hint = 'm_dLamGetPos1'
           TabOrder = 3
           Text = 'm_dLamGetPos1'
+          OnDblClick = m_dLaserPosDblClick
         end
         object m_dLamSecondHeight1: TEdit
           Left = 104
@@ -1398,12 +1423,15 @@ object fmProduct: TfmProduct
           Text = 'Edit1'
         end
         object m_dLamHeight1: TEdit
+          Tag = 4
           Left = 104
           Top = 32
           Width = 73
           Height = 24
+          Hint = 'm_dLamHeight1'
           TabOrder = 0
           Text = 'm_dLamHeight0'
+          OnDblClick = m_dLaserPosDblClick
         end
       end
       object PageControl2: TPageControl
@@ -3629,64 +3657,84 @@ object fmProduct: TfmProduct
               Top = 57
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosX10'
               TabOrder = 0
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosY10: TEdit
+              Tag = 1
               Left = 144
               Top = 57
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosY10'
               TabOrder = 1
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosX11: TEdit
               Left = 64
               Top = 82
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosX11'
               TabOrder = 2
               Text = 'm_dLaserUpPosX11'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosY11: TEdit
+              Tag = 1
               Left = 144
               Top = 82
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosY11'
               TabOrder = 3
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosX12: TEdit
               Left = 64
               Top = 107
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosX12'
               TabOrder = 4
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosY12: TEdit
+              Tag = 1
               Left = 144
               Top = 107
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosY12'
               TabOrder = 5
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosX13: TEdit
               Left = 64
               Top = 132
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosX13'
               TabOrder = 6
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosY13: TEdit
+              Tag = 1
               Left = 144
               Top = 132
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosY13'
               TabOrder = 7
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
           end
           object GroupBox11: TGroupBox
@@ -3715,16 +3763,21 @@ object fmProduct: TfmProduct
               Top = 24
               Width = 73
               Height = 24
+              Hint = 'm_dLaserDownPosX1'
               TabOrder = 0
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserDownPosY1: TEdit
+              Tag = 1
               Left = 144
               Top = 24
               Width = 73
               Height = 24
+              Hint = 'm_dLaserDownPosY1'
               TabOrder = 1
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
           end
           object GroupBox17: TGroupBox
@@ -5940,64 +5993,84 @@ object fmProduct: TfmProduct
               Top = 57
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndX10'
               TabOrder = 0
               Text = 'm_dLaserUpPosEndX10'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndY10: TEdit
+              Tag = 1
               Left = 144
               Top = 57
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndY10'
               TabOrder = 1
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndX11: TEdit
               Left = 64
               Top = 82
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndX11'
               TabOrder = 2
               Text = 'm_dLaserUpPosX11'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndY11: TEdit
+              Tag = 1
               Left = 144
               Top = 82
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndY11'
               TabOrder = 3
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndX12: TEdit
               Left = 64
               Top = 107
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndX12'
               TabOrder = 4
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndY12: TEdit
+              Tag = 1
               Left = 144
               Top = 107
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndY12'
               TabOrder = 5
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndX13: TEdit
               Left = 64
               Top = 132
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndX13'
               TabOrder = 6
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndY13: TEdit
+              Tag = 1
               Left = 144
               Top = 132
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndY13'
               TabOrder = 7
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
           end
           object GroupBox18: TGroupBox
@@ -6026,16 +6099,21 @@ object fmProduct: TfmProduct
               Top = 24
               Width = 73
               Height = 24
+              Hint = 'm_dLaserDownPosEndX1'
               TabOrder = 0
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserDownPosEndY1: TEdit
+              Tag = 1
               Left = 144
               Top = 24
               Width = 73
               Height = 24
+              Hint = 'm_dLaserDownPosEndY1'
               TabOrder = 1
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
           end
           object btnGenerateEndLoc: TBitBtn
@@ -8277,64 +8355,84 @@ object fmProduct: TfmProduct
               Top = 82
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosX01'
               TabOrder = 0
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosY01: TEdit
+              Tag = 1
               Left = 144
               Top = 82
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosY01'
               TabOrder = 1
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosX02: TEdit
               Left = 64
               Top = 107
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosX02'
               TabOrder = 2
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosY02: TEdit
+              Tag = 1
               Left = 144
               Top = 107
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosY02'
               TabOrder = 3
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosX03: TEdit
               Left = 64
               Top = 132
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosX03'
               TabOrder = 4
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosY03: TEdit
+              Tag = 1
               Left = 144
               Top = 132
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosY03'
               TabOrder = 5
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosX00: TEdit
               Left = 64
               Top = 57
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosX00'
               TabOrder = 6
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosY00: TEdit
+              Tag = 1
               Left = 144
               Top = 57
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosY00'
               TabOrder = 7
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
           end
           object GroupBox8: TGroupBox
@@ -8363,16 +8461,21 @@ object fmProduct: TfmProduct
               Top = 24
               Width = 73
               Height = 24
+              Hint = 'm_dLaserDownPosX0'
               TabOrder = 0
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserDownPosY0: TEdit
+              Tag = 1
               Left = 144
               Top = 24
               Width = 73
               Height = 24
+              Hint = 'm_dLaserDownPosY0'
               TabOrder = 1
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
           end
           object BitBtn5: TBitBtn
@@ -10609,64 +10712,84 @@ object fmProduct: TfmProduct
               Top = 57
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndX00'
               TabOrder = 0
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndY00: TEdit
+              Tag = 1
               Left = 144
               Top = 57
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndY00'
               TabOrder = 1
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndX01: TEdit
               Left = 64
               Top = 82
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndX01'
               TabOrder = 2
               Text = 'm_dLaserUpPosX11'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndY01: TEdit
+              Tag = 1
               Left = 144
               Top = 82
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndY01'
               TabOrder = 3
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndX02: TEdit
               Left = 64
               Top = 107
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndX02'
               TabOrder = 4
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndY02: TEdit
+              Tag = 1
               Left = 144
               Top = 107
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndY02'
               TabOrder = 5
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndX03: TEdit
               Left = 64
               Top = 132
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndX03'
               TabOrder = 6
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserUpPosEndY03: TEdit
+              Tag = 1
               Left = 144
               Top = 132
               Width = 73
               Height = 24
+              Hint = 'm_dLaserUpPosEndY03'
               TabOrder = 7
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
           end
           object GroupBox20: TGroupBox
@@ -10695,16 +10818,21 @@ object fmProduct: TfmProduct
               Top = 24
               Width = 73
               Height = 24
+              Hint = 'm_dLaserDownPosEndX0'
               TabOrder = 0
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
             object m_dLaserDownPosEndY0: TEdit
+              Tag = 1
               Left = 144
               Top = 24
               Width = 73
               Height = 24
+              Hint = 'm_dLaserDownPosEndY0'
               TabOrder = 1
               Text = 'Edit1'
+              OnDblClick = m_dLaserPosDblClick
             end
           end
         end

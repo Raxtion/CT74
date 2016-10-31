@@ -322,6 +322,7 @@ __published:	// IDE-managed Components
         void __fastcall RenewCmbScal(AnsiString Hint);
     void __fastcall btnScalModifyClick(TObject *Sender);
     void __fastcall btnGenerateEndLocClick(TObject *Sender);
+    void __fastcall m_dLaserPosDblClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TfmProduct(TComponent* Owner);
