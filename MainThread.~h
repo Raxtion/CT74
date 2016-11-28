@@ -52,7 +52,9 @@ public:
 	bool m_bIsNeedReLoadProductParam;		//Machine Test Mode Change, Need To ReLoad ProductParam
     bool m_bIsAutoCalPressOverAllowF;		//Record for Need Shutdown in AutoCal Processing, when Front Lane Press detection over ErrorAllow.
 	bool m_bIsAutoCalPressOverAllowR;		//Record for Need Shutdown in AutoCal Processing, when Rear Lane Press detection over ErrorAllow.
-	
+    bool m_bIsAutoCalTimesOver25F;			//Record for Need Shutdown in AutoCal Processing, when Front Lane Press calibration times over 25.
+	bool m_bIsAutoCalTimesOver25R;			//Record for Need Shutdown in AutoCal Processing, when Rear Lane Press calibration times over 25.
+
 	//Lock
 	bool m_bIsAutoCalLocked;                   //Record for someone use AutoCal.
 

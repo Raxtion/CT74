@@ -50,6 +50,7 @@ public:
   double m_dLeftGassLeakylimit;
   double m_dRightGassLeakylimit;
   double m_dLaneTransportDelayTime;
+  double m_dLamSubDelayTime;
   bool m_bForceEject;
   bool m_bIsUseF911;
   bool m_bIsUseIL030;
@@ -66,15 +67,10 @@ public:
   double m_dNLimitR;
 
   double m_dLastLamPress[2];  //Record for LastPressCal. Protect Wrong press Lamination in AutoRun
-  
+
   AnsiString m_strHeadScals;
   AnsiString m_strModuleScals;
 
-  //-----------------Product-----------------
-  int m_nCols;
-  int m_nRows;
-  double m_dColPitch;
-  double m_dRowPitch;
   //pos
   double m_dLamHeight[2];          //1: front 0:rear
   double m_dLamStop[2];
@@ -84,6 +80,26 @@ public:
   double m_dLamSecondTime[2];
   double m_dLamThirdHeight[2];
   double m_dLamThirdTime[2];
+
+  int m_nAutoInterval;
+  double m_dAutoStopRange;
+
+  double m_dAutoRunTempRange;
+  double m_dVacDelayTime;
+
+  double m_dPressCalRange;
+  double m_dPressCalTime;
+
+  int m_nDownPercent;                 //for downPress to decrease cylinder friction
+
+
+
+
+  //-----------------Product-----------------
+  int m_nCols;
+  int m_nRows;
+  double m_dColPitch;
+  double m_dRowPitch;
 
   //                                //1:front 0:rear
   double m_dLamTime[2];
@@ -101,20 +117,11 @@ public:
   double m_dLaserDownPosEndX[2];
   double m_dLaserDownPosEndY[2];
 
-  int m_nAutoInterval;
-  double m_dAutoStopRange;
-
   double m_dScaleOffsetFront[50];
   double m_dScaleOffsetRear[50];
 
   int m_nRailOption;
   bool m_bNotLam;
-
-  double m_dPressCalRange;
-  double m_dPressCalTime;
-
-  double m_dAutoRunTempRange;
-  double m_dVacDelayTime;
 
   AnsiString m_strModuleNum;
   AnsiString m_strSetupEENum;
@@ -131,12 +138,14 @@ public:
   double m_dGap[5];                   //for product param keyin
   double m_dKeyTemp[2][3];            //for product param keyin
 
-  int m_nDownPercent;                 //for downPress to decrease cylinder friction
+  double m_dCoolDownTimeF;
+  double m_dCoolDownTimeR;
+
   double m_dLamSecondKeepTime;
   bool m_bIsLamSecondStop;
   double m_dLamSecondCorrectTimes;
   bool m_bIsLamUpDownCorrect;
-
+  
 //Function
 public:
   void __fastcall MachineFile(bool bRead);

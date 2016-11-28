@@ -255,6 +255,20 @@ void __fastcall TfmProduct::m_dLaserPosDblClick(TObject *Sender)
     pMotorCheckDlg->m_nActiveAxis=pEdit->Tag;
     pMotorCheckDlg->Caption=strCap;
 
+    AnsiString sPath = g_IniFile.m_strApplicationPath;
+	sPath = StringReplace(sPath, "\\exe\\", "", TReplaceFlags());
+
+    if (pMotorCheckDlg->m_nActiveAxis == 0)
+    {
+        pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath + "\\bmp\\right.bmp");
+        pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath + "\\bmp\\left.bmp");
+    }
+    else if (pMotorCheckDlg->m_nActiveAxis == 4 || pMotorCheckDlg->m_nActiveAxis == 5)
+    {
+        pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath + "\\bmp\\down.bmp");
+        pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath + "\\bmp\\up.bmp");
+    }
+
     if(pMotorCheckDlg->ShowModal()==mrOk)
     {
         TEdit *pEdit2=(TEdit *)FindComponent(pEdit->Hint);

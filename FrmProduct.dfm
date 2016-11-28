@@ -1,10 +1,10 @@
 object fmProduct: TfmProduct
-  Left = 318
-  Top = 247
+  Left = 277
+  Top = 190
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
-  ClientHeight = 447
-  ClientWidth = 1073
+  ClientHeight = 433
+  ClientWidth = 1074
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,21 +18,21 @@ object fmProduct: TfmProduct
   TextHeight = 16
   object Label92: TLabel
     Left = 24
-    Top = 418
+    Top = 402
     Width = 57
     Height = 16
     Caption = 'Setup EE'
   end
   object Label93: TLabel
     Left = 224
-    Top = 418
+    Top = 402
     Width = 42
     Height = 16
     Caption = '('#32232#34399')'
   end
   object BitBtn1: TBitBtn
     Left = 856
-    Top = 408
+    Top = 392
     Width = 97
     Height = 33
     TabOrder = 0
@@ -40,7 +40,7 @@ object fmProduct: TfmProduct
   end
   object BitBtn2: TBitBtn
     Left = 960
-    Top = 408
+    Top = 392
     Width = 97
     Height = 33
     TabOrder = 1
@@ -50,64 +50,22 @@ object fmProduct: TfmProduct
     Left = 0
     Top = 0
     Width = 1073
-    Height = 401
+    Height = 385
     ActivePage = TabSheet1
     TabIndex = 0
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Common Page'
-      object Label83: TLabel
-        Left = 16
-        Top = 330
-        Width = 64
-        Height = 16
-        Caption = #33258#21205#27169#24335
-      end
-      object Label84: TLabel
-        Left = 16
-        Top = 346
-        Width = 64
-        Height = 16
-        Caption = #23481#35377#28331#24230
-      end
-      object Label85: TLabel
-        Left = 160
-        Top = 338
-        Width = 16
-        Height = 16
-        Caption = #24230
-      end
-      object Label86: TLabel
-        Left = 88
-        Top = 338
-        Width = 12
-        Height = 16
-        Caption = #177' '
-      end
-      object Label88: TLabel
-        Left = 736
-        Top = 338
-        Width = 16
-        Height = 16
-        Caption = #31186
-      end
-      object Label87: TLabel
-        Left = 544
-        Top = 338
-        Width = 144
-        Height = 16
-        Caption = #31532#20108#27425#30495#31354#27298#28204#24310#36978
-      end
       object Label120: TLabel
         Left = 472
-        Top = 300
+        Top = 238
         Width = 16
         Height = 16
         Caption = #31186
       end
       object Label149: TLabel
         Left = 472
-        Top = 340
+        Top = 262
         Width = 16
         Height = 16
         Caption = #27425
@@ -142,14 +100,14 @@ object fmProduct: TfmProduct
         end
         object Label22: TLabel
           Left = 174
-          Top = 39
+          Top = 35
           Width = 16
           Height = 16
           Caption = #31186
         end
         object Label23: TLabel
           Left = 174
-          Top = 72
+          Top = 70
           Width = 16
           Height = 16
           Caption = #24230
@@ -216,14 +174,14 @@ object fmProduct: TfmProduct
         end
         object Label28: TLabel
           Left = 174
-          Top = 39
+          Top = 35
           Width = 16
           Height = 16
           Caption = #31186
         end
         object Label29: TLabel
           Left = 174
-          Top = 72
+          Top = 70
           Width = 16
           Height = 16
           Caption = #24230
@@ -264,7 +222,7 @@ object fmProduct: TfmProduct
         Left = 16
         Top = 153
         Width = 145
-        Height = 128
+        Height = 136
         Caption = #27969#36947#36984#25799
         Items.Strings = (
           #20840#37096#37117#38283#21855
@@ -276,61 +234,61 @@ object fmProduct: TfmProduct
         Left = 536
         Top = 9
         Width = 273
-        Height = 312
+        Height = 336
         Caption = #20854#20182
         TabOrder = 3
         object Label10: TLabel
           Left = 8
-          Top = 57
+          Top = 73
           Width = 80
           Height = 16
           Caption = #29105#22739#38957#22411#24335
         end
         object Label18: TLabel
           Left = 8
-          Top = 94
+          Top = 110
           Width = 80
           Height = 16
           Caption = #29105#22739#38957#23610#23544
         end
         object Label89: TLabel
           Left = 8
-          Top = 169
+          Top = 185
           Width = 64
           Height = 16
           Caption = #30495#31354#38283#21855
         end
         object Label90: TLabel
           Left = 8
-          Top = 206
+          Top = 222
           Width = 64
           Height = 16
           Caption = #22739#21147#39511#35657
         end
         object Label94: TLabel
           Left = 8
-          Top = 132
+          Top = 148
           Width = 64
           Height = 16
           Caption = #19979#27169#23610#23544
         end
         object Label109: TLabel
           Left = 8
-          Top = 244
+          Top = 260
           Width = 64
           Height = 16
           Caption = #27169#20855#32232#34399
         end
         object Label150: TLabel
           Left = 8
-          Top = 20
+          Top = 36
           Width = 61
           Height = 16
           Caption = #26032#33290'Boat'
         end
         object m_cmbHeadType: TComboBox
           Left = 96
-          Top = 53
+          Top = 69
           Width = 153
           Height = 24
           Style = csDropDownList
@@ -342,7 +300,7 @@ object fmProduct: TfmProduct
         end
         object m_cmbVacummOn: TComboBox
           Left = 96
-          Top = 165
+          Top = 181
           Width = 153
           Height = 24
           Style = csDropDownList
@@ -354,7 +312,7 @@ object fmProduct: TfmProduct
         end
         object m_cmbPressCheck: TComboBox
           Left = 96
-          Top = 202
+          Top = 218
           Width = 153
           Height = 24
           Style = csDropDownList
@@ -366,7 +324,7 @@ object fmProduct: TfmProduct
         end
         object m_cmbHeadScal: TComboBox
           Left = 96
-          Top = 90
+          Top = 106
           Width = 153
           Height = 24
           Style = csDropDownList
@@ -375,7 +333,7 @@ object fmProduct: TfmProduct
         end
         object btnHeadScalModify: TButton
           Left = 8
-          Top = 272
+          Top = 288
           Width = 121
           Height = 25
           Hint = 'HeadScal'
@@ -385,7 +343,7 @@ object fmProduct: TfmProduct
         end
         object m_cmbModuleScal: TComboBox
           Left = 96
-          Top = 128
+          Top = 144
           Width = 153
           Height = 24
           Style = csDropDownList
@@ -394,7 +352,7 @@ object fmProduct: TfmProduct
         end
         object btnModuleScalModify: TButton
           Left = 136
-          Top = 272
+          Top = 288
           Width = 121
           Height = 25
           Hint = 'ModuleScal'
@@ -404,7 +362,7 @@ object fmProduct: TfmProduct
         end
         object m_strModuleNum: TEdit
           Left = 96
-          Top = 240
+          Top = 256
           Width = 153
           Height = 24
           TabOrder = 7
@@ -412,7 +370,7 @@ object fmProduct: TfmProduct
         end
         object m_cmbBoatType: TComboBox
           Left = 96
-          Top = 16
+          Top = 32
           Width = 153
           Height = 24
           Style = csDropDownList
@@ -622,82 +580,82 @@ object fmProduct: TfmProduct
         Left = 824
         Top = 232
         Width = 217
-        Height = 129
+        Height = 113
         Caption = 'Tempture Check ('#8451')'
         TabOrder = 5
         object Label104: TLabel
           Left = 16
-          Top = 84
+          Top = 76
           Width = 12
           Height = 16
           Caption = 'F '
         end
         object Label105: TLabel
           Left = 16
-          Top = 52
+          Top = 44
           Width = 10
           Height = 16
           Caption = 'R'
         end
         object Label106: TLabel
           Left = 48
-          Top = 28
+          Top = 20
           Width = 8
           Height = 16
           Caption = '1'
         end
         object Label107: TLabel
           Left = 104
-          Top = 28
+          Top = 20
           Width = 8
           Height = 16
           Caption = '2'
         end
         object Label108: TLabel
           Left = 160
-          Top = 28
+          Top = 20
           Width = 8
           Height = 16
           Caption = '3'
         end
         object m_dKeyTemp11: TEdit
           Left = 32
-          Top = 81
+          Top = 73
           Width = 49
           Height = 24
           TabOrder = 0
         end
         object m_dKeyTemp12: TEdit
           Left = 88
-          Top = 81
+          Top = 73
           Width = 49
           Height = 24
           TabOrder = 1
         end
         object m_dKeyTemp13: TEdit
           Left = 144
-          Top = 81
+          Top = 73
           Width = 49
           Height = 24
           TabOrder = 2
         end
         object m_dKeyTemp01: TEdit
           Left = 32
-          Top = 49
+          Top = 41
           Width = 49
           Height = 24
           TabOrder = 3
         end
         object m_dKeyTemp02: TEdit
           Left = 88
-          Top = 49
+          Top = 41
           Width = 49
           Height = 24
           TabOrder = 4
         end
         object m_dKeyTemp03: TEdit
           Left = 144
-          Top = 49
+          Top = 41
           Width = 49
           Height = 24
           TabOrder = 5
@@ -705,379 +663,107 @@ object fmProduct: TfmProduct
       end
       object m_bNotLam: TCheckBox
         Left = 16
-        Top = 297
+        Top = 310
         Width = 73
         Height = 17
         Caption = #19981#22739#21512
         TabOrder = 6
       end
-      object m_dAutoRunTempRange: TEdit
-        Left = 104
-        Top = 333
-        Width = 49
-        Height = 24
+      object GroupBox21: TGroupBox
+        Left = 208
+        Top = 152
+        Width = 273
+        Height = 65
+        Caption = #20986#26009#27969#36947' '#22238#28331#31186#25976
         TabOrder = 7
-        Text = 'm_dAutoRunTempRange'
-      end
-      object m_dVacDelayTime: TEdit
-        Left = 696
-        Top = 335
-        Width = 33
-        Height = 24
-        TabOrder = 8
-        Text = 'm_dVacDelayTime'
-      end
-      object GroupBox12: TGroupBox
-        Left = 168
-        Top = 153
-        Width = 177
-        Height = 128
-        Caption = #22739#21147#26657#27491#35373#23450
-        TabOrder = 9
-        object Label55: TLabel
-          Left = 8
-          Top = 40
-          Width = 64
+        object Label151: TLabel
+          Left = 110
+          Top = 33
+          Width = 6
           Height = 16
-          AutoSize = False
-          Caption = #23481#35377#35492#24046
+          Caption = 's'
         end
-        object Label56: TLabel
-          Left = 150
-          Top = 36
-          Width = 13
+        object Label152: TLabel
+          Left = 238
+          Top = 33
+          Width = 6
           Height = 16
-          Caption = '%'
+          Caption = 's'
         end
-        object Label57: TLabel
-          Left = 8
-          Top = 72
-          Width = 96
+        object Label153: TLabel
+          Left = 14
+          Top = 33
+          Width = 8
           Height = 16
-          AutoSize = False
-          Caption = #28204#37327#31337#23450#26178#38291
+          Caption = 'F'
         end
-        object Label58: TLabel
-          Left = 94
-          Top = 100
-          Width = 16
+        object Label154: TLabel
+          Left = 142
+          Top = 33
+          Width = 10
           Height = 16
-          Caption = #31186
+          Caption = 'R'
         end
-        object m_dPressCalRange: TEdit
-          Left = 80
-          Top = 32
-          Width = 65
+        object m_dCoolDownTimeF: TEdit
+          Left = 32
+          Top = 30
+          Width = 73
           Height = 24
           TabOrder = 0
           Text = 'm_dLamHeight0'
         end
-        object m_dPressCalTime: TEdit
-          Left = 16
-          Top = 96
+        object m_dCoolDownTimeR: TEdit
+          Left = 160
+          Top = 30
           Width = 73
           Height = 24
           TabOrder = 1
           Text = 'm_dLamHeight0'
-        end
-      end
-      object GroupBox7: TGroupBox
-        Left = 352
-        Top = 153
-        Width = 169
-        Height = 128
-        Caption = #33258#21205#26657#27491
-        TabOrder = 10
-        object Label79: TLabel
-          Left = 8
-          Top = 36
-          Width = 64
-          Height = 16
-          Caption = #38291#38548#30436#25976
-        end
-        object Label80: TLabel
-          Left = 8
-          Top = 69
-          Width = 96
-          Height = 16
-          Caption = #33258#21205#20572#27231#35492#24046
-        end
-        object Label81: TLabel
-          Left = 88
-          Top = 98
-          Width = 13
-          Height = 16
-          Caption = '%'
-        end
-        object Label82: TLabel
-          Left = 143
-          Top = 35
-          Width = 16
-          Height = 16
-          Caption = #30436
-        end
-        object m_nAutoInterval: TEdit
-          Left = 80
-          Top = 32
-          Width = 57
-          Height = 24
-          TabOrder = 0
-          Text = 'm_nAutoInterval'
-        end
-        object m_dAutoStopRange: TEdit
-          Left = 8
-          Top = 92
-          Width = 73
-          Height = 24
-          TabOrder = 1
-          Text = 'm_dAutoStopRange'
         end
       end
       object m_bIsLamSecondStop: TCheckBox
         Left = 208
-        Top = 294
+        Top = 233
         Width = 201
         Height = 25
         Caption = #31532#20108#27573#22739#21512#20572#39376#32173#25345#26178#38291
-        TabOrder = 11
+        TabOrder = 8
       end
       object m_dLamSecondKeepTime: TEdit
         Left = 409
-        Top = 294
+        Top = 234
         Width = 56
         Height = 24
-        TabOrder = 12
+        TabOrder = 9
         Text = 'm_dUpperLaserAlarm'
       end
       object m_bIsLamUpDownCorrect: TCheckBox
         Left = 208
-        Top = 334
+        Top = 257
         Width = 201
         Height = 25
         Caption = #31532#20108#27573#22739#21512#19978#19979#20462#27491#27425#25976
-        TabOrder = 13
+        TabOrder = 10
       end
       object m_dLamSecondCorrectTimes: TEdit
         Left = 409
-        Top = 334
+        Top = 258
         Width = 56
         Height = 24
-        TabOrder = 14
+        TabOrder = 11
         Text = 'm_dUpperLaserAlarm'
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Detail Page'
       ImageIndex = 1
-      object Label110: TLabel
-        Left = 230
-        Top = 338
-        Width = 260
-        Height = 16
-        Caption = '% ('#38477#20302#27773#32568#32568#21185#35492#24046' '#35531#36664#20837'0~100%)'
-      end
-      object Label111: TLabel
-        Left = 24
-        Top = 338
-        Width = 144
-        Height = 16
-        Caption = #22739#21512#21069#32233#34909#22739#21147#19979#38477
-      end
-      object GroupBox3: TGroupBox
-        Left = 8
-        Top = 16
-        Width = 241
-        Height = 225
-        Caption = #24460#22739#21512#27969#36947
-        TabOrder = 0
-        object Label3: TLabel
-          Left = 24
-          Top = 32
-          Width = 64
-          Height = 16
-          Caption = #22739#21512#39640#24230
-        end
-        object Label4: TLabel
-          Left = 24
-          Top = 80
-          Width = 64
-          Height = 16
-          Caption = #25509#29255#39640#24230
-        end
-        object Label16: TLabel
-          Left = 190
-          Top = 36
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label17: TLabel
-          Left = 190
-          Top = 132
-          Width = 20
-          Height = 16
-          Caption = 'sec'
-        end
-        object Label9: TLabel
-          Left = 4
-          Top = 168
-          Width = 90
-          Height = 16
-          Caption = '('#21560#30495#31354#39640#24230')'
-        end
-        object Label61: TLabel
-          Left = 24
-          Top = 56
-          Width = 64
-          Height = 16
-          Caption = #20986#29255#39640#24230
-        end
-        object Label62: TLabel
-          Left = 190
-          Top = 164
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label35: TLabel
-          Left = 8
-          Top = 104
-          Width = 80
-          Height = 16
-          Caption = #31532#20108#27573#39640#24230
-        end
-        object Label36: TLabel
-          Left = 190
-          Top = 196
-          Width = 20
-          Height = 16
-          Caption = 'sec'
-        end
-        object Label37: TLabel
-          Left = 190
-          Top = 60
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label38: TLabel
-          Left = 8
-          Top = 128
-          Width = 80
-          Height = 16
-          Caption = #31532#20108#27573#36895#24230
-        end
-        object Label39: TLabel
-          Left = 8
-          Top = 152
-          Width = 80
-          Height = 16
-          Caption = #31532#19977#27573#39640#24230
-        end
-        object Label40: TLabel
-          Left = 190
-          Top = 108
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label41: TLabel
-          Left = 8
-          Top = 192
-          Width = 80
-          Height = 16
-          Caption = #31532#19977#27573#36895#24230
-        end
-        object Label44: TLabel
-          Left = 190
-          Top = 84
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object m_dLamStop0: TEdit
-          Tag = 5
-          Left = 104
-          Top = 80
-          Width = 73
-          Height = 24
-          Hint = 'm_dLamStop0'
-          TabOrder = 1
-          Text = 'Edit1'
-          OnDblClick = m_dLaserPosDblClick
-        end
-        object m_dLamVacHeight0: TEdit
-          Left = 104
-          Top = 32
-          Width = 73
-          Height = 24
-          Enabled = False
-          TabOrder = 2
-          Text = 'm_dLamVacHeight0'
-          Visible = False
-        end
-        object m_dLamGetPos0: TEdit
-          Tag = 5
-          Left = 104
-          Top = 56
-          Width = 73
-          Height = 24
-          Hint = 'm_dLamGetPos0'
-          TabOrder = 3
-          Text = 'Edit1'
-          OnDblClick = m_dLaserPosDblClick
-        end
-        object m_dLamSecondHeight0: TEdit
-          Left = 104
-          Top = 104
-          Width = 73
-          Height = 24
-          TabOrder = 4
-          Text = 'Edit1'
-        end
-        object m_dLamSecondTime0: TEdit
-          Left = 104
-          Top = 128
-          Width = 73
-          Height = 24
-          TabOrder = 5
-          Text = 'Edit1'
-        end
-        object m_dLamThirdHeight0: TEdit
-          Left = 104
-          Top = 160
-          Width = 73
-          Height = 24
-          TabOrder = 6
-          Text = 'Edit1'
-        end
-        object m_dLamThirdTime0: TEdit
-          Left = 104
-          Top = 192
-          Width = 73
-          Height = 24
-          TabOrder = 7
-          Text = 'Edit1'
-        end
-        object m_dLamHeight0: TEdit
-          Tag = 5
-          Left = 104
-          Top = 32
-          Width = 73
-          Height = 24
-          Hint = 'm_dLamHeight0'
-          TabOrder = 0
-          Text = 'm_dLamHeight0'
-          OnDblClick = m_dLaserPosDblClick
-        end
-      end
       object GroupBox1: TGroupBox
         Left = 8
-        Top = 249
+        Top = 97
         Width = 489
         Height = 80
         Caption = 'Tray Layout'
-        TabOrder = 2
+        TabOrder = 0
         object Label1: TLabel
           Left = 16
           Top = 27
@@ -1154,28 +840,28 @@ object fmProduct: TfmProduct
         end
       end
       object GroupBox6: TGroupBox
-        Left = 504
+        Left = 8
         Top = 16
-        Width = 273
+        Width = 241
         Height = 73
         Caption = #24460#22739#21512'['#28204#37325']'#36215#22987#20301#32622
-        TabOrder = 3
+        TabOrder = 1
         object Label31: TLabel
-          Left = 24
+          Left = 8
           Top = 37
           Width = 36
           Height = 16
           Caption = '(X,Y)'
         end
         object Label34: TLabel
-          Left = 222
+          Left = 206
           Top = 41
           Width = 24
           Height = 16
           Caption = 'mm'
         end
         object m_dLoadCellPosX0: TEdit
-          Left = 64
+          Left = 48
           Top = 32
           Width = 73
           Height = 24
@@ -1186,7 +872,7 @@ object fmProduct: TfmProduct
         end
         object m_dLoadCellPosY0: TEdit
           Tag = 1
-          Left = 144
+          Left = 128
           Top = 32
           Width = 73
           Height = 24
@@ -1197,28 +883,28 @@ object fmProduct: TfmProduct
         end
       end
       object GroupBox9: TGroupBox
-        Left = 784
+        Left = 256
         Top = 16
-        Width = 273
+        Width = 241
         Height = 73
         Caption = #21069#22739#21512'['#28204#37325']'#36215#22987#20301#32622
-        TabOrder = 4
+        TabOrder = 2
         object Label43: TLabel
-          Left = 24
+          Left = 8
           Top = 37
           Width = 36
           Height = 16
           Caption = '(X,Y)'
         end
         object Label46: TLabel
-          Left = 222
+          Left = 206
           Top = 41
           Width = 24
           Height = 16
           Caption = 'mm'
         end
         object m_dLoadCellPosX1: TEdit
-          Left = 64
+          Left = 48
           Top = 32
           Width = 73
           Height = 24
@@ -1229,7 +915,7 @@ object fmProduct: TfmProduct
         end
         object m_dLoadCellPosY1: TEdit
           Tag = 1
-          Left = 144
+          Left = 128
           Top = 32
           Width = 73
           Height = 24
@@ -1239,216 +925,21 @@ object fmProduct: TfmProduct
           OnDblClick = m_dLaserPosDblClick
         end
       end
-      object m_nDownPercent: TEdit
-        Left = 176
-        Top = 335
-        Width = 49
-        Height = 24
-        TabOrder = 5
-      end
-      object GroupBox2: TGroupBox
-        Left = 256
-        Top = 16
-        Width = 241
-        Height = 225
-        Caption = #21069#22739#21512#27969#36947
-        TabOrder = 1
-        object Label5: TLabel
-          Left = 24
-          Top = 32
-          Width = 64
-          Height = 16
-          Caption = #22739#21512#39640#24230
-        end
-        object Label6: TLabel
-          Left = 24
-          Top = 80
-          Width = 64
-          Height = 16
-          Caption = #25509#29255#39640#24230
-        end
-        object Label7: TLabel
-          Left = 190
-          Top = 36
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label8: TLabel
-          Left = 190
-          Top = 84
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label15: TLabel
-          Left = 4
-          Top = 168
-          Width = 90
-          Height = 16
-          Caption = '('#21560#30495#31354#39640#24230')'
-        end
-        object Label59: TLabel
-          Left = 24
-          Top = 56
-          Width = 64
-          Height = 16
-          Caption = #20986#29255#39640#24230
-        end
-        object Label60: TLabel
-          Left = 190
-          Top = 60
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label45: TLabel
-          Left = 190
-          Top = 132
-          Width = 20
-          Height = 16
-          Caption = 'sec'
-        end
-        object Label51: TLabel
-          Left = 190
-          Top = 164
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label52: TLabel
-          Left = 8
-          Top = 104
-          Width = 80
-          Height = 16
-          Caption = #31532#20108#27573#39640#24230
-        end
-        object Label53: TLabel
-          Left = 190
-          Top = 196
-          Width = 20
-          Height = 16
-          Caption = 'sec'
-        end
-        object Label75: TLabel
-          Left = 8
-          Top = 128
-          Width = 80
-          Height = 16
-          Caption = #31532#20108#27573#36895#24230
-        end
-        object Label76: TLabel
-          Left = 8
-          Top = 152
-          Width = 80
-          Height = 16
-          Caption = #31532#19977#27573#39640#24230
-        end
-        object Label77: TLabel
-          Left = 190
-          Top = 108
-          Width = 24
-          Height = 16
-          Caption = 'mm'
-        end
-        object Label78: TLabel
-          Left = 8
-          Top = 192
-          Width = 80
-          Height = 16
-          Caption = #31532#19977#27573#36895#24230
-        end
-        object m_dLamStop1: TEdit
-          Tag = 4
-          Left = 104
-          Top = 80
-          Width = 73
-          Height = 24
-          Hint = 'm_dLamStop1'
-          TabOrder = 1
-          Text = 'Edit1'
-          OnDblClick = m_dLaserPosDblClick
-        end
-        object m_dLamVacHeight1: TEdit
-          Left = 104
-          Top = 32
-          Width = 73
-          Height = 24
-          Enabled = False
-          TabOrder = 2
-          Text = 'm_dLamVacHeight1'
-          Visible = False
-        end
-        object m_dLamGetPos1: TEdit
-          Tag = 4
-          Left = 104
-          Top = 56
-          Width = 73
-          Height = 24
-          Hint = 'm_dLamGetPos1'
-          TabOrder = 3
-          Text = 'm_dLamGetPos1'
-          OnDblClick = m_dLaserPosDblClick
-        end
-        object m_dLamSecondHeight1: TEdit
-          Left = 104
-          Top = 104
-          Width = 73
-          Height = 24
-          TabOrder = 4
-          Text = 'Edit1'
-        end
-        object m_dLamSecondTime1: TEdit
-          Left = 104
-          Top = 128
-          Width = 73
-          Height = 24
-          TabOrder = 5
-          Text = 'Edit1'
-        end
-        object m_dLamThirdHeight1: TEdit
-          Left = 104
-          Top = 160
-          Width = 73
-          Height = 24
-          TabOrder = 6
-          Text = 'Edit1'
-        end
-        object m_dLamThirdTime1: TEdit
-          Left = 104
-          Top = 192
-          Width = 73
-          Height = 24
-          TabOrder = 7
-          Text = 'Edit1'
-        end
-        object m_dLamHeight1: TEdit
-          Tag = 4
-          Left = 104
-          Top = 32
-          Width = 73
-          Height = 24
-          Hint = 'm_dLamHeight1'
-          TabOrder = 0
-          Text = 'm_dLamHeight0'
-          OnDblClick = m_dLaserPosDblClick
-        end
-      end
       object PageControl2: TPageControl
         Left = 504
-        Top = 96
+        Top = 16
         Width = 553
-        Height = 265
+        Height = 297
         ActivePage = TabSheet3
         TabIndex = 0
-        TabOrder = 6
+        TabOrder = 3
         object TabSheet3: TTabSheet
           Caption = 'Front '#21069
           object GroupBox10: TGroupBox
             Left = 0
-            Top = 1
+            Top = 17
             Width = 257
-            Height = 161
+            Height = 168
             Caption = #21069#22739#21512'['#19978#27169#28204#39640']'#36215#22987#20301#32622
             TabOrder = 0
             object Label47: TLabel
@@ -3739,7 +3230,7 @@ object fmProduct: TfmProduct
           end
           object GroupBox11: TGroupBox
             Left = 0
-            Top = 169
+            Top = 193
             Width = 257
             Height = 56
             Caption = #21069#22739#21512'['#19979#27169#28204#39640']'#36215#22987#20301#32622
@@ -3782,9 +3273,9 @@ object fmProduct: TfmProduct
           end
           object GroupBox17: TGroupBox
             Left = 288
-            Top = 1
+            Top = 17
             Width = 257
-            Height = 161
+            Height = 168
             Caption = #21069#22739#21512'['#19978#27169#28204#39640']'#32080#26463#20301#32622
             TabOrder = 2
             object Label121: TLabel
@@ -6075,7 +5566,7 @@ object fmProduct: TfmProduct
           end
           object GroupBox18: TGroupBox
             Left = 288
-            Top = 169
+            Top = 193
             Width = 257
             Height = 56
             Caption = #21069#22739#21512'['#19979#27169#28204#39640']'#32080#26463#20301#32622
@@ -6119,7 +5610,7 @@ object fmProduct: TfmProduct
           object btnGenerateEndLoc: TBitBtn
             Tag = 11
             Left = 260
-            Top = 56
+            Top = 72
             Width = 25
             Height = 57
             Hint = '11'
@@ -6130,7 +5621,7 @@ object fmProduct: TfmProduct
           object BitBtn4: TBitBtn
             Tag = 10
             Left = 260
-            Top = 184
+            Top = 208
             Width = 25
             Height = 33
             Hint = '10'
@@ -6144,9 +5635,9 @@ object fmProduct: TfmProduct
           ImageIndex = 1
           object GroupBox13: TGroupBox
             Left = 0
-            Top = 1
+            Top = 17
             Width = 257
-            Height = 161
+            Height = 168
             Caption = #24460#22739#21512'['#19978#27169#28204#39640']'#36215#22987#20301#32622
             TabOrder = 0
             object Label67: TLabel
@@ -8437,7 +7928,7 @@ object fmProduct: TfmProduct
           end
           object GroupBox8: TGroupBox
             Left = 0
-            Top = 169
+            Top = 193
             Width = 257
             Height = 56
             Caption = #24460#22739#21512'['#19979#27169#28204#39640']'#36215#22987#20301#32622
@@ -8481,7 +7972,7 @@ object fmProduct: TfmProduct
           object BitBtn5: TBitBtn
             Tag = 1
             Left = 260
-            Top = 56
+            Top = 72
             Width = 25
             Height = 57
             Hint = '01'
@@ -8491,7 +7982,7 @@ object fmProduct: TfmProduct
           end
           object BitBtn6: TBitBtn
             Left = 260
-            Top = 184
+            Top = 208
             Width = 25
             Height = 33
             Hint = '00'
@@ -8501,9 +7992,9 @@ object fmProduct: TfmProduct
           end
           object GroupBox19: TGroupBox
             Left = 288
-            Top = 1
+            Top = 17
             Width = 257
-            Height = 161
+            Height = 168
             Caption = #21069#22739#21512'['#19978#27169#28204#39640']'#32080#26463#20301#32622
             TabOrder = 4
             object Label135: TLabel
@@ -10794,7 +10285,7 @@ object fmProduct: TfmProduct
           end
           object GroupBox20: TGroupBox
             Left = 288
-            Top = 169
+            Top = 193
             Width = 257
             Height = 56
             Caption = #21069#22739#21512'['#19979#27169#28204#39640']'#32080#26463#20301#32622
@@ -10841,7 +10332,7 @@ object fmProduct: TfmProduct
   end
   object m_strSetupEENum: TEdit
     Left = 88
-    Top = 413
+    Top = 397
     Width = 129
     Height = 24
     Enabled = False

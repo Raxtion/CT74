@@ -175,6 +175,7 @@ private:	// User declarations
         int m_nROIIndex;
         int m_nUserLevel;
         AnsiString m_strDate;
+        bool m_bIsAutoRun;    //AutoRun = true, Manual = false
         bool m_bLastGassLeakyFront;
         bool m_bLastGassLeakyRear;
         bool m_bLastPusherIOErrorFront;

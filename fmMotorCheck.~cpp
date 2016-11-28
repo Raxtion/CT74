@@ -133,7 +133,8 @@ void __fastcall TfrmMotorCheck::btnFWDMouseDown(TObject *Sender,
     }
     else if (m_nActiveAxis == 1)
     {
-        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[1]+1 || g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[0]+1) g_IniFile.m_nErrorCode = 69;
+        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[1]+1) g_IniFile.m_nErrorCode = 96;
+        else if (g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[0]+1) g_IniFile.m_nErrorCode = 97;
         else
         {
             if(dMovePitch==0) g_Motion.JogStart(m_nActiveAxis,true);
@@ -182,7 +183,8 @@ void __fastcall TfrmMotorCheck::btnRWDMouseDown(TObject *Sender,
     }
     else if (m_nActiveAxis == 1)
     {
-        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[1]+1 || g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[0]+1) g_IniFile.m_nErrorCode = 69;
+        if (g_Motion.GetActualPos(AXIS_FL)>g_IniFile.m_dLamStop[1]+1) g_IniFile.m_nErrorCode = 96;
+        else if (g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[0]+1) g_IniFile.m_nErrorCode = 97;
         else
         {
             if(dMovePitch==0) g_Motion.JogStart(m_nActiveAxis,false);
