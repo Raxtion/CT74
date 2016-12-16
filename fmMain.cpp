@@ -1127,6 +1127,8 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 			strCode.sprintf("%04d", g_IniFile.m_nErrorCode);
 			g_eqpXML.SendAlarmMessage(strCode.c_str(), strMsgCIM.c_str());
 		}
+        //lock RestetButton
+		g_pMainThread->m_bIsResetAlarmLocked = true;
 	}
 
 	if (g_IniFile.m_nErrorCode <= 0 && (nErrorCode != g_IniFile.m_nErrorCode))
@@ -2342,6 +2344,8 @@ void __fastcall TfrmMain::N11Click(TObject *Sender)
 void __fastcall TfrmMain::OP1Click(TObject *Sender)
 {
 	SetPrivilege(0);
+    g_IniFile.m_strLogInENGAccount = "OP";
+    g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
@@ -2376,6 +2380,9 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
 			{
 				Application->MessageBox("登入成功!!", "認證", MB_OK);
 				g_IniFile.m_strLogInENGAccount = pPwdDlg->editAccount->Text;
+                g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
+                //unlock RestetButton
+                g_pMainThread->m_bIsResetAlarmLocked = false;
 				m_nUserLevel = 1;
 				break;
 			}
@@ -2383,6 +2390,7 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
 		else
 		{
 			g_IniFile.m_strLogInENGAccount = "OP";
+            g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
 			m_nUserLevel = 0;
 			break;
 		}
@@ -2435,7 +2443,14 @@ void __fastcall TfrmMain::Admin1Click(TObject *Sender)
 	pPwdDlg->editNewPassword->Visible = false;
 	if (pPwdDlg->ShowModal() == mrOk)
 	{
-		if (pPwdDlg->editOldPassword->Text == g_IniFile.m_strARTPassword) m_nUserLevel = 2;
+		if (pPwdDlg->editOldPassword->Text == g_IniFile.m_strARTPassword)
+        {
+            g_IniFile.m_strLogInENGAccount = "Admin";
+            g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
+            //unlock RestetButton
+            g_pMainThread->m_bIsResetAlarmLocked = false;
+            m_nUserLevel = 2;
+        }
 		else { Application->MessageBox("密碼錯誤!!", "錯誤", MB_OK); m_nUserLevel = 0; }
 	}
 	SetPrivilege(m_nUserLevel);

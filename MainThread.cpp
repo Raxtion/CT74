@@ -68,6 +68,8 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	m_bAutoRetry = false;
 	m_bIsHomingFromBtn = false;
 	m_bIsManualFinish = true;
+    m_bIsDoAutoCalFinish[0] = false;
+    m_bIsDoAutoCalFinish[1] = false;
 	m_nIsFullHoming = -1;
 	m_dUnitPerHour1 = 0.0;
 	m_dUnitPerHour0 = 0.0;
@@ -99,6 +101,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_dFirstNewValue = 0.5;
     m_dLaserKeepValue = 0.0;
 	m_bIsAutoCalLocked = false;
+    m_bIsResetAlarmLocked = false;
     m_bIsTempMonitorFail = false;
     m_bIsNeedReLoadProductParam = false;
 
@@ -249,8 +252,8 @@ void __fastcall CMainThread::Execute()
 			m_bStartLaserUpCal[1] = false;
 			m_bStartLaserDownCal[0] = false;
 			m_bStartLaserDownCal[1] = false;
-			//m_bStartLamSub[0] = false;
-			//m_bStartLamSub[1] = false;
+			if (g_IniFile.m_nErrorCode == 35) m_bStartLamSub[0] = false;    //Off when open safetydoor, On in DoLamination
+			if (g_IniFile.m_nErrorCode == 35) m_bStartLamSub[1] = false;    //Off when open safetydoor, On in DoLamination
 			m_bStartAutoCal[0] = false;
 			m_bStartAutoCal[1] = false;
 			m_bIsManualFinish = true;
@@ -259,8 +262,8 @@ void __fastcall CMainThread::Execute()
 			g_Motion.Stop(1);
 			g_Motion.Stop(2);
 			g_Motion.Stop(3);
-			g_Motion.Stop(4);
-			g_Motion.Stop(5);
+			if (g_IniFile.m_nErrorCode == 35) g_Motion.Stop(4);
+			if (g_IniFile.m_nErrorCode == 35) g_Motion.Stop(5);
 			g_Motion.Stop(6);
 			g_Motion.Stop(7);
 
@@ -275,7 +278,7 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//---Reset Alarm
-		if (g_DIO.ReadDIBit(DI::ResetBtn) && m_bResetAgain)
+		if (g_DIO.ReadDIBit(DI::ResetBtn) && m_bResetAgain && !m_bIsResetAlarmLocked)
 		{
 			g_IniFile.m_nErrorCode = 0;
             if (m_bResetAgain == true && m_bIsHomeDone) m_listLog.push_back("機台重置");
@@ -394,8 +397,6 @@ void __fastcall CMainThread::Execute()
 			}
 
             //Non Stop Process when Stop  //20160722 Need Test for Safe Protect
-            if (m_bStartLamSub[1] && m_bIsHomeDone) DoLamSub(true, nThreadIndex[13]);
-		    if (m_bStartLamSub[0] && m_bIsHomeDone) DoLamSub(false, nThreadIndex[12]);
             if (m_bIsDoAutoCal[1] && m_bIsHomeDone) DoAutoCal(true, nThreadIndex[14]);
             if (m_bIsDoAutoCal[0] && m_bIsHomeDone) DoAutoCal(false, nThreadIndex[15]);
 
@@ -525,6 +526,10 @@ void __fastcall CMainThread::Execute()
 				tmResetLamp.timeStart(500);
 			}
 		}
+
+        //Cycle End Process
+        if (m_bStartLamSub[1] && m_bIsHomeDone) DoLamSub(true, nThreadIndex[13]);
+        if (m_bStartLamSub[0] && m_bIsHomeDone) DoLamSub(false, nThreadIndex[12]);
 
 		::Sleep(10);
 	}
@@ -1120,22 +1125,24 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
     case 11:
         if (!m_bIsAutoCalLocked && !m_bIsAutoCalPressOverAllowF && !m_bIsAutoCalPressOverAllowR && !m_bIsAutoCalTimesOver25F && !m_bIsAutoCalTimesOver25R)
         {
-            if (bFront) m_bIsDoAutoCal[1] = true;
-            else m_bIsDoAutoCal[0] = true;
+            if (bFront) {m_bIsDoAutoCal[1] = true; m_bIsDoAutoCalFinish[1] = false;}
+            else {m_bIsDoAutoCal[0] = true; m_bIsDoAutoCalFinish[0] = false;}
             nThreadIndex++;
         }
         break;
     case 12:
-        if (bFront && !m_bIsDoAutoCal[1])
+        if (bFront && !m_bIsDoAutoCal[1] && m_bIsDoAutoCalFinish[1])
         {
             tm1MS->timeStart(500);
 			nThreadIndex++;
         }
-        if (!bFront && !m_bIsDoAutoCal[0])
+        else if (m_bIsDoAutoCalFinish[1] == false) m_bIsDoAutoCal[1] = true;
+        if (!bFront && !m_bIsDoAutoCal[0] && m_bIsDoAutoCalFinish[0])
         {
             tm1MS->timeStart(500);
 			nThreadIndex++;
         }
+        else if (m_bIsDoAutoCalFinish[0] == false) m_bIsDoAutoCal[0] = true;
         break;
     case 13:
     case nTagFinished:nThreadIndex = 13;
@@ -1147,12 +1154,12 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 				{
 					if (m_bIsAutoCalPressOverAllowF)
 					{
-						m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][10]EjectLane 偵測到AutoCal 流程失敗"));
+						m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][13]TagFinished 偵測到AutoCal 流程失敗"));
 						g_IniFile.m_nErrorCode = 94;
 					}
 					else if (m_bIsAutoCalTimesOver25F)
 					{
-						m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][10]EjectLane 偵測到AutoCal 流程失敗(>25)"));
+						m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][13]TagFinished 偵測到AutoCal 流程失敗(>25)"));
 						g_IniFile.m_nErrorCode = 96;
 					}
 					else nThreadIndex++;
@@ -1161,12 +1168,12 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 				{
 					if (m_bIsAutoCalPressOverAllowR)
 					{
-						m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][10]EjectLane 偵測到AutoCal 流程失敗"));
+						m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][13]TagFinished 偵測到AutoCal 流程失敗"));
 						g_IniFile.m_nErrorCode = 95;
 					}
 					else if (m_bIsAutoCalTimesOver25R)
 					{
-						m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][10]EjectLane 偵測到AutoCal 流程失敗(>25)"));
+						m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][13]TagFinished 偵測到AutoCal 流程失敗(>25)"));
 						g_IniFile.m_nErrorCode = 97;
 					}
 					else nThreadIndex++;
@@ -1189,18 +1196,25 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	static C_GetTime tm2MSFront(EX_SCALE::TIME_1MS, false);
 	static C_GetTime tm2MSRear(EX_SCALE::TIME_1MS, false);
 	static C_GetTime tm1MSLamSecondTime;
-	static bool bVacError = false;
+	static bool bVacErrorF = false; 
+	static bool bVacErrorR = false;
 	static bool bLamSecondTimeError = false;
-	static bool bIsGoUp = true;
-	static int nGoUpIndex = 0;
+	static bool bIsGoUpF = true;
+	static bool bIsGoUpR = true;
+	static int nGoUpIndexF = 0;
+	static int nGoUpIndexR = 0;
 
 	C_GetTime *tm1MS;
 	C_GetTime *tm2MS;
+    bool bIsGoUp;
+	int *nGoUpIndex;
 	CPISODNM100 *pDNPort;
 
 	int nLamInp, nLamEntry, nLamWarp, nEjectEntry, nLifterVacGauge, nEjectInp;
 	int nLamMotorStart, nLifterVac;
 	int nAxisLifter;
+
+
 
 	if (bFront)
 	{
@@ -1218,6 +1232,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		tm1MS = &tm1MSFront;
 		tm2MS = &tm2MSFront;
         pDNPort = &g_DNPort0;
+		bIsGoUp = &bIsGoUpF;
+		nGoUpIndex = &nGoUpIndexF;
 	}
 	else
 	{
@@ -1235,6 +1251,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		tm1MS = &tm1MSRear;
 		tm2MS = &tm2MSRear;
         pDNPort = &g_DNPort1;
+		bIsGoUp = &bIsGoUpR;
+		nGoUpIndex = &nGoUpIndexR;
 	}
 
 	switch (nThreadIndex)
@@ -1325,7 +1343,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
         {
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 第一次真空不偵測"));
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][4]LamSub 時間到開始移動"));
-
+			bFront ? bVacErrorF = false : bVacErrorR = false;
 			bIsGoUp = true;
 			nGoUpIndex = 0;
             m_bFirstVacSuccessed = true;
@@ -1334,9 +1352,9 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		break;
 	case 5:
 		if (g_IniFile.m_bIsLamUpDownCorrect && g_Motion.IsMotionDone(nAxisLifter))
-		{	
+		{
             g_Motion.SetSpeed(nAxisLifter, g_IniFile.m_dACCSpeed[nAxisLifter], g_IniFile.m_dDECSpeed[nAxisLifter], g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
-            if (nGoUpIndex >= g_IniFile.m_dLamSecondCorrectTimes)
+            if ((*nGoUpIndex) >= g_IniFile.m_dLamSecondCorrectTimes)
 			{
 				m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][5]LamSub 第二段壓合上下修正結束"));
 				g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamHeight[bFront]);
@@ -1445,7 +1463,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
         if (g_IniFile.m_nVacummOn == 0)
         {
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][8]LamSub 第二次真空不偵測"));
-            bVacError = false;
+			bFront ? bVacErrorF = false : bVacErrorR = false;
             nThreadIndex++;
         }
         else
@@ -1453,13 +1471,13 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		    if (g_DIO.ReadDIBit(nLifterVacGauge))
 		    {
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][8]LamSub 第二次真空偵測成功"));
-			    bVacError = false;
+				bFront ? bVacErrorF = false : bVacErrorR = false;
 			    nThreadIndex++;
 		    }
 		    else if (tm2MS->timeUp())
 		    {
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][8]LamSub 第二次真空偵測失敗"));
-			    bVacError = true;
+				bFront ? bVacErrorF = true : bVacErrorR = true;
 			    nThreadIndex++;
 		    }
         }
@@ -1517,7 +1535,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		}
 		break;
 	case 15:
-		if (bVacError)
+		if ((bFront && bVacErrorF) || (!bFront && bVacErrorR))
 		{
 			bFront ? g_IniFile.m_nErrorCode = 54 : g_IniFile.m_nErrorCode = 55;
 			m_bStartLamSub[bFront] = false;
@@ -2803,6 +2821,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		m_bIsAutoCalLocked = false;
 		m_bIsDoAutoCal[bFront] = false;
 		nThreadIndex = 0;
+        m_bIsDoAutoCalFinish[bFront] = true;
         m_bStopLC = false;
 	}
 
@@ -2814,6 +2833,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
         m_bStopLC = false;
 	}
 }
+
 
 
 
