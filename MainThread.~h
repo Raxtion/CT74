@@ -41,7 +41,6 @@ public:
 	int m_nPassBoatCount1;                  //Counted how many Boats are finished (front).
 	bool m_bIsDoAutoCal[2];                 //Record for get into AutoCal. ([1]=fornt, [0]=rear)
 	bool m_bIsManualFinish;                 //Record for Manual is finished then UP the btn.
-    bool m_bIsDoAutoCalFinish[2];           //Record for DoAutoCal is finished
 	int m_nIsFullHoming;                    //Record for Homing button should go fullhoming. (-1=normal, 1=true, 0=false, 2=cancel)
 	double m_dUnitPerHour1;                 //The result of UPH Front.
 	double m_dUnitPerHour0;                 //The result of UPH Rear.
@@ -57,7 +56,8 @@ public:
 	bool m_bIsAutoCalTimesOver25R;			//Record for Need Shutdown in AutoCal Processing, when Rear Lane Press calibration times over 25.
 
 	//Lock
-	bool m_bIsAutoCalLocked;                   //Record for someone use AutoCal.
+	bool m_bIsAutoCalLocked;                   //Record for someone use AutoCal
+    bool m_bIsResetAlarmLocked;				//Record for Lock ResetButton when Alarm..
 
 	//MoveIndex
 	int m_nPressCalMoveIndex[2];

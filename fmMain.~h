@@ -119,6 +119,8 @@ __published:	// IDE-managed Components
     TMenuItem *N17;
     TMenuItem *N18;
     TRadioGroup *radioPosOption;
+    TLabel *Label35;
+    TLabel *Label36;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);

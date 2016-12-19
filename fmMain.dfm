@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = 59
-  Top = 197
-  Width = 1436
-  Height = 832
+  Left = 1
+  Top = 1
+  Width = 1364
+  Height = 736
   Caption = 'frmMain'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -164,7 +164,7 @@ object frmMain: TfrmMain
   end
   object SpeedButton1: TSpeedButton
     Left = 32
-    Top = 448
+    Top = 440
     Width = 97
     Height = 41
     Caption = 'Load Cell UP'
@@ -172,7 +172,7 @@ object frmMain: TfrmMain
   end
   object SpeedButton2: TSpeedButton
     Left = 32
-    Top = 496
+    Top = 488
     Width = 97
     Height = 41
     Caption = 'Load Cell DOWN'
@@ -259,9 +259,9 @@ object frmMain: TfrmMain
   end
   object GroupBox1: TGroupBox
     Left = 8
-    Top = 552
+    Top = 536
     Width = 161
-    Height = 107
+    Height = 123
     Caption = 'Value Monitor'
     Color = clMoneyGreen
     ParentColor = False
@@ -276,17 +276,31 @@ object frmMain: TfrmMain
     end
     object Label8: TLabel
       Left = 16
-      Top = 60
+      Top = 52
       Width = 43
       Height = 13
       Caption = 'Laser Up'
     end
     object Label9: TLabel
       Left = 16
-      Top = 84
+      Top = 68
       Width = 58
       Height = 13
       Caption = 'Load Down:'
+    end
+    object Label35: TLabel
+      Left = 16
+      Top = 84
+      Width = 38
+      Height = 13
+      Caption = 'Gass R:'
+    end
+    object Label36: TLabel
+      Left = 16
+      Top = 100
+      Width = 36
+      Height = 13
+      Caption = 'Gass F:'
     end
     object checkMonitor: TCheckBox
       Left = 96

@@ -1072,6 +1072,8 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 		else Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_pMainThread->m_dSensoLinkF911RealTime);
 		Label8->Caption = "Laser(上):" + FormatFloat("0.00", g_pMainThread->m_dUpperLaserRealTime) + "mm";
 		Label9->Caption = "Laser(下):" + FormatFloat("0.00", g_pMainThread->m_dDownLaserRealTime) + "mm";
+        Label35->Caption = "Gass R" + FormatFloat("0.00", g_pMainThread->m_dRearPressloseRealTime);
+        Label36->Caption = "Gass F" + FormatFloat("0.00", g_pMainThread->m_dForntPressloseRealTime);
 	}
 
 	if (g_IniFile.m_nLanguageMode>0)
@@ -1218,6 +1220,9 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 
     //---Syn the checkStopLC
     checkStopLC->Checked = g_pMainThread->m_bStopLC;
+
+    //---When StopLC, Off the ReadyIn1
+    if (g_pMainThread->m_bStopLC) g_DIO.SetDO(DO::ReadyIn1, false);
 
     //---Auto ReLoad ProductParam
     if (g_IniFile.m_nErrorCode == 999 && g_pMainThread->m_bIsNeedReLoadProductParam)
@@ -2380,10 +2385,10 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
 			{
 				Application->MessageBox("登入成功!!", "認證", MB_OK);
 				g_IniFile.m_strLogInENGAccount = pPwdDlg->editAccount->Text;
+				m_nUserLevel = 1;
                 g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
                 //unlock RestetButton
                 g_pMainThread->m_bIsResetAlarmLocked = false;
-				m_nUserLevel = 1;
 				break;
 			}
 		}
