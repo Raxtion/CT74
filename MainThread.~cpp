@@ -481,6 +481,14 @@ void __fastcall CMainThread::Execute()
 					else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bIsAutoCalPressOverAllowR == true) g_IniFile.m_nErrorCode = 25;
 				}
 
+                //Check UpperMoldCheck
+                /*
+                if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+                    || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+                {
+                    g_IniFile.m_nErrorCode = 30;
+                }*/
+
                 //nThreadIndex[1]=0;       //some thread need to start from zero
                 m_bIsAutoMode = true;
 
@@ -578,6 +586,8 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 			else if (!g_DIO.ReadDIBit(DI::LCStopUp)) g_IniFile.m_nErrorCode = 17;
 			else if (g_DIO.ReadDIBit(DI::LCInp) || g_DIO.ReadDIBit(DI::LCExist) || g_DIO.ReadDIBit(DI::LCEntry)) g_IniFile.m_nErrorCode = 18;
 			else if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
+            /*else if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+                || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2))) g_IniFile.m_nErrorCode = 30;*/
 			else nThreadIndex++;
 		}
 		break;
@@ -821,13 +831,13 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		}
 		else if (g_DIO.ReadDIBit(DI::LCEntry))
 		{
-			g_DIO.SetDO(DO::ReadyIn1, false); 
+			g_DIO.SetDO(DO::ReadyIn1, false);
 			g_DIO.SetDO(DO::LCMotorStart, true);
 			tm1MS.timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][2]LC 接料區進料開始"));
 			nThreadIndex++;
 		}
-        else if (!g_DIO.ReadDOBit(DO::ReadyIn1)) g_DIO.SetDO(DO::ReadyIn1, true);
+        else if (!g_DIO.ReadDOBit(DO::ReadyIn1) && !g_DIO.ReadDIBit(DI::LCInp)) g_DIO.SetDO(DO::ReadyIn1, true);
 		break;
 	case 3:
 		if (g_DIO.ReadDIBit(DI::LCInp) && !g_DIO.ReadDIBit(DI::LCEntry))    //g_DIO.ReadDIBit(DI::LCExist)
@@ -1119,21 +1129,35 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
         }
         break;
     case 11:
-        if (!m_bIsAutoCalLocked && !m_bIsAutoCalPressOverAllowF && !m_bIsAutoCalPressOverAllowR && !m_bIsAutoCalTimesOver25F && !m_bIsAutoCalTimesOver25R)
-        {
-            if (bFront) m_bIsDoAutoCal[1] = true;
-            else m_bIsDoAutoCal[0] = true;
-            nThreadIndex++;
-        }
-        break;
+        if (g_IniFile.m_nRailOption == 0 && !m_bIsAutoCalLocked && !m_bIsAutoCalPressOverAllowF && !m_bIsAutoCalTimesOver25F && !m_bIsAutoCalPressOverAllowR && !m_bIsAutoCalTimesOver25R)
+		{	
+			m_bIsAutoCalLocked = true;
+			if (bFront) m_bIsDoAutoCal[1] = true;
+			else m_bIsDoAutoCal[0] = true;
+			nThreadIndex++;
+		}
+		if (g_IniFile.m_nRailOption == 1 && !m_bIsAutoCalLocked && !m_bIsAutoCalPressOverAllowF && !m_bIsAutoCalTimesOver25F)
+		{
+			m_bIsAutoCalLocked = true;
+			m_bIsDoAutoCal[1] = true;
+			nThreadIndex++;
+		}
+		if (g_IniFile.m_nRailOption == 2 && !m_bIsAutoCalLocked && !m_bIsAutoCalPressOverAllowR && !m_bIsAutoCalTimesOver25R)
+		{
+			m_bIsAutoCalLocked = true;
+			m_bIsDoAutoCal[0] = true;
+			nThreadIndex++;
+		}
     case 12:
         if (bFront && !m_bIsDoAutoCal[1])
         {
+            m_bIsAutoCalLocked = false;
             tm1MS->timeStart(500);
 			nThreadIndex++;
         }
         if (!bFront && !m_bIsDoAutoCal[0])
         {
+            m_bIsAutoCalLocked = false;
             tm1MS->timeStart(500);
 			nThreadIndex++;
         }

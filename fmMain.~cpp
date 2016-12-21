@@ -2280,6 +2280,14 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
 				delete pChoiceMotorDlg;
 				return;
 			}
+            /*if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+                || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+            {
+                Application->MessageBoxA("請確認 前後上模具護蓋已經卸除!!", "Confirm", MB_OK);
+				delete pMotorCheckDlg;
+				delete pChoiceMotorDlg;
+				return;
+            }*/
 		}
 		if (pChoiceMotorDlg->m_nSelectAxis == 1)
 		{
@@ -2663,6 +2671,13 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 		g_IniFile.m_nErrorCode = 10;
 		return;
 	}
+    /*
+    else if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+        || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+    {
+        Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
+        return;
+    }*/
 
 	int nFront = ((TPaintBox *)Sender)->Tag;
 
@@ -2768,6 +2783,13 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 #pragma region MainManual
 void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 {
+    /*if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+        || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+    {
+        Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
+        return;
+    }*/
+
     TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
 	checkMonitor->Checked = false;
