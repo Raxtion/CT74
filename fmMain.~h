@@ -121,6 +121,9 @@ __published:	// IDE-managed Components
     TRadioGroup *radioPosOption;
     TLabel *Label35;
     TLabel *Label36;
+    TSpeedButton *btnClearEject0;
+    TSpeedButton *btnClearEject1;
+    TSpeedButton *btnStartOneStepPressCal;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -172,6 +175,9 @@ __published:	// IDE-managed Components
     void __fastcall N17Click(TObject *Sender);
     void __fastcall N18Click(TObject *Sender);
     void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
+    void __fastcall btnClearEject0Click(TObject *Sender);
+    void __fastcall btnClearEject1Click(TObject *Sender);
+    void __fastcall btnStartOneStepPressCalClick(TObject *Sender);
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;

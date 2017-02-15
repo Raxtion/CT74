@@ -77,6 +77,7 @@ public:
         //----For Delta DTA4848 thermal controller
         double __fastcall GetPV(int nID);                //Get Current Temperature
         void __fastcall SetSV(int nID,double dValue);    //Set Target Temperature
+        void __fastcall SetTempOffset(int nID,double dValue);    //Set Offset Target Temperature
 
         //---For ICPDAS M-7017Z
         double __fastcall GetAnalogData(int nID,int nChannel);

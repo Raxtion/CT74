@@ -45,7 +45,6 @@ public:
         double __fastcall GetMM(int nMacID,int nChannel) {return ReadPollData(nMacID,nChannel)*(30.0/13106.8)-22.5; };
 
         void __fastcall ClearOutData(){memset(m_nOutputData,0x00,sizeof(__int16)*50);};
-        
+
 };
 #endif
- 

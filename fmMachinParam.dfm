@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 144
-  Top = 193
+  Left = 195
+  Top = 197
   Width = 1110
   Height = 618
   Caption = #27231#21488#21443#25976
@@ -1746,5 +1746,57 @@ object frmMachineParam: TfrmMachineParam
     Width = 49
     Height = 24
     TabOrder = 31
+  end
+  object GroupBox8: TGroupBox
+    Left = 936
+    Top = 256
+    Width = 137
+    Height = 137
+    Caption = #28331#25511#22120' '#28331#24230'Offset'
+    TabOrder = 32
+    object Label2: TLabel
+      Left = 6
+      Top = 43
+      Width = 16
+      Height = 16
+      Caption = #21069
+    end
+    object Label10: TLabel
+      Left = 6
+      Top = 83
+      Width = 16
+      Height = 16
+      Caption = #24460
+    end
+    object Label11: TLabel
+      Left = 113
+      Top = 41
+      Width = 16
+      Height = 16
+      Caption = #24230
+    end
+    object Label12: TLabel
+      Left = 113
+      Top = 81
+      Width = 16
+      Height = 16
+      Caption = #24230
+    end
+    object m_dTempOffsetF: TEdit
+      Left = 30
+      Top = 40
+      Width = 81
+      Height = 24
+      TabOrder = 0
+      Text = 'm_dTempOffsetF'
+    end
+    object m_dTempOffsetR: TEdit
+      Left = 30
+      Top = 80
+      Width = 81
+      Height = 24
+      TabOrder = 1
+      Text = 'Edit1'
+    end
   end
 end

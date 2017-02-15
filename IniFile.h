@@ -92,7 +92,8 @@ public:
 
   int m_nDownPercent;                 //for downPress to decrease cylinder friction
 
-
+  double m_dTempOffsetF;
+  double m_dTempOffsetR;
 
 
   //-----------------Product-----------------

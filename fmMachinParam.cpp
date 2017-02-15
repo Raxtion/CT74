@@ -123,3 +123,4 @@ void __fastcall TfrmMachineParam::m_dLamHeightDblClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+

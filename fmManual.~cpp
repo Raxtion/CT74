@@ -49,6 +49,12 @@ void __fastcall TfrmManual::Timer1Timer(TObject *Sender)
 
 void __fastcall TfrmManual::SpeedButton1Click(TObject *Sender)
 {
+        if (!g_DIO.ReadDIBit(DI::LoadCellDown))
+        {
+            g_IniFile.m_nErrorCode = 10;
+		    return;
+        }
+
         TSpeedButton *pBtn=(TSpeedButton *)Sender;
         pBtn->Enabled=false;
 

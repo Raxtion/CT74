@@ -715,700 +715,700 @@ object frmOffser: TfrmOffser
     Caption = 'Label1'
   end
   object Label101: TLabel
-    Left = 672
+    Left = 664
     Top = 123
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label102: TLabel
-    Left = 729
+    Left = 721
     Top = 123
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label103: TLabel
-    Left = 787
+    Left = 779
     Top = 123
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label104: TLabel
-    Left = 845
+    Left = 837
     Top = 123
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label105: TLabel
-    Left = 903
+    Left = 895
     Top = 124
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label106: TLabel
-    Left = 960
+    Left = 952
     Top = 124
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label107: TLabel
-    Left = 1018
+    Left = 1010
     Top = 124
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label108: TLabel
-    Left = 1076
+    Left = 1068
     Top = 124
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label109: TLabel
-    Left = 1134
+    Left = 1126
     Top = 124
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label110: TLabel
-    Left = 1192
+    Left = 1184
     Top = 124
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label111: TLabel
-    Left = 672
+    Left = 664
     Top = 99
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label112: TLabel
-    Left = 729
+    Left = 721
     Top = 99
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label113: TLabel
-    Left = 787
+    Left = 779
     Top = 99
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label114: TLabel
-    Left = 845
+    Left = 837
     Top = 99
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label115: TLabel
-    Left = 903
+    Left = 895
     Top = 100
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label116: TLabel
-    Left = 960
+    Left = 952
     Top = 100
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label117: TLabel
-    Left = 1018
+    Left = 1010
     Top = 100
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label118: TLabel
-    Left = 1076
+    Left = 1068
     Top = 100
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label119: TLabel
-    Left = 1134
+    Left = 1126
     Top = 100
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label120: TLabel
-    Left = 1192
+    Left = 1184
     Top = 100
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label121: TLabel
-    Left = 672
+    Left = 664
     Top = 75
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label122: TLabel
-    Left = 729
+    Left = 721
     Top = 75
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label123: TLabel
-    Left = 787
+    Left = 779
     Top = 75
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label124: TLabel
-    Left = 845
+    Left = 837
     Top = 75
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label125: TLabel
-    Left = 903
+    Left = 895
     Top = 76
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label126: TLabel
-    Left = 960
+    Left = 952
     Top = 76
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label127: TLabel
-    Left = 1018
+    Left = 1010
     Top = 76
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label128: TLabel
-    Left = 1076
+    Left = 1068
     Top = 76
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label129: TLabel
-    Left = 1134
+    Left = 1126
     Top = 76
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label130: TLabel
-    Left = 1192
+    Left = 1184
     Top = 76
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label131: TLabel
-    Left = 672
+    Left = 664
     Top = 51
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label132: TLabel
-    Left = 729
+    Left = 721
     Top = 51
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label133: TLabel
-    Left = 787
+    Left = 779
     Top = 51
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label134: TLabel
-    Left = 845
+    Left = 837
     Top = 51
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label135: TLabel
-    Left = 903
+    Left = 895
     Top = 52
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label136: TLabel
-    Left = 960
+    Left = 952
     Top = 52
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label137: TLabel
-    Left = 1018
+    Left = 1010
     Top = 52
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label138: TLabel
-    Left = 1076
+    Left = 1068
     Top = 52
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label139: TLabel
-    Left = 1134
+    Left = 1126
     Top = 52
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label140: TLabel
-    Left = 1192
+    Left = 1184
     Top = 52
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label141: TLabel
-    Left = 672
+    Left = 664
     Top = 27
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label142: TLabel
-    Left = 729
+    Left = 721
     Top = 27
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label143: TLabel
-    Left = 787
+    Left = 779
     Top = 27
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label144: TLabel
-    Left = 845
+    Left = 837
     Top = 27
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label145: TLabel
-    Left = 903
+    Left = 895
     Top = 28
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label146: TLabel
-    Left = 960
+    Left = 952
     Top = 28
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label147: TLabel
-    Left = 1018
+    Left = 1010
     Top = 28
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label148: TLabel
-    Left = 1076
+    Left = 1068
     Top = 28
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label149: TLabel
-    Left = 1134
+    Left = 1126
     Top = 28
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label150: TLabel
-    Left = 1192
+    Left = 1184
     Top = 28
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label151: TLabel
-    Left = 672
+    Left = 664
     Top = 307
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label152: TLabel
-    Left = 729
+    Left = 721
     Top = 307
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label153: TLabel
-    Left = 787
+    Left = 779
     Top = 307
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label154: TLabel
-    Left = 845
+    Left = 837
     Top = 307
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label155: TLabel
-    Left = 903
+    Left = 895
     Top = 308
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label156: TLabel
-    Left = 960
+    Left = 952
     Top = 308
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label157: TLabel
-    Left = 1018
+    Left = 1010
     Top = 308
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label158: TLabel
-    Left = 1076
+    Left = 1068
     Top = 308
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label159: TLabel
-    Left = 1134
+    Left = 1126
     Top = 308
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label160: TLabel
-    Left = 1192
+    Left = 1184
     Top = 308
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label161: TLabel
-    Left = 672
+    Left = 664
     Top = 283
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label162: TLabel
-    Left = 729
+    Left = 721
     Top = 283
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label163: TLabel
-    Left = 787
+    Left = 779
     Top = 283
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label164: TLabel
-    Left = 845
+    Left = 837
     Top = 283
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label165: TLabel
-    Left = 903
+    Left = 895
     Top = 284
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label166: TLabel
-    Left = 960
+    Left = 952
     Top = 284
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label167: TLabel
-    Left = 1018
+    Left = 1010
     Top = 284
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label168: TLabel
-    Left = 1076
+    Left = 1068
     Top = 284
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label169: TLabel
-    Left = 1134
+    Left = 1126
     Top = 284
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label170: TLabel
-    Left = 1192
+    Left = 1184
     Top = 284
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label171: TLabel
-    Left = 672
+    Left = 664
     Top = 259
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label172: TLabel
-    Left = 729
+    Left = 721
     Top = 259
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label173: TLabel
-    Left = 787
+    Left = 779
     Top = 259
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label174: TLabel
-    Left = 845
+    Left = 837
     Top = 259
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label175: TLabel
-    Left = 903
+    Left = 895
     Top = 260
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label176: TLabel
-    Left = 960
+    Left = 952
     Top = 260
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label177: TLabel
-    Left = 1018
+    Left = 1010
     Top = 260
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label178: TLabel
-    Left = 1076
+    Left = 1068
     Top = 260
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label179: TLabel
-    Left = 1134
+    Left = 1126
     Top = 260
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label180: TLabel
-    Left = 1192
+    Left = 1184
     Top = 260
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label181: TLabel
-    Left = 672
+    Left = 664
     Top = 235
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label182: TLabel
-    Left = 729
+    Left = 721
     Top = 235
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label183: TLabel
-    Left = 787
+    Left = 779
     Top = 235
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label184: TLabel
-    Left = 845
+    Left = 837
     Top = 235
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label185: TLabel
-    Left = 903
+    Left = 895
     Top = 236
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label186: TLabel
-    Left = 960
+    Left = 952
     Top = 236
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label187: TLabel
-    Left = 1018
+    Left = 1010
     Top = 236
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label188: TLabel
-    Left = 1076
+    Left = 1068
     Top = 236
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label189: TLabel
-    Left = 1134
+    Left = 1126
     Top = 236
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label190: TLabel
-    Left = 1192
+    Left = 1184
     Top = 236
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label191: TLabel
-    Left = 672
+    Left = 664
     Top = 211
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label192: TLabel
-    Left = 729
+    Left = 721
     Top = 211
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label193: TLabel
-    Left = 787
+    Left = 779
     Top = 211
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label194: TLabel
-    Left = 845
+    Left = 837
     Top = 211
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label195: TLabel
-    Left = 903
+    Left = 895
     Top = 212
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label196: TLabel
-    Left = 960
+    Left = 952
     Top = 212
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label197: TLabel
-    Left = 1018
+    Left = 1010
     Top = 212
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label198: TLabel
-    Left = 1076
+    Left = 1068
     Top = 212
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label199: TLabel
-    Left = 1134
+    Left = 1126
     Top = 212
     Width = 32
     Height = 13
     Caption = 'Label1'
   end
   object Label200: TLabel
-    Left = 1192
+    Left = 1184
     Top = 212
     Width = 32
     Height = 13
@@ -1424,6 +1424,20 @@ object frmOffser: TfrmOffser
   object Label202: TLabel
     Left = 672
     Top = 8
+    Width = 22
+    Height = 13
+    Caption = 'GET'
+  end
+  object Label203: TLabel
+    Left = 640
+    Top = 192
+    Width = 21
+    Height = 13
+    Caption = 'SET'
+  end
+  object Label204: TLabel
+    Left = 672
+    Top = 192
     Width = 22
     Height = 13
     Caption = 'GET'

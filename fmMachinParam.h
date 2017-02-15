@@ -188,6 +188,13 @@ __published:	// IDE-managed Components
     TLabel *Label111;
     TEdit *m_nDownPercent;
     TLabel *Label110;
+    TGroupBox *GroupBox8;
+    TLabel *Label2;
+    TLabel *Label10;
+    TEdit *m_dTempOffsetF;
+    TEdit *m_dTempOffsetR;
+    TLabel *Label11;
+    TLabel *Label12;
     void __fastcall m_bIsUseCIMClick(TObject *Sender);
     void __fastcall m_dLamHeightDblClick(TObject *Sender);
 private:	// User declarations

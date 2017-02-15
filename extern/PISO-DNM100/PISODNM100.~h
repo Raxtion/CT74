@@ -40,11 +40,13 @@ public:
 
         double __fastcall GetKg(int nIndex) {return (m_nInputData[nIndex]/4096.0)*0.5*10.2; };       // MAX 0.5Mpa,1 MPa=10.2Kg/cm2
         double __fastcall GetSetKg(int nIndex) {return (m_nOutputData[nIndex]/4096.0)*0.5*10.2; };       // MAX 0.5Mpa,1 MPa=10.2Kg/cm2
+        double __fastcall InitGetKg(int nIndex) {return (1.0/4096.0)*0.5*10.2; };       // MAX 0.5Mpa,1 MPa=10.2Kg/cm2
+        double __fastcall InitGetSetKg(int nIndex) {return (1.0/4096.0)*0.5*10.2; };       // MAX 0.5Mpa,1 MPa=10.2Kg/cm2
         void __fastcall SetKg(int nIndex,double dKg);
 
         double __fastcall GetMM(int nMacID,int nChannel) {return ReadPollData(nMacID,nChannel)*(30.0/13106.8)-22.5; };
 
         void __fastcall ClearOutData(){memset(m_nOutputData,0x00,sizeof(__int16)*50);};
+        
 };
 #endif
- 

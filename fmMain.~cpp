@@ -77,6 +77,9 @@ void __fastcall CGetRealTimeValueThread::Execute()
 {
     g_bStopGetRealTimeValueThread = false;
 
+    double dTempOffsetF = 0.0;
+    double dTempOffsetR = 0.0;
+
     while (true)
 	{
 		if (g_bStopGetRealTimeValueThread) break;
@@ -100,6 +103,19 @@ void __fastcall CGetRealTimeValueThread::Execute()
         ::Sleep(10);
         g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
         ::Sleep(10);
+        if (dTempOffsetF != g_IniFile.m_dTempOffsetF)
+        {
+            g_ModBus.SetTempOffset(2, g_IniFile.m_dTempOffsetF);
+            ::Sleep(10);
+        }
+        dTempOffsetF = g_IniFile.m_dTempOffsetF;
+        if (dTempOffsetR != g_IniFile.m_dTempOffsetR)
+        {
+            g_ModBus.SetTempOffset(1, g_IniFile.m_dTempOffsetR);
+            ::Sleep(10);
+        }
+        dTempOffsetR = g_IniFile.m_dTempOffsetR;
+
         if (g_IniFile.m_bIsUseIL030)
         {
             g_pMainThread->m_dDownLaserRealTime = g_IL030SerialDown.GetLaserValue();
@@ -516,7 +532,7 @@ void __fastcall TfrmMain::SetAllDevice()
 		int nRow = nIndex / 10;
 
 		if (nCol<g_IniFile.m_nCols && nRow< g_IniFile.m_nRows &&
-			(g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1))
+			(g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && !g_IniFile.m_bNotLam)
 			g_DNPort0.SetKg(nIndex, g_IniFile.m_dLamPress[1] + g_IniFile.m_dScaleOffsetFront[nIndex]);
 		else  g_DNPort0.SetKg(nIndex, 0);
 	}
@@ -528,7 +544,7 @@ void __fastcall TfrmMain::SetAllDevice()
 		int nRow = nIndex / 10;
 
 		if (nCol<g_IniFile.m_nCols && nRow< g_IniFile.m_nRows &&
-			(g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2))
+			(g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && !g_IniFile.m_bNotLam)
 			g_DNPort1.SetKg(nIndex, g_IniFile.m_dLamPress[0] + g_IniFile.m_dScaleOffsetRear[nIndex]);
 		else  g_DNPort1.SetKg(nIndex, 0);
 	}
@@ -1128,9 +1144,24 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 			AnsiString strCode;
 			strCode.sprintf("%04d", g_IniFile.m_nErrorCode);
 			g_eqpXML.SendAlarmMessage(strCode.c_str(), strMsgCIM.c_str());
+
+            //Check DNport connection Error
+			if (g_IniFile.m_nErrorCode == 2001)
+			{	
+                bool bDNPortError = false;
+				for (int nX = 0; nX < 50; nX++)
+				{
+					if (g_pMainThread->m_bDNPortConnectError0[nX] == true) { AddList("Front: " + IntToStr(nX) + "DNport Connection Error."); bDNPortError = true; }
+					if (g_pMainThread->m_bDNPortConnectError1[nX] == true) { AddList("Rear: " + IntToStr(nX) + "DNport Connection Error"); bDNPortError = true; }
+                    g_pMainThread->m_bDNPortConnectError0[nX] = false;
+                    g_pMainThread->m_bDNPortConnectError1[nX] = false;
+				}
+                if (!bDNPortError) AddList("比例閥通訊測試...OK");
+                SetAllDevice();
+			}
 		}
         //lock RestetButton
-		g_pMainThread->m_bIsResetAlarmLocked = true;
+		g_pMainThread->m_bIsResetAlarmLocked = false;
 	}
 
 	if (g_IniFile.m_nErrorCode <= 0 && (nErrorCode != g_IniFile.m_nErrorCode))
@@ -1199,6 +1230,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 		if (g_pMainThread->m_bStartLaserUpCal[0] == false) btnLaserUp0->Down = false;
 		if (g_pMainThread->m_bStartLaserDownCal[1] == false) btnLaserDown1->Down = false;
 		if (g_pMainThread->m_bStartLaserDownCal[0] == false) btnLaserDown0->Down = false;
+		if (g_pMainThread->m_bStartOneStepCal == false) btnStartOneStepPressCal->Down = false;
 	}
 
 	//---Renew UPH
@@ -1263,7 +1295,8 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 
 	//--CIM Remote Disable MainFromBtn---
 	if (btnStartPressCal0->Down == false && btnLaserUp0->Down == false && btnLaserDown0->Down == false
-		&& btnStartPressCal1->Down == false && btnLaserUp1->Down == false && btnLaserDown1->Down == false)
+		&& btnStartPressCal1->Down == false && btnLaserUp1->Down == false && btnLaserDown1->Down == false
+		&& btnStartOneStepPressCal->Down == false)
 	{
 		radioPosOption->Enabled = !g_pMainThread->m_bIsAutoMode;
 		checkStopLC->Enabled = !g_pMainThread->m_bIsAutoMode;
@@ -1280,12 +1313,16 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 		cmbRange->Enabled = !g_pMainThread->m_bIsAutoMode;
 		cmbFirstLoc->Enabled = !g_pMainThread->m_bIsAutoMode;
 		cmbTimes->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnClearEject0->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnClearEject1->Enabled = !g_pMainThread->m_bIsAutoMode;
+		btnStartOneStepPressCal->Enabled = !g_pMainThread->m_bIsAutoMode;
 	}
 
 	//--Keep renew Privilege When Idel
-	if (!btnStartPressCal0->Down && !btnStartPressCal1->Down &&
-		!btnLaserUp1->Down && !btnLaserUp0->Down &&
-		!btnLaserDown1->Down && !btnLaserDown0->Down)
+	if (!btnStartPressCal1->Down && !btnStartPressCal0->Down 
+		&& !btnLaserUp1->Down && !btnLaserUp0->Down 
+		&& !btnLaserDown1->Down && !btnLaserDown0->Down
+		&& !btnStartOneStepPressCal->Down)
 		SetPrivilege(m_nUserLevel);
 	else { MotorTest1->Enabled = false; N10->Enabled = false; }
 
@@ -1649,6 +1686,9 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
     DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
 
+    DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pMachineDlg->m_dTempOffsetF);
+    DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pMachineDlg->m_dTempOffsetR);
+
     while (1)
 	{
 		if (pMachineDlg->ShowModal() == mrOk)
@@ -1751,6 +1791,9 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pMachineDlg->m_dVacDelayTime);
 
         DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
+
+        DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pMachineDlg->m_dTempOffsetF);
+        DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pMachineDlg->m_dTempOffsetR);
         
 		g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
 		g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
@@ -2280,14 +2323,14 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
 				delete pChoiceMotorDlg;
 				return;
 			}
-            /*if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+            if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
                 || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
             {
                 Application->MessageBoxA("請確認 前後上模具護蓋已經卸除!!", "Confirm", MB_OK);
 				delete pMotorCheckDlg;
 				delete pChoiceMotorDlg;
 				return;
-            }*/
+            }
 		}
 		if (pChoiceMotorDlg->m_nSelectAxis == 1)
 		{
@@ -2536,6 +2579,8 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 			if (nIndex == g_pMainThread->m_nPressCalMoveIndex[1] && btnStartPressCal1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[1] && btnLaserUp1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[1] && btnLaserDown1->Down) PaintBox1->Canvas->Brush->Color = clYellow;
+			else if ((nIndex == g_pMainThread->m_nLaserCalMoveIndex[1] && !g_pMainThread->m_bIsDoLaserCalFinished) || (nIndex == g_pMainThread->m_nPressCalMoveIndex[1] && !g_pMainThread->m_bIsDoPressCalFinished)
+				&& btnStartOneStepPressCal->Down) PaintBox1->Canvas->Brush->Color = clYellow;
 			else if (g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0] > g_IniFile.m_dUpperLaserAlarm
 				|| g_pMainThread->m_dFrontDownLaserDiff[nIndex][0] > g_IniFile.m_dDownLaserAlarm
 				|| g_pMainThread->m_dFrontUpperTotalLaserDiff[nIndex][0] > g_IniFile.m_dUpperTotalLaserAlarm) PaintBox1->Canvas->Brush->Color = clRed;
@@ -2599,10 +2644,11 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 
 		if (nCol<g_IniFile.m_nCols && nRow< g_IniFile.m_nRows)
 		{
-
 			if (nIndex == g_pMainThread->m_nPressCalMoveIndex[0] && btnStartPressCal0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[0] && btnLaserUp0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
 			else if (nIndex == g_pMainThread->m_nLaserCalMoveIndex[0] && btnLaserDown0->Down) PaintBox2->Canvas->Brush->Color = clYellow;
+			else if ((nIndex == g_pMainThread->m_nLaserCalMoveIndex[0] && !g_pMainThread->m_bIsDoLaserCalFinished) || (nIndex == g_pMainThread->m_nPressCalMoveIndex[0] && !g_pMainThread->m_bIsDoPressCalFinished)
+				&& btnStartOneStepPressCal->Down) PaintBox2->Canvas->Brush->Color = clYellow;
 			else if (g_pMainThread->m_dRearUpperLaserDiff[nIndex][0] > g_IniFile.m_dUpperLaserAlarm
 				|| g_pMainThread->m_dRearDownLaserDiff[nIndex][0] > g_IniFile.m_dDownLaserAlarm
 				|| g_pMainThread->m_dRearUpperTotalLaserDiff[nIndex][0] > g_IniFile.m_dUpperTotalLaserAlarm) PaintBox2->Canvas->Brush->Color = clRed;
@@ -2671,13 +2717,12 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 		g_IniFile.m_nErrorCode = 10;
 		return;
 	}
-    /*
     else if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
         || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
     {
         Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
         return;
-    }*/
+    }
 
 	int nFront = ((TPaintBox *)Sender)->Tag;
 
@@ -2783,12 +2828,13 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 #pragma region MainManual
 void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 {
-    /*if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+	if (g_pMainThread->m_bIsAutoMode) return;
+	if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
         || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
     {
         Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
         return;
-    }*/
+    }
 
     TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
@@ -2836,6 +2882,12 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 
 	    g_pMainThread->m_nPressCalMoveIndex[1] = -1;
 	    g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
+
+		if (checkAutoRetry->Checked && cmbRange->ItemIndex == 0 && cmbFirstLoc->ItemIndex == 0 && (pBtn->Tag == 0 || pBtn->Tag == 3))
+		{
+            //Not Reset
+			//for (int nI = 0; nI<50; nI++) { g_pMainThread->m_arrybDoPressCal[nI] = true; }
+		}
     }
     if (cmbRange->ItemIndex==1)
     {
@@ -2844,7 +2896,7 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 
 	    g_pMainThread->m_nPressCalMoveIndex[1] = -1;
 	    g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
-                
+
         //start the btn also update the value of cmb
         g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
         g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
@@ -2853,7 +2905,7 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
     // update AutoRetry
     g_pMainThread->m_bAutoRetry = checkAutoRetry->Checked;
 
-            
+
     g_pMainThread->m_bStartPressCal[0] = btnStartPressCal0->Down;
 	g_pMainThread->m_bStartPressCal[1] = btnStartPressCal1->Down;
 	g_pMainThread->m_bStartLaserUpCal[1] = btnLaserUp1->Down;
@@ -2966,7 +3018,160 @@ void __fastcall TfrmMain::btnStartMotor1Click(TObject *Sender)
 	}
 }
 //---------------------------------------------------------------------------
+void __fastcall TfrmMain::btnClearEject0Click(TObject *Sender)
+{
+    if (Application->MessageBoxA("確定手動排除 後排除流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+    g_pMainThread->nThreadIndex[5] = 0;
+    g_DIO.SetDO(DO::ReadyOutR, false);
+    g_DIO.SetDO(DO::EjectMotorStart2, false);
+    g_DIO.SetDO(DO::EjectStop2, true);
+}
+//---------------------------------------------------------------------------
+void __fastcall TfrmMain::btnClearEject1Click(TObject *Sender)
+{
+    if (Application->MessageBoxA("確定手動排除 前排除流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+    g_pMainThread->nThreadIndex[4] = 0;
+    g_DIO.SetDO(DO::ReadyOutF, false);
+    g_DIO.SetDO(DO::EjectMotorStart1, false);
+    g_DIO.SetDO(DO::EjectStop1, true);
+}
+//---------------------------------------------------------------------------
+void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
+{
+    if (g_pMainThread->m_bIsAutoMode) return;
+    if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+        || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+    {
+        Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
+        return;
+    }
+
+	C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
+
+    TSpeedButton *pBtn = (TSpeedButton *)Sender;
+    bool bIsStart = pBtn->Down;
+
+    bool bIsContinue = false;
+    if (bIsStart)                   //Strat
+    {
+		AnsiString pString;
+		if (g_IniFile.m_nLanguageMode>0) pString = "OneStepCal Restrat?";
+		else pString = "一鍵量測校正 是否重新開始?";
+		switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
+		{
+		    case IDYES: { bIsContinue = false; break; }
+		    case IDNO: { bIsContinue = true; break; }
+		    case IDCANCEL: { return; }
+		}
+    }
+	else						//Stop
+	{
+		g_pMainThread->m_bStartPressCal[0] = false;
+		g_pMainThread->m_bStartPressCal[1] = false;
+		g_pMainThread->m_bStartLaserUpCal[1] = false;
+		g_pMainThread->m_bStartLaserUpCal[0] = false;
+		g_pMainThread->m_bStartLaserDownCal[1] = false;
+		g_pMainThread->m_bStartLaserDownCal[0] = false;
+
+        g_pMainThread->m_bStartOneStepCal = false;
+	}
+
+
+	if (g_pMainThread->m_bStartOneStepCal) SetAllDevice();
+
+	g_DIO.SetDO(DO::LoadCellValve, false);
+
+    if (bIsStart && bIsContinue)
+    {
+        g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+		g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
+
+		g_pMainThread->m_nPressCalMoveIndex[1] = -1;
+		g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
+
+		//start the btn also update the value of cmb
+		g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
+		g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
+		g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
+    }
+    else if (bIsStart && !bIsContinue)
+	{
+		g_pMainThread->nThreadIndex[6] = 0;
+		g_pMainThread->nThreadIndex[7] = 0;
+		g_pMainThread->nThreadIndex[8] = 0;
+		g_pMainThread->nThreadIndex[9] = 0;
+		g_pMainThread->nThreadIndex[10] = 0;
+		g_pMainThread->nThreadIndex[11] = 0;
+		g_pMainThread->nThreadIndex[16] = 0;
+
+		g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+		g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
+
+		g_pMainThread->m_nPressCalMoveIndex[1] = -1;
+		g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
+
+		//start the btn also update the value of cmb
+		g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
+		g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
+		g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
+
+		g_DIO.SetDO(DO::LoadCellValve, false);
+		::Sleep(500);
+		g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+
+		tm1MS.timeStart(10000);
+		while (true)
+		{
+			if (g_Motion.IsMotionDone(AXIS_Y)) break;
+			if (tm1MS.timeUp()) break;
+			Application->ProcessMessages();
+		}
+
+	}
+
+    g_pMainThread->m_bStartOneStepCal = bIsStart;
+    btnStartOneStepPressCal->Down = bIsStart;
+
+
+    if (btnStartOneStepPressCal->Down)
+	{
+		MotorTest1->Enabled = false;
+        N10->Enabled = false;
+	}
+	else  SetPrivilege(m_nUserLevel);
+
+    //block function switch within one is running
+    if (bIsStart)
+    {
+        btnStartPressCal0->Enabled = false;
+        btnLaserUp0 ->Enabled = false;
+        btnLaserDown0->Enabled = false;
+        btnStartPressCal1->Enabled = false;
+        btnLaserUp1->Enabled = false;
+        btnLaserDown1->Enabled = false;
+		btnStartOneStepPressCal->Enabled = false;
+    }
+    else
+    {
+        btnStartPressCal0->Enabled = true;
+        btnLaserUp0->Enabled = true;
+        btnLaserDown0->Enabled = true;
+        btnStartPressCal1->Enabled = true;
+        btnLaserUp1->Enabled = true;
+        btnLaserDown1->Enabled = true;
+		btnStartOneStepPressCal->Enabled = true;
+    }
+    pBtn->Enabled = true;
+
+}
+//---------------------------------------------------------------------------
+
 #pragma endregion
+
+
+
+
+
 
 
 

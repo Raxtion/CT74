@@ -87,8 +87,8 @@ void __fastcall TfrmManual::SpeedButton1Click(TObject *Sender)
         if((!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) && pBtn->Tag!=0) g_IniFile.m_nErrorCode = 51;
         else if(g_DIO.ReadDIBit(DI::LamEntry1) || g_DIO.ReadDIBit(DI::LamEntry2)) g_IniFile.m_nErrorCode = 12;
         else if(!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
-        /*else if((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
-            || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2))) g_IniFile.m_nErrorCode = 30;*/
+        else if((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+            || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2))) g_IniFile.m_nErrorCode = 30;
         else
         switch(pBtn->Tag)
         {

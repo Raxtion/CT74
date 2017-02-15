@@ -579,6 +579,11 @@ void __fastcall CDeltaPLC::SetSV(int nID,double dValue)    //Set Target Temperat
         SetWordDevice(nID,0x4701,dValue*10);
 }
 //---------------------------------------------------------------------------
+void __fastcall CDeltaPLC::SetTempOffset(int nID,double dValue)    //Set Offset Target Temperature
+{
+        SetWordDevice(nID,0x1016,dValue*10);
+}
+//---------------------------------------------------------------------------
 double __fastcall CDeltaPLC::GetAnalogData(int nID,int nChannel)
 {
          __int16 nData=0;

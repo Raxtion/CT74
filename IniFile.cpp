@@ -143,6 +143,9 @@ void __fastcall CIniFile::MachineFile(bool bRead)
 
   DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nDownPercent",m_nDownPercent,30);
 
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dTempOffsetF",m_dTempOffsetF,0.0);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dTempOffsetR",m_dTempOffsetR,0.0);
+
   delete pIniFile;
 }
 //---------------------------------------------------------------------------

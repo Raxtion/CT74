@@ -22,60 +22,46 @@ object frmMachineParam: TfrmMachineParam
     Caption = #35486#31995
   end
   object Label83: TLabel
-    Left = 936
-    Top = 314
+    Left = 600
+    Top = 418
     Width = 64
     Height = 16
     Caption = #33258#21205#27169#24335
   end
   object Label84: TLabel
-    Left = 936
-    Top = 330
+    Left = 600
+    Top = 434
     Width = 64
     Height = 16
     Caption = #23481#35377#28331#24230
   end
   object Label85: TLabel
-    Left = 1080
-    Top = 322
+    Left = 744
+    Top = 426
     Width = 16
     Height = 16
     Caption = #24230
   end
   object Label86: TLabel
-    Left = 1008
-    Top = 322
+    Left = 672
+    Top = 426
     Width = 12
     Height = 16
     Caption = #177' '
   end
   object Label88: TLabel
-    Left = 1080
+    Left = 1000
     Top = 426
     Width = 16
     Height = 16
     Caption = #31186
   end
   object Label87: TLabel
-    Left = 888
+    Left = 808
     Top = 426
     Width = 144
     Height = 16
     Caption = #31532#20108#27425#30495#31354#27298#28204#24310#36978
-  end
-  object Label120: TLabel
-    Left = 840
-    Top = 412
-    Width = 16
-    Height = 16
-    Caption = #31186
-  end
-  object Label149: TLabel
-    Left = 840
-    Top = 444
-    Width = 16
-    Height = 16
-    Caption = #27425
   end
   object Label111: TLabel
     Left = 592
@@ -1363,52 +1349,20 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object m_dAutoRunTempRange: TEdit
-    Left = 1024
-    Top = 317
+    Left = 688
+    Top = 421
     Width = 49
     Height = 24
     TabOrder = 27
     Text = 'm_dAutoRunTempRange'
   end
   object m_dVacDelayTime: TEdit
-    Left = 1040
+    Left = 960
     Top = 423
     Width = 33
     Height = 24
     TabOrder = 28
     Text = 'm_dVacDelayTime'
-  end
-  object m_bIsLamSecondStop: TCheckBox
-    Left = 576
-    Top = 406
-    Width = 201
-    Height = 25
-    Caption = #31532#20108#27573#22739#21512#20572#39376#32173#25345#26178#38291
-    TabOrder = 29
-  end
-  object m_dLamSecondKeepTime: TEdit
-    Left = 777
-    Top = 406
-    Width = 56
-    Height = 24
-    TabOrder = 30
-    Text = 'm_dUpperLaserAlarm'
-  end
-  object m_bIsLamUpDownCorrect: TCheckBox
-    Left = 576
-    Top = 438
-    Width = 201
-    Height = 25
-    Caption = #31532#20108#27573#22739#21512#19978#19979#20462#27491#27425#25976
-    TabOrder = 31
-  end
-  object m_dLamSecondCorrectTimes: TEdit
-    Left = 777
-    Top = 438
-    Width = 56
-    Height = 24
-    TabOrder = 32
-    Text = 'm_dUpperLaserAlarm'
   end
   object GroupBox5: TGroupBox
     Left = 576
@@ -1416,7 +1370,7 @@ object frmMachineParam: TfrmMachineParam
     Width = 241
     Height = 225
     Caption = #24460#22739#21512#27969#36947
-    TabOrder = 33
+    TabOrder = 29
     object Label3: TLabel
       Left = 24
       Top = 32
@@ -1604,7 +1558,7 @@ object frmMachineParam: TfrmMachineParam
     Width = 241
     Height = 225
     Caption = #21069#22739#21512#27969#36947
-    TabOrder = 34
+    TabOrder = 30
     object Label5: TLabel
       Left = 24
       Top = 32
@@ -1791,6 +1745,14 @@ object frmMachineParam: TfrmMachineParam
     Top = 479
     Width = 49
     Height = 24
-    TabOrder = 35
+    TabOrder = 31
+  end
+  object GroupBox8: TGroupBox
+    Left = 936
+    Top = 256
+    Width = 137
+    Height = 137
+    Caption = #28331#25511#22120' '#28331#24230'Offset'
+    TabOrder = 32
   end
 end

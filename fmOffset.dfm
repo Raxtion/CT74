@@ -1,6 +1,6 @@
 object frmOffser: TfrmOffser
-  Left = 15
-  Top = 182
+  Left = 21
+  Top = 55
   Width = 1250
   Height = 530
   Caption = 'frmOffser'
