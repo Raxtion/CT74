@@ -19,9 +19,11 @@ private:
     char *errMsg;
     char **result;
 public:
-    __fastcall SQLITE3IF(int DBtype, AnsiString DBPath);    //Temp=0; Action=1; Account=2;
+    __fastcall SQLITE3IF(int DBtype, AnsiString DBPath);							//Temp=0; Action=1; Account=2; Change=3;
+	__fastcall SQLITE3IF(int DBtype, AnsiString DBPath, AnsiString strTableName);	//Offset=4;
 
-    void __fastcall open(int DBtype);                       //Temp=0; Action=1; Account=2;
+    void __fastcall open(int DBtype);							//Temp=0; Action=1; Account=2; Change=3;
+	void __fastcall open(int DBtype, AnsiString strTableName);	//Offset=4;
     void __fastcall free();
     void __fastcall close();
     void __fastcall insertTemp();
@@ -32,9 +34,13 @@ public:
     int __fastcall changeAccountPass(AnsiString Account, AnsiString OldPassword, AnsiString NewPassword);  //"修改失敗"=0; "修改成功"=1
     AnsiString __fastcall queryAccountPass();                                   //retrun select * form C74log
     AnsiString __fastcall updateAccountPass(AnsiString Input);                  //return "succeed" "falure"
+	AnsiString __fastcall queryOffsetTable(AnsiString strTableName, bool bIsFront, double setKg);	//return select * from strTableName
+	AnsiString __fastcall updateOffsetTable(AnsiString strTableName, bool bIsFront, double setKg);	//return "succeed" "falure"
 
     void __fastcall selectSQL(AnsiString SQL_SELECT);
     void __fastcall insertSQL(AnsiString SQL_INSERT);
     void __fastcall updateSQL(AnsiString SQL_UPDATE);
 
 };
+
+

@@ -1074,7 +1074,7 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
                 if (bIsInputINstrList == false && strB != "")
                 {
                     g_IniFile.m_strHeadScals += (strB+"/");
-                    //g_IniFile.MachineFile(false);
+                    g_IniFile.MachineFile(false);
                 }
                 delete strList;
                 //add in ProductParam
@@ -1097,7 +1097,7 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
                 if (bIsInputINstrList == false && strB != "")
                 {
                     g_IniFile.m_strModuleScals += (strB+"/");
-                    //g_IniFile.MachineFile(false);
+                    g_IniFile.MachineFile(false);
                 }
                 delete strList;
                 //add in ProductParam

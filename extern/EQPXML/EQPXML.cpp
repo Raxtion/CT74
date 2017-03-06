@@ -656,6 +656,15 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 		        pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
 		        pParam->LinkEndChild(pProperty);
             }
+            else if (strcmp(ParamItem[nX * 5], "m_strModuleNum") == 0)
+			{
+				AnsiString strModuleNum = g_IniFile.m_strModuleNum[1] + " @:@ " + g_IniFile.m_strModuleNum[0];
+				pProperty = new TiXmlElement("PROPERTY");
+				AnsiString strResult = strModuleNum;
+				if (strResult.IsEmpty()) strResult = "NULL";
+				pProperty->LinkEndChild(new TiXmlText(strResult.c_str()));
+				pParam->LinkEndChild(pProperty);
+			}
             else if (strcmp(ParamItem[nX*5],"m_strSetupEENum")==0)
             {
                 pProperty=new TiXmlElement("PROPERTY");

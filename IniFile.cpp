@@ -97,6 +97,9 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseF911",m_bIsUseF911,true);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseIL030",m_bIsUseIL030,true);
   DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseCIM",m_bIsUseCIM,false);
+  DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsFullLaserMode",m_bIsFullLaserMode,false);
+  DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUseDBOffset",m_bIsUseDBOffset,true);
+  DDXFile_Bool(bRead,pIniFile,Machine_Section,"m_bIsUpdateOffsetTable",m_bIsUpdateOffsetTable,true);
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dPLimitF",m_dPLimitF,0.0);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dNLimitF",m_dNLimitF,0.0);
@@ -233,7 +236,8 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nVacummOn",m_nVacummOn,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nPressCheck",m_nPressCheck,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDummyCheck",m_nDummyCheck,0);
-  DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleNum",m_strModuleNum,"");
+  DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleNum0",m_strModuleNum[0],"");
+  DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleNum1",m_strModuleNum[1],"");
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strSetupEENum",m_strSetupEENum,"");
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dBLT0",m_dBLT[0],0.0);

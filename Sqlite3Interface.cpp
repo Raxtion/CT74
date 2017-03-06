@@ -9,8 +9,10 @@
 #include "MainThread.h"
 #include "DeltaPLC.h"
 #include "GlobalFunction.h"
+#include "IniFile.h"
 
 extern CMainThread *g_pMainThread;
+extern CIniFile g_IniFile;
 extern CDeltaPLC g_ModBus;
 
 //---------------------------------------------------------------------------
@@ -39,10 +41,31 @@ __fastcall SQLITE3IF::SQLITE3IF(int DBtype,AnsiString DBPath)
 }
 
 //---------------------------------------------------------------------------
+__fastcall SQLITE3IF::SQLITE3IF(int DBtype, AnsiString DBPath, AnsiString strTableName)
+{
+	m_strDBPath = DBPath;
+
+	if (!FileExists(DBPath.c_str())) _mkdir(DBPath.c_str());
+
+	/* 初始DB */
+	open(DBtype, strTableName);
+	free();
+	close();
+
+	/* 取得unique_id */
+	open(DBtype, strTableName);
+	selectSQL("SELECT idx FROM " + strTableName + " ORDER BY idx DESC;");
+	if (rows != 0) unique_id = atoi(result[1]) + 1;
+	else unique_id = 0;
+	free();
+	close();
+}
+
+//---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::open(int DBtype)
 {
     AnsiString strFullPath;
-    AnsiString strDBName; (DBtype==2) ? strDBName = "\\AccountLog.db3" :strDBName = "\\%04d_%02d_%02d.db3";
+	AnsiString strDBName; (DBtype == 2) ? strDBName = "\\AccountLog.db3" : strDBName = "\\%04d_%02d_%02d.db3";
     time_t timer = time(NULL);
     struct tm *tblock = localtime(&timer);
 
@@ -82,6 +105,29 @@ void __fastcall SQLITE3IF::open(int DBtype)
         }
         unique_id = 0;
     }
+}
+
+//---------------------------------------------------------------------------
+void __fastcall SQLITE3IF::open(int DBtype, AnsiString strTableName)
+{
+	AnsiString strFullPath;
+	AnsiString strDBName = "\\OffsetTable.db3";
+
+    strFullPath = m_strDBPath + strDBName;
+
+	/* 開啟 database 檔 */
+	if (sqlite3_open_v2(strFullPath.c_str(), &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL)) { return; }
+
+	/* 確認table是否存在 */
+	selectSQL("SELECT name FROM SQLITE_MASTER WHERE type='table' and name='" + strTableName + "';");
+
+	if (strcmp(result[1], strTableName.c_str()) != 0)
+	{
+		/* 建立 Offset Table */
+		sqlite3_exec(db, ("CREATE TABLE " + strTableName + "(idx INTEGER PRIMARY KEY, isfront BOOLEAN, location INTERGER, setKg FLOAT, offsetKg FLOAT, statistic INTERGER, Note TEXT);").c_str(), 0, 0, &errMsg);
+		if (errMsg != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
+		unique_id = 0;
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -315,6 +361,158 @@ AnsiString __fastcall SQLITE3IF::updateAccountPass(AnsiString Input)
 }
 
 //---------------------------------------------------------------------------
+AnsiString __fastcall SQLITE3IF::queryOffsetTable(AnsiString strTableName, bool bIsFront, double setKg)
+{
+	AnsiString Result = "";
+
+	open(4, strTableName);
+	
+	AnsiString strIsFront; (bIsFront) ? strIsFront = "1" : strIsFront = "0";
+	AnsiString strSetKg = FormatFloat("0.0", setKg);
+
+	//selectSQL("SELECT idx, isfront, location, setKg, offsetKg FROM " + strTableName
+    //    + " WHERE isfront='" + strIsFront + "' AND setKg='" + strSetKg + "' ORDER BY location ASC;");
+    selectSQL("SELECT idx, offsetKg FROM " + strTableName
+        + " WHERE isfront='" + strIsFront + "' AND setKg='" + strSetKg + "' ORDER BY location ASC;");
+
+	if (rows != 0)
+	{
+        int j = 1;
+        for (int i = 0; i < 50; i++)
+        {
+            if ((i % 10) < g_IniFile.m_nCols && (i / 10) < g_IniFile.m_nRows)
+		    {
+                AnsiString strTemp = result[j * 2 + 1];
+                double dTemp = 0.0;
+
+                try
+                {
+                    dTemp = strTemp.ToDouble();
+                }
+                catch (...)
+                {
+                    g_pMainThread->m_listLog.push_back(strTemp+" Can Not Trans To double type.");
+                }
+
+                if (bIsFront) g_IniFile.m_dScaleOffsetFront[i] = dTemp;
+                else g_IniFile.m_dScaleOffsetRear[i] = dTemp;
+
+                Result += strTemp + " ";
+                j++;
+            }
+        }
+	}
+	else Result = "";
+
+	free();
+	close();
+	return Result;
+}
+
+//---------------------------------------------------------------------------
+AnsiString __fastcall SQLITE3IF::updateOffsetTable(AnsiString strTableName, bool bIsFront, double setKg)
+{
+	AnsiString Result = "";
+	bool bIsUpdateMode = false;
+
+	int pnidx[1000];
+	memset(pnidx, 0, sizeof(int) * 1000);
+
+	double *pOffset;
+	if (bIsFront) pOffset = g_IniFile.m_dScaleOffsetFront;
+	else pOffset = g_IniFile.m_dScaleOffsetRear;
+
+	open(4, strTableName);
+
+	/* 確認 TableName, bIsFront, setKg 已經存在 */
+	selectSQL("SELECT idx, isfront, location, setKg, offsetKg FROM " + strTableName + " WHERE isfront='" + IntToStr(bIsFront) + "' AND setKg='" + setKg + "' ORDER BY location ASC;");
+	if (rows != 0)
+	{
+		for (int i = 1; i<rows + 1; i++)
+		{
+			pnidx[i-1] = StrToInt(result[i * 5]);
+            //g_pMainThread->m_listLog.push_back(result[i * 5]);	//Debug code
+		}
+		bIsUpdateMode = true;
+	}
+	else bIsUpdateMode = false;
+
+    int j = 0;
+	for (int i = 0; i < 50; i++)
+	{
+		if ((i % 10) < g_IniFile.m_nCols && (i / 10) < g_IniFile.m_nRows)
+		{
+			/* Update or Insert */
+			if (bIsUpdateMode)	//Update
+			{
+				try
+				{
+					/* Update OffsetTable */
+					unique_id++;	//must enshure unique_id always added.
+					AnsiString updatesql = "UPDATE " + strTableName + " SET"
+						+ " offsetKg=" + FormatFloat("0.000", pOffset[i])
+						+ " WHERE idx = " + IntToStr(pnidx[j]) + " ;";
+
+                    j++;
+                    //g_pMainThread->m_listLog.push_back(updatesql);	//Debug code
+
+					/* 更新一筆資料 */
+					sqlite3_exec(db, updatesql.c_str(), 0, 0, &errMsg);
+					if (errMsg != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
+				}
+				catch (...)
+				{
+					unique_id--;
+					Result = "falure";
+					break;
+				}
+			}
+			else				//Insert
+			{
+				try
+				{
+					/* INSERT OffsetTable */
+					AnsiString strLastrowid = unique_id;
+					unique_id++;	//must enshure unique_id always added.
+					AnsiString insertsql = "INSERT INTO " + strTableName + " VALUES( " + strLastrowid
+						+ " , " + IntToStr(bIsFront)
+						+ " , " + IntToStr(i)
+						+ " , " + FormatFloat("0.000", setKg)
+						+ " , " + FormatFloat("0.000", pOffset[i])
+						+ " , " + "NULL"
+						+ " , " + "NULL" + " );";
+
+                    //g_pMainThread->m_listLog.push_back(insertsql);	//Debug code
+
+					/* 新增一筆資料 */
+					sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
+					if (errMsg != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
+				}
+				catch (...)
+				{
+					unique_id--;
+					Result = "falure";
+					break;
+				}
+			}
+		}
+	}
+	
+
+	/* 確認 */
+	selectSQL("SELECT idx, isfront, location, setKg, offsetKg FROM " + strTableName + " WHERE isfront='" + IntToStr(bIsFront) + "' AND setKg='" + setKg + "' ORDER BY location ASC;");
+	if (rows != 0 && Result != "falure")
+	{
+		Result = "succeed";
+	}
+	else Result = "falure";
+
+	free();
+	close();
+	return Result;
+}
+
+//---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::selectSQL(AnsiString SQL_SELECT)
 {
     sqlite3_get_table(db ,SQL_SELECT.c_str(), &result , &rows, &cols, &errMsg);
@@ -334,4 +532,8 @@ void __fastcall SQLITE3IF::updateSQL(AnsiString SQL_UPDATE)
     sqlite3_exec(db, SQL_UPDATE.c_str(), 0, 0, &errMsg);
     if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 }
+
+
+
+
 

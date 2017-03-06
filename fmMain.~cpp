@@ -152,9 +152,13 @@ __fastcall TfrmMain::TfrmMain(TComponent* Owner)
 #pragma region MainCommonFunction
 void __fastcall TfrmMain::FormCreate(TObject *Sender)
 {
+    g_pMainThread = new CMainThread(false);
+    g_pGetRealTimeValueThread = new CGetRealTimeValueThread(false);
+
 	g_IniFile.MachineFile(true);
 	Caption = g_IniFile.m_strLastFileName;
 	g_IniFile.ProductFile(g_IniFile.m_strLastFileName.c_str(), true);
+    if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
 
 	//CreateCaptionFile(this);
 	ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
@@ -171,7 +175,6 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	GroupBox2->Caption = StrList->Strings[StrList->Count - 1];
 	delete StrList;
 
-	g_pMainThread = new CMainThread(false);
 
 	SetAllDevice();
 	RenewRadioGroup(true);
@@ -179,7 +182,6 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	Timer1->Enabled = true;
 	Timer2->Enabled = true;
 	timerPressure->Enabled = true;
-	g_pGetRealTimeValueThread = new CGetRealTimeValueThread(false);
 
 	g_TempLog.open(0);
 	g_ActionLog.open(1);
@@ -413,6 +415,7 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 		g_IniFile.m_strLastFileName = strFileName;
 
 		g_IniFile.ProductFile(strFileName.c_str(), true);
+        if (g_IniFile.m_bIsUseDBOffset) frmMain->ImportOffsetFromDB();
 
 		frmMain->SetAllDevice();
 
@@ -713,6 +716,22 @@ void __fastcall TfrmMain::CheckParamChange(TfmProduct *pWnd, TfmProduct *pWndRec
         g_pMainThread->m_bIsAutoCalPressOverAllowR = true;
     }
 
+}
+//---------------------------------------------------------------------------
+void __fastcall TfrmMain::ImportOffsetFromDB()
+{
+    AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
+    AnsiString strModuleNum = g_IniFile.m_strModuleNum[1] + "_";
+    AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
+    AnsiString strHeadScal = g_IniFile.m_strHeadScal;
+    AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
+
+    SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
+    AnsiString strResultF = g_OffsetTable->queryOffsetTable(strTableName, true, g_IniFile.m_dLamPress[1]);
+    if (strResultF=="") g_pMainThread->m_listLog.push_back("Table: "+strTableName+". No Front Offset Data in DB.");
+    AnsiString strResultR = g_OffsetTable->queryOffsetTable(strTableName, false, g_IniFile.m_dLamPress[0]);
+    if (strResultR=="") g_pMainThread->m_listLog.push_back("Table: "+strTableName+". No Rear Offset Data in DB.");
+    delete g_OffsetTable;
 }
 //---------------------------------------------------------------------------
 /*
@@ -1079,8 +1098,23 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 
 	RefreshImage();
 
-	Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "度";
-	Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "度";
+    //--- real time monitor temperature
+    if (g_IniFile.m_nLanguageMode>0)
+    {
+        Label1->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "℃ ";
+        Label4->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "℃ ";
+
+        Label2->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
+		Label5->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "Sec";
+    }
+    else
+    {
+        Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "度";
+        Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "度";
+
+        Label2->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
+		Label5->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
+    }
 
 	if (checkMonitor->Checked)
 	{
@@ -1092,16 +1126,6 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
         Label36->Caption = "Gass F" + FormatFloat("0.00", g_pMainThread->m_dForntPressloseRealTime);
 	}
 
-	if (g_IniFile.m_nLanguageMode>0)
-	{
-		Label2->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
-		Label5->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "Sec";
-	}
-	else
-	{
-		Label2->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
-		Label5->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
-	}
 	timerPressure->Enabled = true;
 
 }
@@ -1261,6 +1285,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
     {
         g_pMainThread->m_bIsNeedReLoadProductParam = false;
         g_IniFile.ProductFile(Caption.c_str(), true);
+        if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
     }
 
 	//--Add ActionLog---
@@ -1358,22 +1383,6 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 
 	Timer2->Enabled = false;
 
-	//--- real time monitor temperature
-	if (g_pMainThread->m_bIsManualFinish == true
-		&& btnLaserUp1->Down == false && btnLaserUp0->Down == false && btnLaserDown1->Down == false && btnLaserDown0->Down == false)
-	{
-		if (g_IniFile.m_nLanguageMode>0)
-		{
-			Label1->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "℃ ";
-			Label4->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "℃ ";
-		}
-		else
-		{
-			Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "度";
-			Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "度";
-		}
-	}
-
 	//--- real time detect servermoter touch the soft limitation
 	if (g_pMainThread->m_bIsHomeDone == true)
 	{
@@ -1415,6 +1424,53 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
         if (g_pMainThread->m_dRearPressloseRealTime < g_IniFile.m_dLeftGassLeakylimit) m_bLastGassLeakyRear = true;
 		else m_bLastGassLeakyRear = false;
 	}
+
+    //---If Finish PressCal write Offset in to OffsetTable Database
+    if (g_pMainThread->m_bIsWriteOffsetToDB_F)
+    {
+        g_pMainThread->m_bIsWriteOffsetToDB_F = false;
+
+        if (g_IniFile.m_strModuleNum[1] != "")
+        {
+            AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
+            AnsiString strModuleNum = g_IniFile.m_strModuleNum[1] + "_";
+            AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
+            AnsiString strHeadScal = g_IniFile.m_strHeadScal;
+            AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
+
+            g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Please Waite.");
+            SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
+
+            AnsiString strResult = g_OffsetTable->updateOffsetTable(strTableName, true, g_IniFile.m_dLamPress[1]);
+            g_pMainThread->m_listLog.push_back(strResult);
+
+            delete g_OffsetTable;
+            g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Process End.");
+        }
+    }
+    if (g_pMainThread->m_bIsWriteOffsetToDB_R)
+    {
+        g_pMainThread->m_bIsWriteOffsetToDB_R = false;
+
+        if (g_IniFile.m_strModuleNum[0] != "")
+        {
+            AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
+            AnsiString strModuleNum = g_IniFile.m_strModuleNum[1] + "_";
+            AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
+            AnsiString strHeadScal = g_IniFile.m_strHeadScal;
+            AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
+
+            g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Please Waite.");
+            SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
+
+            AnsiString strResult = g_OffsetTable->updateOffsetTable(strTableName, false, g_IniFile.m_dLamPress[0]);
+            g_pMainThread->m_listLog.push_back(strResult);
+
+            delete g_OffsetTable;
+            g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Process End.");
+        }
+    }
+
 
 	Timer2->Enabled = true;
 }
@@ -1479,7 +1535,7 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 		g_IniFile.m_strLastFileName = Caption;
 
 		g_IniFile.ProductFile(OpenDialog1->FileName.c_str(), true);
-
+        if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
 		SetAllDevice();
 
 		//Count MoveLocX, MoveLocY
@@ -1647,6 +1703,9 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
 	DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
     DDX_Check(bRead, g_IniFile.m_bIsMochineTestMode, pMachineDlg->m_bIsMochineTestMode);
+    DDX_Check(bRead, g_IniFile.m_bIsFullLaserMode, pMachineDlg->m_bIsFullLaserMode);
+    DDX_Check(bRead, g_IniFile.m_bIsUseDBOffset, pMachineDlg->m_bIsUseDBOffset);
+    DDX_Check(bRead, g_IniFile.m_bIsUpdateOffsetTable, pMachineDlg->m_bIsUpdateOffsetTable);
 
 	DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 	DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -1753,6 +1812,9 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
 		DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
         DDX_Check(bRead, g_IniFile.m_bIsMochineTestMode, pMachineDlg->m_bIsMochineTestMode);
+        DDX_Check(bRead, g_IniFile.m_bIsFullLaserMode, pMachineDlg->m_bIsFullLaserMode);
+        DDX_Check(bRead, g_IniFile.m_bIsUseDBOffset, pMachineDlg->m_bIsUseDBOffset);
+        DDX_Check(bRead, g_IniFile.m_bIsUpdateOffsetTable, pMachineDlg->m_bIsUpdateOffsetTable);
 
 		DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 		DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -1903,7 +1965,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWndRecord->m_cmbVacummOn);
 	DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWndRecord->m_cmbPressCheck);
 	DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWndRecord->m_cmbDummyCheck);
-	DDX_String(bRead, g_IniFile.m_strModuleNum, pWndRecord->m_strModuleNum);
+    DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWndRecord->m_strModuleNum0);
+	DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWndRecord->m_strModuleNum1);
 
 	DDX_Float(bRead, g_IniFile.m_dBLT[0], pWndRecord->m_dBLT1);
 	DDX_Float(bRead, g_IniFile.m_dBLT[1], pWndRecord->m_dBLT2);
@@ -2010,7 +2073,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
 	DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
 	DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
-	DDX_String(bRead, g_IniFile.m_strModuleNum, pWnd->m_strModuleNum);
+    DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWnd->m_strModuleNum0);
+	DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWnd->m_strModuleNum1);
 
 	DDX_Float(bRead, g_IniFile.m_dBLT[0], pWnd->m_dBLT1);
 	DDX_Float(bRead, g_IniFile.m_dBLT[1], pWnd->m_dBLT2);
@@ -2166,7 +2230,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
 		DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
 		DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
-		DDX_String(bRead, g_IniFile.m_strModuleNum, pWnd->m_strModuleNum);
+        DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWnd->m_strModuleNum0);
+        DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWnd->m_strModuleNum1);
 
 		DDX_Float(bRead, g_IniFile.m_dBLT[0], pWnd->m_dBLT1);
 		DDX_Float(bRead, g_IniFile.m_dBLT[1], pWnd->m_dBLT2);
@@ -2937,6 +3002,7 @@ void __fastcall TfrmMain::radioPosOptionClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnHomingClick(TObject *Sender)
 {
+
 	g_pMainThread->m_bIsHomingFromBtn = true;
 	if (g_IniFile.m_nErrorCode == 0)
 	{
@@ -2950,6 +3016,15 @@ void __fastcall TfrmMain::btnHomingClick(TObject *Sender)
 		case IDCANCEL: {g_pMainThread->m_nIsFullHoming = 2; break; }
 		}
 	}
+
+
+    //------------------------------------------------------------------------------------------------------------------------
+    //For Test
+
+
+    //g_pMainThread->m_bIsWriteOffsetToDB_F = true;
+
+
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::checkStopLCClick(TObject *Sender)

@@ -102,6 +102,8 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_bIsResetAlarmLocked = false;
     m_bIsTempMonitorFail = false;
     m_bIsNeedReLoadProductParam = false;
+    m_bIsWriteOffsetToDB_F = false;
+    m_bIsWriteOffsetToDB_R = false;
 
 	m_bIsAutoCalPressOverAllowF = true;
 	m_bIsAutoCalPressOverAllowR = true;
@@ -244,6 +246,8 @@ void __fastcall CMainThread::Execute()
 					m_bIsDoLaserCalFinished[1] = false;
                     m_bIsDoLamSubFinished[0] = false;
                     m_bIsDoLamSubFinished[1] = false;
+                    m_bIsWriteOffsetToDB_F = false;
+                    m_bIsWriteOffsetToDB_R = false;
 					bStartMachineInit = false;
 
 					g_IniFile.m_nErrorCode = 1003;
@@ -844,6 +848,8 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 			m_bIsDoLaserCalFinished[1] = false;
             m_bIsDoLamSubFinished[0] = false;
             m_bIsDoLamSubFinished[1] = false;
+            m_bIsWriteOffsetToDB_F = false;
+            m_bIsWriteOffsetToDB_R = false;
 
 			m_dLamTimer[0] = 0;
 			m_dLamTimer[1] = 0;
@@ -1186,7 +1192,8 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][4]Lane 進料區成功開始壓合"));
 			g_DIO.SetDO(nLamMotorStart, false);
 			m_bStartLamSub[bFront] = !g_IniFile.m_bNotLam;
-            m_bIsDoLamSubFinished[bFront] = false;
+            if (!g_IniFile.m_bNotLam) m_bIsDoLamSubFinished[bFront] = false;
+            else m_bIsDoLamSubFinished[bFront] = true;
 
 			nThreadIndex++;
 		}
@@ -2153,14 +2160,14 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					{
 						m_listLog.push_back("重量超過容許誤差" + FormatFloat("0000.0 g", g_IniFile.m_dAutoStopRange) + "，必須停機");
 						//If Manual mode, used ErrorCode to Stop. Both Mode, used m_bIsAutoCalPressOverAllow F&R to stop.
-						if (!m_bIsDoAutoCal[1] && !m_bIsDoAutoCal[0] && !m_bStartPressCal[1] && !m_bStartPressCal[0]) g_IniFile.m_nErrorCode = 74;
-						else
+						//if (!m_bIsDoAutoCal[1] && !m_bIsDoAutoCal[0] && !m_bStartPressCal[1] && !m_bStartPressCal[0]) g_IniFile.m_nErrorCode = 74;
+						//else
 						{
 							if (bFront) m_bIsAutoCalPressOverAllowF = true;
 							else m_bIsAutoCalPressOverAllowR = true;
 						}
 
-                        m_bPrassNeedReCal = false;
+                        m_bPrassNeedReCal = true;
 						m_arrybDoPressCal[nMoveIndex] = true;
 					}
 					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] + g_IniFile.m_dPressCalRange * 0.001 ||
@@ -2362,6 +2369,8 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					else m_bIsAutoCalTimesOver25R = false;
 					g_IniFile.m_dLastLamPress[bFront] = g_IniFile.m_dLamPress[bFront];
 				}
+                if (bFront) m_bIsWriteOffsetToDB_F = true;
+                else m_bIsWriteOffsetToDB_R = true;
 			}
 			nThreadIndex++;
 		}
@@ -2473,14 +2482,24 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 			m_nCalCol = nMoveIndex % 10;
 			m_nCalRow = nMoveIndex / 10;
 
-			if (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows)
+			bool bIsGotoWork = false;
+			if (!g_IniFile.m_bIsFullLaserMode && (nMoveIndex == 0 || nMoveIndex == 10 * (g_IniFile.m_nRows - 1) || nMoveIndex == 10 * (g_IniFile.m_nRows - 1) + (g_IniFile.m_nCols - 1) || nMoveIndex == g_IniFile.m_nCols - 1))
 			{
-                m_ActionLog.push_back(AddTimeString(bFront, "[DoLaserCal][0]Laser 開始Laser量測程序"));
+				bIsGotoWork = true;
+			}
+			else if (g_IniFile.m_bIsFullLaserMode && (m_nCalCol<g_IniFile.m_nCols && m_nCalRow< g_IniFile.m_nRows))
+			{
+				bIsGotoWork = true;
+			}
+
+			if (bIsGotoWork)
+			{
+				m_ActionLog.push_back(AddTimeString(bFront, "[DoLaserCal][0]Laser 開始Laser量測程序"));
 				if (nMoveIndex == 0 && nMoveIndexSub == 0)
-                {
-                    memset(p_dLaserValue, 0, sizeof(double) * 50);
-                    memset(p_dLaserValueDiff, 0, sizeof(double) * 50);
-                }
+				{
+					memset(p_dLaserValue, 0, sizeof(double) * 50);
+					memset(p_dLaserValueDiff, 0, sizeof(double) * 50);
+				}
 				m_listLog.push_back("開始Laser 量測程序-->" + FormatFloat("0", nMoveIndex + 1));
 
 				//Move Axis

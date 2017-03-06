@@ -51,6 +51,8 @@ public:
     double m_dFirstNewValue;                //Record for first Press Cal. input value that used to Cal. next.
     bool m_bIsTempMonitorFail;				//Record for get NULL value from Sqlite3Interface.
 	bool m_bIsNeedReLoadProductParam;		//Machine Test Mode Change, Need To ReLoad ProductParam
+    bool m_bIsWriteOffsetToDB_F;            //When PressCal Finished turn true, to Synchronize the OffsetTable.db3 by UI. (front)
+    bool m_bIsWriteOffsetToDB_R;            //When PressCal Finished turn true, to Synchronize the OffsetTable.db3 by UI. (rear)
 
 	//Error Tag
     bool m_bIsAutoCalPressOverAllowF;		//Record for Need Shutdown in AutoCal Processing, when Front Lane Press detection over ErrorAllow.

@@ -214,6 +214,7 @@ public:		// User declarations
         static bool StartProcess(bool bStart);
         static bool OpenFilebyCIM(AnsiString strFileName);
         void __fastcall CheckParamChange(TfmProduct *pWnd, TfmProduct *pWndRecord, SQLITE3IF *g_ChangeLog, AnsiString SetupEE);
+        void __fastcall ImportOffsetFromDB();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmMain *frmMain;

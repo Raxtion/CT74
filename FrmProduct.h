@@ -77,7 +77,7 @@ __published:	// IDE-managed Components
     TButton *btnHeadScalModify;
     TComboBox *m_cmbModuleScal;
     TButton *btnModuleScalModify;
-    TEdit *m_strModuleNum;
+    TEdit *m_strModuleNum1;
     TGroupBox *GroupBox15;
     TLabel *Label91;
     TLabel *Label95;
@@ -251,6 +251,8 @@ __published:	// IDE-managed Components
     TLabel *Label149;
     TCheckBox *m_bIsLamUpDownCorrect;
     TEdit *m_dLamSecondCorrectTimes;
+    TLabel *Label110;
+    TEdit *m_strModuleNum0;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbScal(AnsiString Hint);

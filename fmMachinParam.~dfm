@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 144
-  Top = 193
+  Left = 231
+  Top = 154
   Width = 1110
   Height = 618
   Caption = #27231#21488#21443#25976
@@ -23,56 +23,56 @@ object frmMachineParam: TfrmMachineParam
   end
   object Label83: TLabel
     Left = 600
-    Top = 418
+    Top = 402
     Width = 64
     Height = 16
     Caption = #33258#21205#27169#24335
   end
   object Label84: TLabel
     Left = 600
-    Top = 434
+    Top = 418
     Width = 64
     Height = 16
     Caption = #23481#35377#28331#24230
   end
   object Label85: TLabel
     Left = 744
-    Top = 426
+    Top = 410
     Width = 16
     Height = 16
     Caption = #24230
   end
   object Label86: TLabel
     Left = 672
-    Top = 426
+    Top = 410
     Width = 12
     Height = 16
     Caption = #177' '
   end
   object Label88: TLabel
     Left = 1000
-    Top = 426
+    Top = 410
     Width = 16
     Height = 16
     Caption = #31186
   end
   object Label87: TLabel
     Left = 808
-    Top = 426
+    Top = 410
     Width = 144
     Height = 16
     Caption = #31532#20108#27425#30495#31354#27298#28204#24310#36978
   end
   object Label111: TLabel
     Left = 592
-    Top = 482
+    Top = 450
     Width = 144
     Height = 16
     Caption = #22739#21512#21069#32233#34909#22739#21147#19979#38477
   end
   object Label110: TLabel
     Left = 798
-    Top = 482
+    Top = 450
     Width = 260
     Height = 16
     Caption = '% ('#38477#20302#27773#32568#32568#21185#35492#24046' '#35531#36664#20837'0~100%)'
@@ -1350,7 +1350,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_dAutoRunTempRange: TEdit
     Left = 688
-    Top = 421
+    Top = 405
     Width = 49
     Height = 24
     TabOrder = 27
@@ -1358,7 +1358,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_dVacDelayTime: TEdit
     Left = 960
-    Top = 423
+    Top = 407
     Width = 33
     Height = 24
     TabOrder = 28
@@ -1742,7 +1742,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_nDownPercent: TEdit
     Left = 744
-    Top = 479
+    Top = 447
     Width = 49
     Height = 24
     TabOrder = 31
@@ -1754,5 +1754,73 @@ object frmMachineParam: TfrmMachineParam
     Height = 137
     Caption = #28331#25511#22120' '#28331#24230'Offset'
     TabOrder = 32
+    object Label2: TLabel
+      Left = 6
+      Top = 43
+      Width = 16
+      Height = 16
+      Caption = #21069
+    end
+    object Label10: TLabel
+      Left = 6
+      Top = 83
+      Width = 16
+      Height = 16
+      Caption = #24460
+    end
+    object Label11: TLabel
+      Left = 113
+      Top = 41
+      Width = 16
+      Height = 16
+      Caption = #24230
+    end
+    object Label12: TLabel
+      Left = 113
+      Top = 81
+      Width = 16
+      Height = 16
+      Caption = #24230
+    end
+    object m_dTempOffsetF: TEdit
+      Left = 30
+      Top = 40
+      Width = 81
+      Height = 24
+      TabOrder = 0
+      Text = 'm_dTempOffsetF'
+    end
+    object m_dTempOffsetR: TEdit
+      Left = 30
+      Top = 80
+      Width = 81
+      Height = 24
+      TabOrder = 1
+      Text = 'Edit1'
+    end
+  end
+  object m_bIsFullLaserMode: TCheckBox
+    Left = 592
+    Top = 485
+    Width = 153
+    Height = 25
+    Caption = #20840#24179#38754#38647#23556#28204#39640
+    TabOrder = 33
+  end
+  object m_bIsUpdateOffsetTable: TCheckBox
+    Left = 912
+    Top = 485
+    Width = 153
+    Height = 25
+    Caption = #35036#20767#20540#23531#20837#36039#26009#24235
+    TabOrder = 34
+  end
+  object m_bIsUseDBOffset: TCheckBox
+    Left = 752
+    Top = 485
+    Width = 153
+    Height = 25
+    Caption = #20351#29992#36039#26009#24235#35036#20767#20540
+    TabOrder = 35
   end
 end

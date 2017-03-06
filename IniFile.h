@@ -56,6 +56,9 @@ public:
   bool m_bIsUseIL030;
   bool m_bIsUseCIM;
   bool m_bIsMochineTestMode;
+  bool m_bIsFullLaserMode;
+  bool m_bIsUseDBOffset;
+  bool m_bIsUpdateOffsetTable;
   int m_nLanguage;
 
   double m_dLoadCellX[2];    //For Calibrate Load Cell
@@ -124,7 +127,7 @@ public:
   int m_nRailOption;
   bool m_bNotLam;
 
-  AnsiString m_strModuleNum;
+  AnsiString m_strModuleNum[2];
   AnsiString m_strSetupEENum;
   int m_nBoatType;                    //0=Old ; 1=New ;
   int m_nHeadType;                    //0=實心; 1=空心;
