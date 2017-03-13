@@ -54,7 +54,7 @@ __fastcall SQLITE3IF::SQLITE3IF(int DBtype, AnsiString DBPath, AnsiString strTab
 
 	/* 取得unique_id */
 	open(DBtype, strTableName);
-	selectSQL("SELECT idx FROM " + strTableName + " ORDER BY idx DESC;");
+	selectSQL("SELECT idx FROM '" + strTableName + "' ORDER BY idx DESC;");
 	if (rows != 0) unique_id = atoi(result[1]) + 1;
 	else unique_id = 0;
 	free();
@@ -124,7 +124,7 @@ void __fastcall SQLITE3IF::open(int DBtype, AnsiString strTableName)
 	if (strcmp(result[1], strTableName.c_str()) != 0)
 	{
 		/* 建立 Offset Table */
-		sqlite3_exec(db, ("CREATE TABLE " + strTableName + "(idx INTEGER PRIMARY KEY, isfront BOOLEAN, location INTERGER, setKg FLOAT, offsetKg FLOAT, statistic INTERGER, Note TEXT);").c_str(), 0, 0, &errMsg);
+		sqlite3_exec(db, ("CREATE TABLE '" + strTableName + "'(idx INTEGER PRIMARY KEY, isfront BOOLEAN, location INTERGER, setKg FLOAT, offsetKg FLOAT, statistic INTERGER, Note TEXT);").c_str(), 0, 0, &errMsg);
 		if (errMsg != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
 		unique_id = 0;
 	}
@@ -372,7 +372,7 @@ AnsiString __fastcall SQLITE3IF::queryOffsetTable(AnsiString strTableName, bool 
 
 	//selectSQL("SELECT idx, isfront, location, setKg, offsetKg FROM " + strTableName
     //    + " WHERE isfront='" + strIsFront + "' AND setKg='" + strSetKg + "' ORDER BY location ASC;");
-    selectSQL("SELECT idx, offsetKg FROM " + strTableName
+    selectSQL("SELECT idx, offsetKg FROM '" + strTableName + "'"
         + " WHERE isfront='" + strIsFront + "' AND setKg='" + strSetKg + "' ORDER BY location ASC;");
 
 	if (rows != 0)
@@ -425,7 +425,7 @@ AnsiString __fastcall SQLITE3IF::updateOffsetTable(AnsiString strTableName, bool
 	open(4, strTableName);
 
 	/* 確認 TableName, bIsFront, setKg 已經存在 */
-	selectSQL("SELECT idx, isfront, location, setKg, offsetKg FROM " + strTableName + " WHERE isfront='" + IntToStr(bIsFront) + "' AND setKg='" + setKg + "' ORDER BY location ASC;");
+	selectSQL("SELECT idx, isfront, location, setKg, offsetKg FROM '" + strTableName + "' WHERE isfront='" + IntToStr(bIsFront) + "' AND setKg='" + setKg + "' ORDER BY location ASC;");
 	if (rows != 0)
 	{
 		for (int i = 1; i<rows + 1; i++)
@@ -449,7 +449,7 @@ AnsiString __fastcall SQLITE3IF::updateOffsetTable(AnsiString strTableName, bool
 				{
 					/* Update OffsetTable */
 					unique_id++;	//must enshure unique_id always added.
-					AnsiString updatesql = "UPDATE " + strTableName + " SET"
+					AnsiString updatesql = "UPDATE '" + strTableName + "' SET"
 						+ " offsetKg=" + FormatFloat("0.000", pOffset[i])
 						+ " WHERE idx = " + IntToStr(pnidx[j]) + " ;";
 
@@ -474,7 +474,7 @@ AnsiString __fastcall SQLITE3IF::updateOffsetTable(AnsiString strTableName, bool
 					/* INSERT OffsetTable */
 					AnsiString strLastrowid = unique_id;
 					unique_id++;	//must enshure unique_id always added.
-					AnsiString insertsql = "INSERT INTO " + strTableName + " VALUES( " + strLastrowid
+					AnsiString insertsql = "INSERT INTO '" + strTableName + "' VALUES( " + strLastrowid
 						+ " , " + IntToStr(bIsFront)
 						+ " , " + IntToStr(i)
 						+ " , " + FormatFloat("0.000", setKg)
@@ -500,7 +500,7 @@ AnsiString __fastcall SQLITE3IF::updateOffsetTable(AnsiString strTableName, bool
 	
 
 	/* 確認 */
-	selectSQL("SELECT idx, isfront, location, setKg, offsetKg FROM " + strTableName + " WHERE isfront='" + IntToStr(bIsFront) + "' AND setKg='" + setKg + "' ORDER BY location ASC;");
+	selectSQL("SELECT idx, isfront, location, setKg, offsetKg FROM '" + strTableName + "' WHERE isfront='" + IntToStr(bIsFront) + "' AND setKg='" + setKg + "' ORDER BY location ASC;");
 	if (rows != 0 && Result != "falure")
 	{
 		Result = "succeed";

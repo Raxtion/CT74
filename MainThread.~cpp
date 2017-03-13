@@ -121,7 +121,8 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 	    m_bDNPortConnectError1[nI] = false;
 		m_arrybDoUpperMoldLaser[nI] = false;
 		m_arrybDoDownMoldLaser[nI] = false;
-		m_arrybDoPressCal[nI] = false;
+        m_arrybDoPressCal[0][nI] = false;
+		m_arrybDoPressCal[1][nI] = false;
     }
 }
 //---------------------------------------------------------------------------
@@ -530,12 +531,13 @@ void __fastcall CMainThread::Execute()
 					else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bIsAutoCalPressOverAllowR == true) g_IniFile.m_nErrorCode = 25;
 				}
 
-                //Check UpperMoldCheck
+                //Check UpperMoldCheck //20170309 When Start Not Check this
+                /*
                 if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
                     || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
                 {
                     g_IniFile.m_nErrorCode = 30;
-                }
+                }*/
 
                 //nThreadIndex[1]=0;       //some thread need to start from zero
                 m_bIsAutoMode = true;
@@ -806,13 +808,13 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 		{
 			double dGetSetKgValue = g_DNPort0.GetSetKg(nI);
 			double dGetKgValue = g_DNPort0.GetKg(nI);
-			if (fabs(dGetSetKgValue - dGetKgValue) > 0.5) m_bDNPortConnectError0[nI] = true;
+			if (fabs(dGetSetKgValue - dGetKgValue) > 0.5) m_bDNPortConnectError1[nI] = true;
 		}
 		for (int nI = 0; nI < 50; nI++)
 		{
 			double dGetSetKgValue = g_DNPort1.GetSetKg(nI);
 			double dGetKgValue = g_DNPort1.GetKg(nI);
-			if (fabs(dGetSetKgValue - dGetKgValue) > 0.1) m_bDNPortConnectError1[nI] = true;
+			if (fabs(dGetSetKgValue - dGetKgValue) > 0.5) m_bDNPortConnectError0[nI] = true;
 		}
 		nThreadIndex++;
 		break;
@@ -2002,12 +2004,12 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		if (bFront) 
 		{
 			//memset(m_dFrontPressCal, 0, sizeof(double) * 50);
-			for (int nI = 0; nI < 50; nI++) { if (m_arrybDoPressCal[nI] == true) m_dFrontPressCal[nI] = 0; }
+			for (int nI = 0; nI < 50; nI++) { if (m_arrybDoPressCal[1][nI] == true) m_dFrontPressCal[nI] = 0; }
 		}
 		else
 		{
 			//memset(m_dRearPressCal, 0, sizeof(double) * 50);
-			for (int nI = 0; nI < 50; nI++) { if (m_arrybDoPressCal[nI] == true) m_dRearPressCal[nI] = 0; }
+			for (int nI = 0; nI < 50; nI++) { if (m_arrybDoPressCal[0][nI] == true) m_dRearPressCal[nI] = 0; }
 		}
 	}
 
@@ -2015,6 +2017,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 
 	double *pOffset;
 	double *pLoadCellValue;
+    bool *parrybDoPressCal;
 
 	if (bFront)
 	{
@@ -2025,6 +2028,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 
 		pOffset = g_IniFile.m_dScaleOffsetFront;
 		pLoadCellValue = m_dFrontPressCal;
+        parrybDoPressCal = m_arrybDoPressCal[1];
 	}
 	else
 	{
@@ -2035,6 +2039,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 
 		pOffset = g_IniFile.m_dScaleOffsetRear;
 		pLoadCellValue = m_dRearPressCal;
+        parrybDoPressCal = m_arrybDoPressCal[0];
 	}
 
 	switch (nThreadIndex)
@@ -2051,7 +2056,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 
 			if (m_nCalCol < g_IniFile.m_nCols && m_nCalRow < g_IniFile.m_nRows)
 			{	
-				if ((m_bAutoRetry && m_arrybDoPressCal[nMoveIndex]) || (!m_bAutoRetry))
+				if ((m_bAutoRetry && parrybDoPressCal[nMoveIndex]) || (!m_bAutoRetry))
 				{
 					if (m_bAutoRetry == true)
 					{
@@ -2168,14 +2173,14 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 						}
 
                         m_bPrassNeedReCal = true;
-						m_arrybDoPressCal[nMoveIndex] = true;
+						parrybDoPressCal[nMoveIndex] = true;
 					}
 					else if (dLoadCellValue > g_IniFile.m_dLamPress[bFront] + g_IniFile.m_dPressCalRange * 0.001 ||
                         dLoadCellValue < g_IniFile.m_dLamPress[bFront] - g_IniFile.m_dPressCalRange * 0.001 )
 					{
 						m_listLog.push_back("重量超過容許誤差，未超過" + FormatFloat("0000.0 g", g_IniFile.m_dAutoStopRange) + "，必須重新校正");
                         m_bPrassNeedReCal = true;
-						m_arrybDoPressCal[nMoveIndex] = true;
+						parrybDoPressCal[nMoveIndex] = true;
 					}
 
 				//}
@@ -2271,7 +2276,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
                     }
                     else
                     {
-						m_arrybDoPressCal[nMoveIndex] = false;
+						parrybDoPressCal[nMoveIndex] = false;
 					    pOffset[nMoveIndex] = dNewValue - g_IniFile.m_dLamPress[bFront];
 
 					    pLoadCellValue[nMoveIndex] = dLoadCellValue;
@@ -2369,8 +2374,8 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 					else m_bIsAutoCalTimesOver25R = false;
 					g_IniFile.m_dLastLamPress[bFront] = g_IniFile.m_dLamPress[bFront];
 				}
-                if (bFront) m_bIsWriteOffsetToDB_F = true;
-                else m_bIsWriteOffsetToDB_R = true;
+                if (bFront && g_IniFile.m_bIsUpdateOffsetTable) m_bIsWriteOffsetToDB_F = true;
+                else if (!bFront && g_IniFile.m_bIsUpdateOffsetTable) m_bIsWriteOffsetToDB_R = true;
 			}
 			nThreadIndex++;
 		}
@@ -2724,7 +2729,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						double *maxValue = std::max_element(vecTempUpFull.begin(), vecTempUpFull.end());
 						double *minValue = std::min_element(vecTempUpFull.begin(), vecTempUpFull.end());
 						vecTempUpFull.clear();
-						m_listLog.push_back("全部壓頭高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue))); 
+						m_listLog.push_back("全部壓頭高度誤差= " + FormatFloat("0.0000 mm", (*maxValue - *minValue)));
 					}
 					else
 					{
@@ -2739,7 +2744,11 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
                     std::vector<double> vecTempDown;
                     for (int i=0;i<50;i++)
                     {
-                        if ((i % 10)<g_IniFile.m_nCols && (i / 10)< g_IniFile.m_nRows)
+                        if (!g_IniFile.m_bIsFullLaserMode && (i == 0 || i == 10 * (g_IniFile.m_nRows - 1) || i == 10 * (g_IniFile.m_nRows - 1) + (g_IniFile.m_nCols - 1) || i == g_IniFile.m_nCols - 1))
+                        {
+                            if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[i * 4]);
+                        }
+                        else if (g_IniFile.m_bIsFullLaserMode && (i % 10)<g_IniFile.m_nCols && (i / 10)< g_IniFile.m_nRows)
                         {
                             if (p_dLaserValue[i] != 999) vecTempDown.push_back(p_dLaserValue[i * 4]);
                         }
@@ -2916,7 +2925,8 @@ void __fastcall CMainThread::DoOneStepCal(int &nThreadIndex)
 				{
 					m_arrybDoUpperMoldLaser[nI] = false;
 					m_arrybDoDownMoldLaser[nI] = false;
-					m_arrybDoPressCal[nI] = false;
+					m_arrybDoPressCal[0][nI] = false;
+					m_arrybDoPressCal[1][nI] = false;
 				}
 
 				if (g_IniFile.m_nRailOption == 0) bFront = true;

@@ -253,6 +253,13 @@ __published:	// IDE-managed Components
     TEdit *m_dLamSecondCorrectTimes;
     TLabel *Label110;
     TEdit *m_strModuleNum0;
+    TGroupBox *GroupBox2;
+    TLabel *Label3;
+    TLabel *Label4;
+    TLabel *Label5;
+    TLabel *Label6;
+    TEdit *m_dTempOffsetF;
+    TEdit *m_dTempOffsetR;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbScal(AnsiString Hint);

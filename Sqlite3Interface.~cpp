@@ -171,7 +171,7 @@ void __fastcall SQLITE3IF::insertTemp()
         g_ModBus.m_bInitOK = true;
         strRearTemp = "NULL";
         strFrontTemp = "NULL";
-        //g_pMainThread->m_bIsTempMonitorFail = true;
+        g_pMainThread->m_bIsTempMonitorFail = true;
     }
     AnsiString insertsql = "INSERT INTO C74Log VALUES( "+strLastrowid
                                                     +" ,'"+strDateTime

@@ -95,8 +95,6 @@ public:
 
   int m_nDownPercent;                 //for downPress to decrease cylinder friction
 
-  double m_dTempOffsetF;
-  double m_dTempOffsetR;
 
 
   //-----------------Product-----------------
@@ -149,7 +147,11 @@ public:
   bool m_bIsLamSecondStop;
   double m_dLamSecondCorrectTimes;
   bool m_bIsLamUpDownCorrect;
-  
+
+  double m_dTempOffsetF;
+  double m_dTempOffsetR;
+
+
 //Function
 public:
   void __fastcall MachineFile(bool bRead);

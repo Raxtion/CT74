@@ -1747,65 +1747,13 @@ object frmMachineParam: TfrmMachineParam
     Height = 24
     TabOrder = 31
   end
-  object GroupBox8: TGroupBox
-    Left = 936
-    Top = 256
-    Width = 137
-    Height = 137
-    Caption = #28331#25511#22120' '#28331#24230'Offset'
-    TabOrder = 32
-    object Label2: TLabel
-      Left = 6
-      Top = 43
-      Width = 16
-      Height = 16
-      Caption = #21069
-    end
-    object Label10: TLabel
-      Left = 6
-      Top = 83
-      Width = 16
-      Height = 16
-      Caption = #24460
-    end
-    object Label11: TLabel
-      Left = 113
-      Top = 41
-      Width = 16
-      Height = 16
-      Caption = #24230
-    end
-    object Label12: TLabel
-      Left = 113
-      Top = 81
-      Width = 16
-      Height = 16
-      Caption = #24230
-    end
-    object m_dTempOffsetF: TEdit
-      Left = 30
-      Top = 40
-      Width = 81
-      Height = 24
-      TabOrder = 0
-      Text = 'm_dTempOffsetF'
-    end
-    object m_dTempOffsetR: TEdit
-      Left = 30
-      Top = 80
-      Width = 81
-      Height = 24
-      TabOrder = 1
-      Text = 'Edit1'
-    end
-  end
   object m_bIsFullLaserMode: TCheckBox
     Left = 592
     Top = 485
     Width = 153
     Height = 25
     Caption = #20840#24179#38754#38647#23556#28204#39640
-    TabOrder = 33
+    TabOrder = 32
   end
   object m_bIsUpdateOffsetTable: TCheckBox
     Left = 920
@@ -1813,7 +1761,7 @@ object frmMachineParam: TfrmMachineParam
     Width = 153
     Height = 25
     Caption = #35036#20767#20540#23531#20837#36039#26009#24235
-    TabOrder = 34
+    TabOrder = 33
   end
   object m_bIsUseDBOffset: TCheckBox
     Left = 752
@@ -1821,6 +1769,6 @@ object frmMachineParam: TfrmMachineParam
     Width = 153
     Height = 25
     Caption = #20351#29992#36039#26009#24235#35036#20767#20540
-    TabOrder = 35
+    TabOrder = 34
   end
 end

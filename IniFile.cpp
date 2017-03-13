@@ -146,8 +146,6 @@ void __fastcall CIniFile::MachineFile(bool bRead)
 
   DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nDownPercent",m_nDownPercent,30);
 
-  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dTempOffsetF",m_dTempOffsetF,0.0);
-  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dTempOffsetR",m_dTempOffsetR,0.0);
 
   delete pIniFile;
 }
@@ -270,6 +268,9 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bIsLamSecondStop",m_bIsLamSecondStop,false);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamSecondCorrectTimes",m_dLamSecondCorrectTimes,1);
   DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bIsLamUpDownCorrect",m_bIsLamUpDownCorrect,false);
+
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTempOffsetF",m_dTempOffsetF,0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTempOffsetR",m_dTempOffsetR,0.0);
 
   delete pIniFile;
 }

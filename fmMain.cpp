@@ -1175,8 +1175,8 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
                 bool bDNPortError = false;
 				for (int nX = 0; nX < 50; nX++)
 				{
-					if (g_pMainThread->m_bDNPortConnectError0[nX] == true) { AddList("Front: " + IntToStr(nX) + "DNport Connection Error."); bDNPortError = true; }
-					if (g_pMainThread->m_bDNPortConnectError1[nX] == true) { AddList("Rear: " + IntToStr(nX) + "DNport Connection Error"); bDNPortError = true; }
+					if (g_pMainThread->m_bDNPortConnectError1[nX] == true) { AddList("Front: " + IntToStr(nX+1) + " DNport Connection Error."); bDNPortError = true; }
+					if (g_pMainThread->m_bDNPortConnectError0[nX] == true) { AddList("Rear: " + IntToStr(nX+1) + " DNport Connection Error"); bDNPortError = true; }
                     g_pMainThread->m_bDNPortConnectError0[nX] = false;
                     g_pMainThread->m_bDNPortConnectError1[nX] = false;
 				}
@@ -1745,9 +1745,6 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
     DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
 
-    DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pMachineDlg->m_dTempOffsetF);
-    DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pMachineDlg->m_dTempOffsetR);
-
     while (1)
 	{
 		if (pMachineDlg->ShowModal() == mrOk)
@@ -1854,9 +1851,6 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
         DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
 
-        DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pMachineDlg->m_dTempOffsetF);
-        DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pMachineDlg->m_dTempOffsetR);
-        
 		g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
 		g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
 
@@ -1999,6 +1993,10 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWndRecord->m_dLamSecondCorrectTimes);
 	DDX_Check(bRead, g_IniFile.m_bIsLamUpDownCorrect, pWndRecord->m_bIsLamUpDownCorrect);
 
+    DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWndRecord->m_dTempOffsetF);
+    DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWndRecord->m_dTempOffsetR);
+
+
 	//---------------------------------------------------------------------------
 	//pWnd ready to show for user
 	DDX_Int(bRead, g_IniFile.m_nCols, pWnd->m_nCols);
@@ -2106,6 +2104,9 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWnd->m_bIsLamSecondStop);
     DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWnd->m_dLamSecondCorrectTimes);
 	DDX_Check(bRead, g_IniFile.m_bIsLamUpDownCorrect, pWnd->m_bIsLamUpDownCorrect);
+
+    DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWnd->m_dTempOffsetF);
+    DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWnd->m_dTempOffsetR);
 
 	pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
@@ -2266,6 +2267,9 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWnd->m_dLamSecondCorrectTimes);
         DDX_Check(bRead, g_IniFile.m_bIsLamUpDownCorrect, pWnd->m_bIsLamUpDownCorrect);
 
+        DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWnd->m_dTempOffsetF);
+        DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWnd->m_dTempOffsetR);
+
         //Count MoveLocX, MoveLocY
         int nColum = 0;
         int nRow = 0;
@@ -2298,6 +2302,9 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 				g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchRearDownY;
 			}
         }
+
+        //Read OffsetTable
+        if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
 
 		Label22->Caption = g_IniFile.m_dLamTime[0];
 		Label25->Caption = g_IniFile.m_dLamTemp[0];
@@ -2650,6 +2657,7 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 				|| g_pMainThread->m_dFrontDownLaserDiff[nIndex][0] > g_IniFile.m_dDownLaserAlarm
 				|| g_pMainThread->m_dFrontUpperTotalLaserDiff[nIndex][0] > g_IniFile.m_dUpperTotalLaserAlarm) PaintBox1->Canvas->Brush->Color = clRed;
             else if (fabs(g_pMainThread->m_dFrontPressCal[nIndex] - g_IniFile.m_dLamPress[1]) > g_IniFile.m_dAutoStopRange*0.001) PaintBox1->Canvas->Brush->Color = clRed;
+            else if (g_pMainThread->m_arrybDoPressCal[1][nIndex]) PaintBox1->Canvas->Brush->Color = clRed;
 			else PaintBox1->Canvas->Brush->Color = clGreen;
 		}
 		else PaintBox1->Canvas->Brush->Color = clGray;
@@ -2718,6 +2726,7 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 				|| g_pMainThread->m_dRearDownLaserDiff[nIndex][0] > g_IniFile.m_dDownLaserAlarm
 				|| g_pMainThread->m_dRearUpperTotalLaserDiff[nIndex][0] > g_IniFile.m_dUpperTotalLaserAlarm) PaintBox2->Canvas->Brush->Color = clRed;
             else if (fabs(g_pMainThread->m_dRearPressCal[nIndex] - g_IniFile.m_dLamPress[0]) > g_IniFile.m_dAutoStopRange*0.001) PaintBox2->Canvas->Brush->Color = clRed;
+            else if (g_pMainThread->m_arrybDoPressCal[0][nIndex]) PaintBox2->Canvas->Brush->Color = clRed;
 			else PaintBox2->Canvas->Brush->Color = clGreen;
 		}
 		else PaintBox2->Canvas->Brush->Color = clGray;
@@ -2903,9 +2912,25 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 
     TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
+    //Select if PressCal from 1st location
+    bool bFrom1st = false;
+    AnsiString pString;
+    if (g_IniFile.m_nLanguageMode>0) pString = "PressCal From 1st Location?";
+    else pString = "是否重頭開始校正?";
+    if (g_pMainThread->m_bAutoRetry && pBtn->Down == true)
+    {
+        switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
+        {
+        case IDYES: { bFrom1st = true; pBtn->Down = true; break; }
+        case IDNO: { bFrom1st = false; pBtn->Down = true; break; }
+        case IDCANCEL: { return; break;}
+        }
+    }
+    
 	checkMonitor->Checked = false;
     g_pMainThread->m_bIsManualFinish = false;
 
+    //Privilege Set
 	if (btnStartPressCal0->Down || btnStartPressCal1->Down ||
 		btnLaserUp1->Down || btnLaserUp0->Down ||
 		btnLaserDown1->Down || btnLaserDown0->Down)
@@ -2913,7 +2938,7 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 		MotorTest1->Enabled = false;
         N10->Enabled = false;
 	}
-	else  SetPrivilege(m_nUserLevel);
+	else SetPrivilege(m_nUserLevel);
 
     //block function switch within one is running
     if (pBtn->Down == true)
@@ -2936,10 +2961,13 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
     }
     pBtn->Enabled = true;
 
+    //if PressCal SetAllDevice
 	if (g_pMainThread->m_bStartPressCal[0] || g_pMainThread->m_bStartPressCal[1]) SetAllDevice();
 
+    //Protect LoadCell
 	g_DIO.SetDO(DO::LoadCellValve,false);
 
+    //if btn down 
 	if (checkRestartCal->Checked && pBtn->Down)
 	{
 	    g_pMainThread->m_nPressCalMoveIndex[0] = -1;
@@ -2951,7 +2979,11 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 		if (checkAutoRetry->Checked && cmbRange->ItemIndex == 0 && cmbFirstLoc->ItemIndex == 0 && (pBtn->Tag == 0 || pBtn->Tag == 3))
 		{
             //Not Reset
-			//for (int nI = 0; nI<50; nI++) { g_pMainThread->m_arrybDoPressCal[nI] = true; }
+            if (bFrom1st)
+            {
+			    if (btnStartPressCal1->Down) {for (int nI = 0; nI<50; nI++) { g_pMainThread->m_arrybDoPressCal[1][nI] = true; }}
+                if (btnStartPressCal0->Down) {for (int nI = 0; nI<50; nI++) { g_pMainThread->m_arrybDoPressCal[0][nI] = true; }}
+            }
 		}
     }
     if (cmbRange->ItemIndex==1)

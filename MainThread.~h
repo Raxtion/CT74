@@ -133,7 +133,7 @@ public:
 	//Cal Job container for DoOneStepCal
 	bool m_arrybDoUpperMoldLaser[50];
 	bool m_arrybDoDownMoldLaser[50];
-	bool m_arrybDoPressCal[50];
+	bool m_arrybDoPressCal[2][50];
 
 	__fastcall CMainThread(bool CreateSuspended);
 	void __fastcall SetWorkSpeed();

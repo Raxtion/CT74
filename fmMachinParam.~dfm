@@ -1808,7 +1808,7 @@ object frmMachineParam: TfrmMachineParam
     TabOrder = 33
   end
   object m_bIsUpdateOffsetTable: TCheckBox
-    Left = 912
+    Left = 920
     Top = 485
     Width = 153
     Height = 25
