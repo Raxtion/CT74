@@ -1709,7 +1709,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dWorkSpeed[nAxisLifter]);
 			g_DIO.SetDO(nLifterVac, false);
             g_DIO.SetDO(nLifterDeVac, true);
-			tm1MS->timeStart(1000);
+			tm1MS->timeStart(g_IniFile.m_dDeVacDelayTime * 1000);
 			g_Motion.Stop(nAxisLifter);
 			nThreadIndex++;
 		}
@@ -1732,6 +1732,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 14:
 		if (g_Motion.IsPosDone(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]))
 		{
+            g_DIO.SetDO(nLifterDeVac, false);
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][14]LamSub lifter¨ì¹Fm_dLamGetPos"));
 			nThreadIndex++;
 		}
@@ -2182,7 +2183,10 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
                         m_bPrassNeedReCal = true;
 						parrybDoPressCal[nMoveIndex] = true;
 					}
-
+                    else
+                    {
+                        parrybDoPressCal[nMoveIndex] = false;
+                    }
 				//}
 
                 //also renew fmMain

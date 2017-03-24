@@ -1170,13 +1170,21 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 			g_eqpXML.SendAlarmMessage(strCode.c_str(), strMsgCIM.c_str());
 
             //Check DNport connection Error
-			if (g_IniFile.m_nErrorCode == 2001)
-			{	
+			if (!g_IniFile.m_bNotLam && g_IniFile.m_nErrorCode == 2001)
+			{
                 bool bDNPortError = false;
 				for (int nX = 0; nX < 50; nX++)
 				{
-					if (g_pMainThread->m_bDNPortConnectError1[nX] == true) { AddList("Front: " + IntToStr(nX+1) + " DNport Connection Error."); bDNPortError = true; }
-					if (g_pMainThread->m_bDNPortConnectError0[nX] == true) { AddList("Rear: " + IntToStr(nX+1) + " DNport Connection Error"); bDNPortError = true; }
+					if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && (g_pMainThread->m_bDNPortConnectError1[nX] == true))
+                    {
+                        AddList("Front: " + IntToStr(nX+1) + " DNport Connection Error.");
+                        bDNPortError = true;
+                    }
+					if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && (g_pMainThread->m_bDNPortConnectError0[nX] == true))
+                    {
+                        AddList("Rear: " + IntToStr(nX+1) + " DNport Connection Error");
+                        bDNPortError = true;
+                    }
                     g_pMainThread->m_bDNPortConnectError0[nX] = false;
                     g_pMainThread->m_bDNPortConnectError1[nX] = false;
 				}
@@ -1742,6 +1750,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
     DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pMachineDlg->m_dAutoRunTempRange);
 	DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pMachineDlg->m_dVacDelayTime);
+    DDX_Float(bRead, g_IniFile.m_dDeVacDelayTime, pMachineDlg->m_dDeVacDelayTime);
 
     DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
 
@@ -1848,6 +1857,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 
         DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pMachineDlg->m_dAutoRunTempRange);
         DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pMachineDlg->m_dVacDelayTime);
+        DDX_Float(bRead, g_IniFile.m_dDeVacDelayTime, pMachineDlg->m_dDeVacDelayTime);
 
         DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
 
@@ -2921,8 +2931,8 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
     {
         switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
         {
-        case IDYES: { bFrom1st = true; break; }
-        case IDNO: { bFrom1st = false; break; }
+        case IDYES: { bFrom1st = true; pBtn->Down = true; break; }
+        case IDNO: { bFrom1st = false; pBtn->Down = true; break; }
         case IDCANCEL: { return; break;}
         }
     }

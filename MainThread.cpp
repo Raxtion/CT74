@@ -706,11 +706,11 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 		{
 			for (int nI = 0; nI < 50; nI++)
 			{
-				g_DNPort0.SetKg(nI, 1.0);
-				g_DNPort1.SetKg(nI, 1.0);
+				if (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1)) g_DNPort0.SetKg(nI, 1.0);
+				if (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2)) g_DNPort1.SetKg(nI, 1.0);
 			}
-			g_DNPort0.WriteAllData();
-			g_DNPort1.WriteAllData();
+			if (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1)) g_DNPort0.WriteAllData();
+			if (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2)) g_DNPort1.WriteAllData();
 
 			g_Motion.JogStart(AXIS_X, false);
 			g_Motion.JogStart(AXIS_Y, false);
@@ -793,28 +793,37 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 	case 11:
 		if (g_Motion.IsMotionDone(AXIS_Y))
 		{
-			m_ActionLog.push_back(AddTimeString("[InitialMachine][9] 比例閥通訊測試"));
-            m_listLog.push_back(AddTimeString("比例閥通訊測試..."));
-            for (int nI = 0; nI<50; nI++)
-            {
-                m_bDNPortConnectError0[nI] = false;
-                m_bDNPortConnectError1[nI] = false;
-            }
+			if (!g_IniFile.m_bNotLam)
+			{
+				m_ActionLog.push_back(AddTimeString("[InitialMachine][9] 比例閥通訊測試"));
+				m_listLog.push_back(AddTimeString("比例閥通訊測試..."));
+				for (int nI = 0; nI<50; nI++)
+				{
+					if (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) m_bDNPortConnectError0[nI] = false;
+					if (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) m_bDNPortConnectError1[nI] = false;
+				}
+			}
 			nThreadIndex++;
 		}
 		break;
 	case 12:
-		for (int nI = 0; nI < 50; nI++)
+		if (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1))
 		{
-			double dGetSetKgValue = g_DNPort0.GetSetKg(nI);
-			double dGetKgValue = g_DNPort0.GetKg(nI);
-			if (fabs(dGetSetKgValue - dGetKgValue) > 0.5) m_bDNPortConnectError1[nI] = true;
+			for (int nI = 0; nI < 50; nI++)
+			{
+				double dGetSetKgValue = g_DNPort0.GetSetKg(nI);
+				double dGetKgValue = g_DNPort0.GetKg(nI);
+				if (fabs(dGetSetKgValue - dGetKgValue) > 0.5) m_bDNPortConnectError1[nI] = true;
+			}
 		}
-		for (int nI = 0; nI < 50; nI++)
+		if (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2))
 		{
-			double dGetSetKgValue = g_DNPort1.GetSetKg(nI);
-			double dGetKgValue = g_DNPort1.GetKg(nI);
-			if (fabs(dGetSetKgValue - dGetKgValue) > 0.5) m_bDNPortConnectError0[nI] = true;
+			for (int nI = 0; nI < 50; nI++)
+			{
+				double dGetSetKgValue = g_DNPort1.GetSetKg(nI);
+				double dGetKgValue = g_DNPort1.GetKg(nI);
+				if (fabs(dGetSetKgValue - dGetKgValue) > 0.5) m_bDNPortConnectError0[nI] = true;
+			}
 		}
 		nThreadIndex++;
 		break;
@@ -1709,7 +1718,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dWorkSpeed[nAxisLifter]);
 			g_DIO.SetDO(nLifterVac, false);
             g_DIO.SetDO(nLifterDeVac, true);
-			tm1MS->timeStart(1000);
+			tm1MS->timeStart(g_IniFile.m_dDeVacDelayTime * 1000);
 			g_Motion.Stop(nAxisLifter);
 			nThreadIndex++;
 		}
@@ -1732,6 +1741,7 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 14:
 		if (g_Motion.IsPosDone(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]))
 		{
+            g_DIO.SetDO(nLifterDeVac, false);
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][14]LamSub lifter到達m_dLamGetPos"));
 			nThreadIndex++;
 		}
@@ -3519,6 +3529,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		//m_bStopLC = false;
 	}
 }
+
 
 
 

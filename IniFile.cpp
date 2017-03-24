@@ -143,6 +143,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
 
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dAutoRunTempRange",m_dAutoRunTempRange,0.0);
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dVacDelayTime",m_dVacDelayTime,0.0);
+  DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dDeVacDelayTime",m_dDeVacDelayTime,1.0);
 
   DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nDownPercent",m_nDownPercent,30);
 

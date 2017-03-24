@@ -1,8 +1,8 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 231
-  Top = 154
-  Width = 1110
-  Height = 618
+  Left = 228
+  Top = 181
+  Width = 1105
+  Height = 615
   Caption = #27231#21488#21443#25976
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -22,42 +22,42 @@ object frmMachineParam: TfrmMachineParam
     Caption = #35486#31995
   end
   object Label83: TLabel
-    Left = 600
-    Top = 402
+    Left = 976
+    Top = 266
     Width = 64
     Height = 16
     Caption = #33258#21205#27169#24335
   end
   object Label84: TLabel
-    Left = 600
-    Top = 418
+    Left = 976
+    Top = 282
     Width = 64
     Height = 16
     Caption = #23481#35377#28331#24230
   end
   object Label85: TLabel
-    Left = 744
-    Top = 410
+    Left = 1040
+    Top = 314
     Width = 16
     Height = 16
     Caption = #24230
   end
   object Label86: TLabel
-    Left = 672
-    Top = 410
+    Left = 968
+    Top = 314
     Width = 12
     Height = 16
     Caption = #177' '
   end
   object Label88: TLabel
-    Left = 1000
+    Left = 784
     Top = 410
     Width = 16
     Height = 16
     Caption = #31186
   end
   object Label87: TLabel
-    Left = 808
+    Left = 592
     Top = 410
     Width = 144
     Height = 16
@@ -76,6 +76,20 @@ object frmMachineParam: TfrmMachineParam
     Width = 260
     Height = 16
     Caption = '% ('#38477#20302#27773#32568#32568#21185#35492#24046' '#35531#36664#20837'0~100%)'
+  end
+  object Label2: TLabel
+    Left = 1040
+    Top = 410
+    Width = 16
+    Height = 16
+    Caption = #31186
+  end
+  object Label10: TLabel
+    Left = 837
+    Top = 410
+    Width = 160
+    Height = 16
+    Caption = #22739#21512#19979#38477#30495#31354#37323#25918#25345#32396
   end
   object BitBtn1: TBitBtn
     Left = 288
@@ -1349,15 +1363,15 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object m_dAutoRunTempRange: TEdit
-    Left = 688
-    Top = 405
+    Left = 984
+    Top = 309
     Width = 49
     Height = 24
     TabOrder = 27
     Text = 'm_dAutoRunTempRange'
   end
   object m_dVacDelayTime: TEdit
-    Left = 960
+    Left = 744
     Top = 407
     Width = 33
     Height = 24
@@ -1747,65 +1761,13 @@ object frmMachineParam: TfrmMachineParam
     Height = 24
     TabOrder = 31
   end
-  object GroupBox8: TGroupBox
-    Left = 936
-    Top = 256
-    Width = 137
-    Height = 137
-    Caption = #28331#25511#22120' '#28331#24230'Offset'
-    TabOrder = 32
-    object Label2: TLabel
-      Left = 6
-      Top = 43
-      Width = 16
-      Height = 16
-      Caption = #21069
-    end
-    object Label10: TLabel
-      Left = 6
-      Top = 83
-      Width = 16
-      Height = 16
-      Caption = #24460
-    end
-    object Label11: TLabel
-      Left = 113
-      Top = 41
-      Width = 16
-      Height = 16
-      Caption = #24230
-    end
-    object Label12: TLabel
-      Left = 113
-      Top = 81
-      Width = 16
-      Height = 16
-      Caption = #24230
-    end
-    object m_dTempOffsetF: TEdit
-      Left = 30
-      Top = 40
-      Width = 81
-      Height = 24
-      TabOrder = 0
-      Text = 'm_dTempOffsetF'
-    end
-    object m_dTempOffsetR: TEdit
-      Left = 30
-      Top = 80
-      Width = 81
-      Height = 24
-      TabOrder = 1
-      Text = 'Edit1'
-    end
-  end
   object m_bIsFullLaserMode: TCheckBox
     Left = 592
     Top = 485
     Width = 153
     Height = 25
     Caption = #20840#24179#38754#38647#23556#28204#39640
-    TabOrder = 33
+    TabOrder = 32
   end
   object m_bIsUpdateOffsetTable: TCheckBox
     Left = 920
@@ -1813,7 +1775,7 @@ object frmMachineParam: TfrmMachineParam
     Width = 153
     Height = 25
     Caption = #35036#20767#20540#23531#20837#36039#26009#24235
-    TabOrder = 34
+    TabOrder = 33
   end
   object m_bIsUseDBOffset: TCheckBox
     Left = 752
@@ -1821,6 +1783,14 @@ object frmMachineParam: TfrmMachineParam
     Width = 153
     Height = 25
     Caption = #20351#29992#36039#26009#24235#35036#20767#20540
+    TabOrder = 34
+  end
+  object m_dDeVacDelayTime: TEdit
+    Left = 1000
+    Top = 407
+    Width = 33
+    Height = 24
     TabOrder = 35
+    Text = 'm_dVacDelayTime'
   end
 end

@@ -191,6 +191,9 @@ __published:	// IDE-managed Components
     TCheckBox *m_bIsFullLaserMode;
     TCheckBox *m_bIsUpdateOffsetTable;
     TCheckBox *m_bIsUseDBOffset;
+    TLabel *Label2;
+    TLabel *Label10;
+    TEdit *m_dDeVacDelayTime;
     void __fastcall m_bIsUseCIMClick(TObject *Sender);
     void __fastcall m_dLamHeightDblClick(TObject *Sender);
 private:	// User declarations
