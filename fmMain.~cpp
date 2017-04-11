@@ -259,6 +259,9 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 {
 	g_bStopMainThread = true;
 	g_bStopGetRealTimeValueThread = true;
+    g_TempLog.free();
+    g_ActionLog.free();
+    g_ChangeLog.free();
 	g_TempLog.close();
 	g_ActionLog.close();
 	g_ChangeLog.close();
@@ -3138,6 +3141,11 @@ void __fastcall TfrmMain::btnStartMotor1Click(TObject *Sender)
 void __fastcall TfrmMain::btnClearEject0Click(TObject *Sender)
 {
     if (Application->MessageBoxA("確定手動排除 後排除流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+    if (g_DIO.ReadDIBit(DI::EjectEntry2) || g_DIO.ReadDIBit(DI::EjectInp2) || g_DIO.ReadDIBit(DI::EjectExit2))
+    {
+        g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
+        return;
+    }
     g_pMainThread->nThreadIndex[5] = 0;
     g_DIO.SetDO(DO::ReadyOutR, false);
     g_DIO.SetDO(DO::EjectMotorStart2, false);
@@ -3147,10 +3155,28 @@ void __fastcall TfrmMain::btnClearEject0Click(TObject *Sender)
 void __fastcall TfrmMain::btnClearEject1Click(TObject *Sender)
 {
     if (Application->MessageBoxA("確定手動排除 前排除流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+    if (g_DIO.ReadDIBit(DI::EjectEntry1) || g_DIO.ReadDIBit(DI::EjectInp1) || g_DIO.ReadDIBit(DI::EjectExit1))
+    {
+        g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
+        return;
+    }
     g_pMainThread->nThreadIndex[4] = 0;
     g_DIO.SetDO(DO::ReadyOutF, false);
     g_DIO.SetDO(DO::EjectMotorStart1, false);
     g_DIO.SetDO(DO::EjectStop1, true);
+}
+//---------------------------------------------------------------------------
+void __fastcall TfrmMain::btnClearLCClick(TObject *Sender)
+{
+    if (Application->MessageBoxA("確定手動排除 LC流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+    if (g_DIO.ReadDIBit(DI::LCInp) || g_DIO.ReadDIBit(DI::LamEntry2) || g_DIO.ReadDIBit(DI::LamEntry1))
+    {
+        g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
+        return;
+    }
+    g_pMainThread->nThreadIndex[1] = 0;
+    g_DIO.SetDO(DO::LCMotorStart, false);
+    g_DIO.SetDO(DO::LCStop, true);
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
@@ -3284,6 +3310,10 @@ void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 #pragma endregion
+
+
+
+
 
 
 

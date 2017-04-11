@@ -35,7 +35,7 @@ extern CKeyenceIL030 g_IL030SerialDown;
 
 bool g_bStopMainThread = false;
 
-CMainThread *g_pMainThread;
+CMainThread *g_pMainThread = 0;
 //---------------------------------------------------------------------------
 
 //   Important: Methods and properties of objects in VCL can only be
@@ -956,6 +956,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		if (g_DIO.ReadDIBit(DI::LCEntry)) g_IniFile.m_nErrorCode = 40;
 		else if (g_DIO.ReadDIBit(DI::LamEntry1)) g_IniFile.m_nErrorCode = 41;
 		else if (g_DIO.ReadDIBit(DI::LamEntry2)) g_IniFile.m_nErrorCode = 42;
+        else if (g_DIO.ReadDIBit(DI::LCInp)) g_IniFile.m_nErrorCode = 39;
 		else if (!g_DIO.ReadDIBit(DI::LCStopUp)) g_IniFile.m_nErrorCode = 17;
 		else
 		{
@@ -1000,7 +1001,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
             g_DIO.SetDO(DO::LCMotorStart, true);
 			tm1MS.timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
 		}
-		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 43;
+		else if (tm1MS.timeUp()) { g_IniFile.m_nErrorCode = 43; nThreadIndex = 0; }
 		break;
 	case 4:
 		if (tm1MS.timeUp())
@@ -1050,7 +1051,7 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		{
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][7]LC 出料區Stop汽缸下降"));
 			g_DIO.SetDO(DO::LCMotorStart, true);
-			tm1MS.timeStart(5000);
+			tm1MS.timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
 			nThreadIndex++;
 		}
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 68;
@@ -1066,10 +1067,15 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][8]LC 出料區出料失敗重試"));
             g_DIO.SetDO(DO::LCMotorStart, true);
 			tm1MS.timeStart(5000);
-			//nThreadIndex++;
             break;
         }
-		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 44;
+		else if (tm1MS.timeUp())
+        {
+            g_IniFile.m_nErrorCode = 44;
+            nThreadIndex = 0;
+            if (m_bLamReady[0]) { CMainThread::nThreadIndex[3] = 0; m_bLamReady[0] = false; }
+            else if (m_bLamReady[1]) { CMainThread::nThreadIndex[2] = 0; m_bLamReady[1] = false; }
+        }
 		break;
 	case 9:
 		if (tm1MS.timeUp())
@@ -1157,22 +1163,34 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		{
 			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]);
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][0]Lane Lifter上升到接片高度"));
+            g_DIO.SetDO(nLamMotorStart, true);
+            tm1MS->timeStart(2000);
 			nThreadIndex++;
 		}
 		break;
 	case 1:
-		if (g_Motion.IsLastPosDone(nAxisLifter))
+		if (g_Motion.IsLastPosDone(nAxisLifter) && tm1MS->timeUp())
 		{
-			m_bLamReady[bFront] = true;
+            g_DIO.SetDO(nLamMotorStart, false);
 			nThreadIndex++;
 		}
 		break;
-	case 2:
+    case 2:
+        if (g_DIO.ReadDIBit(nLamEntry)) { bFront ? g_IniFile.m_nErrorCode = 41 : g_IniFile.m_nErrorCode = 42; nThreadIndex = 0;}
+		else if (g_DIO.ReadDIBit(nLamInp)) { bFront ? g_IniFile.m_nErrorCode = 45 : g_IniFile.m_nErrorCode = 46; nThreadIndex = 0;}
+		else if (!g_IniFile.m_bNotLam && g_IniFile.m_nBoatType == 0 && g_DIO.ReadDIBit(nLamWarp)) { bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48; nThreadIndex = 0;}
+		else if (g_DIO.ReadDIBit(nEjectEntry)) { bFront ? g_IniFile.m_nErrorCode = 49 : g_IniFile.m_nErrorCode = 50; nThreadIndex = 0;}
+        else
+        {
+            m_bLamReady[bFront] = true;
+            nThreadIndex++;
+        }
+        break;
+	case 3:
 		if (g_Motion.IsLastPosDone(nAxisLifter) && g_DIO.ReadDIBit(nLamEntry) && m_bStartLamSub[bFront] == false && fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])<=1) //wait the for boat login
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][2]Lane 進料區Ready"));
 			g_DIO.SetDO(nLamMotorStart, true);
-			m_bLamReady[bFront] = false;
 			tm1MS->timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
 			nThreadIndex++;
 		}
@@ -1182,10 +1200,11 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             nThreadIndex=0;
         }
 		break;
-	case 3:
-		if (g_DIO.ReadDIBit(nLamInp))
+	case 4:
+        if (!g_DIO.ReadDIBit(DI::LCInp) && !g_DIO.ReadDIBit(nLamEntry) && g_DIO.ReadDIBit(nLamInp))
 		{
 			tm1MS->timeStart(g_IniFile.m_dLamSubDelayTime * 1000);
+            m_bLamReady[bFront] = false;
 			nThreadIndex++;
 		}
         else if (!g_DIO.ReadDOBit(nLamMotorStart))
@@ -1195,9 +1214,15 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             tm1MS->timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
         }
 		else if (!g_IniFile.m_bNotLam && g_IniFile.m_nBoatType == 0 && g_DIO.ReadDIBit(nLamWarp)) bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48;
-		else if (tm1MS->timeUp())  bFront ? g_IniFile.m_nErrorCode = 52 : g_IniFile.m_nErrorCode = 53;
+		else if (tm1MS->timeUp())
+        {
+            bFront ? g_IniFile.m_nErrorCode = 52 : g_IniFile.m_nErrorCode = 53;
+            m_bLamReady[bFront] = false;
+            nThreadIndex = 0;
+            CMainThread::nThreadIndex[1] = 0;
+        }
 		break;
-	case 4:
+	case 5:
 		if (tm1MS->timeUp())
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][4]Lane 進料區成功開始壓合"));
@@ -1209,7 +1234,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 5:                                                     //stop here and wait LamSub finished
+	case 6:                                                     //stop here and wait LamSub finished
 		if (!m_bStartLamSub[bFront] && m_bIsDoLamSubFinished[bFront])
 		{
 			if ((bFront && m_bIsbVacErrorF) || (!bFront && m_bIsbVacErrorR))
@@ -1224,7 +1249,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			else nThreadIndex++;
 		}
 		break;
-	case 6:
+	case 7:
 		if (true)
 		{
 			if ((bFront && m_bIsLamSecondTimeErrorF) || (!bFront && m_bIsLamSecondTimeErrorR))
@@ -1239,19 +1264,19 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			else nThreadIndex++;
 		}
 		break;
-	case 7:
+	case 8:
 		m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][5]Lane 壓合流程結束"));
 		tm1MS->timeStart(300);
 		nThreadIndex++;
 		break;
-	case 8:
+	case 9:
 		if (tm1MS->timeUp())
 		{
 			g_Motion.AbsMove(nAxisLifter, 0.0);
 			nThreadIndex++;
 		}
 		break;
-	case 9:
+	case 10:
 		if (g_Motion.IsLastPosDone(nAxisLifter))
 		{
 			if (bFront) { m_nPassBoatCount1++; }
@@ -1260,7 +1285,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 10:
+	case 11:
 		if (m_bEjectReady[bFront])
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][8]Lane 出料區Ready"));
@@ -1269,8 +1294,8 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 11:
-		if (g_DIO.ReadDIBit(nEjectInp))
+	case 12:
+		if (!g_DIO.ReadDIBit(nLamInp) && !g_DIO.ReadDIBit(nEjectEntry) && g_DIO.ReadDIBit(nEjectInp))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][9]Lane 出料區出料成功"));
 			g_DIO.SetDO(nLamMotorStart, false);
@@ -1283,9 +1308,16 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             g_DIO.SetDO(nLamMotorStart, true);
 			tm1MS->timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
         }
-		else if (tm1MS->timeUp())  bFront ? g_IniFile.m_nErrorCode = 56 : g_IniFile.m_nErrorCode = 57;
+		else if (tm1MS->timeUp())
+        {
+            bFront ? g_IniFile.m_nErrorCode = 56 : g_IniFile.m_nErrorCode = 57;
+            m_bEjectReady[bFront] = false;
+            nThreadIndex = 0;
+            if (bFront) CMainThread::nThreadIndex[4] = 0;
+            else CMainThread::nThreadIndex[5] = 0;
+        }
 		break;
-    case 12:
+    case 13:
         if (tm1MS->timeUp())
         {
             int nRemainder;
@@ -1308,9 +1340,9 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             }
         }
         break;
-    case 13:
+    case 14:
         if (g_IniFile.m_nRailOption == 0 && !m_bIsAutoCalLocked && !m_bIsAutoCalPressOverAllowF && !m_bIsAutoCalTimesOver25F && !m_bIsAutoCalPressOverAllowR && !m_bIsAutoCalTimesOver25R)
-		{	
+		{
 			m_bIsAutoCalLocked = true;
 			if (bFront)
 			{
@@ -1339,7 +1371,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
         break;
-    case 14:
+    case 15:
         if (bFront && !m_bIsDoAutoCal[1] && m_bIsAutoCalFinished[1])
         {
             m_bIsAutoCalLocked = false;
@@ -1353,8 +1385,8 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
         }
         break;
-    case 15:
-    case nTagFinished:nThreadIndex = 15;
+    case 16:
+    case nTagFinished:nThreadIndex = 16;
         if (tm1MS->timeUp())
         {
 			if (!g_IniFile.m_bNotLam && !m_bStartLamSub[1] && !m_bStartLamSub[0])
@@ -1787,7 +1819,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 
 	C_GetTime *tm1MS;
 
-	int nEjectInp, nEjectEntry, nEjectExit, nEjectExist, nEjectStopUp, nEjectStopDown, nReadyOut, nReadyOutY;
+	int nLamInp, nEjectInp, nEjectEntry, nEjectExit, nEjectExist, nEjectStopUp, nEjectStopDown, nReadyOut, nReadyOutY;
 	int nEjectMotorStart, nEjectStop;
 
 	double dPassTimeFront;
@@ -1795,6 +1827,8 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 
 	if (bFront)
 	{
+        nLamInp = DI::LamInp1;
+
 		nEjectInp = DI::EjectInp1;
 		nEjectEntry = DI::EjectEntry1;
 		nEjectExit = DI::EjectExit1;
@@ -1811,6 +1845,8 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 	}
 	else
 	{
+        nLamInp = DI::LamInp2;
+
 		nEjectInp = DI::EjectInp2;
 		nEjectEntry = DI::EjectEntry2;
 		nEjectExit = DI::EjectExit2;
@@ -1829,10 +1865,21 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 
 	switch (nThreadIndex)
 	{
-	case 0:
-		if (g_DIO.ReadDIBit(nEjectInp)) bFront ? g_IniFile.m_nErrorCode = 59 : g_IniFile.m_nErrorCode = 58;
-		else if (g_DIO.ReadDIBit(nEjectEntry)) bFront ? g_IniFile.m_nErrorCode = 61 : g_IniFile.m_nErrorCode = 60;
-		else if (g_DIO.ReadDIBit(nEjectExit)) bFront ? g_IniFile.m_nErrorCode = 63 : g_IniFile.m_nErrorCode = 62;
+    case 0:
+        if (g_DIO.ReadDIBit(nEjectInp)) bFront ? g_IniFile.m_nErrorCode = 58 : g_IniFile.m_nErrorCode = 59;
+		else if (g_DIO.ReadDIBit(nEjectEntry)) bFront ? g_IniFile.m_nErrorCode = 60 : g_IniFile.m_nErrorCode = 61;
+		else if (g_DIO.ReadDIBit(nEjectExit)) bFront ? g_IniFile.m_nErrorCode = 62 : g_IniFile.m_nErrorCode = 63;
+		//else if(g_DIO.ReadDIBit(nEjectExist)) bFront ? g_IniFile.m_nErrorCode=65: g_IniFile.m_nErrorCode=64;
+		else if (!g_DIO.ReadDIBit(nEjectStopUp)) bFront ? g_IniFile.m_nErrorCode = 13 : g_IniFile.m_nErrorCode = 14;
+        else
+        {
+            nThreadIndex++;
+        }
+        break;
+	case 1:
+		if (g_DIO.ReadDIBit(nEjectInp)) bFront ? g_IniFile.m_nErrorCode = 58 : g_IniFile.m_nErrorCode = 59;
+		else if (g_DIO.ReadDIBit(nEjectEntry)) bFront ? g_IniFile.m_nErrorCode = 60 : g_IniFile.m_nErrorCode = 61;
+		else if (g_DIO.ReadDIBit(nEjectExit)) bFront ? g_IniFile.m_nErrorCode = 62 : g_IniFile.m_nErrorCode = 63;
 		//else if(g_DIO.ReadDIBit(nEjectExist)) bFront ? g_IniFile.m_nErrorCode=65: g_IniFile.m_nErrorCode=64;
 		else if (!g_DIO.ReadDIBit(nEjectStopUp)) bFront ? g_IniFile.m_nErrorCode = 13 : g_IniFile.m_nErrorCode = 14;
 		else
@@ -1842,7 +1889,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 1:
+	case 2:
 		if (!m_bIsDoAutoCal[bFront] && g_DIO.ReadDIBit(nEjectEntry))                   //wait for boat login
 		{
 			m_bEjectReady[bFront] = false;
@@ -1851,8 +1898,8 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 2:
-		if (g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry))               //g_DIO.ReadDIBit(nEjectExist)
+	case 3:
+		if (!g_DIO.ReadDIBit(nLamInp) && !g_DIO.ReadDIBit(nEjectEntry) && g_DIO.ReadDIBit(nEjectInp))               //g_DIO.ReadDIBit(nEjectExist)
         {
             m_bEjectReady[bFront] = false;
 			tm1MS->timeStart(500);
@@ -1865,9 +1912,16 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
             g_DIO.SetDO(nEjectMotorStart, true);
 			tm1MS->timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
         }
-		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 56 : g_IniFile.m_nErrorCode = 57;
+		else if (tm1MS->timeUp())
+        {
+            bFront ? g_IniFile.m_nErrorCode = 56 : g_IniFile.m_nErrorCode = 57;
+            m_bEjectReady[bFront] = false;
+            nThreadIndex = 0;
+            if (bFront) CMainThread::nThreadIndex[2] = 0;
+            else CMainThread::nThreadIndex[3] = 0;
+        }
 		break;
-	case 3:
+	case 4:
 		if (tm1MS->timeUp())
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][3]EjectLane 進料區進料成功"));
@@ -1877,7 +1931,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-    case 4:
+    case 5:
         if (tm1MS->timeUp())
         {
             m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][4]EjectLane 回溫時間到"));
@@ -1885,7 +1939,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
             nThreadIndex++;
         }
         break;
-	case 5:
+	case 6:
 		if (g_DIO.ReadDIBit(nReadyOut) || g_IniFile.m_bForceEject)        //bypass
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][5]EjectLane 出料區Ready"));
@@ -1909,14 +1963,13 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 6:
-        /*
+	case 7:
         if (!g_DIO.ReadDIBit(nReadyOut))
 		{
 			g_DIO.SetDO(nEjectMotorStart, false);
 			bFront ? g_IniFile.m_nErrorCode = 76 : g_IniFile.m_nErrorCode = 77;
+			nThreadIndex = 0;
 		}
-        */
 		if (g_DIO.ReadDIBit(nEjectStopDown))
 		{
 			g_DIO.SetDO(nEjectMotorStart, true);
@@ -1925,14 +1978,13 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		}
 		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 66 : g_IniFile.m_nErrorCode = 67;
 		break;
-	case 7:
-        /*
+	case 8:
         if (!g_DIO.ReadDIBit(nReadyOut))
 		{
 			g_DIO.SetDO(nEjectMotorStart, false);
 			bFront ? g_IniFile.m_nErrorCode = 76 : g_IniFile.m_nErrorCode = 77;
+			nThreadIndex = 0;
 		}
-        */
 		if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
 		{
 			tm1MS->timeStart(3000);
@@ -1943,18 +1995,22 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
             g_DIO.SetDO(nEjectMotorStart, true);
 			tm1MS->timeStart(g_IniFile.m_dLaneTransportDelayTime * 1000);
         }
-		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 90 : g_IniFile.m_nErrorCode = 91;
+		else if (tm1MS->timeUp())
+        {
+            bFront ? g_IniFile.m_nErrorCode = 90 : g_IniFile.m_nErrorCode = 91;
+            g_DIO.SetDO(nReadyOutY, false);
+            nThreadIndex = 0;
+        }
 		break;
-    case 8:
+    case 9:
         if (tm1MS->timeUp())
         {
-            /*
             if (!g_DIO.ReadDIBit(nReadyOut))
 			{
 				g_DIO.SetDO(nEjectMotorStart, false);
 				bFront ? g_IniFile.m_nErrorCode = 76 : g_IniFile.m_nErrorCode = 77;
+				nThreadIndex = 0;
 			}
-            */
             if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
             {
                 m_ActionLog.push_back(AddTimeString(bFront, "[DoEject][8]EjectLane 出料區出料完成"));
@@ -1972,14 +2028,14 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
             }
         }
         break;
-	case 9:
+	case 10:
 		if (tm1MS->timeUp() && g_DIO.ReadDIBit(nEjectStopUp))
 		{
 			nThreadIndex++;
 		}
 		else if (tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 13 : g_IniFile.m_nErrorCode = 14;
 		break;
-	case 10:
+	case 11:
 		nThreadIndex++;
 		break;
 	default:
@@ -3529,6 +3585,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		//m_bStopLC = false;
 	}
 }
+
 
 
 

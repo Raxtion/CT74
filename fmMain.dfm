@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 91
-  Top = 125
+  Left = 97
+  Top = 86
   Width = 1444
   Height = 805
   HorzScrollBar.Position = 167
@@ -212,21 +212,21 @@ object frmMain: TfrmMain
   object Label6: TLabel
     Left = 1316
     Top = 40
-    Width = 28
+    Width = 24
     Height = 13
     Caption = #31684#22285
   end
   object Label10: TLabel
     Left = 1316
     Top = 96
-    Width = 56
+    Width = 48
     Height = 13
     Caption = #36215#22987#20301#32622
   end
   object Label11: TLabel
     Left = 1316
     Top = 149
-    Width = 56
+    Width = 48
     Height = 13
     Caption = #20597#28204#27425#25976
   end
@@ -242,7 +242,7 @@ object frmMain: TfrmMain
   end
   object btnClearEject0: TSpeedButton
     Left = 1320
-    Top = 401
+    Top = 425
     Width = 81
     Height = 41
     AllowAllUp = True
@@ -251,7 +251,7 @@ object frmMain: TfrmMain
   end
   object btnClearEject1: TSpeedButton
     Left = 1320
-    Top = 449
+    Top = 473
     Width = 81
     Height = 41
     AllowAllUp = True
@@ -268,6 +268,15 @@ object frmMain: TfrmMain
     GroupIndex = 1
     Caption = #19968#37749#37327#28204#26657#27491
     OnClick = btnStartOneStepPressCalClick
+  end
+  object btnClearLC: TSpeedButton
+    Left = 1320
+    Top = 377
+    Width = 81
+    Height = 41
+    AllowAllUp = True
+    Caption = #28165#38500' LC'#27969#36947
+    OnClick = btnClearLCClick
   end
   object listHistory: TListBox
     Left = -167

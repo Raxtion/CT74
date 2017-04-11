@@ -10,6 +10,7 @@
 #include "DeltaPLC.h"
 #include "GlobalFunction.h"
 #include "IniFile.h"
+#include <stdio.h>
 
 extern CMainThread *g_pMainThread;
 extern CIniFile g_IniFile;
@@ -70,12 +71,35 @@ void __fastcall SQLITE3IF::open(int DBtype)
     struct tm *tblock = localtime(&timer);
 
     strFullPath.sprintf((m_strDBPath+strDBName).c_str(),tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
+    AnsiString strTime = IntToStr(tblock->tm_hour)+IntToStr(tblock->tm_min)+IntToStr(tblock->tm_sec);
+
+    /* 確認資料庫是否已有缺失 */
+    if (FileExists(m_strDBPath+"\\Note"))
+    {
+        RenameFile(strFullPath, strFullPath+strTime);
+        DeleteFile(m_strDBPath+"\\Note");
+        errMsg = NULL;
+    }
+
     /* 開啟 database 檔 */
     if (sqlite3_open_v2(strFullPath.c_str(), &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL)) {return;}
 
+    /* 若db開啟有錯誤 Create Note File*/
+    if (errMsg != NULL)
+    {
+        FILE *pFile;
+        pFile=fopen((m_strDBPath+"\\Note").c_str(),"a+");
+        if(pFile!=NULL)
+        {
+            fclose(pFile);
+        }
+    }
+
+    result = 0;
     /* 確認table是否存在 */
     selectSQL("SELECT name FROM SQLITE_MASTER WHERE type='table' and name='C74Log';");
 
+    if (result != 0){
     if (strcmp(result[1],"C74Log\0") != 0)
     {
         switch (DBtype)
@@ -83,28 +107,28 @@ void __fastcall SQLITE3IF::open(int DBtype)
         case 0:
             /* 建立 Temp Table */
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), FrontT FLOAT, RearT FLOAT);", 0, 0, &errMsg);
-            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+            if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         case 1:
             /* 建立 Action Table */
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), action NVARCHAR(100));", 0, 0, &errMsg);
-            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+            if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         case 2:
             /* 建立 Account Table*/
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, account VARCHAR(25), password VARCHAR(25));", 0, 0, &errMsg);
-            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+            if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         case 3:
             /* 建立 Change Table*/
             sqlite3_exec(db, "CREATE TABLE C74Log(idx INTEGER PRIMARY KEY, datetime VARCHAR(25), ParamChange NVARCHAR(50));", 0, 0, &errMsg);
-            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+            if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
             break;
         default:
             g_pMainThread->m_listLog.push_back("open() DBType Error!");
         }
         unique_id = 0;
-    }
+    }}
 }
 
 //---------------------------------------------------------------------------
@@ -112,11 +136,33 @@ void __fastcall SQLITE3IF::open(int DBtype, AnsiString strTableName)
 {
 	AnsiString strFullPath;
 	AnsiString strDBName = "\\OffsetTable.db3";
+    time_t timer = time(NULL);
+    struct tm *tblock = localtime(&timer);
 
     strFullPath = m_strDBPath + strDBName;
+    AnsiString strTime = IntToStr(tblock->tm_hour)+IntToStr(tblock->tm_min)+IntToStr(tblock->tm_sec);
+    
+    /* 確認資料庫是否已有缺失 */
+    if (FileExists(m_strDBPath+"\\Note"))
+    {
+        RenameFile(strFullPath, strFullPath+strTime);
+        DeleteFile(m_strDBPath+"\\Note");
+        errMsg = NULL;
+    }
 
 	/* 開啟 database 檔 */
 	if (sqlite3_open_v2(strFullPath.c_str(), &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL)) { return; }
+
+    /* 若db開啟有錯誤 Create Note File*/
+    if (errMsg != NULL)
+    {
+        FILE *pFile;
+        pFile=fopen((m_strDBPath+"\\Note").c_str(),"a+");
+        if(pFile!=NULL)
+        {
+            fclose(pFile);
+        }
+    }
 
 	/* 確認table是否存在 */
 	selectSQL("SELECT name FROM SQLITE_MASTER WHERE type='table' and name='" + strTableName + "';");
@@ -125,7 +171,7 @@ void __fastcall SQLITE3IF::open(int DBtype, AnsiString strTableName)
 	{
 		/* 建立 Offset Table */
 		sqlite3_exec(db, ("CREATE TABLE '" + strTableName + "'(idx INTEGER PRIMARY KEY, isfront BOOLEAN, location INTERGER, setKg FLOAT, offsetKg FLOAT, statistic INTERGER, Note TEXT);").c_str(), 0, 0, &errMsg);
-		if (errMsg != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
+		if (errMsg != NULL && g_pMainThread != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
 		unique_id = 0;
 	}
 }
@@ -177,9 +223,10 @@ void __fastcall SQLITE3IF::insertTemp()
                                                     +" ,'"+strDateTime
                                                     +"', "+strFrontTemp
                                                     +" , "+strRearTemp+");";
+
     /* 新增一筆資料 */
     sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 
     unique_id += 1;
 }
@@ -201,7 +248,7 @@ void __fastcall SQLITE3IF::insertAction(AnsiString Action)
                                                     +"','"+Action+"');";
     /* 新增一筆資料 */
     sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 
     unique_id += 1;
 }
@@ -223,7 +270,7 @@ void __fastcall SQLITE3IF::insertChange(AnsiString Change)
                                                     +"','"+Change+"');";
     /* 新增一筆資料 */
     sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 
     unique_id += 1;
 }
@@ -237,7 +284,7 @@ void __fastcall SQLITE3IF::insertAccount(AnsiString Account, AnsiString Password
                                                     +"','"+Password+"');";
     /* 新增一筆資料 */
     sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 
     unique_id += 1;
 }
@@ -319,7 +366,7 @@ AnsiString __fastcall SQLITE3IF::updateAccountPass(AnsiString Input)
     open(2);
     /* 刪除 Account Table*/
     sqlite3_exec(db, "DELETE FROM C74Log;", 0, 0, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 
     for (int i=1;i<(strRowsList->Count);i++)
     {
@@ -335,7 +382,7 @@ AnsiString __fastcall SQLITE3IF::updateAccountPass(AnsiString Input)
                                                         +"','"+strDataList->operator[](1)+"');";
             /* 新增一筆資料 */
             sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
-            if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+            if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
         }
         catch (...)
         {
@@ -458,7 +505,7 @@ AnsiString __fastcall SQLITE3IF::updateOffsetTable(AnsiString strTableName, bool
 
 					/* 更新一筆資料 */
 					sqlite3_exec(db, updatesql.c_str(), 0, 0, &errMsg);
-					if (errMsg != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
+					if (errMsg != NULL && g_pMainThread != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
 				}
 				catch (...)
 				{
@@ -486,7 +533,7 @@ AnsiString __fastcall SQLITE3IF::updateOffsetTable(AnsiString strTableName, bool
 
 					/* 新增一筆資料 */
 					sqlite3_exec(db, insertsql.c_str(), 0, 0, &errMsg);
-					if (errMsg != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
+					if (errMsg != NULL && g_pMainThread != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
 				}
 				catch (...)
 				{
@@ -516,21 +563,21 @@ AnsiString __fastcall SQLITE3IF::updateOffsetTable(AnsiString strTableName, bool
 void __fastcall SQLITE3IF::selectSQL(AnsiString SQL_SELECT)
 {
     sqlite3_get_table(db ,SQL_SELECT.c_str(), &result , &rows, &cols, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 }
 
 //---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::insertSQL(AnsiString SQL_INSERT)
 {
     sqlite3_exec(db, SQL_INSERT.c_str(), 0, 0, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 }
 
 //---------------------------------------------------------------------------
 void __fastcall SQLITE3IF::updateSQL(AnsiString SQL_UPDATE)
 {
     sqlite3_exec(db, SQL_UPDATE.c_str(), 0, 0, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 }
 
 
