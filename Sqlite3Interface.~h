@@ -16,7 +16,7 @@ private:
     AnsiString m_strDBPath;
     int rows, cols, unique_id;
     sqlite3 *db;
-    char *errMsg;
+    char *errMsg ;
     char **result;
 public:
     __fastcall SQLITE3IF(int DBtype, AnsiString DBPath);							//Temp=0; Action=1; Account=2; Change=3;

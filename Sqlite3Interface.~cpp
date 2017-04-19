@@ -24,6 +24,7 @@ extern CDeltaPLC g_ModBus;
 __fastcall SQLITE3IF::SQLITE3IF(int DBtype,AnsiString DBPath)
 {
     m_strDBPath = DBPath;
+    errMsg = NULL;
 
     if (!FileExists(DBPath.c_str())) _mkdir(DBPath.c_str());
 
@@ -45,6 +46,7 @@ __fastcall SQLITE3IF::SQLITE3IF(int DBtype,AnsiString DBPath)
 __fastcall SQLITE3IF::SQLITE3IF(int DBtype, AnsiString DBPath, AnsiString strTableName)
 {
 	m_strDBPath = DBPath;
+    errMsg = NULL;
 
 	if (!FileExists(DBPath.c_str())) _mkdir(DBPath.c_str());
 
@@ -164,16 +166,18 @@ void __fastcall SQLITE3IF::open(int DBtype, AnsiString strTableName)
         }
     }
 
+    result = 0;
 	/* 確認table是否存在 */
 	selectSQL("SELECT name FROM SQLITE_MASTER WHERE type='table' and name='" + strTableName + "';");
 
+    if (result != 0){
 	if (strcmp(result[1], strTableName.c_str()) != 0)
 	{
 		/* 建立 Offset Table */
 		sqlite3_exec(db, ("CREATE TABLE '" + strTableName + "'(idx INTEGER PRIMARY KEY, isfront BOOLEAN, location INTERGER, setKg FLOAT, offsetKg FLOAT, statistic INTERGER, Note TEXT);").c_str(), 0, 0, &errMsg);
 		if (errMsg != NULL && g_pMainThread != NULL) { g_pMainThread->m_listLog.push_back(errMsg); }
 		unique_id = 0;
-	}
+	}}
 }
 
 //---------------------------------------------------------------------------
@@ -366,7 +370,7 @@ AnsiString __fastcall SQLITE3IF::updateAccountPass(AnsiString Input)
     open(2);
     /* 刪除 Account Table*/
     sqlite3_exec(db, "DELETE FROM C74Log;", 0, 0, &errMsg);
-    if (errMsg != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
+    if (errMsg != NULL && g_pMainThread != NULL) {g_pMainThread->m_listLog.push_back(errMsg);}
 
     for (int i=1;i<(strRowsList->Count);i++)
     {

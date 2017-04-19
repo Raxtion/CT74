@@ -353,7 +353,15 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//--Stop Auto
-		if ((g_eqpXML.m_CIMStatus.ToInt()!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
+        //switch (g_eqpXML.m_CIMStatus.ToInt())
+        int nStatus = 0;
+        if (g_eqpXML.m_CIMStatus == "0") nStatus = 0;
+        else if (g_eqpXML.m_CIMStatus == "1") nStatus = 1;
+        else if (g_eqpXML.m_CIMStatus == "2") nStatus = 2;
+        else nStatus = 0;
+
+		//if ((g_eqpXML.m_CIMStatus.ToInt()!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
+        if ((nStatus!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
 		{
 			m_bIsAutoMode = false;
             m_bInitalAgain = true;
@@ -465,7 +473,13 @@ void __fastcall CMainThread::Execute()
 			//g_DIO.SetDO(DO::RedLamp,false);
 
 			//當start綠燈被壓下時，或者CIM觸發StartProcess function
-			switch (g_eqpXML.m_CIMStatus.ToInt())
+            //switch (g_eqpXML.m_CIMStatus.ToInt())
+            int nStatus = 0;
+			if (g_eqpXML.m_CIMStatus == "0") nStatus = 0;
+			else if (g_eqpXML.m_CIMStatus == "1") nStatus = 1;
+			else if (g_eqpXML.m_CIMStatus == "2") nStatus = 2;
+			else nStatus = 0;
+			switch (nStatus)
 			{
 			case 0:                                                                              //Offline
 				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
@@ -1176,17 +1190,17 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		}
 		break;
     case 2:
-        if (g_DIO.ReadDIBit(nLamEntry)) bFront ? g_IniFile.m_nErrorCode = 41 : g_IniFile.m_nErrorCode = 42;
-		else if (g_DIO.ReadDIBit(nLamInp)) bFront ? g_IniFile.m_nErrorCode = 45 : g_IniFile.m_nErrorCode = 46;
-		else if (!g_IniFile.m_bNotLam && g_IniFile.m_nBoatType == 0 && g_DIO.ReadDIBit(nLamWarp)) bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48;
-		else if (g_DIO.ReadDIBit(nEjectEntry)) bFront ? g_IniFile.m_nErrorCode = 49 : g_IniFile.m_nErrorCode = 50;
+        if (g_DIO.ReadDIBit(nLamEntry)) { bFront ? g_IniFile.m_nErrorCode = 41 : g_IniFile.m_nErrorCode = 42; nThreadIndex = 0;}
+		else if (g_DIO.ReadDIBit(nLamInp)) { bFront ? g_IniFile.m_nErrorCode = 45 : g_IniFile.m_nErrorCode = 46; nThreadIndex = 0;}
+		else if (!g_IniFile.m_bNotLam && g_IniFile.m_nBoatType == 0 && g_DIO.ReadDIBit(nLamWarp)) { bFront ? g_IniFile.m_nErrorCode = 47 : g_IniFile.m_nErrorCode = 48; nThreadIndex = 0;}
+		else if (g_DIO.ReadDIBit(nEjectEntry)) { bFront ? g_IniFile.m_nErrorCode = 49 : g_IniFile.m_nErrorCode = 50; nThreadIndex = 0;}
         else
         {
             m_bLamReady[bFront] = true;
             nThreadIndex++;
         }
         break;
-	case 2:
+	case 3:
 		if (g_Motion.IsLastPosDone(nAxisLifter) && g_DIO.ReadDIBit(nLamEntry) && m_bStartLamSub[bFront] == false && fabs(g_Motion.GetActualPos(nAxisLifter)-g_IniFile.m_dLamStop[bFront])<=1) //wait the for boat login
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][2]Lane 進料區Ready"));
@@ -1200,7 +1214,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             nThreadIndex=0;
         }
 		break;
-	case 3:
+	case 4:
         if (!g_DIO.ReadDIBit(DI::LCInp) && !g_DIO.ReadDIBit(nLamEntry) && g_DIO.ReadDIBit(nLamInp))
 		{
 			tm1MS->timeStart(g_IniFile.m_dLamSubDelayTime * 1000);
@@ -1222,7 +1236,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             CMainThread::nThreadIndex[1] = 0;
         }
 		break;
-	case 4:
+	case 5:
 		if (tm1MS->timeUp())
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][4]Lane 進料區成功開始壓合"));
@@ -1234,7 +1248,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 5:                                                     //stop here and wait LamSub finished
+	case 6:                                                     //stop here and wait LamSub finished
 		if (!m_bStartLamSub[bFront] && m_bIsDoLamSubFinished[bFront])
 		{
 			if ((bFront && m_bIsbVacErrorF) || (!bFront && m_bIsbVacErrorR))
@@ -1249,7 +1263,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			else nThreadIndex++;
 		}
 		break;
-	case 6:
+	case 7:
 		if (true)
 		{
 			if ((bFront && m_bIsLamSecondTimeErrorF) || (!bFront && m_bIsLamSecondTimeErrorR))
@@ -1264,19 +1278,19 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			else nThreadIndex++;
 		}
 		break;
-	case 7:
+	case 8:
 		m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][5]Lane 壓合流程結束"));
 		tm1MS->timeStart(300);
 		nThreadIndex++;
 		break;
-	case 8:
+	case 9:
 		if (tm1MS->timeUp())
 		{
 			g_Motion.AbsMove(nAxisLifter, 0.0);
 			nThreadIndex++;
 		}
 		break;
-	case 9:
+	case 10:
 		if (g_Motion.IsLastPosDone(nAxisLifter))
 		{
 			if (bFront) { m_nPassBoatCount1++; }
@@ -1285,7 +1299,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 10:
+	case 11:
 		if (m_bEjectReady[bFront])
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][8]Lane 出料區Ready"));
@@ -1294,7 +1308,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
 		break;
-	case 11:
+	case 12:
 		if (!g_DIO.ReadDIBit(nLamInp) && !g_DIO.ReadDIBit(nEjectEntry) && g_DIO.ReadDIBit(nEjectInp))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][9]Lane 出料區出料成功"));
@@ -1317,7 +1331,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             else CMainThread::nThreadIndex[5] = 0;
         }
 		break;
-    case 12:
+    case 13:
         if (tm1MS->timeUp())
         {
             int nRemainder;
@@ -1340,9 +1354,9 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
             }
         }
         break;
-    case 13:
+    case 14:
         if (g_IniFile.m_nRailOption == 0 && !m_bIsAutoCalLocked && !m_bIsAutoCalPressOverAllowF && !m_bIsAutoCalTimesOver25F && !m_bIsAutoCalPressOverAllowR && !m_bIsAutoCalTimesOver25R)
-		{	
+		{
 			m_bIsAutoCalLocked = true;
 			if (bFront)
 			{
@@ -1371,7 +1385,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
 		}
         break;
-    case 14:
+    case 15:
         if (bFront && !m_bIsDoAutoCal[1] && m_bIsAutoCalFinished[1])
         {
             m_bIsAutoCalLocked = false;
@@ -1385,8 +1399,8 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 			nThreadIndex++;
         }
         break;
-    case 15:
-    case nTagFinished:nThreadIndex = 15;
+    case 16:
+    case nTagFinished:nThreadIndex = 16;
         if (tm1MS->timeUp())
         {
 			if (!g_IniFile.m_bNotLam && !m_bStartLamSub[1] && !m_bStartLamSub[0])

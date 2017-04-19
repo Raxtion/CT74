@@ -259,17 +259,70 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 {
 	g_bStopMainThread = true;
 	g_bStopGetRealTimeValueThread = true;
+    ::Sleep(50);
     g_TempLog.free();
     g_ActionLog.free();
     g_ChangeLog.free();
 	g_TempLog.close();
+    ::Sleep(50);
 	g_ActionLog.close();
+    ::Sleep(50);
 	g_ChangeLog.close();
+    ::Sleep(50);
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::FormCloseQuery(TObject *Sender, bool &CanClose)
 {
 	CanClose = false;
+    if (m_nUserLevel == 0)
+    {
+        bool bCheckAccountPass = false;
+        TfrmPassword *pPwdDlg = new TfrmPassword(this);
+
+        ReadCaptionFile(pPwdDlg, g_IniFile.m_nLanguageMode);
+
+	    if (g_IniFile.m_nLanguageMode>0)
+	    {
+		    pPwdDlg->labelOldPassword->Caption = "Enter Password";
+		    pPwdDlg->labelAccount->Caption = "Enter Account";
+	    }
+	    else
+	    {
+		    pPwdDlg->labelOldPassword->Caption = "½Ğ¿é¤J±K½X";
+		    pPwdDlg->labelAccount->Caption = "½Ğ¿é¤J±b¸¹";
+	    }
+
+	    pPwdDlg->labelNewPassword->Visible = false;
+	    pPwdDlg->editNewPassword->Visible = false;
+
+        while (1)
+	    {
+		    if (pPwdDlg->ShowModal() == mrOk)
+		    {
+		    	AnsiString result = CheckAccount(pPwdDlg->editAccount->Text, pPwdDlg->editOldPassword->Text);
+			    if (result == "±b¸¹¿ù»~") Application->MessageBox("±b¸¹¿ù»~!!", "»{ÃÒ", MB_OK);
+                else if (result == "±K½X¿ù»~") Application->MessageBox("±K½X¿ù»~!!", "»{ÃÒ", MB_OK);
+			    else
+			    {
+                    bCheckAccountPass = true;
+				    break;
+			    }
+		    }
+            else
+		    {
+                bCheckAccountPass = false;
+			    break;
+		    }
+	    }
+
+        delete pPwdDlg;
+
+
+        if (!bCheckAccountPass) return;
+    }
+    else if (m_nUserLevel == 1 || m_nUserLevel == 2) {}
+
+
 	if (g_IniFile.m_nLanguageMode>0)
 	{
 		if (Application->MessageBox("Ready To Quit?", "Confirm", MB_OKCANCEL) == IDOK)
@@ -724,17 +777,24 @@ void __fastcall TfrmMain::CheckParamChange(TfmProduct *pWnd, TfmProduct *pWndRec
 void __fastcall TfrmMain::ImportOffsetFromDB()
 {
     AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
-    AnsiString strModuleNum = g_IniFile.m_strModuleNum[1] + "_";
     AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
     AnsiString strHeadScal = g_IniFile.m_strHeadScal;
-    AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
 
-    SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
-    AnsiString strResultF = g_OffsetTable->queryOffsetTable(strTableName, true, g_IniFile.m_dLamPress[1]);
-    if (strResultF=="") g_pMainThread->m_listLog.push_back("Table: "+strTableName+". No Front Offset Data in DB.");
-    AnsiString strResultR = g_OffsetTable->queryOffsetTable(strTableName, false, g_IniFile.m_dLamPress[0]);
-    if (strResultR=="") g_pMainThread->m_listLog.push_back("Table: "+strTableName+". No Rear Offset Data in DB.");
-    delete g_OffsetTable;
+
+    AnsiString strModuleNumF = g_IniFile.m_strModuleNum[1] + "_";
+    AnsiString strTableNameF = strHeadType + strModuleNumF + strLayout + strHeadScal;
+    SQLITE3IF *g_OffsetTableF = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableNameF);
+    AnsiString strResultF = g_OffsetTableF->queryOffsetTable(strTableNameF, true, g_IniFile.m_dLamPress[1]);
+    if (strResultF=="") g_pMainThread->m_listLog.push_back("Table: "+strTableNameF+". No Front Offset Data in DB.");
+    delete g_OffsetTableF;
+
+
+    AnsiString strModuleNumR = g_IniFile.m_strModuleNum[0] + "_";
+    AnsiString strTableNameR = strHeadType + strModuleNumR + strLayout + strHeadScal;
+    SQLITE3IF *g_OffsetTableR = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableNameR);
+    AnsiString strResultR = g_OffsetTableR->queryOffsetTable(strTableNameR, false, g_IniFile.m_dLamPress[0]);
+    if (strResultR=="") g_pMainThread->m_listLog.push_back("Table: "+strTableNameR+". No Rear Offset Data in DB.");
+    delete g_OffsetTableR;
 }
 //---------------------------------------------------------------------------
 /*
@@ -1466,7 +1526,7 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
         if (g_IniFile.m_strModuleNum[0] != "")
         {
             AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
-            AnsiString strModuleNum = g_IniFile.m_strModuleNum[1] + "_";
+            AnsiString strModuleNum = g_IniFile.m_strModuleNum[0] + "_";
             AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
             AnsiString strHeadScal = g_IniFile.m_strHeadScal;
             AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
@@ -1666,7 +1726,9 @@ void __fastcall TfrmMain::N5Click(TObject *Sender)
 		{
 			if (Application->MessageBox("Save File Before Leave?", "Confirm", MB_OKCANCEL) == IDOK)
 				N3Click(Sender);
-			exit(0);
+			//exit(0);
+            FormClose(this, true);
+            Application->Terminate();
 		}
 	}
 	else
@@ -1675,7 +1737,9 @@ void __fastcall TfrmMain::N5Click(TObject *Sender)
 		{
 			if (Application->MessageBox("Â÷¶}«e¬O§_­n¦sÀÉ?", "ª`·N", MB_OKCANCEL) == IDOK)
 				N3Click(Sender);
-			exit(0);
+			//exit(0);
+            FormClose(this, true);
+            Application->Terminate();
 		}
 	}
 }

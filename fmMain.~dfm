@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 97
-  Top = 86
+  Left = 79
+  Top = 155
   Width = 1444
   Height = 805
   HorzScrollBar.Position = 167
@@ -275,7 +275,7 @@ object frmMain: TfrmMain
     Width = 81
     Height = 41
     AllowAllUp = True
-    Caption = #28165#38500' '#21069#27969#36947
+    Caption = #28165#38500' LC'#27969#36947
     OnClick = btnClearLCClick
   end
   object listHistory: TListBox

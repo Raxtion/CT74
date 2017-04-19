@@ -353,7 +353,15 @@ void __fastcall CMainThread::Execute()
 		}
 
 		//--Stop Auto
-		if ((g_eqpXML.m_CIMStatus.ToInt()!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
+        //switch (g_eqpXML.m_CIMStatus.ToInt())
+        int nStatus = 0;
+        if (g_eqpXML.m_CIMStatus == "0") nStatus = 0;
+        else if (g_eqpXML.m_CIMStatus == "1") nStatus = 1;
+        else if (g_eqpXML.m_CIMStatus == "2") nStatus = 2;
+        else nStatus = 0;
+
+		//if ((g_eqpXML.m_CIMStatus.ToInt()!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
+        if ((nStatus!=2 && (g_DIO.ReadDIBit(DI::StopBtn) && m_bStopAgain)) || m_bIsStopProcessbyCIM)
 		{
 			m_bIsAutoMode = false;
             m_bInitalAgain = true;
@@ -465,7 +473,13 @@ void __fastcall CMainThread::Execute()
 			//g_DIO.SetDO(DO::RedLamp,false);
 
 			//當start綠燈被壓下時，或者CIM觸發StartProcess function
-			switch (g_eqpXML.m_CIMStatus.ToInt())
+            //switch (g_eqpXML.m_CIMStatus.ToInt())
+            int nStatus = 0;
+			if (g_eqpXML.m_CIMStatus == "0") nStatus = 0;
+			else if (g_eqpXML.m_CIMStatus == "1") nStatus = 1;
+			else if (g_eqpXML.m_CIMStatus == "2") nStatus = 2;
+			else nStatus = 0;
+			switch (nStatus)
 			{
 			case 0:                                                                              //Offline
 				if (g_DIO.ReadDIBit(DI::StartBtn) && m_bStartAgain)
@@ -1987,7 +2001,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		}
 		if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
 		{
-			tm1MS->timeStart(3000);
+			tm1MS->timeStart(500);
 			nThreadIndex++;
 		}
         else if (!g_DIO.ReadDOBit(nEjectMotorStart))
