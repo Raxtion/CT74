@@ -217,6 +217,7 @@ public:		// User declarations
         static bool OpenFilebyCIM(AnsiString strFileName);
         void __fastcall CheckParamChange(TfmProduct *pWnd, TfmProduct *pWndRecord, SQLITE3IF *g_ChangeLog, AnsiString SetupEE);
         void __fastcall ImportOffsetFromDB();
+        bool __fastcall ExportDBtoCSV(bool bFront);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmMain *frmMain;

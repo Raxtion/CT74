@@ -1,5 +1,5 @@
 object fmProduct: TfmProduct
-  Left = 288
+  Left = 294
   Top = 190
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976

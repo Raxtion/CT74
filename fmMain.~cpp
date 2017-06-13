@@ -797,6 +797,58 @@ void __fastcall TfrmMain::ImportOffsetFromDB()
     delete g_OffsetTableR;
 }
 //---------------------------------------------------------------------------
+bool __fastcall TfrmMain::ExportDBtoCSV(bool bFront)
+{
+    bool bIsProcessOK = false;
+
+	if (!FileExists("C:\\C74 Log\\OffsetTable\\Backup")) _mkdir("C:\\C74 Log\\OffsetTable\\Backup");
+
+	AnsiString strFileName = "C:\\C74 Log\\OffsetTable\\Backup\\";
+	AnsiString strDatetime = FormatDateTime("yyyymmddhhnnss", Now());
+	strFileName = strFileName + strDatetime + "_" + g_IniFile.m_strModuleNum[bFront] + ".csv";
+
+	double *pOffset;
+	if (bFront) pOffset = g_IniFile.m_dScaleOffsetFront;
+	else pOffset = g_IniFile.m_dScaleOffsetRear;
+
+	try 
+	{
+		FILE *pFile;
+
+		pFile = fopen(strFileName.c_str(), "a+");
+
+		if (pFile != NULL)
+		{
+			fprintf(pFile, "idx,isfront,location,setKg,offsetKg,statistic,Note\n");
+
+			int j = 0;
+			for (int i = 0; i < 50; i++)
+			{
+				if ((i % 10) < g_IniFile.m_nCols && (i / 10) < g_IniFile.m_nRows)
+				{
+					AnsiString strOup = IntToStr(j)
+						+ "," + IntToStr(bFront)
+						+ "," + IntToStr(i)
+						+ "," + FormatFloat("0.000", g_IniFile.m_dLamPress[bFront])
+						+ "," + FormatFloat("0.000", pOffset[i])
+						+ "," + "NULL"
+						+ "," + "NULL"+ "\n";
+					fprintf(pFile, strOup.c_str());
+					j++;
+				}
+			}
+		}
+		bIsProcessOK = true;
+
+	}
+	catch (const EAccessViolation &e)
+	{
+
+	}
+
+	return bIsProcessOK;
+}
+//---------------------------------------------------------------------------
 /*
 void __fastcall TfrmMain::CreateCaptionFileTMainMenu(TMainMenu *pMainMenu)
 {
@@ -1411,6 +1463,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 		cmbTimes->Enabled = !g_pMainThread->m_bIsAutoMode;
         btnClearEject0->Enabled = !g_pMainThread->m_bIsAutoMode;
         btnClearEject1->Enabled = !g_pMainThread->m_bIsAutoMode;
+        btnClearLC->Enabled = !g_pMainThread->m_bIsAutoMode;
 		btnStartOneStepPressCal->Enabled = !g_pMainThread->m_bIsAutoMode;
 	}
 
@@ -1510,12 +1563,15 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
             AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
 
             g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Please Waite.");
+			//Write to DB
             SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
-
             AnsiString strResult = g_OffsetTable->updateOffsetTable(strTableName, true, g_IniFile.m_dLamPress[1]);
             g_pMainThread->m_listLog.push_back(strResult);
-
             delete g_OffsetTable;
+
+			//Write to .csv
+			if (ExportDBtoCSV(true)) g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup finished.");
+            else g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup failed.");
             g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Process End.");
         }
     }
@@ -1532,12 +1588,15 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
             AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
 
             g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Please Waite.");
+			//Write to DB
             SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
-
             AnsiString strResult = g_OffsetTable->updateOffsetTable(strTableName, false, g_IniFile.m_dLamPress[0]);
             g_pMainThread->m_listLog.push_back(strResult);
-
             delete g_OffsetTable;
+
+			//Write to .csv
+			if (ExportDBtoCSV(false)) g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup finished.");
+            else g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup failed.");
             g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Process End.");
         }
     }
@@ -2187,11 +2246,15 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
 	pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
-	if (g_IniFile.m_strLogInENGAccount != "Admin")
+	//if (g_IniFile.m_strLogInENGAccount != "Admin")
+	if (g_IniFile.m_strLogInENGAccount == "OP")
 	{
 		pWnd->PageControl1->Pages[1]->Enabled = false;
 	}
 	pWnd->PageControl1->ActivePageIndex = 0;
+    pWnd->m_cmbHeadType->Enabled = false;
+    pWnd->m_cmbHeadScal->Enabled = false;
+    pWnd->m_cmbModuleScal->Enabled = false;
 
 	while (1)
 	{
@@ -3111,7 +3174,7 @@ void __fastcall TfrmMain::radioPosOptionClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnHomingClick(TObject *Sender)
 {
-
+    /*
 	g_pMainThread->m_bIsHomingFromBtn = true;
 	if (g_IniFile.m_nErrorCode == 0)
 	{
@@ -3125,13 +3188,13 @@ void __fastcall TfrmMain::btnHomingClick(TObject *Sender)
 		case IDCANCEL: {g_pMainThread->m_nIsFullHoming = 2; break; }
 		}
 	}
-
+    */
 
     //------------------------------------------------------------------------------------------------------------------------
     //For Test
 
 
-    //g_pMainThread->m_bIsWriteOffsetToDB_F = true;
+    g_pMainThread->m_bIsWriteOffsetToDB_F = true;
 
 
 }
