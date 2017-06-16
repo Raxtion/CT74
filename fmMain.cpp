@@ -2095,6 +2095,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWndRecord->m_cmbVacummOn);
 	DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWndRecord->m_cmbPressCheck);
 	DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWndRecord->m_cmbDummyCheck);
+    g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
+    g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
     DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWndRecord->m_strModuleNum0);
 	DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWndRecord->m_strModuleNum1);
 
@@ -2207,6 +2209,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
 	DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
 	DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
+    g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
+    g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
     DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWnd->m_strModuleNum0);
 	DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWnd->m_strModuleNum1);
 
@@ -2373,6 +2377,8 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
         DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWnd->m_strModuleNum0);
         DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWnd->m_strModuleNum1);
+        g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
+        g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
 
 		DDX_Float(bRead, g_IniFile.m_dBLT[0], pWnd->m_dBLT1);
 		DDX_Float(bRead, g_IniFile.m_dBLT[1], pWnd->m_dBLT2);
