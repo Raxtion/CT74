@@ -1495,6 +1495,14 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
         delete StrList;
 	}
 
+    //--Renew Mainfrom Product Info. Force!!
+    Label22->Caption = g_IniFile.m_dLamTime[0];
+    Label25->Caption = g_IniFile.m_dLamTemp[0];
+    Label28->Caption = g_IniFile.m_dLamPress[0];
+    Label17->Caption = g_IniFile.m_dLamTime[1];
+    Label13->Caption = g_IniFile.m_dLamTemp[1];
+    Label14->Caption = g_IniFile.m_dLamPress[1];
+
 	Timer1->Enabled = true;
 
 }
