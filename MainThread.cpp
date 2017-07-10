@@ -512,6 +512,11 @@ void __fastcall CMainThread::Execute()
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
 
+                //Check Product Param ModuleNum
+                if (g_IniFile.m_nRailOption == 0 && (g_IniFile.m_strModuleNum[1] == "" || g_IniFile.m_strModuleNum[0] == "")) g_IniFile.m_nErrorCode = 26;
+                else if (g_IniFile.m_nRailOption == 1 && g_IniFile.m_strModuleNum[1] == "") g_IniFile.m_nErrorCode = 26;
+                else if (g_IniFile.m_nRailOption == 2 && g_IniFile.m_strModuleNum[0] == "") g_IniFile.m_nErrorCode = 26;
+
                 //Check LoadCell Safe
                 if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 70;
                 if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
@@ -2351,7 +2356,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				else
 				{
 					bPassCal = true;
-					if (m_nPressCalPassCount < 3)
+					if (m_nPressCalPassCount < g_IniFile.m_nPressCalRecheckTimes)
                     {
                         m_listLog.push_back("數值合格,再測一次");
                         m_nPressCalPassCount++;

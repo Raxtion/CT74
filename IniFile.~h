@@ -89,6 +89,7 @@ public:
 
   double m_dAutoRunTempRange;
   double m_dVacDelayTime;
+  double m_dDeVacDelayTime;
 
   double m_dPressCalRange;
   double m_dPressCalTime;

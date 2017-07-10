@@ -23,28 +23,28 @@ object frmMachineParam: TfrmMachineParam
   end
   object Label83: TLabel
     Left = 976
-    Top = 266
+    Top = 258
     Width = 64
     Height = 16
     Caption = #33258#21205#27169#24335
   end
   object Label84: TLabel
     Left = 976
-    Top = 282
+    Top = 274
     Width = 64
     Height = 16
     Caption = #23481#35377#28331#24230
   end
   object Label85: TLabel
     Left = 1040
-    Top = 314
+    Top = 306
     Width = 16
     Height = 16
     Caption = #24230
   end
   object Label86: TLabel
     Left = 968
-    Top = 314
+    Top = 306
     Width = 12
     Height = 16
     Caption = #177' '
@@ -90,6 +90,20 @@ object frmMachineParam: TfrmMachineParam
     Width = 160
     Height = 16
     Caption = #22739#21512#19979#38477#30495#31354#37323#25918#25345#32396
+  end
+  object Label11: TLabel
+    Left = 952
+    Top = 338
+    Width = 128
+    Height = 16
+    Caption = #22739#21147#26657#27491#35079#27298#27425#25976
+  end
+  object Label12: TLabel
+    Left = 1040
+    Top = 362
+    Width = 16
+    Height = 16
+    Caption = #27425
   end
   object BitBtn1: TBitBtn
     Left = 288
@@ -1364,7 +1378,7 @@ object frmMachineParam: TfrmMachineParam
   end
   object m_dAutoRunTempRange: TEdit
     Left = 984
-    Top = 309
+    Top = 301
     Width = 49
     Height = 24
     TabOrder = 27
@@ -1792,5 +1806,13 @@ object frmMachineParam: TfrmMachineParam
     Height = 24
     TabOrder = 35
     Text = 'm_dVacDelayTime'
+  end
+  object m_nPressCalRecheckTimes: TEdit
+    Left = 984
+    Top = 357
+    Width = 49
+    Height = 24
+    TabOrder = 36
+    Text = 'm_dAutoRunTempRange'
   end
 end

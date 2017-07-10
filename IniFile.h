@@ -94,8 +94,8 @@ public:
   double m_dPressCalRange;
   double m_dPressCalTime;
 
-  int m_nDownPercent;                 //for downPress to decrease cylinder friction
-
+  int m_nDownPercent;                       //for downPress to decrease cylinder friction
+  int m_nPressCalRecheckTimes;
 
 
   //-----------------Product-----------------

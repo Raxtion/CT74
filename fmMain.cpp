@@ -222,14 +222,22 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	//Count MoveLocX, MoveLocY
     int nColum = 0;
     int nRow = 0;
-    double dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-    double dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
-    double dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
-    double dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
-    double dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
-    double dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
-    double dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
-    double dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
+    double dPitchFrontUpX = 0;
+    double dPitchFrontUpY = 0;
+    double dPitchRearUpX = 0;
+    double dPitchRearUpY = 0;
+    double dPitchFrontDownX = 0;
+    double dPitchFrontDownY = 0;
+    double dPitchRearDownX = 0;
+    double dPitchRearDownY = 0;
+    if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+    if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+    if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+    if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+    if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+    if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+    if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+    if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
     for (int nX=0; nX<50; nX++)
     {
         nColum = nX % 10;
@@ -1679,14 +1687,22 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 		//Count MoveLocX, MoveLocY
         int nColum = 0;
         int nRow = 0;
-		double dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-		double dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
-        double dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
-		double dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
-        double dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
-        double dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
-        double dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
-        double dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
+        double dPitchFrontUpX = 0;
+        double dPitchFrontUpY = 0;
+        double dPitchRearUpX = 0;
+        double dPitchRearUpY = 0;
+        double dPitchFrontDownX = 0;
+        double dPitchFrontDownY = 0;
+        double dPitchRearDownX = 0;
+        double dPitchRearDownY = 0;
+        if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+        if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+        if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+        if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+        if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+        if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+        if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+        if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
         for (int nX=0; nX<50; nX++)
         {
             nColum = nX % 10;
@@ -1887,6 +1903,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
     DDX_Float(bRead, g_IniFile.m_dDeVacDelayTime, pMachineDlg->m_dDeVacDelayTime);
 
     DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
+    DDX_Int(bRead, g_IniFile.m_nPressCalRecheckTimes, pMachineDlg->m_nPressCalRecheckTimes);
 
     while (1)
 	{
@@ -1994,6 +2011,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
         DDX_Float(bRead, g_IniFile.m_dDeVacDelayTime, pMachineDlg->m_dDeVacDelayTime);
 
         DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
+        DDX_Int(bRead, g_IniFile.m_nPressCalRecheckTimes, pMachineDlg->m_nPressCalRecheckTimes);
 
 		g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
 		g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
@@ -2276,9 +2294,9 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 			{
 				Application->MessageBoxA("SetupEE 編號不可空白", "Confirm", MB_OK);
 			}
-			else if (pWnd->m_nCols->Text.ToDouble() < 2 || pWnd->m_nRows->Text.ToDouble() < 2)
+			else if (pWnd->m_nCols->Text.ToDouble() < 1 || pWnd->m_nRows->Text.ToDouble() < 1)
 			{
-				Application->MessageBoxA("Row與Colum不可以 < 2", "Confirm", MB_OK);
+				Application->MessageBoxA("Row與Colum不可以 < 1", "Confirm", MB_OK);
 			}
 			else if (pWnd->m_dLamTemp0->Text.ToDouble() >= 250 || (pWnd->m_dLamTemp0->Text.ToDouble() < 0))
 			{
@@ -2427,14 +2445,22 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
         //Count MoveLocX, MoveLocY
         int nColum = 0;
         int nRow = 0;
-		double dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-		double dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
-        double dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
-		double dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
-        double dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
-        double dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
-        double dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
-        double dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
+        double dPitchFrontUpX = 0;
+        double dPitchFrontUpY = 0;
+        double dPitchRearUpX = 0;
+        double dPitchRearUpY = 0;
+        double dPitchFrontDownX = 0;
+        double dPitchFrontDownY = 0;
+        double dPitchRearDownX = 0;
+        double dPitchRearDownY = 0;
+        if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+        if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+        if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+        if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+        if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+        if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+        if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+        if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
         for (int nX=0; nX<50; nX++)
         {
             nColum = nX % 10;

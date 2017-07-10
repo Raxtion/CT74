@@ -512,6 +512,11 @@ void __fastcall CMainThread::Execute()
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
 
+                //Check Product Param ModuleNum
+                if (g_IniFile.m_nRailOption == 0 && (g_IniFile.m_strModuleNum[1] == "" || g_IniFile.m_strModuleNum[0] == "")) g_IniFile.m_nErrorCode = 26;
+                else if (g_IniFile.m_nRailOption == 1 && g_IniFile.m_strModuleNum[1] == "") g_IniFile.m_nErrorCode = 26;
+                else if (g_IniFile.m_nRailOption == 2 && g_IniFile.m_strModuleNum[0] == "") g_IniFile.m_nErrorCode = 26;
+
                 //Check LoadCell Safe
                 if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 70;
                 if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
@@ -2001,7 +2006,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		}
 		if (!g_DIO.ReadDIBit(nEjectInp) && !g_DIO.ReadDIBit(nEjectEntry) && !g_DIO.ReadDIBit(nEjectExit) && !g_DIO.ReadDIBit(nEjectExist))
 		{
-			tm1MS->timeStart(3000);
+			tm1MS->timeStart(500);
 			nThreadIndex++;
 		}
         else if (!g_DIO.ReadDOBit(nEjectMotorStart))

@@ -146,7 +146,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dDeVacDelayTime",m_dDeVacDelayTime,1.0);
 
   DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nDownPercent",m_nDownPercent,30);
-
+  DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nPressCalRecheckTimes",m_nPressCalRecheckTimes,3);
 
   delete pIniFile;
 }

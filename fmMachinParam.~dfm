@@ -1,5 +1,5 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 376
+  Left = 384
   Top = 214
   Width = 1105
   Height = 615
