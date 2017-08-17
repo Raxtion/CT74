@@ -125,6 +125,8 @@ __published:	// IDE-managed Components
     TSpeedButton *btnStartOneStepPressCal;
     TSpeedButton *btnClearLC;
     TSpeedButton *btnClearEject0;
+    TClientSocket *client1DF;
+    TClientSocket *client1DR;
         void __fastcall N2Click(TObject *Sender);
         void __fastcall N3Click(TObject *Sender);
         void __fastcall N4Click(TObject *Sender);
@@ -180,6 +182,25 @@ __published:	// IDE-managed Components
     void __fastcall btnClearEject1Click(TObject *Sender);
     void __fastcall btnStartOneStepPressCalClick(TObject *Sender);
     void __fastcall btnClearLCClick(TObject *Sender);
+    void __fastcall client1DFConnect(TObject *Sender,
+          TCustomWinSocket *Socket);
+    void __fastcall client1DFDisconnect(TObject *Sender,
+          TCustomWinSocket *Socket);
+    void __fastcall client1DFError(TObject *Sender,
+          TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
+          int &ErrorCode);
+    void __fastcall client1DFRead(TObject *Sender,
+          TCustomWinSocket *Socket);
+    void __fastcall client1DRConnect(TObject *Sender,
+          TCustomWinSocket *Socket);
+    void __fastcall client1DRDisconnect(TObject *Sender,
+          TCustomWinSocket *Socket);
+    void __fastcall client1DRError(TObject *Sender,
+          TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
+          int &ErrorCode);
+    void __fastcall client1DRRead(TObject *Sender,
+          TCustomWinSocket *Socket);
+
 private:	// User declarations
         C_GetTime tm1MSLogOut;
         int m_nROIIndex;
@@ -218,6 +239,8 @@ public:		// User declarations
         void __fastcall CheckParamChange(TfmProduct *pWnd, TfmProduct *pWndRecord, SQLITE3IF *g_ChangeLog, AnsiString SetupEE);
         void __fastcall ImportOffsetFromDB();
         bool __fastcall ExportDBtoCSV(bool bFront);
+
+        AnsiString str1DReaderData[2];
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmMain *frmMain;

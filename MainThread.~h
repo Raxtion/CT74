@@ -63,6 +63,8 @@ public:
 	bool m_bIsbVacErrorR;					//Record for Need Shutdown in LamSub, when g_IniFile.m_nErrorCode = 55;
 	bool m_bIsLamSecondTimeErrorF;			//Record for Need Shutdown in LamSub, when g_IniFile.m_nErrorCode = 92;
 	bool m_bIsLamSecondTimeErrorR;			//Record for Need Shutdown in LamSub, when g_IniFile.m_nErrorCode = 93;
+    bool m_bIsLamCorrCheckErrorF;			//Record for Need Shutdown in LamSub, when g_IniFile.m_nErrorCode = 100;
+    bool m_bIsLamCorrCheckErrorR;           //Record for Need Shutdown in LamSub, when g_IniFile.m_nErrorCode = 101;
 
 	//Lock
 	bool m_bIsAutoCalLocked;                //Record for someone use AutoCal
@@ -129,6 +131,7 @@ public:
     bool m_bIsDoPressCalFinished[2];		//Record for finished DoPressCal.
 	bool m_bIsDoLaserCalFinished[2];		//Record for finished DoLaserCal.
     bool m_bIsDoLamSubFinished[2];          //Record for finished DoLamSub.
+    bool m_bIsLamCorrCheckLock;             //Record for Use LamCorrectionCheck. (Maybe Co-control).
 
 	//Cal Job container for DoOneStepCal
 	bool m_arrybDoUpperMoldLaser[50];

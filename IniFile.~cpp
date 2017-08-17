@@ -146,7 +146,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   DDXFile_Float(bRead,pIniFile,Machine_Section,"m_dDeVacDelayTime",m_dDeVacDelayTime,1.0);
 
   DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nDownPercent",m_nDownPercent,30);
-
+  DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nPressCalRecheckTimes",m_nPressCalRecheckTimes,3);
 
   delete pIniFile;
 }
@@ -232,6 +232,7 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nHeadType",m_nHeadType,0);
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strHeadScal",m_strHeadScal,0);
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleScal",m_strModuleScal,0);
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nUseLamCorrectBoard",m_nUseLamCorrectBoard,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nVacummOn",m_nVacummOn,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nPressCheck",m_nPressCheck,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDummyCheck",m_nDummyCheck,0);

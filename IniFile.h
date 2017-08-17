@@ -132,6 +132,7 @@ public:
   int m_nHeadType;                    //0=實心; 1=空心;
   AnsiString m_strHeadScal;           //(43X43/31X31)
   AnsiString m_strModuleScal;         //(43X43/31X31)
+  int m_nUseLamCorrectBoard;          //0=FAIL; 1=TRUE
   int m_nVacummOn;                    //0=FAIL; 1=TRUE
   int m_nPressCheck;                  //0=FAIL; 1=TRUE
   int m_nDummyCheck;                  //0=FAIL; 1=TRUE
@@ -152,6 +153,7 @@ public:
   double m_dTempOffsetF;
   double m_dTempOffsetR;
 
+  double m_dLamCorrBoardHeight;
 
 //Function
 public:

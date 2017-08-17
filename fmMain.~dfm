@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 121
-  Top = 104
+  Left = 58
+  Top = 248
   Width = 1444
   Height = 805
   Caption = 'frmMain'
@@ -888,5 +888,29 @@ object frmMain: TfrmMain
     OnTimer = timerRenewPainBoxTimer
     Left = 352
     Top = 296
+  end
+  object client1DF: TClientSocket
+    Active = False
+    Address = '192.168.1.101'
+    ClientType = ctNonBlocking
+    Port = 9004
+    OnConnect = client1DFConnect
+    OnDisconnect = client1DFDisconnect
+    OnRead = client1DFRead
+    OnError = client1DFError
+    Left = 288
+    Top = 328
+  end
+  object client1DR: TClientSocket
+    Active = False
+    Address = '192.168.1.102'
+    ClientType = ctNonBlocking
+    Port = 9004
+    OnConnect = client1DRConnect
+    OnDisconnect = client1DRDisconnect
+    OnRead = client1DRRead
+    OnError = client1DRError
+    Left = 320
+    Top = 328
   end
 end

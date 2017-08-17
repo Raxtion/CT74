@@ -1,6 +1,6 @@
 object fmProduct: TfmProduct
-  Left = 294
-  Top = 190
+  Left = 247
+  Top = 223
   BorderStyle = bsDialog
   Caption = #29986#21697#21443#25976
   ClientHeight = 453
@@ -230,177 +230,13 @@ object fmProduct: TfmProduct
           #24460#27969#36947)
         TabOrder = 2
       end
-      object GroupBox14: TGroupBox
-        Left = 536
-        Top = 9
-        Width = 273
-        Height = 352
-        Caption = #20854#20182
-        TabOrder = 3
-        object Label10: TLabel
-          Left = 12
-          Top = 61
-          Width = 80
-          Height = 16
-          Caption = #29105#22739#38957#22411#24335
-        end
-        object Label18: TLabel
-          Left = 12
-          Top = 98
-          Width = 80
-          Height = 16
-          Caption = #29105#22739#38957#23610#23544
-        end
-        object Label89: TLabel
-          Left = 12
-          Top = 171
-          Width = 64
-          Height = 16
-          Caption = #30495#31354#38283#21855
-        end
-        object Label90: TLabel
-          Left = 12
-          Top = 207
-          Width = 64
-          Height = 16
-          Caption = #22739#21147#39511#35657
-        end
-        object Label94: TLabel
-          Left = 12
-          Top = 134
-          Width = 64
-          Height = 16
-          Caption = #19979#27169#23610#23544
-        end
-        object Label109: TLabel
-          Left = 12
-          Top = 244
-          Width = 80
-          Height = 16
-          Caption = #21069#27169#20855#32232#34399
-        end
-        object Label150: TLabel
-          Left = 12
-          Top = 25
-          Width = 61
-          Height = 16
-          Caption = #26032#33290'Boat'
-        end
-        object Label110: TLabel
-          Left = 12
-          Top = 281
-          Width = 80
-          Height = 16
-          Caption = #24460#27169#20855#32232#34399
-        end
-        object m_cmbHeadType: TComboBox
-          Left = 100
-          Top = 57
-          Width = 153
-          Height = 24
-          Style = csDropDownList
-          ItemHeight = 16
-          TabOrder = 0
-          Items.Strings = (
-            #23526#24515
-            #31354#24515)
-        end
-        object m_cmbVacummOn: TComboBox
-          Left = 100
-          Top = 167
-          Width = 153
-          Height = 24
-          Style = csDropDownList
-          ItemHeight = 16
-          TabOrder = 1
-          Items.Strings = (
-            'Fail'
-            'True')
-        end
-        object m_cmbPressCheck: TComboBox
-          Left = 100
-          Top = 203
-          Width = 153
-          Height = 24
-          Style = csDropDownList
-          ItemHeight = 16
-          TabOrder = 2
-          Items.Strings = (
-            'Fail'
-            'True')
-        end
-        object m_cmbHeadScal: TComboBox
-          Left = 100
-          Top = 94
-          Width = 153
-          Height = 24
-          Style = csDropDownList
-          ItemHeight = 16
-          TabOrder = 3
-        end
-        object btnHeadScalModify: TButton
-          Left = 8
-          Top = 312
-          Width = 121
-          Height = 25
-          Hint = 'HeadScal'
-          Caption = #22739#38957#23610#23544#20462#25913
-          TabOrder = 4
-          OnClick = btnScalModifyClick
-        end
-        object m_cmbModuleScal: TComboBox
-          Left = 100
-          Top = 130
-          Width = 153
-          Height = 24
-          Style = csDropDownList
-          ItemHeight = 16
-          TabOrder = 5
-        end
-        object btnModuleScalModify: TButton
-          Left = 136
-          Top = 312
-          Width = 121
-          Height = 25
-          Hint = 'ModuleScal'
-          Caption = #19979#27169#23610#23544#20462#25913
-          TabOrder = 6
-          OnClick = btnScalModifyClick
-        end
-        object m_strModuleNum1: TEdit
-          Left = 100
-          Top = 240
-          Width = 153
-          Height = 24
-          TabOrder = 7
-        end
-        object m_cmbBoatType: TComboBox
-          Left = 100
-          Top = 21
-          Width = 153
-          Height = 24
-          Style = csDropDownList
-          ItemHeight = 16
-          TabOrder = 8
-          Items.Strings = (
-            'Old'
-            'New')
-        end
-        object m_strModuleNum0: TEdit
-          Left = 100
-          Top = 277
-          Width = 153
-          Height = 24
-          TabOrder = 9
-        end
-      end
       object GroupBox15: TGroupBox
         Left = 824
         Top = 8
         Width = 217
         Height = 225
         Caption = 'Dummy Check'
-        TabOrder = 4
+        TabOrder = 3
         object Label91: TLabel
           Left = 16
           Top = 20
@@ -595,7 +431,7 @@ object fmProduct: TfmProduct
         Width = 217
         Height = 121
         Caption = 'Tempture Check ('#8451')'
-        TabOrder = 5
+        TabOrder = 4
         object Label104: TLabel
           Left = 16
           Top = 76
@@ -680,7 +516,7 @@ object fmProduct: TfmProduct
         Width = 73
         Height = 17
         Caption = #19981#22739#21512
-        TabOrder = 6
+        TabOrder = 5
       end
       object GroupBox21: TGroupBox
         Left = 208
@@ -688,7 +524,7 @@ object fmProduct: TfmProduct
         Width = 289
         Height = 65
         Caption = #20986#26009#27969#36947' '#22238#28331#31186#25976
-        TabOrder = 7
+        TabOrder = 6
         object Label151: TLabel
           Left = 110
           Top = 33
@@ -740,14 +576,14 @@ object fmProduct: TfmProduct
         Width = 201
         Height = 25
         Caption = #31532#20108#27573#22739#21512#20572#39376#32173#25345#26178#38291
-        TabOrder = 8
+        TabOrder = 7
       end
       object m_dLamSecondKeepTime: TEdit
         Left = 409
         Top = 312
         Width = 56
         Height = 24
-        TabOrder = 9
+        TabOrder = 8
         Text = 'm_dUpperLaserAlarm'
       end
       object m_bIsLamUpDownCorrect: TCheckBox
@@ -756,14 +592,14 @@ object fmProduct: TfmProduct
         Width = 201
         Height = 25
         Caption = #31532#20108#27573#22739#21512#19978#19979#20462#27491#27425#25976
-        TabOrder = 10
+        TabOrder = 9
       end
       object m_dLamSecondCorrectTimes: TEdit
         Left = 409
         Top = 336
         Width = 56
         Height = 24
-        TabOrder = 11
+        TabOrder = 10
         Text = 'm_dUpperLaserAlarm'
       end
       object GroupBox2: TGroupBox
@@ -772,7 +608,7 @@ object fmProduct: TfmProduct
         Width = 289
         Height = 65
         Caption = #28331#25511#22120' '#28331#24230'Offset'
-        TabOrder = 12
+        TabOrder = 11
         object Label3: TLabel
           Left = 14
           Top = 27
@@ -816,6 +652,209 @@ object fmProduct: TfmProduct
           Height = 24
           TabOrder = 1
           Text = 'Edit1'
+        end
+      end
+      object GroupBox14: TGroupBox
+        Left = 536
+        Top = 9
+        Width = 273
+        Height = 352
+        Caption = #20854#20182
+        TabOrder = 12
+        object Label10: TLabel
+          Left = 12
+          Top = 61
+          Width = 80
+          Height = 16
+          Caption = #29105#22739#38957#22411#24335
+        end
+        object Label18: TLabel
+          Left = 12
+          Top = 82
+          Width = 80
+          Height = 16
+          Caption = #29105#22739#38957#23610#23544
+        end
+        object Label89: TLabel
+          Left = 12
+          Top = 171
+          Width = 64
+          Height = 16
+          Caption = #30495#31354#38283#21855
+        end
+        object Label90: TLabel
+          Left = 12
+          Top = 207
+          Width = 64
+          Height = 16
+          Caption = #22739#21147#39511#35657
+        end
+        object Label94: TLabel
+          Left = 12
+          Top = 102
+          Width = 64
+          Height = 16
+          Caption = #19979#27169#23610#23544
+        end
+        object Label109: TLabel
+          Left = 12
+          Top = 244
+          Width = 80
+          Height = 16
+          Caption = #21069#27169#20855#32232#34399
+        end
+        object Label150: TLabel
+          Left = 12
+          Top = 25
+          Width = 61
+          Height = 16
+          Caption = #26032#33290'Boat'
+        end
+        object Label110: TLabel
+          Left = 12
+          Top = 281
+          Width = 80
+          Height = 16
+          Caption = #24460#27169#20855#32232#34399
+        end
+        object Label7: TLabel
+          Left = 12
+          Top = 137
+          Width = 80
+          Height = 16
+          Caption = #20351#29992#20013#25215#26495
+        end
+        object m_cmbHeadType: TComboBox
+          Left = 100
+          Top = 57
+          Width = 153
+          Height = 24
+          Style = csDropDownList
+          ItemHeight = 16
+          TabOrder = 0
+          Items.Strings = (
+            #23526#24515
+            #31354#24515)
+        end
+        object m_cmbVacummOn: TComboBox
+          Left = 100
+          Top = 167
+          Width = 153
+          Height = 24
+          Style = csDropDownList
+          ItemHeight = 16
+          TabOrder = 1
+          Items.Strings = (
+            'Fail'
+            'True')
+        end
+        object m_cmbPressCheck: TComboBox
+          Left = 100
+          Top = 203
+          Width = 153
+          Height = 24
+          Style = csDropDownList
+          ItemHeight = 16
+          TabOrder = 2
+          Items.Strings = (
+            'Fail'
+            'True')
+        end
+        object m_cmbHeadScal: TComboBox
+          Left = 100
+          Top = 78
+          Width = 153
+          Height = 24
+          Style = csDropDownList
+          ItemHeight = 16
+          TabOrder = 3
+        end
+        object btnHeadScalModify: TButton
+          Left = 8
+          Top = 312
+          Width = 121
+          Height = 25
+          Hint = 'HeadScal'
+          Caption = #22739#38957#23610#23544#20462#25913
+          TabOrder = 4
+          OnClick = btnScalModifyClick
+        end
+        object m_cmbModuleScal: TComboBox
+          Left = 100
+          Top = 98
+          Width = 153
+          Height = 24
+          Style = csDropDownList
+          ItemHeight = 16
+          TabOrder = 5
+        end
+        object btnModuleScalModify: TButton
+          Left = 136
+          Top = 312
+          Width = 121
+          Height = 25
+          Hint = 'ModuleScal'
+          Caption = #19979#27169#23610#23544#20462#25913
+          TabOrder = 6
+          OnClick = btnScalModifyClick
+        end
+        object m_strModuleNum1: TEdit
+          Left = 100
+          Top = 240
+          Width = 125
+          Height = 24
+          TabOrder = 7
+        end
+        object m_cmbBoatType: TComboBox
+          Left = 100
+          Top = 21
+          Width = 153
+          Height = 24
+          Style = csDropDownList
+          ItemHeight = 16
+          TabOrder = 8
+          Items.Strings = (
+            'Old'
+            'New')
+        end
+        object m_strModuleNum0: TEdit
+          Left = 100
+          Top = 277
+          Width = 125
+          Height = 24
+          TabOrder = 9
+        end
+        object btnRead1DFront: TButton
+          Left = 224
+          Top = 240
+          Width = 41
+          Height = 25
+          Hint = 'HeadScal'
+          Caption = 'Read'
+          TabOrder = 10
+          OnClick = btnRead1DFrontClick
+        end
+        object btnRead1DRear: TButton
+          Left = 224
+          Top = 276
+          Width = 41
+          Height = 25
+          Hint = 'HeadScal'
+          Caption = 'Read'
+          TabOrder = 11
+          OnClick = btnRead1DRearClick
+        end
+        object m_cmbUseLamCorrectBoard: TComboBox
+          Left = 100
+          Top = 133
+          Width = 153
+          Height = 24
+          Style = csDropDownList
+          ItemHeight = 16
+          TabOrder = 12
+          Items.Strings = (
+            'Fail'
+            'True')
         end
       end
     end
@@ -995,8 +1034,8 @@ object fmProduct: TfmProduct
         Top = 16
         Width = 553
         Height = 297
-        ActivePage = TabSheet3
-        TabIndex = 0
+        ActivePage = TabSheet4
+        TabIndex = 1
         TabOrder = 3
         object TabSheet3: TTabSheet
           Caption = 'Front '#21069
@@ -10393,6 +10432,37 @@ object fmProduct: TfmProduct
           end
         end
       end
+      object GroupBox3: TGroupBox
+        Left = 8
+        Top = 192
+        Width = 241
+        Height = 73
+        Caption = #20351#29992#26657#27491#26495
+        TabOrder = 4
+        object Label8: TLabel
+          Left = 8
+          Top = 37
+          Width = 112
+          Height = 16
+          Caption = #26657#27491#26495#36864#32302#21402#24230
+        end
+        object Label9: TLabel
+          Left = 206
+          Top = 36
+          Width = 24
+          Height = 16
+          Caption = 'mm'
+        end
+        object m_dLamCorrBoardHeight: TEdit
+          Tag = 1
+          Left = 128
+          Top = 32
+          Width = 73
+          Height = 24
+          TabOrder = 0
+          Text = 'Edit1'
+        end
+      end
     end
   end
   object m_strSetupEENum: TEdit
@@ -10402,5 +10472,15 @@ object fmProduct: TfmProduct
     Height = 24
     Enabled = False
     TabOrder = 3
+  end
+  object btn1DReaderReconnect: TButton
+    Left = 456
+    Top = 408
+    Width = 169
+    Height = 33
+    Hint = 'HeadScal'
+    Caption = '1D Reader '#37325#26032#36899#32218
+    TabOrder = 4
+    OnClick = btn1DReaderReconnectClick
   end
 end

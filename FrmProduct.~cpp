@@ -9,11 +9,13 @@
 #include "fmHeadScalModify.h"
 #include "fmMachinParam.h"
 #include "fmMotorCheck.h"
+#include "fmMain.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 extern CIniFile g_IniFile;
 extern CMyPISODIO g_DIO;
+extern TfrmMain *frmMain;
 
 //TfmProduct *fmProduct;
 //---------------------------------------------------------------------------
@@ -280,4 +282,78 @@ void __fastcall TfmProduct::m_dLaserPosDblClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TfmProduct::btnRead1DFrontClick(TObject *Sender)
+{
+    C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
+
+    TSpeedButton *pBtn = (TSpeedButton *)Sender;
+	pBtn->Enabled = false;
+
+    frmMain->str1DReaderData[1] = "";
+    frmMain->client1DF->Socket->SendText("LON\r\n");
+
+    tm1MS.timeStart(5000);
+	while (1)
+	{
+		if (frmMain->str1DReaderData[1] != "") break;
+		if (tm1MS.timeUp()) break;
+		Application->ProcessMessages();
+	}
+
+    if(frmMain->str1DReaderData[1] == "")
+    {
+        ShowMessage("1D Reader Time Out!");
+        frmMain->client1DF->Socket->SendText("LOFF\r\n");
+        pBtn->Enabled = true;
+        return;
+    }
+    else m_strModuleNum1->Text = frmMain->str1DReaderData[1];
+
+    pBtn->Enabled = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfmProduct::btnRead1DRearClick(TObject *Sender)
+{
+    C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
+
+    TSpeedButton *pBtn = (TSpeedButton *)Sender;
+	pBtn->Enabled = false;
+
+    frmMain->str1DReaderData[0] = "";
+    frmMain->client1DR->Socket->SendText("LON\r\n");
+
+    tm1MS.timeStart(5000);
+	while (1)
+	{
+		if (frmMain->str1DReaderData[0] != "") break;
+		if (tm1MS.timeUp()) break;
+		Application->ProcessMessages();
+	}
+
+    if(frmMain->str1DReaderData[0] == "")
+    {
+        ShowMessage("1D Reader Time Out!");
+        frmMain->client1DR->Socket->SendText("LOFF\r\n");
+        pBtn->Enabled = true;
+        return;
+    }
+    else m_strModuleNum0->Text = frmMain->str1DReaderData[0];
+
+    pBtn->Enabled = true;    
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfmProduct::btn1DReaderReconnectClick(TObject *Sender)
+{
+    frmMain->client1DF->Active = false;
+    frmMain->client1DR->Active = false;
+
+    ::Sleep(1000);
+
+    frmMain->client1DF->Active = true;
+    frmMain->client1DR->Active = true;
+}
+//---------------------------------------------------------------------------
 

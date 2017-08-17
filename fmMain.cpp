@@ -75,69 +75,69 @@ __fastcall CGetRealTimeValueThread::CGetRealTimeValueThread(bool CreateSuspended
 //---------------------------------------------------------------------------
 void __fastcall CGetRealTimeValueThread::Execute()
 {
-    g_bStopGetRealTimeValueThread = false;
+	g_bStopGetRealTimeValueThread = false;
 
-    double dTempOffsetF = 0.0;
-    double dTempOffsetR = 0.0;
+	double dTempOffsetF = 0.0;
+	double dTempOffsetR = 0.0;
 
-    while (true)
+	while (true)
 	{
 		if (g_bStopGetRealTimeValueThread) break;
-        //--- renew Temperature and LaserValue
-        if (g_IniFile.m_bNotLam)
-        {
-            //If not Lam then set temp to 20 degree
-            g_ModBus.SetSV(1, 20.0);
-            ::Sleep(10);
-            g_ModBus.SetSV(2, 20.0);
-            ::Sleep(10);
-        }
-        else
-        {
-            g_ModBus.SetSV(1, g_IniFile.m_dLamTemp[0]);
-            ::Sleep(10);
-            g_ModBus.SetSV(2, g_IniFile.m_dLamTemp[1]);
-            ::Sleep(10);
-        }
-        g_pMainThread->m_dRearTempRealTime = g_ModBus.GetPV(1);
-        ::Sleep(10);
-        g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
-        ::Sleep(10);
-        if (dTempOffsetF != g_IniFile.m_dTempOffsetF)
-        {
-            g_ModBus.SetTempOffset(2, g_IniFile.m_dTempOffsetF);
-            ::Sleep(10);
-        }
-        dTempOffsetF = g_IniFile.m_dTempOffsetF;
-        if (dTempOffsetR != g_IniFile.m_dTempOffsetR)
-        {
-            g_ModBus.SetTempOffset(1, g_IniFile.m_dTempOffsetR);
-            ::Sleep(10);
-        }
-        dTempOffsetR = g_IniFile.m_dTempOffsetR;
+		//--- renew Temperature and LaserValue
+		if (g_IniFile.m_bNotLam)
+		{
+			//If not Lam then set temp to 20 degree
+			g_ModBus.SetSV(1, 20.0);
+			::Sleep(10);
+			g_ModBus.SetSV(2, 20.0);
+			::Sleep(10);
+		}
+		else
+		{
+			g_ModBus.SetSV(1, g_IniFile.m_dLamTemp[0]);
+			::Sleep(10);
+			g_ModBus.SetSV(2, g_IniFile.m_dLamTemp[1]);
+			::Sleep(10);
+		}
+		g_pMainThread->m_dRearTempRealTime = g_ModBus.GetPV(1);
+		::Sleep(10);
+		g_pMainThread->m_dFrontTempRealTime = g_ModBus.GetPV(2);
+		::Sleep(10);
+		if (dTempOffsetF != g_IniFile.m_dTempOffsetF)
+		{
+			g_ModBus.SetTempOffset(2, g_IniFile.m_dTempOffsetF);
+			::Sleep(10);
+		}
+		dTempOffsetF = g_IniFile.m_dTempOffsetF;
+		if (dTempOffsetR != g_IniFile.m_dTempOffsetR)
+		{
+			g_ModBus.SetTempOffset(1, g_IniFile.m_dTempOffsetR);
+			::Sleep(10);
+		}
+		dTempOffsetR = g_IniFile.m_dTempOffsetR;
 
-        if (g_IniFile.m_bIsUseIL030)
-        {
-            g_pMainThread->m_dDownLaserRealTime = g_IL030SerialDown.GetLaserValue();
-            ::Sleep(10);
-            g_pMainThread->m_dUpperLaserRealTime = g_IL030SerialUp.GetLaserValue();
-            ::Sleep(10);
-        }
-        else
-        {
-            g_pMainThread->m_dDownLaserRealTime = g_ModBus.GetAnalogData(3, 0);
-            ::Sleep(10);
-            g_pMainThread->m_dUpperLaserRealTime = g_ModBus.GetAnalogData(3, 1);
-            ::Sleep(10);
-        }
-        g_pMainThread->m_dForntPressloseRealTime = g_ModBus.GetAnalogData(3, 2);
-        ::Sleep(10);
-        g_pMainThread->m_dRearPressloseRealTime = g_ModBus.GetAnalogData(3, 3);
-        ::Sleep(10);
-        if (g_IniFile.m_bIsUseF911) g_pMainThread->m_dSensoLinkF911RealTime = g_ModBus.GetKg(4);
+		if (g_IniFile.m_bIsUseIL030)
+		{
+			g_pMainThread->m_dDownLaserRealTime = g_IL030SerialDown.GetLaserValue();
+			::Sleep(10);
+			g_pMainThread->m_dUpperLaserRealTime = g_IL030SerialUp.GetLaserValue();
+			::Sleep(10);
+		}
+		else
+		{
+			g_pMainThread->m_dDownLaserRealTime = g_ModBus.GetAnalogData(3, 0);
+			::Sleep(10);
+			g_pMainThread->m_dUpperLaserRealTime = g_ModBus.GetAnalogData(3, 1);
+			::Sleep(10);
+		}
+		g_pMainThread->m_dForntPressloseRealTime = g_ModBus.GetAnalogData(3, 2);
+		::Sleep(10);
+		g_pMainThread->m_dRearPressloseRealTime = g_ModBus.GetAnalogData(3, 3);
+		::Sleep(10);
+		if (g_IniFile.m_bIsUseF911) g_pMainThread->m_dSensoLinkF911RealTime = g_ModBus.GetKg(4);
 
-        ::Sleep(10);
-    }
+		::Sleep(10);
+	}
 }
 //---------------------------------------------------------------------------
 
@@ -152,13 +152,13 @@ __fastcall TfrmMain::TfrmMain(TComponent* Owner)
 #pragma region MainCommonFunction
 void __fastcall TfrmMain::FormCreate(TObject *Sender)
 {
-    g_pMainThread = new CMainThread(false);
-    g_pGetRealTimeValueThread = new CGetRealTimeValueThread(false);
+	g_pMainThread = new CMainThread(false);
+	g_pGetRealTimeValueThread = new CGetRealTimeValueThread(false);
 
 	g_IniFile.MachineFile(true);
 	Caption = g_IniFile.m_strLastFileName;
 	g_IniFile.ProductFile(g_IniFile.m_strLastFileName.c_str(), true);
-    if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
+	if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
 
 	//CreateCaptionFile(this);
 	ReadCaptionFile(this, g_IniFile.m_nLanguageMode);
@@ -208,7 +208,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 		g_eqpXML.m_CIMStatus = "0";
 	}
 
-    m_bIsAutoRun = false;
+	m_bIsAutoRun = false;
 	m_bLastGassLeakyFront = false;
 	m_bLastGassLeakyRear = false;
 	m_bLastPusherIOErrorFront = false;
@@ -220,115 +220,118 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
 
 	//Count MoveLocX, MoveLocY
-    int nColum = 0;
-    int nRow = 0;
-    double dPitchFrontUpX = 0;
-    double dPitchFrontUpY = 0;
-    double dPitchRearUpX = 0;
-    double dPitchRearUpY = 0;
-    double dPitchFrontDownX = 0;
-    double dPitchFrontDownY = 0;
-    double dPitchRearDownX = 0;
-    double dPitchRearDownY = 0;
-    if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-    if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
-    if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
-    if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
-    if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
-    if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
-    if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
-    if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
-    for (int nX=0; nX<50; nX++)
-    {
-        nColum = nX % 10;
-        nRow = nX / 10;
+	int nColum = 0;
+	int nRow = 0;
+	double dPitchFrontUpX = 0;
+	double dPitchFrontUpY = 0;
+	double dPitchRearUpX = 0;
+	double dPitchRearUpY = 0;
+	double dPitchFrontDownX = 0;
+	double dPitchFrontDownY = 0;
+	double dPitchRearDownX = 0;
+	double dPitchRearDownY = 0;
+	if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+	if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+	if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+	if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+	if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+	if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+	if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+	if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
+	for (int nX = 0; nX<50; nX++)
+	{
+		nColum = nX % 10;
+		nRow = nX / 10;
 
-        if (nColum < g_IniFile.m_nCols && nRow < g_IniFile.m_nRows)
-        {
-            for (int nY = 0; nY < 4; nY++)
-            {
-                g_pMainThread->m_dFrontUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[1][nY] + nColum*dPitchFrontUpX;
-                g_pMainThread->m_dFrontUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[1][nY] - nRow*dPitchFrontUpY;
-                g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchRearUpX;
-                g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchRearUpY;
-            }
+		if (nColum < g_IniFile.m_nCols && nRow < g_IniFile.m_nRows)
+		{
+			for (int nY = 0; nY < 4; nY++)
+			{
+				g_pMainThread->m_dFrontUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[1][nY] + nColum*dPitchFrontUpX;
+				g_pMainThread->m_dFrontUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[1][nY] - nRow*dPitchFrontUpY;
+				g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchRearUpX;
+				g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchRearUpY;
+			}
 
-            g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchFrontDownX;
-            g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchFrontDownY;
-            g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchRearDownX;
-            g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchRearDownY;
-        }
-    }
+			g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchFrontDownX;
+			g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchFrontDownY;
+			g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchRearDownX;
+			g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchRearDownY;
+		}
+	}
 
-
+	str1DReaderData[0] = "";
+	str1DReaderData[1] = "";
+	client1DF->Active = true;
+	client1DR->Active = true;
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 {
 	g_bStopMainThread = true;
 	g_bStopGetRealTimeValueThread = true;
-    ::Sleep(50);
-    g_TempLog.free();
-    g_ActionLog.free();
-    g_ChangeLog.free();
+	::Sleep(50);
+	g_TempLog.free();
+	g_ActionLog.free();
+	g_ChangeLog.free();
 	g_TempLog.close();
-    ::Sleep(50);
+	::Sleep(50);
 	g_ActionLog.close();
-    ::Sleep(50);
+	::Sleep(50);
 	g_ChangeLog.close();
-    ::Sleep(50);
+	::Sleep(50);
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::FormCloseQuery(TObject *Sender, bool &CanClose)
 {
 	CanClose = false;
-    if (m_nUserLevel == 0)
-    {
-        bool bCheckAccountPass = false;
-        TfrmPassword *pPwdDlg = new TfrmPassword(this);
+	if (m_nUserLevel == 0)
+	{
+		bool bCheckAccountPass = false;
+		TfrmPassword *pPwdDlg = new TfrmPassword(this);
 
-        ReadCaptionFile(pPwdDlg, g_IniFile.m_nLanguageMode);
+		ReadCaptionFile(pPwdDlg, g_IniFile.m_nLanguageMode);
 
-	    if (g_IniFile.m_nLanguageMode>0)
-	    {
-		    pPwdDlg->labelOldPassword->Caption = "Enter Password";
-		    pPwdDlg->labelAccount->Caption = "Enter Account";
-	    }
-	    else
-	    {
-		    pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
-		    pPwdDlg->labelAccount->Caption = "請輸入帳號";
-	    }
+		if (g_IniFile.m_nLanguageMode>0)
+		{
+			pPwdDlg->labelOldPassword->Caption = "Enter Password";
+			pPwdDlg->labelAccount->Caption = "Enter Account";
+		}
+		else
+		{
+			pPwdDlg->labelOldPassword->Caption = "請輸入密碼";
+			pPwdDlg->labelAccount->Caption = "請輸入帳號";
+		}
 
-	    pPwdDlg->labelNewPassword->Visible = false;
-	    pPwdDlg->editNewPassword->Visible = false;
+		pPwdDlg->labelNewPassword->Visible = false;
+		pPwdDlg->editNewPassword->Visible = false;
 
-        while (1)
-	    {
-		    if (pPwdDlg->ShowModal() == mrOk)
-		    {
-		    	AnsiString result = CheckAccount(pPwdDlg->editAccount->Text, pPwdDlg->editOldPassword->Text);
-			    if (result == "帳號錯誤") Application->MessageBox("帳號錯誤!!", "認證", MB_OK);
-                else if (result == "密碼錯誤") Application->MessageBox("密碼錯誤!!", "認證", MB_OK);
-			    else
-			    {
-                    bCheckAccountPass = true;
-				    break;
-			    }
-		    }
-            else
-		    {
-                bCheckAccountPass = false;
-			    break;
-		    }
-	    }
+		while (1)
+		{
+			if (pPwdDlg->ShowModal() == mrOk)
+			{
+				AnsiString result = CheckAccount(pPwdDlg->editAccount->Text, pPwdDlg->editOldPassword->Text);
+				if (result == "帳號錯誤") Application->MessageBox("帳號錯誤!!", "認證", MB_OK);
+				else if (result == "密碼錯誤") Application->MessageBox("密碼錯誤!!", "認證", MB_OK);
+				else
+				{
+					bCheckAccountPass = true;
+					break;
+				}
+			}
+			else
+			{
+				bCheckAccountPass = false;
+				break;
+			}
+		}
 
-        delete pPwdDlg;
+		delete pPwdDlg;
 
 
-        if (!bCheckAccountPass) return;
-    }
-    else if (m_nUserLevel == 1 || m_nUserLevel == 2) {}
+		if (!bCheckAccountPass) return;
+	}
+	else if (m_nUserLevel == 1 || m_nUserLevel == 2) {}
 
 
 	if (g_IniFile.m_nLanguageMode>0)
@@ -479,7 +482,7 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 		g_IniFile.m_strLastFileName = strFileName;
 
 		g_IniFile.ProductFile(strFileName.c_str(), true);
-        if (g_IniFile.m_bIsUseDBOffset) frmMain->ImportOffsetFromDB();
+		if (g_IniFile.m_bIsUseDBOffset) frmMain->ImportOffsetFromDB();
 
 		frmMain->SetAllDevice();
 
@@ -764,50 +767,50 @@ void __fastcall TfrmMain::CheckParamChange(TfmProduct *pWnd, TfmProduct *pWndRec
 		AddList(strLog);      //if compare more param,this can delete. And Log it in database only.
 	}
 
-    //TfmProduct Check Param Change and Turn off Tag
-    TEdit *m_dLamPress1 = (TEdit *)pWnd->FindComponent("m_dLamPress1");
-    TEdit *m_dLamPress1Record = (TEdit *)pWndRecord->FindComponent("m_dLamPress1");
-    if (m_dLamPress1->Text.ToDouble() != m_dLamPress1Record->Text.ToDouble())
-    {
-        g_pMainThread->m_bIsAutoCalPressOverAllowF = true;
-    }
+	//TfmProduct Check Param Change and Turn off Tag
+	TEdit *m_dLamPress1 = (TEdit *)pWnd->FindComponent("m_dLamPress1");
+	TEdit *m_dLamPress1Record = (TEdit *)pWndRecord->FindComponent("m_dLamPress1");
+	if (m_dLamPress1->Text.ToDouble() != m_dLamPress1Record->Text.ToDouble())
+	{
+		g_pMainThread->m_bIsAutoCalPressOverAllowF = true;
+	}
 
-    //TfmProduct Check Param Change and Turn off Tag
-    TEdit *m_dLamPress0 = (TEdit *)pWnd->FindComponent("m_dLamPress0");
-    TEdit *m_dLamPress0Record = (TEdit *)pWndRecord->FindComponent("m_dLamPress0");
-    if (m_dLamPress0->Text.ToDouble() != m_dLamPress0Record->Text.ToDouble())
-    {
-        g_pMainThread->m_bIsAutoCalPressOverAllowR = true;
-    }
+	//TfmProduct Check Param Change and Turn off Tag
+	TEdit *m_dLamPress0 = (TEdit *)pWnd->FindComponent("m_dLamPress0");
+	TEdit *m_dLamPress0Record = (TEdit *)pWndRecord->FindComponent("m_dLamPress0");
+	if (m_dLamPress0->Text.ToDouble() != m_dLamPress0Record->Text.ToDouble())
+	{
+		g_pMainThread->m_bIsAutoCalPressOverAllowR = true;
+	}
 
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::ImportOffsetFromDB()
 {
-    AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
-    AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
-    AnsiString strHeadScal = g_IniFile.m_strHeadScal;
+	AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
+	AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
+	AnsiString strHeadScal = g_IniFile.m_strHeadScal;
 
 
-    AnsiString strModuleNumF = g_IniFile.m_strModuleNum[1] + "_";
-    AnsiString strTableNameF = strHeadType + strModuleNumF + strLayout + strHeadScal;
-    SQLITE3IF *g_OffsetTableF = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableNameF);
-    AnsiString strResultF = g_OffsetTableF->queryOffsetTable(strTableNameF, true, g_IniFile.m_dLamPress[1]);
-    if (strResultF=="") g_pMainThread->m_listLog.push_back("Table: "+strTableNameF+". No Front Offset Data in DB.");
-    delete g_OffsetTableF;
+	AnsiString strModuleNumF = g_IniFile.m_strModuleNum[1] + "_";
+	AnsiString strTableNameF = strHeadType + strModuleNumF + strLayout + strHeadScal;
+	SQLITE3IF *g_OffsetTableF = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableNameF);
+	AnsiString strResultF = g_OffsetTableF->queryOffsetTable(strTableNameF, true, g_IniFile.m_dLamPress[1]);
+	if (strResultF == "") g_pMainThread->m_listLog.push_back("Table: " + strTableNameF + ". No Front Offset Data in DB.");
+	delete g_OffsetTableF;
 
 
-    AnsiString strModuleNumR = g_IniFile.m_strModuleNum[0] + "_";
-    AnsiString strTableNameR = strHeadType + strModuleNumR + strLayout + strHeadScal;
-    SQLITE3IF *g_OffsetTableR = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableNameR);
-    AnsiString strResultR = g_OffsetTableR->queryOffsetTable(strTableNameR, false, g_IniFile.m_dLamPress[0]);
-    if (strResultR=="") g_pMainThread->m_listLog.push_back("Table: "+strTableNameR+". No Rear Offset Data in DB.");
-    delete g_OffsetTableR;
+	AnsiString strModuleNumR = g_IniFile.m_strModuleNum[0] + "_";
+	AnsiString strTableNameR = strHeadType + strModuleNumR + strLayout + strHeadScal;
+	SQLITE3IF *g_OffsetTableR = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableNameR);
+	AnsiString strResultR = g_OffsetTableR->queryOffsetTable(strTableNameR, false, g_IniFile.m_dLamPress[0]);
+	if (strResultR == "") g_pMainThread->m_listLog.push_back("Table: " + strTableNameR + ". No Rear Offset Data in DB.");
+	delete g_OffsetTableR;
 }
 //---------------------------------------------------------------------------
 bool __fastcall TfrmMain::ExportDBtoCSV(bool bFront)
 {
-    bool bIsProcessOK = false;
+	bool bIsProcessOK = false;
 
 	if (!FileExists("C:\\C74 Log\\OffsetTable\\Backup")) _mkdir("C:\\C74 Log\\OffsetTable\\Backup");
 
@@ -819,7 +822,7 @@ bool __fastcall TfrmMain::ExportDBtoCSV(bool bFront)
 	if (bFront) pOffset = g_IniFile.m_dScaleOffsetFront;
 	else pOffset = g_IniFile.m_dScaleOffsetRear;
 
-	try 
+	try
 	{
 		FILE *pFile;
 
@@ -840,7 +843,7 @@ bool __fastcall TfrmMain::ExportDBtoCSV(bool bFront)
 						+ "," + FormatFloat("0.000", g_IniFile.m_dLamPress[bFront])
 						+ "," + FormatFloat("0.000", pOffset[i])
 						+ "," + "NULL"
-						+ "," + "NULL"+ "\n";
+						+ "," + "NULL" + "\n";
 					fprintf(pFile, strOup.c_str());
 					j++;
 				}
@@ -1209,6 +1212,76 @@ void __fastcall TfrmMain::ServerCIMClientRead(TObject *Sender,
 	g_eqpXML.ProcessCIMstr();
 }
 //---------------------------------------------------------------------------
+void __fastcall TfrmMain::client1DFConnect(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    AddList("Front 1D Reader連線 IP:" + Socket->RemoteAddress);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::client1DFDisconnect(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    AddList("Front 1D Reader 讀取器斷線!");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::client1DFError(TObject *Sender,
+      TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
+{
+    AddList("[clientVenderID Error]連線Front 1D Reader讀取器發生異常");
+	ErrorCode = 0;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::client1DFRead(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    AnsiString strR = Socket->ReceiveText();
+
+	if (strR.Length()>6 && strR != "ERROR")
+	{
+		AddList("Front 1D Reader:" + strR);
+		str1DReaderData[1] = strR;
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::client1DRConnect(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    AddList("Rear 1D Reader連線 IP:" + Socket->RemoteAddress);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::client1DRDisconnect(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    AddList("Rear 1D Reader 讀取器斷線!");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::client1DRError(TObject *Sender,
+      TCustomWinSocket *Socket, TErrorEvent ErrorEvent, int &ErrorCode)
+{
+    AddList("[clientVenderID Error]連線Rear 1D Reader讀取器發生異常");
+	ErrorCode = 0;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfrmMain::client1DRRead(TObject *Sender,
+      TCustomWinSocket *Socket)
+{
+    AnsiString strR = Socket->ReceiveText();
+
+	if (strR.Length()>6 && strR != "ERROR")
+	{
+		AddList("Rear 1D Reader:" + strR);
+		str1DReaderData[0] = strR;
+	}
+}
+//---------------------------------------------------------------------------
+
 #pragma endregion
 
 #pragma region MainTimer
@@ -1221,23 +1294,23 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 
 	RefreshImage();
 
-    //--- real time monitor temperature
-    if (g_IniFile.m_nLanguageMode>0)
-    {
-        Label1->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "℃ ";
-        Label4->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "℃ ";
+	//--- real time monitor temperature
+	if (g_IniFile.m_nLanguageMode>0)
+	{
+		Label1->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "℃ ";
+		Label4->Caption = "Temperature:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "℃ ";
 
-        Label2->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
+		Label2->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "Sec";
 		Label5->Caption = "Lam.RemainTime:" + FormatFloat("0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "Sec";
-    }
-    else
-    {
-        Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "度";
-        Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "度";
+	}
+	else
+	{
+		Label1->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dRearTempRealTime) + "度";
+		Label4->Caption = "目前溫度:" + FormatFloat("0.0", g_pMainThread->m_dFrontTempRealTime) + "度";
 
-        Label2->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
+		Label2->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[1] / 1000.0) + "秒";
 		Label5->Caption = "壓合剩餘時間:" + FormatFloat("0", g_pMainThread->m_dLamTimer[0] / 1000.0) + "秒";
-    }
+	}
 
 	if (checkMonitor->Checked)
 	{
@@ -1245,8 +1318,8 @@ void __fastcall TfrmMain::timerPressureTimer(TObject *Sender)
 		else Label7->Caption = "Load Cell:" + FormatFloat("0.00kg", g_pMainThread->m_dSensoLinkF911RealTime);
 		Label8->Caption = "Laser(上):" + FormatFloat("0.00", g_pMainThread->m_dUpperLaserRealTime) + "mm";
 		Label9->Caption = "Laser(下):" + FormatFloat("0.00", g_pMainThread->m_dDownLaserRealTime) + "mm";
-        Label35->Caption = "Gass R" + FormatFloat("0.00", g_pMainThread->m_dRearPressloseRealTime);
-        Label36->Caption = "Gass F" + FormatFloat("0.00", g_pMainThread->m_dForntPressloseRealTime);
+		Label35->Caption = "Gass R" + FormatFloat("0.00", g_pMainThread->m_dRearPressloseRealTime);
+		Label36->Caption = "Gass F" + FormatFloat("0.00", g_pMainThread->m_dForntPressloseRealTime);
 	}
 
 	timerPressure->Enabled = true;
@@ -1292,30 +1365,30 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 			strCode.sprintf("%04d", g_IniFile.m_nErrorCode);
 			g_eqpXML.SendAlarmMessage(strCode.c_str(), strMsgCIM.c_str());
 
-            //Check DNport connection Error
+			//Check DNport connection Error
 			if (!g_IniFile.m_bNotLam && g_IniFile.m_nErrorCode == 2001)
 			{
-                bool bDNPortError = false;
+				bool bDNPortError = false;
 				for (int nX = 0; nX < 50; nX++)
 				{
 					if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && (g_pMainThread->m_bDNPortConnectError1[nX] == true))
-                    {
-                        AddList("Front: " + IntToStr(nX+1) + " DNport Connection Error.");
-                        bDNPortError = true;
-                    }
+					{
+						AddList("Front: " + IntToStr(nX + 1) + " DNport Connection Error.");
+						bDNPortError = true;
+					}
 					if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && (g_pMainThread->m_bDNPortConnectError0[nX] == true))
-                    {
-                        AddList("Rear: " + IntToStr(nX+1) + " DNport Connection Error");
-                        bDNPortError = true;
-                    }
-                    g_pMainThread->m_bDNPortConnectError0[nX] = false;
-                    g_pMainThread->m_bDNPortConnectError1[nX] = false;
+					{
+						AddList("Rear: " + IntToStr(nX + 1) + " DNport Connection Error");
+						bDNPortError = true;
+					}
+					g_pMainThread->m_bDNPortConnectError0[nX] = false;
+					g_pMainThread->m_bDNPortConnectError1[nX] = false;
 				}
-                if (!bDNPortError) AddList("比例閥通訊測試...OK");
-                SetAllDevice();
+				if (!bDNPortError) AddList("比例閥通訊測試...OK");
+				SetAllDevice();
 			}
 		}
-        //lock RestetButton
+		//lock RestetButton
 		g_pMainThread->m_bIsResetAlarmLocked = false;
 	}
 
@@ -1396,28 +1469,28 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 
 	//---Auto active LC no function
 	if (g_IniFile.m_nErrorCode == 54 || g_IniFile.m_nErrorCode == 55
-        || g_IniFile.m_nErrorCode == 92 || g_IniFile.m_nErrorCode == 93
-        || (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && g_pMainThread->m_bIsAutoCalPressOverAllowF)
-        || (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && g_pMainThread->m_bIsAutoCalPressOverAllowR)
-        || (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && g_pMainThread->m_bIsAutoCalTimesOver25F)
-        || (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && g_pMainThread->m_bIsAutoCalTimesOver25R))
+		|| g_IniFile.m_nErrorCode == 92 || g_IniFile.m_nErrorCode == 93
+		|| (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && g_pMainThread->m_bIsAutoCalPressOverAllowF)
+		|| (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && g_pMainThread->m_bIsAutoCalPressOverAllowR)
+		|| (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && g_pMainThread->m_bIsAutoCalTimesOver25F)
+		|| (!g_IniFile.m_bNotLam && (g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && g_pMainThread->m_bIsAutoCalTimesOver25R))
 	{
 		g_pMainThread->m_bStopLC = true;
 	}
 
-    //---Syn the checkStopLC
-    checkStopLC->Checked = g_pMainThread->m_bStopLC;
+	//---Syn the checkStopLC
+	checkStopLC->Checked = g_pMainThread->m_bStopLC;
 
-    //---When StopLC, Off the ReadyIn1
-    if (g_pMainThread->m_bStopLC) g_DIO.SetDO(DO::ReadyIn1, false);
+	//---When StopLC, Off the ReadyIn1
+	if (g_pMainThread->m_bStopLC) g_DIO.SetDO(DO::ReadyIn1, false);
 
-    //---Auto ReLoad ProductParam
-    if (g_IniFile.m_nErrorCode == 999 && g_pMainThread->m_bIsNeedReLoadProductParam)
-    {
-        g_pMainThread->m_bIsNeedReLoadProductParam = false;
-        g_IniFile.ProductFile(Caption.c_str(), true);
-        if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
-    }
+	//---Auto ReLoad ProductParam
+	if (g_IniFile.m_nErrorCode == 999 && g_pMainThread->m_bIsNeedReLoadProductParam)
+	{
+		g_pMainThread->m_bIsNeedReLoadProductParam = false;
+		g_IniFile.ProductFile(Caption.c_str(), true);
+		if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
+	}
 
 	//--Add ActionLog---
 	if (g_pMainThread->m_ActionLog.size()>0)
@@ -1469,15 +1542,15 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 		cmbRange->Enabled = !g_pMainThread->m_bIsAutoMode;
 		cmbFirstLoc->Enabled = !g_pMainThread->m_bIsAutoMode;
 		cmbTimes->Enabled = !g_pMainThread->m_bIsAutoMode;
-        btnClearEject0->Enabled = !g_pMainThread->m_bIsAutoMode;
-        btnClearEject1->Enabled = !g_pMainThread->m_bIsAutoMode;
-        btnClearLC->Enabled = !g_pMainThread->m_bIsAutoMode;
+		btnClearEject0->Enabled = !g_pMainThread->m_bIsAutoMode;
+		btnClearEject1->Enabled = !g_pMainThread->m_bIsAutoMode;
+		btnClearLC->Enabled = !g_pMainThread->m_bIsAutoMode;
 		btnStartOneStepPressCal->Enabled = !g_pMainThread->m_bIsAutoMode;
 	}
 
 	//--Keep renew Privilege When Idel
-	if (!btnStartPressCal1->Down && !btnStartPressCal0->Down 
-		&& !btnLaserUp1->Down && !btnLaserUp0->Down 
+	if (!btnStartPressCal1->Down && !btnStartPressCal0->Down
+		&& !btnLaserUp1->Down && !btnLaserUp0->Down
 		&& !btnLaserDown1->Down && !btnLaserDown0->Down
 		&& !btnStartOneStepPressCal->Down)
 		SetPrivilege(m_nUserLevel);
@@ -1488,28 +1561,28 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 	{
 		if (g_IniFile.m_nLanguageMode>0) Caption = g_IniFile.m_strLastFileName + " ( Non Lamination )";
 		else
-        {
-            Caption = g_IniFile.m_strLastFileName + " ( 不壓合 )";
-            TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
-            GroupBox2->Caption = StrList->Strings[StrList->Count - 1];
-            delete StrList;
-        }
+		{
+			Caption = g_IniFile.m_strLastFileName + " ( 不壓合 )";
+			TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+			GroupBox2->Caption = StrList->Strings[StrList->Count - 1];
+			delete StrList;
+		}
 	}
 	else
 	{
 		Caption = g_IniFile.m_strLastFileName;
-        TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
-        GroupBox2->Caption = StrList->Strings[StrList->Count - 1];
-        delete StrList;
+		TStringList *StrList = SplitString(g_IniFile.m_strLastFileName, "\\");
+		GroupBox2->Caption = StrList->Strings[StrList->Count - 1];
+		delete StrList;
 	}
 
-    //--Renew Mainfrom Product Info. Force!!
-    Label22->Caption = g_IniFile.m_dLamTime[0];
-    Label25->Caption = g_IniFile.m_dLamTemp[0];
-    Label28->Caption = g_IniFile.m_dLamPress[0];
-    Label17->Caption = g_IniFile.m_dLamTime[1];
-    Label13->Caption = g_IniFile.m_dLamTemp[1];
-    Label14->Caption = g_IniFile.m_dLamPress[1];
+	//--Renew Mainfrom Product Info. Force!!
+	Label22->Caption = g_IniFile.m_dLamTime[0];
+	Label25->Caption = g_IniFile.m_dLamTemp[0];
+	Label28->Caption = g_IniFile.m_dLamPress[0];
+	Label17->Caption = g_IniFile.m_dLamTime[1];
+	Label13->Caption = g_IniFile.m_dLamTemp[1];
+	Label14->Caption = g_IniFile.m_dLamPress[1];
 
 	Timer1->Enabled = true;
 
@@ -1533,14 +1606,14 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 		else if (g_Motion.GetActualPos(5) < g_IniFile.m_dNLimitR || abs(g_Motion.GetActualPos(5) > g_IniFile.m_dPLimitR)) g_IniFile.m_nErrorCode = 84;
 	}
 
-    //--- If g_pMainThread->m_bIsAutoMode change status, Recode on m_bIsAutoRun and Reset tm1MS and tm2MS
-    if (g_pMainThread->m_bIsAutoMode == true && m_bIsAutoRun == false)
-    {
-        tm1MS.timeStart(5000);
-        tm2MS.timeStart(5000);
-        tm3MS.timeStart(1000);
-    }
-    m_bIsAutoRun = g_pMainThread->m_bIsAutoMode;
+	//--- If g_pMainThread->m_bIsAutoMode change status, Recode on m_bIsAutoRun and Reset tm1MS and tm2MS
+	if (g_pMainThread->m_bIsAutoMode == true && m_bIsAutoRun == false)
+	{
+		tm1MS.timeStart(5000);
+		tm2MS.timeStart(5000);
+		tm3MS.timeStart(1000);
+	}
+	m_bIsAutoRun = g_pMainThread->m_bIsAutoMode;
 
 	//--- real time detect Front and Rear Gas Pressure leaky
 	if (g_pMainThread->m_bIsAutoMode == true && g_pMainThread->m_bIsHomeDone == true && tm3MS.timeUp())
@@ -1552,7 +1625,7 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 			g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(F) Value= 0.00", g_pMainThread->m_dForntPressloseRealTime));
 			g_IniFile.m_nErrorCode = 85;
 		}
-        if (g_pMainThread->m_dForntPressloseRealTime < g_IniFile.m_dRightGassLeakylimit) m_bLastGassLeakyFront = true;
+		if (g_pMainThread->m_dForntPressloseRealTime < g_IniFile.m_dRightGassLeakylimit) m_bLastGassLeakyFront = true;
 		else m_bLastGassLeakyFront = false;
 		//---Detect GassLeaky keep over 5 second then allarm
 		if (g_pMainThread->m_dRearPressloseRealTime < g_IniFile.m_dLeftGassLeakylimit && !m_bLastGassLeakyRear) tm2MS.timeStart(5000);
@@ -1561,61 +1634,61 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 			g_pMainThread->m_listLog.push_back(FormatFloat("GassSenser(R) Value= 0.00", g_pMainThread->m_dRearPressloseRealTime));
 			g_IniFile.m_nErrorCode = 86;
 		}
-        if (g_pMainThread->m_dRearPressloseRealTime < g_IniFile.m_dLeftGassLeakylimit) m_bLastGassLeakyRear = true;
+		if (g_pMainThread->m_dRearPressloseRealTime < g_IniFile.m_dLeftGassLeakylimit) m_bLastGassLeakyRear = true;
 		else m_bLastGassLeakyRear = false;
 	}
 
-    //---If Finish PressCal write Offset in to OffsetTable Database
-    if (g_pMainThread->m_bIsWriteOffsetToDB_F)
-    {
-        g_pMainThread->m_bIsWriteOffsetToDB_F = false;
+	//---If Finish PressCal write Offset in to OffsetTable Database
+	if (g_pMainThread->m_bIsWriteOffsetToDB_F)
+	{
+		g_pMainThread->m_bIsWriteOffsetToDB_F = false;
 
-        if (g_IniFile.m_strModuleNum[1] != "")
-        {
-            AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
-            AnsiString strModuleNum = g_IniFile.m_strModuleNum[1] + "_";
-            AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
-            AnsiString strHeadScal = g_IniFile.m_strHeadScal;
-            AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
+		if (g_IniFile.m_strModuleNum[1] != "")
+		{
+			AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
+			AnsiString strModuleNum = g_IniFile.m_strModuleNum[1] + "_";
+			AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
+			AnsiString strHeadScal = g_IniFile.m_strHeadScal;
+			AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
 
-            g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Please Waite.");
+			g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". OffsetTable Synchnizing, Please Waite.");
 			//Write to DB
-            SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
-            AnsiString strResult = g_OffsetTable->updateOffsetTable(strTableName, true, g_IniFile.m_dLamPress[1]);
-            g_pMainThread->m_listLog.push_back(strResult);
-            delete g_OffsetTable;
+			SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
+			AnsiString strResult = g_OffsetTable->updateOffsetTable(strTableName, true, g_IniFile.m_dLamPress[1]);
+			g_pMainThread->m_listLog.push_back(strResult);
+			delete g_OffsetTable;
 
 			//Write to .csv
 			if (ExportDBtoCSV(true)) g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup finished.");
-            else g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup failed.");
-            g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Process End.");
-        }
-    }
-    if (g_pMainThread->m_bIsWriteOffsetToDB_R)
-    {
-        g_pMainThread->m_bIsWriteOffsetToDB_R = false;
+			else g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup failed.");
+			g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". OffsetTable Synchnizing, Process End.");
+		}
+	}
+	if (g_pMainThread->m_bIsWriteOffsetToDB_R)
+	{
+		g_pMainThread->m_bIsWriteOffsetToDB_R = false;
 
-        if (g_IniFile.m_strModuleNum[0] != "")
-        {
-            AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
-            AnsiString strModuleNum = g_IniFile.m_strModuleNum[0] + "_";
-            AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
-            AnsiString strHeadScal = g_IniFile.m_strHeadScal;
-            AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
+		if (g_IniFile.m_strModuleNum[0] != "")
+		{
+			AnsiString strHeadType; (g_IniFile.m_nHeadType) ? strHeadType = "H_" : strHeadType = "S_";
+			AnsiString strModuleNum = g_IniFile.m_strModuleNum[0] + "_";
+			AnsiString strLayout = IntToStr(g_IniFile.m_nRows) + "X" + IntToStr(g_IniFile.m_nCols) + "_";
+			AnsiString strHeadScal = g_IniFile.m_strHeadScal;
+			AnsiString strTableName = strHeadType + strModuleNum + strLayout + strHeadScal;
 
-            g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Please Waite.");
+			g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". OffsetTable Synchnizing, Please Waite.");
 			//Write to DB
-            SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
-            AnsiString strResult = g_OffsetTable->updateOffsetTable(strTableName, false, g_IniFile.m_dLamPress[0]);
-            g_pMainThread->m_listLog.push_back(strResult);
-            delete g_OffsetTable;
+			SQLITE3IF *g_OffsetTable = new SQLITE3IF(4, "C:\\C74 Log\\OffsetTable", strTableName);
+			AnsiString strResult = g_OffsetTable->updateOffsetTable(strTableName, false, g_IniFile.m_dLamPress[0]);
+			g_pMainThread->m_listLog.push_back(strResult);
+			delete g_OffsetTable;
 
 			//Write to .csv
 			if (ExportDBtoCSV(false)) g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup finished.");
-            else g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup failed.");
-            g_pMainThread->m_listLog.push_back("Table: "+strTableName+". OffsetTable Synchnizing, Process End.");
-        }
-    }
+			else g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". Backup failed.");
+			g_pMainThread->m_listLog.push_back("Table: " + strTableName + ". OffsetTable Synchnizing, Process End.");
+		}
+	}
 
 
 	Timer2->Enabled = true;
@@ -1681,33 +1754,33 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 		g_IniFile.m_strLastFileName = Caption;
 
 		g_IniFile.ProductFile(OpenDialog1->FileName.c_str(), true);
-        if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
+		if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
 		SetAllDevice();
 
 		//Count MoveLocX, MoveLocY
-        int nColum = 0;
-        int nRow = 0;
-        double dPitchFrontUpX = 0;
-        double dPitchFrontUpY = 0;
-        double dPitchRearUpX = 0;
-        double dPitchRearUpY = 0;
-        double dPitchFrontDownX = 0;
-        double dPitchFrontDownY = 0;
-        double dPitchRearDownX = 0;
-        double dPitchRearDownY = 0;
-        if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-        if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
-        if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
-        if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
-        if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
-        if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
-        if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
-        if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
-        for (int nX=0; nX<50; nX++)
-        {
-            nColum = nX % 10;
-            nRow = nX / 10;
-			
+		int nColum = 0;
+		int nRow = 0;
+		double dPitchFrontUpX = 0;
+		double dPitchFrontUpY = 0;
+		double dPitchRearUpX = 0;
+		double dPitchRearUpY = 0;
+		double dPitchFrontDownX = 0;
+		double dPitchFrontDownY = 0;
+		double dPitchRearDownX = 0;
+		double dPitchRearDownY = 0;
+		if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+		if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+		if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+		if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+		if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+		if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+		if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+		if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
+		for (int nX = 0; nX<50; nX++)
+		{
+			nColum = nX % 10;
+			nRow = nX / 10;
+
 			if (nColum < g_IniFile.m_nCols && nRow < g_IniFile.m_nRows)
 			{
 				for (int nY = 0; nY < 4; nY++)
@@ -1717,13 +1790,13 @@ void __fastcall TfrmMain::N2Click(TObject *Sender)
 					g_pMainThread->m_dRearUpperMoveLocX[nX][nY] = g_IniFile.m_dLaserUpPosX[0][nY] + nColum*dPitchRearUpX;
 					g_pMainThread->m_dRearUpperMoveLocY[nX][nY] = g_IniFile.m_dLaserUpPosY[0][nY] - nRow*dPitchRearUpY;
 				}
-			
+
 				g_pMainThread->m_dFrontDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[1] + nColum*dPitchFrontDownX;
 				g_pMainThread->m_dFrontDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[1] - nRow*dPitchFrontDownY;
 				g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchRearDownX;
 				g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchRearDownY;
 			}
-        }
+		}
 
 		Label22->Caption = g_IniFile.m_dLamTime[0];
 		Label25->Caption = g_IniFile.m_dLamTemp[0];
@@ -1810,8 +1883,8 @@ void __fastcall TfrmMain::N5Click(TObject *Sender)
 			if (Application->MessageBox("Save File Before Leave?", "Confirm", MB_OKCANCEL) == IDOK)
 				N3Click(Sender);
 			//exit(0);
-            FormClose(this, true);
-            Application->Terminate();
+			FormClose(this, true);
+			Application->Terminate();
 		}
 	}
 	else
@@ -1821,8 +1894,8 @@ void __fastcall TfrmMain::N5Click(TObject *Sender)
 			if (Application->MessageBox("離開前是否要存檔?", "注意", MB_OKCANCEL) == IDOK)
 				N3Click(Sender);
 			//exit(0);
-            FormClose(this, true);
-            Application->Terminate();
+			FormClose(this, true);
+			Application->Terminate();
 		}
 	}
 }
@@ -1853,17 +1926,17 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dUpperTotalLaserAlarm, pMachineDlg->m_dUpperTotalLaserAlarm);
 	DDX_Float(bRead, g_IniFile.m_dLeftGassLeakylimit, pMachineDlg->m_dLeftGassLeakylimit);
 	DDX_Float(bRead, g_IniFile.m_dRightGassLeakylimit, pMachineDlg->m_dRightGassLeakylimit);
-    DDX_Float(bRead, g_IniFile.m_dLaneTransportDelayTime, pMachineDlg->m_dLaneTransportDelayTime);
-    DDX_Float(bRead, g_IniFile.m_dLamSubDelayTime, pMachineDlg->m_dLamSubDelayTime);
+	DDX_Float(bRead, g_IniFile.m_dLaneTransportDelayTime, pMachineDlg->m_dLaneTransportDelayTime);
+	DDX_Float(bRead, g_IniFile.m_dLamSubDelayTime, pMachineDlg->m_dLamSubDelayTime);
 	DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
 	DDX_Check(bRead, g_IniFile.m_bIsUseF911, pMachineDlg->m_bIsUseF911);
 	DDX_Check(bRead, g_IniFile.m_bIsUseIL030, pMachineDlg->m_bIsUseIL030);
 	DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
 	DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
-    DDX_Check(bRead, g_IniFile.m_bIsMochineTestMode, pMachineDlg->m_bIsMochineTestMode);
-    DDX_Check(bRead, g_IniFile.m_bIsFullLaserMode, pMachineDlg->m_bIsFullLaserMode);
-    DDX_Check(bRead, g_IniFile.m_bIsUseDBOffset, pMachineDlg->m_bIsUseDBOffset);
-    DDX_Check(bRead, g_IniFile.m_bIsUpdateOffsetTable, pMachineDlg->m_bIsUpdateOffsetTable);
+	DDX_Check(bRead, g_IniFile.m_bIsMochineTestMode, pMachineDlg->m_bIsMochineTestMode);
+	DDX_Check(bRead, g_IniFile.m_bIsFullLaserMode, pMachineDlg->m_bIsFullLaserMode);
+	DDX_Check(bRead, g_IniFile.m_bIsUseDBOffset, pMachineDlg->m_bIsUseDBOffset);
+	DDX_Check(bRead, g_IniFile.m_bIsUpdateOffsetTable, pMachineDlg->m_bIsUpdateOffsetTable);
 
 	DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 	DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -1874,7 +1947,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dPLimitR, pMachineDlg->m_dPLimitR);
 	DDX_Float(bRead, g_IniFile.m_dNLimitR, pMachineDlg->m_dNLimitR);
 
-    DDX_Float(bRead, g_IniFile.m_dLamHeight[0], pMachineDlg->m_dLamHeight0);
+	DDX_Float(bRead, g_IniFile.m_dLamHeight[0], pMachineDlg->m_dLamHeight0);
 	DDX_Float(bRead, g_IniFile.m_dLamHeight[1], pMachineDlg->m_dLamHeight1);
 	DDX_Float(bRead, g_IniFile.m_dLamStop[0], pMachineDlg->m_dLamStop0);
 	DDX_Float(bRead, g_IniFile.m_dLamStop[1], pMachineDlg->m_dLamStop1);
@@ -1892,20 +1965,20 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dLamThirdTime[0], pMachineDlg->m_dLamThirdTime0);
 	DDX_Float(bRead, g_IniFile.m_dLamThirdTime[1], pMachineDlg->m_dLamThirdTime1);
 
-    DDX_Float(bRead, g_IniFile.m_dPressCalRange, pMachineDlg->m_dPressCalRange);
+	DDX_Float(bRead, g_IniFile.m_dPressCalRange, pMachineDlg->m_dPressCalRange);
 	DDX_Float(bRead, g_IniFile.m_dPressCalTime, pMachineDlg->m_dPressCalTime);
 
-    DDX_Int(bRead, g_IniFile.m_nAutoInterval, pMachineDlg->m_nAutoInterval);
+	DDX_Int(bRead, g_IniFile.m_nAutoInterval, pMachineDlg->m_nAutoInterval);
 	DDX_Float(bRead, g_IniFile.m_dAutoStopRange, pMachineDlg->m_dAutoStopRange);
 
-    DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pMachineDlg->m_dAutoRunTempRange);
+	DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pMachineDlg->m_dAutoRunTempRange);
 	DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pMachineDlg->m_dVacDelayTime);
-    DDX_Float(bRead, g_IniFile.m_dDeVacDelayTime, pMachineDlg->m_dDeVacDelayTime);
+	DDX_Float(bRead, g_IniFile.m_dDeVacDelayTime, pMachineDlg->m_dDeVacDelayTime);
 
-    DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
-    DDX_Int(bRead, g_IniFile.m_nPressCalRecheckTimes, pMachineDlg->m_nPressCalRecheckTimes);
+	DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
+	DDX_Int(bRead, g_IniFile.m_nPressCalRecheckTimes, pMachineDlg->m_nPressCalRecheckTimes);
 
-    while (1)
+	while (1)
 	{
 		if (pMachineDlg->ShowModal() == mrOk)
 		{
@@ -1943,7 +2016,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 	}
 
 	//if (pMachineDlg->ShowModal() == mrOk)
-    if (bRead == false)
+	if (bRead == false)
 	{
 		bRead = false;
 
@@ -1961,17 +2034,17 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dUpperTotalLaserAlarm, pMachineDlg->m_dUpperTotalLaserAlarm);
 		DDX_Float(bRead, g_IniFile.m_dLeftGassLeakylimit, pMachineDlg->m_dLeftGassLeakylimit);
 		DDX_Float(bRead, g_IniFile.m_dRightGassLeakylimit, pMachineDlg->m_dRightGassLeakylimit);
-        DDX_Float(bRead, g_IniFile.m_dLaneTransportDelayTime, pMachineDlg->m_dLaneTransportDelayTime);
-        DDX_Float(bRead, g_IniFile.m_dLamSubDelayTime, pMachineDlg->m_dLamSubDelayTime);
+		DDX_Float(bRead, g_IniFile.m_dLaneTransportDelayTime, pMachineDlg->m_dLaneTransportDelayTime);
+		DDX_Float(bRead, g_IniFile.m_dLamSubDelayTime, pMachineDlg->m_dLamSubDelayTime);
 		DDX_Check(bRead, g_IniFile.m_bForceEject, pMachineDlg->m_bForceEject);
 		DDX_Check(bRead, g_IniFile.m_bIsUseF911, pMachineDlg->m_bIsUseF911);
 		DDX_Check(bRead, g_IniFile.m_bIsUseIL030, pMachineDlg->m_bIsUseIL030);
 		DDX_Check(bRead, g_IniFile.m_bIsUseCIM, pMachineDlg->m_bIsUseCIM);
 		DDX_ComboBox(bRead, g_IniFile.m_nLanguageMode, pMachineDlg->m_cmbLanguage);
-        DDX_Check(bRead, g_IniFile.m_bIsMochineTestMode, pMachineDlg->m_bIsMochineTestMode);
-        DDX_Check(bRead, g_IniFile.m_bIsFullLaserMode, pMachineDlg->m_bIsFullLaserMode);
-        DDX_Check(bRead, g_IniFile.m_bIsUseDBOffset, pMachineDlg->m_bIsUseDBOffset);
-        DDX_Check(bRead, g_IniFile.m_bIsUpdateOffsetTable, pMachineDlg->m_bIsUpdateOffsetTable);
+		DDX_Check(bRead, g_IniFile.m_bIsMochineTestMode, pMachineDlg->m_bIsMochineTestMode);
+		DDX_Check(bRead, g_IniFile.m_bIsFullLaserMode, pMachineDlg->m_bIsFullLaserMode);
+		DDX_Check(bRead, g_IniFile.m_bIsUseDBOffset, pMachineDlg->m_bIsUseDBOffset);
+		DDX_Check(bRead, g_IniFile.m_bIsUpdateOffsetTable, pMachineDlg->m_bIsUpdateOffsetTable);
 
 		DDX_Float(bRead, g_IniFile.m_dLCEntryPos, pMachineDlg->m_dLCEntryPos);
 		DDX_Float(bRead, g_IniFile.m_dLCFrontPos, pMachineDlg->m_dLCFrontPos);
@@ -1982,36 +2055,36 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dPLimitR, pMachineDlg->m_dPLimitR);
 		DDX_Float(bRead, g_IniFile.m_dNLimitR, pMachineDlg->m_dNLimitR);
 
-        DDX_Float(bRead, g_IniFile.m_dLamHeight[0], pMachineDlg->m_dLamHeight0);
-        DDX_Float(bRead, g_IniFile.m_dLamHeight[1], pMachineDlg->m_dLamHeight1);
-	    DDX_Float(bRead, g_IniFile.m_dLamStop[0], pMachineDlg->m_dLamStop0);
-	    DDX_Float(bRead, g_IniFile.m_dLamStop[1], pMachineDlg->m_dLamStop1);
-	    DDX_Float(bRead, g_IniFile.m_dLamGetPos[0], pMachineDlg->m_dLamGetPos0);
-	    DDX_Float(bRead, g_IniFile.m_dLamGetPos[1], pMachineDlg->m_dLamGetPos1);
-	    DDX_Float(bRead, g_IniFile.m_dLamVacHeight[0], pMachineDlg->m_dLamVacHeight0);
-	    DDX_Float(bRead, g_IniFile.m_dLamVacHeight[1], pMachineDlg->m_dLamVacHeight1);
+		DDX_Float(bRead, g_IniFile.m_dLamHeight[0], pMachineDlg->m_dLamHeight0);
+		DDX_Float(bRead, g_IniFile.m_dLamHeight[1], pMachineDlg->m_dLamHeight1);
+		DDX_Float(bRead, g_IniFile.m_dLamStop[0], pMachineDlg->m_dLamStop0);
+		DDX_Float(bRead, g_IniFile.m_dLamStop[1], pMachineDlg->m_dLamStop1);
+		DDX_Float(bRead, g_IniFile.m_dLamGetPos[0], pMachineDlg->m_dLamGetPos0);
+		DDX_Float(bRead, g_IniFile.m_dLamGetPos[1], pMachineDlg->m_dLamGetPos1);
+		DDX_Float(bRead, g_IniFile.m_dLamVacHeight[0], pMachineDlg->m_dLamVacHeight0);
+		DDX_Float(bRead, g_IniFile.m_dLamVacHeight[1], pMachineDlg->m_dLamVacHeight1);
 
-	    DDX_Float(bRead, g_IniFile.m_dLamSecondHeight[0], pMachineDlg->m_dLamSecondHeight0);
-	    DDX_Float(bRead, g_IniFile.m_dLamSecondHeight[1], pMachineDlg->m_dLamSecondHeight1);
-	    DDX_Float(bRead, g_IniFile.m_dLamSecondTime[0], pMachineDlg->m_dLamSecondTime0);
-	    DDX_Float(bRead, g_IniFile.m_dLamSecondTime[1], pMachineDlg->m_dLamSecondTime1);
-	    DDX_Float(bRead, g_IniFile.m_dLamThirdHeight[0], pMachineDlg->m_dLamThirdHeight0);
-	    DDX_Float(bRead, g_IniFile.m_dLamThirdHeight[1], pMachineDlg->m_dLamThirdHeight1);
-	    DDX_Float(bRead, g_IniFile.m_dLamThirdTime[0], pMachineDlg->m_dLamThirdTime0);
-	    DDX_Float(bRead, g_IniFile.m_dLamThirdTime[1], pMachineDlg->m_dLamThirdTime1);
+		DDX_Float(bRead, g_IniFile.m_dLamSecondHeight[0], pMachineDlg->m_dLamSecondHeight0);
+		DDX_Float(bRead, g_IniFile.m_dLamSecondHeight[1], pMachineDlg->m_dLamSecondHeight1);
+		DDX_Float(bRead, g_IniFile.m_dLamSecondTime[0], pMachineDlg->m_dLamSecondTime0);
+		DDX_Float(bRead, g_IniFile.m_dLamSecondTime[1], pMachineDlg->m_dLamSecondTime1);
+		DDX_Float(bRead, g_IniFile.m_dLamThirdHeight[0], pMachineDlg->m_dLamThirdHeight0);
+		DDX_Float(bRead, g_IniFile.m_dLamThirdHeight[1], pMachineDlg->m_dLamThirdHeight1);
+		DDX_Float(bRead, g_IniFile.m_dLamThirdTime[0], pMachineDlg->m_dLamThirdTime0);
+		DDX_Float(bRead, g_IniFile.m_dLamThirdTime[1], pMachineDlg->m_dLamThirdTime1);
 
-        DDX_Float(bRead, g_IniFile.m_dPressCalRange, pMachineDlg->m_dPressCalRange);
-	    DDX_Float(bRead, g_IniFile.m_dPressCalTime, pMachineDlg->m_dPressCalTime);
+		DDX_Float(bRead, g_IniFile.m_dPressCalRange, pMachineDlg->m_dPressCalRange);
+		DDX_Float(bRead, g_IniFile.m_dPressCalTime, pMachineDlg->m_dPressCalTime);
 
-        DDX_Int(bRead, g_IniFile.m_nAutoInterval, pMachineDlg->m_nAutoInterval);
-	    DDX_Float(bRead, g_IniFile.m_dAutoStopRange, pMachineDlg->m_dAutoStopRange);
+		DDX_Int(bRead, g_IniFile.m_nAutoInterval, pMachineDlg->m_nAutoInterval);
+		DDX_Float(bRead, g_IniFile.m_dAutoStopRange, pMachineDlg->m_dAutoStopRange);
 
-        DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pMachineDlg->m_dAutoRunTempRange);
-        DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pMachineDlg->m_dVacDelayTime);
-        DDX_Float(bRead, g_IniFile.m_dDeVacDelayTime, pMachineDlg->m_dDeVacDelayTime);
+		DDX_Float(bRead, g_IniFile.m_dAutoRunTempRange, pMachineDlg->m_dAutoRunTempRange);
+		DDX_Float(bRead, g_IniFile.m_dVacDelayTime, pMachineDlg->m_dVacDelayTime);
+		DDX_Float(bRead, g_IniFile.m_dDeVacDelayTime, pMachineDlg->m_dDeVacDelayTime);
 
-        DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
-        DDX_Int(bRead, g_IniFile.m_nPressCalRecheckTimes, pMachineDlg->m_nPressCalRecheckTimes);
+		DDX_Int(bRead, g_IniFile.m_nDownPercent, pMachineDlg->m_nDownPercent);
+		DDX_Int(bRead, g_IniFile.m_nPressCalRecheckTimes, pMachineDlg->m_nPressCalRecheckTimes);
 
 		g_Motion.SetSoftLimit(4, g_IniFile.m_dPLimitF, g_IniFile.m_dNLimitF);
 		g_Motion.SetSoftLimit(5, g_IniFile.m_dPLimitR, g_IniFile.m_dNLimitR);
@@ -2021,14 +2094,14 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 		//CreateCaptionFileTMainMenu(TfrmMain::MainMenu);
 		ReadCaptionFileTMainMenu(MainMenu, g_IniFile.m_nLanguageMode);
 
-        //Manual mode Bypass m_bIsAutoCalPressOverAllow
-        if (g_IniFile.m_bIsMochineTestMode)
-        {
-            g_pMainThread->m_bIsAutoCalPressOverAllowF = false;
-            g_pMainThread->m_bIsAutoCalPressOverAllowR = false;
-            g_pMainThread->m_bIsAutoCalTimesOver25F = false;
-            g_pMainThread->m_bIsAutoCalTimesOver25R = false;
-        }
+		//Manual mode Bypass m_bIsAutoCalPressOverAllow
+		if (g_IniFile.m_bIsMochineTestMode)
+		{
+			g_pMainThread->m_bIsAutoCalPressOverAllowF = false;
+			g_pMainThread->m_bIsAutoCalPressOverAllowR = false;
+			g_pMainThread->m_bIsAutoCalTimesOver25F = false;
+			g_pMainThread->m_bIsAutoCalTimesOver25R = false;
+		}
 
 		RenewRadioGroup(false);
 		this->Repaint();
@@ -2072,7 +2145,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][2], pWndRecord->m_dLaserUpPosY02);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][3], pWndRecord->m_dLaserUpPosX03);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][3], pWndRecord->m_dLaserUpPosY03);
-    DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][0], pWndRecord->m_dLaserUpPosEndX00);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][0], pWndRecord->m_dLaserUpPosEndX00);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][0], pWndRecord->m_dLaserUpPosEndY00);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][1], pWndRecord->m_dLaserUpPosEndX01);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][1], pWndRecord->m_dLaserUpPosEndY01);
@@ -2083,7 +2156,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[0], pWndRecord->m_dLaserDownPosX0);
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[0], pWndRecord->m_dLaserDownPosY0);
-    DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[0], pWndRecord->m_dLaserDownPosEndX0);
+	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[0], pWndRecord->m_dLaserDownPosEndX0);
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndY[0], pWndRecord->m_dLaserDownPosEndY0);
 
 	DDX_Float(bRead, g_IniFile.m_dLoadCellPosX[1], pWndRecord->m_dLoadCellPosX1);
@@ -2097,7 +2170,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][2], pWndRecord->m_dLaserUpPosY12);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][3], pWndRecord->m_dLaserUpPosX13);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][3], pWndRecord->m_dLaserUpPosY13);
-    DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][0], pWndRecord->m_dLaserUpPosEndX10);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][0], pWndRecord->m_dLaserUpPosEndX10);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][0], pWndRecord->m_dLaserUpPosEndY10);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][1], pWndRecord->m_dLaserUpPosEndX11);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][1], pWndRecord->m_dLaserUpPosEndY11);
@@ -2108,22 +2181,23 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[1], pWndRecord->m_dLaserDownPosX1);
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[1], pWndRecord->m_dLaserDownPosY1);
-    DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[1], pWndRecord->m_dLaserDownPosEndX1);
+	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[1], pWndRecord->m_dLaserDownPosEndX1);
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndY[1], pWndRecord->m_dLaserDownPosEndY1);
 
 	DDX_Radio(bRead, g_IniFile.m_nRailOption, pWndRecord->m_nRailOption);
 	DDX_Check(bRead, g_IniFile.m_bNotLam, pWndRecord->m_bNotLam);
 
-    DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWndRecord->m_cmbBoatType);
+	DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWndRecord->m_cmbBoatType);
 	DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWndRecord->m_cmbHeadType);
 	DDX_String(bRead, g_IniFile.m_strHeadScal, pWndRecord->m_cmbHeadScal, g_IniFile.m_strHeadScals);
 	DDX_String(bRead, g_IniFile.m_strModuleScal, pWndRecord->m_cmbModuleScal, g_IniFile.m_strModuleScals);
+	DDX_ComboBox(bRead, g_IniFile.m_nUseLamCorrectBoard, pWndRecord->m_cmbUseLamCorrectBoard);
 	DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWndRecord->m_cmbVacummOn);
 	DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWndRecord->m_cmbPressCheck);
 	DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWndRecord->m_cmbDummyCheck);
-    g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
-    g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
-    DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWndRecord->m_strModuleNum0);
+	g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
+	g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
+	DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWndRecord->m_strModuleNum0);
 	DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWndRecord->m_strModuleNum1);
 
 	DDX_Float(bRead, g_IniFile.m_dBLT[0], pWndRecord->m_dBLT1);
@@ -2149,17 +2223,18 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWndRecord->m_dKeyTemp12);
 	DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWndRecord->m_dKeyTemp13);
 
-    DDX_Float(bRead, g_IniFile.m_dCoolDownTimeF, pWndRecord->m_dCoolDownTimeF);
-    DDX_Float(bRead, g_IniFile.m_dCoolDownTimeR, pWndRecord->m_dCoolDownTimeR);
+	DDX_Float(bRead, g_IniFile.m_dCoolDownTimeF, pWndRecord->m_dCoolDownTimeF);
+	DDX_Float(bRead, g_IniFile.m_dCoolDownTimeR, pWndRecord->m_dCoolDownTimeR);
 
-    DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWndRecord->m_dLamSecondKeepTime);
+	DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWndRecord->m_dLamSecondKeepTime);
 	DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWndRecord->m_bIsLamSecondStop);
-    DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWndRecord->m_dLamSecondCorrectTimes);
+	DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWndRecord->m_dLamSecondCorrectTimes);
 	DDX_Check(bRead, g_IniFile.m_bIsLamUpDownCorrect, pWndRecord->m_bIsLamUpDownCorrect);
 
-    DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWndRecord->m_dTempOffsetF);
-    DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWndRecord->m_dTempOffsetR);
+	DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWndRecord->m_dTempOffsetF);
+	DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWndRecord->m_dTempOffsetR);
 
+    DDX_Float(bRead, g_IniFile.m_dLamCorrBoardHeight, pWndRecord->m_dLamCorrBoardHeight);
 
 	//---------------------------------------------------------------------------
 	//pWnd ready to show for user
@@ -2186,7 +2261,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][2], pWnd->m_dLaserUpPosY02);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][3], pWnd->m_dLaserUpPosX03);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][3], pWnd->m_dLaserUpPosY03);
-    DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][0], pWnd->m_dLaserUpPosEndX00);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][0], pWnd->m_dLaserUpPosEndX00);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][0], pWnd->m_dLaserUpPosEndY00);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][1], pWnd->m_dLaserUpPosEndX01);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][1], pWnd->m_dLaserUpPosEndY01);
@@ -2197,7 +2272,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[0], pWnd->m_dLaserDownPosX0);
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[0], pWnd->m_dLaserDownPosY0);
-    DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[0], pWnd->m_dLaserDownPosEndX0);
+	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[0], pWnd->m_dLaserDownPosEndX0);
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndY[0], pWnd->m_dLaserDownPosEndY0);
 
 	DDX_Float(bRead, g_IniFile.m_dLoadCellPosX[1], pWnd->m_dLoadCellPosX1);
@@ -2211,7 +2286,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][2], pWnd->m_dLaserUpPosY12);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][3], pWnd->m_dLaserUpPosX13);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][3], pWnd->m_dLaserUpPosY13);
-    DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][0], pWnd->m_dLaserUpPosEndX10);
+	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][0], pWnd->m_dLaserUpPosEndX10);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][0], pWnd->m_dLaserUpPosEndY10);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][1], pWnd->m_dLaserUpPosEndX11);
 	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][1], pWnd->m_dLaserUpPosEndY11);
@@ -2222,22 +2297,23 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[1], pWnd->m_dLaserDownPosX1);
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[1], pWnd->m_dLaserDownPosY1);
-    DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[1], pWnd->m_dLaserDownPosEndX1);
+	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[1], pWnd->m_dLaserDownPosEndX1);
 	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndY[1], pWnd->m_dLaserDownPosEndY1);
 
 	DDX_Radio(bRead, g_IniFile.m_nRailOption, pWnd->m_nRailOption);
 	DDX_Check(bRead, g_IniFile.m_bNotLam, pWnd->m_bNotLam);
 
-    DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWnd->m_cmbBoatType);
+	DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWnd->m_cmbBoatType);
 	DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
 	DDX_String(bRead, g_IniFile.m_strHeadScal, pWnd->m_cmbHeadScal, g_IniFile.m_strHeadScals);
 	DDX_String(bRead, g_IniFile.m_strModuleScal, pWnd->m_cmbModuleScal, g_IniFile.m_strModuleScals);
+	DDX_ComboBox(bRead, g_IniFile.m_nUseLamCorrectBoard, pWnd->m_cmbUseLamCorrectBoard);
 	DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
 	DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
 	DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
-    g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
-    g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
-    DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWnd->m_strModuleNum0);
+	g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
+	g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
+	DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWnd->m_strModuleNum0);
 	DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWnd->m_strModuleNum1);
 
 	DDX_Float(bRead, g_IniFile.m_dBLT[0], pWnd->m_dBLT1);
@@ -2263,16 +2339,18 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWnd->m_dKeyTemp12);
 	DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
 
-    DDX_Float(bRead, g_IniFile.m_dCoolDownTimeF, pWnd->m_dCoolDownTimeF);
-    DDX_Float(bRead, g_IniFile.m_dCoolDownTimeR, pWnd->m_dCoolDownTimeR);
+	DDX_Float(bRead, g_IniFile.m_dCoolDownTimeF, pWnd->m_dCoolDownTimeF);
+	DDX_Float(bRead, g_IniFile.m_dCoolDownTimeR, pWnd->m_dCoolDownTimeR);
 
-    DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWnd->m_dLamSecondKeepTime);
+	DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWnd->m_dLamSecondKeepTime);
 	DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWnd->m_bIsLamSecondStop);
-    DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWnd->m_dLamSecondCorrectTimes);
+	DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWnd->m_dLamSecondCorrectTimes);
 	DDX_Check(bRead, g_IniFile.m_bIsLamUpDownCorrect, pWnd->m_bIsLamUpDownCorrect);
 
-    DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWnd->m_dTempOffsetF);
-    DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWnd->m_dTempOffsetR);
+	DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWnd->m_dTempOffsetF);
+	DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWnd->m_dTempOffsetR);
+
+    DDX_Float(bRead, g_IniFile.m_dLamCorrBoardHeight, pWnd->m_dLamCorrBoardHeight);
 
 	pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
@@ -2282,15 +2360,15 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		pWnd->PageControl1->Pages[1]->Enabled = false;
 	}
 	pWnd->PageControl1->ActivePageIndex = 0;
-    pWnd->m_cmbHeadType->Enabled = false;
-    pWnd->m_cmbHeadScal->Enabled = false;
-    pWnd->m_cmbModuleScal->Enabled = false;
+	pWnd->m_cmbHeadType->Enabled = false;
+	pWnd->m_cmbHeadScal->Enabled = false;
+	pWnd->m_cmbModuleScal->Enabled = false;
 
 	while (1)
 	{
 		if (pWnd->ShowModal() == mrOk)
 		{
-            if (pWnd->m_strSetupEENum->Text == "")
+			if (pWnd->m_strSetupEENum->Text == "")
 			{
 				Application->MessageBoxA("SetupEE 編號不可空白", "Confirm", MB_OK);
 			}
@@ -2306,14 +2384,14 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 			{
 				Application->MessageBoxA("壓合溫度不可以超過0~250", "Confirm", MB_OK);
 			}
-            else if (!g_IniFile.m_bIsMochineTestMode && (pWnd->m_dLamTime0->Text.ToDouble() <= 60 || pWnd->m_dLamTime1->Text.ToDouble() <= 60))
-            {
-                Application->MessageBoxA("壓合時間不可以小於60秒", "Confirm", MB_OK);
-            }
-            else if (pWnd->m_dLamSecondCorrectTimes->Text.ToDouble() < 1)
-            {
-                Application->MessageBoxA("上下修正次數 不可以 < 1", "Confirm", MB_OK);
-            }
+			else if (!g_IniFile.m_bIsMochineTestMode && (pWnd->m_dLamTime0->Text.ToDouble() <= 60 || pWnd->m_dLamTime1->Text.ToDouble() <= 60))
+			{
+				Application->MessageBoxA("壓合時間不可以小於60秒", "Confirm", MB_OK);
+			}
+			else if (pWnd->m_dLamSecondCorrectTimes->Text.ToDouble() < 1)
+			{
+				Application->MessageBoxA("上下修正次數 不可以 < 1", "Confirm", MB_OK);
+			}
 			else
 			{
 				bRead = false;
@@ -2355,7 +2433,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][2], pWnd->m_dLaserUpPosY02);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][3], pWnd->m_dLaserUpPosX03);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][3], pWnd->m_dLaserUpPosY03);
-        DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][0], pWnd->m_dLaserUpPosEndX00);
+		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][0], pWnd->m_dLaserUpPosEndX00);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][0], pWnd->m_dLaserUpPosEndY00);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][1], pWnd->m_dLaserUpPosEndX01);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][1], pWnd->m_dLaserUpPosEndY01);
@@ -2365,7 +2443,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][3], pWnd->m_dLaserUpPosEndY03);
 		DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[0], pWnd->m_dLaserDownPosX0);
 		DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[0], pWnd->m_dLaserDownPosY0);
-        DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[0], pWnd->m_dLaserDownPosEndX0);
+		DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[0], pWnd->m_dLaserDownPosEndX0);
 		DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndY[0], pWnd->m_dLaserDownPosEndY0);
 
 		DDX_Float(bRead, g_IniFile.m_dLoadCellPosX[1], pWnd->m_dLoadCellPosX1);
@@ -2378,7 +2456,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][2], pWnd->m_dLaserUpPosY12);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][3], pWnd->m_dLaserUpPosX13);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][3], pWnd->m_dLaserUpPosY13);
-        DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][0], pWnd->m_dLaserUpPosEndX10);
+		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][0], pWnd->m_dLaserUpPosEndX10);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][0], pWnd->m_dLaserUpPosEndY10);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][1], pWnd->m_dLaserUpPosEndX11);
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][1], pWnd->m_dLaserUpPosEndY11);
@@ -2388,23 +2466,24 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][3], pWnd->m_dLaserUpPosEndY13);
 		DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[1], pWnd->m_dLaserDownPosX1);
 		DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[1], pWnd->m_dLaserDownPosY1);
-        DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[1], pWnd->m_dLaserDownPosEndX1);
+		DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[1], pWnd->m_dLaserDownPosEndX1);
 		DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndY[1], pWnd->m_dLaserDownPosEndY1);
 
 		DDX_Radio(bRead, g_IniFile.m_nRailOption, pWnd->m_nRailOption);
 		DDX_Check(bRead, g_IniFile.m_bNotLam, pWnd->m_bNotLam);
 
-        DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWnd->m_cmbBoatType);
+		DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWnd->m_cmbBoatType);
 		DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWnd->m_cmbHeadType);
 		DDX_String(bRead, g_IniFile.m_strHeadScal, pWnd->m_cmbHeadScal, g_IniFile.m_strHeadScals);
 		DDX_String(bRead, g_IniFile.m_strModuleScal, pWnd->m_cmbModuleScal, g_IniFile.m_strModuleScals);
+		DDX_ComboBox(bRead, g_IniFile.m_nUseLamCorrectBoard, pWnd->m_cmbUseLamCorrectBoard);
 		DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWnd->m_cmbVacummOn);
 		DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWnd->m_cmbPressCheck);
 		DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWnd->m_cmbDummyCheck);
-        DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWnd->m_strModuleNum0);
-        DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWnd->m_strModuleNum1);
-        g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
-        g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
+		DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWnd->m_strModuleNum0);
+		DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWnd->m_strModuleNum1);
+		g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
+		g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
 
 		DDX_Float(bRead, g_IniFile.m_dBLT[0], pWnd->m_dBLT1);
 		DDX_Float(bRead, g_IniFile.m_dBLT[1], pWnd->m_dBLT2);
@@ -2429,42 +2508,44 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWnd->m_dKeyTemp12);
 		DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWnd->m_dKeyTemp13);
 
-        DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
+		DDX_String(bRead, g_IniFile.m_strSetupEENum, pWnd->m_strSetupEENum);
 
-        DDX_Float(bRead, g_IniFile.m_dCoolDownTimeF, pWnd->m_dCoolDownTimeF);
-        DDX_Float(bRead, g_IniFile.m_dCoolDownTimeR, pWnd->m_dCoolDownTimeR);
+		DDX_Float(bRead, g_IniFile.m_dCoolDownTimeF, pWnd->m_dCoolDownTimeF);
+		DDX_Float(bRead, g_IniFile.m_dCoolDownTimeR, pWnd->m_dCoolDownTimeR);
 
-        DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWnd->m_dLamSecondKeepTime);
-        DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWnd->m_bIsLamSecondStop);
-        DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWnd->m_dLamSecondCorrectTimes);
-        DDX_Check(bRead, g_IniFile.m_bIsLamUpDownCorrect, pWnd->m_bIsLamUpDownCorrect);
+		DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWnd->m_dLamSecondKeepTime);
+		DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWnd->m_bIsLamSecondStop);
+		DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWnd->m_dLamSecondCorrectTimes);
+		DDX_Check(bRead, g_IniFile.m_bIsLamUpDownCorrect, pWnd->m_bIsLamUpDownCorrect);
 
-        DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWnd->m_dTempOffsetF);
-        DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWnd->m_dTempOffsetR);
+		DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWnd->m_dTempOffsetF);
+		DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWnd->m_dTempOffsetR);
 
-        //Count MoveLocX, MoveLocY
-        int nColum = 0;
-        int nRow = 0;
-        double dPitchFrontUpX = 0;
-        double dPitchFrontUpY = 0;
-        double dPitchRearUpX = 0;
-        double dPitchRearUpY = 0;
-        double dPitchFrontDownX = 0;
-        double dPitchFrontDownY = 0;
-        double dPitchRearDownX = 0;
-        double dPitchRearDownY = 0;
-        if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
-        if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
-        if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
-        if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
-        if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
-        if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
-        if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
-        if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
-        for (int nX=0; nX<50; nX++)
-        {
-            nColum = nX % 10;
-            nRow = nX / 10;
+        DDX_Float(bRead, g_IniFile.m_dLamCorrBoardHeight, pWnd->m_dLamCorrBoardHeight);
+
+		//Count MoveLocX, MoveLocY
+		int nColum = 0;
+		int nRow = 0;
+		double dPitchFrontUpX = 0;
+		double dPitchFrontUpY = 0;
+		double dPitchRearUpX = 0;
+		double dPitchRearUpY = 0;
+		double dPitchFrontDownX = 0;
+		double dPitchFrontDownY = 0;
+		double dPitchRearDownX = 0;
+		double dPitchRearDownY = 0;
+		if (g_IniFile.m_nCols>1) dPitchFrontUpX = fabs(g_IniFile.m_dLaserUpPosX[1][0] - g_IniFile.m_dLaserUpPosEndX[1][0]) / (g_IniFile.m_nCols - 1);
+		if (g_IniFile.m_nCols>1) dPitchFrontUpY = fabs(g_IniFile.m_dLaserUpPosY[1][0] - g_IniFile.m_dLaserUpPosEndY[1][0]) / (g_IniFile.m_nRows - 1);
+		if (g_IniFile.m_nCols>1) dPitchRearUpX = fabs(g_IniFile.m_dLaserUpPosX[0][0] - g_IniFile.m_dLaserUpPosEndX[0][0]) / (g_IniFile.m_nCols - 1);
+		if (g_IniFile.m_nCols>1) dPitchRearUpY = fabs(g_IniFile.m_dLaserUpPosY[0][0] - g_IniFile.m_dLaserUpPosEndY[0][0]) / (g_IniFile.m_nRows - 1);
+		if (g_IniFile.m_nCols>1) dPitchFrontDownX = fabs(g_IniFile.m_dLaserDownPosX[1] - g_IniFile.m_dLaserDownPosEndX[1]) / (g_IniFile.m_nCols - 1);
+		if (g_IniFile.m_nCols>1) dPitchFrontDownY = fabs(g_IniFile.m_dLaserDownPosY[1] - g_IniFile.m_dLaserDownPosEndY[1]) / (g_IniFile.m_nRows - 1);
+		if (g_IniFile.m_nCols>1) dPitchRearDownX = fabs(g_IniFile.m_dLaserDownPosX[0] - g_IniFile.m_dLaserDownPosEndX[0]) / (g_IniFile.m_nCols - 1);
+		if (g_IniFile.m_nCols>1) dPitchRearDownY = fabs(g_IniFile.m_dLaserDownPosY[0] - g_IniFile.m_dLaserDownPosEndY[0]) / (g_IniFile.m_nRows - 1);
+		for (int nX = 0; nX<50; nX++)
+		{
+			nColum = nX % 10;
+			nRow = nX / 10;
 
 			if (nColum < g_IniFile.m_nCols && nRow < g_IniFile.m_nRows)
 			{
@@ -2481,10 +2562,10 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 				g_pMainThread->m_dRearDownMoveLocX[nX][0] = g_IniFile.m_dLaserDownPosX[0] + nColum*dPitchRearDownX;
 				g_pMainThread->m_dRearDownMoveLocY[nX][0] = g_IniFile.m_dLaserDownPosY[0] - nRow*dPitchRearDownY;
 			}
-        }
+		}
 
-        //Read OffsetTable
-        if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
+		//Read OffsetTable
+		if (g_IniFile.m_bIsUseDBOffset) ImportOffsetFromDB();
 
 		Label22->Caption = g_IniFile.m_dLamTime[0];
 		Label25->Caption = g_IniFile.m_dLamTemp[0];
@@ -2575,14 +2656,14 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
 				delete pChoiceMotorDlg;
 				return;
 			}
-            if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
-                || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
-            {
-                Application->MessageBoxA("請確認 前後上模具護蓋已經卸除!!", "Confirm", MB_OK);
+			if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+				|| (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+			{
+				Application->MessageBoxA("請確認 前後上模具護蓋已經卸除!!", "Confirm", MB_OK);
 				delete pMotorCheckDlg;
 				delete pChoiceMotorDlg;
 				return;
-            }
+			}
 		}
 		if (pChoiceMotorDlg->m_nSelectAxis == 1)
 		{
@@ -2598,13 +2679,13 @@ void __fastcall TfrmMain::MotorTest1Click(TObject *Sender)
 		{
 			pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath + "\\bmp\\down.bmp");
 			pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath + "\\bmp\\up.bmp");
-            if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB))
-            {
-                Application->MessageBoxA("請確認LoadCell是否在安全位置!!", "Confirm", MB_OK);
-                delete pMotorCheckDlg;
+			if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB))
+			{
+				Application->MessageBoxA("請確認LoadCell是否在安全位置!!", "Confirm", MB_OK);
+				delete pMotorCheckDlg;
 				delete pChoiceMotorDlg;
 				return;
-            }
+			}
 		}
 
 		pMotorCheckDlg->m_nActiveAxis = pChoiceMotorDlg->m_nSelectAxis;
@@ -2652,8 +2733,8 @@ void __fastcall TfrmMain::N11Click(TObject *Sender)
 void __fastcall TfrmMain::OP1Click(TObject *Sender)
 {
 	SetPrivilege(0);
-    g_IniFile.m_strLogInENGAccount = "OP";
-    g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
+	g_IniFile.m_strLogInENGAccount = "OP";
+	g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount + " 登入.");
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
@@ -2689,16 +2770,16 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
 				Application->MessageBox("登入成功!!", "認證", MB_OK);
 				g_IniFile.m_strLogInENGAccount = pPwdDlg->editAccount->Text;
 				m_nUserLevel = 1;
-                g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
-                //unlock RestetButton
-                g_pMainThread->m_bIsResetAlarmLocked = false;
+				g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount + " 登入.");
+				//unlock RestetButton
+				g_pMainThread->m_bIsResetAlarmLocked = false;
 				break;
 			}
 		}
 		else
 		{
 			g_IniFile.m_strLogInENGAccount = "OP";
-            g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
+			g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount + " 登入.");
 			m_nUserLevel = 0;
 			break;
 		}
@@ -2752,13 +2833,13 @@ void __fastcall TfrmMain::Admin1Click(TObject *Sender)
 	if (pPwdDlg->ShowModal() == mrOk)
 	{
 		if (pPwdDlg->editOldPassword->Text == g_IniFile.m_strARTPassword)
-        {
-            g_IniFile.m_strLogInENGAccount = "Admin";
-            g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount+" 登入.");
-            //unlock RestetButton
-            g_pMainThread->m_bIsResetAlarmLocked = false;
-            m_nUserLevel = 2;
-        }
+		{
+			g_IniFile.m_strLogInENGAccount = "Admin";
+			g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount + " 登入.");
+			//unlock RestetButton
+			g_pMainThread->m_bIsResetAlarmLocked = false;
+			m_nUserLevel = 2;
+		}
 		else { Application->MessageBox("密碼錯誤!!", "錯誤", MB_OK); m_nUserLevel = 0; }
 	}
 	SetPrivilege(m_nUserLevel);
@@ -2779,6 +2860,22 @@ void __fastcall TfrmMain::N15Click(TObject *Sender)
 	{
 		AnsiString Result = g_AccountLog->updateAccountPass(pAccountManual->Memo1->Text);
 		Application->MessageBox(Result.c_str(), "認證", MB_OK);
+
+        //For Debug
+	    if (g_pMainThread->m_bIsHomeDone)
+	    {
+		    AnsiString strShowThreadIndex = "";
+		    for (int nIndex = 0; nIndex<MAX_PROCESS; nIndex++)
+		    {
+			    strShowThreadIndex += IntToStr(g_pMainThread->nThreadIndex[nIndex]) + ',';
+		    }
+		    for (int nAxis = 0; nAxis<6; nAxis++)
+		    {
+			    strShowThreadIndex += FormatFloat("0.000", g_Motion.GetActualPos(nAxis)) + ',';
+		    }
+
+		    AddList(strShowThreadIndex);
+	    }
 	}
 	delete pAccountManual;
 	delete g_AccountLog;
@@ -2836,8 +2933,8 @@ void __fastcall TfrmMain::PaintBox1Paint(TObject *Sender)
 			else if (g_pMainThread->m_dFrontUpperLaserDiff[nIndex][0] > g_IniFile.m_dUpperLaserAlarm
 				|| g_pMainThread->m_dFrontDownLaserDiff[nIndex][0] > g_IniFile.m_dDownLaserAlarm
 				|| g_pMainThread->m_dFrontUpperTotalLaserDiff[nIndex][0] > g_IniFile.m_dUpperTotalLaserAlarm) PaintBox1->Canvas->Brush->Color = clRed;
-            else if (fabs(g_pMainThread->m_dFrontPressCal[nIndex] - g_IniFile.m_dLamPress[1]) > g_IniFile.m_dAutoStopRange*0.001) PaintBox1->Canvas->Brush->Color = clRed;
-            else if (g_pMainThread->m_arrybDoPressCal[1][nIndex]) PaintBox1->Canvas->Brush->Color = clRed;
+			else if (fabs(g_pMainThread->m_dFrontPressCal[nIndex] - g_IniFile.m_dLamPress[1]) > g_IniFile.m_dAutoStopRange*0.001) PaintBox1->Canvas->Brush->Color = clRed;
+			else if (g_pMainThread->m_arrybDoPressCal[1][nIndex]) PaintBox1->Canvas->Brush->Color = clRed;
 			else PaintBox1->Canvas->Brush->Color = clGreen;
 		}
 		else PaintBox1->Canvas->Brush->Color = clGray;
@@ -2905,8 +3002,8 @@ void __fastcall TfrmMain::PaintBox2Paint(TObject *Sender)
 			else if (g_pMainThread->m_dRearUpperLaserDiff[nIndex][0] > g_IniFile.m_dUpperLaserAlarm
 				|| g_pMainThread->m_dRearDownLaserDiff[nIndex][0] > g_IniFile.m_dDownLaserAlarm
 				|| g_pMainThread->m_dRearUpperTotalLaserDiff[nIndex][0] > g_IniFile.m_dUpperTotalLaserAlarm) PaintBox2->Canvas->Brush->Color = clRed;
-            else if (fabs(g_pMainThread->m_dRearPressCal[nIndex] - g_IniFile.m_dLamPress[0]) > g_IniFile.m_dAutoStopRange*0.001) PaintBox2->Canvas->Brush->Color = clRed;
-            else if (g_pMainThread->m_arrybDoPressCal[0][nIndex]) PaintBox2->Canvas->Brush->Color = clRed;
+			else if (fabs(g_pMainThread->m_dRearPressCal[nIndex] - g_IniFile.m_dLamPress[0]) > g_IniFile.m_dAutoStopRange*0.001) PaintBox2->Canvas->Brush->Color = clRed;
+			else if (g_pMainThread->m_arrybDoPressCal[0][nIndex]) PaintBox2->Canvas->Brush->Color = clRed;
 			else PaintBox2->Canvas->Brush->Color = clGreen;
 		}
 		else PaintBox2->Canvas->Brush->Color = clGray;
@@ -2961,22 +3058,22 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 		g_IniFile.m_nErrorCode = 98;
 		return;
 	}
-    else if (g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[0] + 1)
-    {
-        g_IniFile.m_nErrorCode = 99;
+	else if (g_Motion.GetActualPos(AXIS_RL)> g_IniFile.m_dLamStop[0] + 1)
+	{
+		g_IniFile.m_nErrorCode = 99;
 		return;
-    }
+	}
 	else if (!g_DIO.ReadDIBit(DI::LoadCellDown))
 	{
 		g_IniFile.m_nErrorCode = 10;
 		return;
 	}
-    else if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
-        || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
-    {
-        Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
-        return;
-    }
+	else if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+		|| (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+	{
+		Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
+		return;
+	}
 
 	int nFront = ((TPaintBox *)Sender)->Tag;
 
@@ -3014,48 +3111,48 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 				int nCol = nIndex % 10;
 				int nRow = nIndex / 10;
 
-                switch (radioPosOption->ItemIndex)
-                {
-                    case 1:
-                        if (nCol<g_IniFile.m_nCols && nRow< g_IniFile.m_nRows)
-				        {
-				            g_Motion.AbsMove(AXIS_X, dStartX + nCol*g_IniFile.m_dColPitch);
-					        g_Motion.AbsMove(AXIS_Y, dStartY - nRow*g_IniFile.m_dRowPitch);
-				        }
-                        break;
-                    case 2:
-                        if (nFront)
-                        {
-                            g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dFrontUpperMoveLocX[nIndex][0]);
-                            g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dFrontUpperMoveLocY[nIndex][0]);
-                        }
-                        else
-                        {
-                            g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dRearUpperMoveLocX[nIndex][0]);
-                            g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dRearUpperMoveLocY[nIndex][0]);
-                        }
-                        break;
-                    case 3:
-                        if (nFront)
-                        {
-                            g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dFrontDownMoveLocX[nIndex][0]);
-                            g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dFrontDownMoveLocY[nIndex][0]);
-                        }
-                        else
-                        {
-                            g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dRearDownMoveLocX[nIndex][0]);
-                            g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dRearDownMoveLocY[nIndex][0]);
-                        }
-                        break;
-                }
+				switch (radioPosOption->ItemIndex)
+				{
+				case 1:
+					if (nCol<g_IniFile.m_nCols && nRow< g_IniFile.m_nRows)
+					{
+						g_Motion.AbsMove(AXIS_X, dStartX + nCol*g_IniFile.m_dColPitch);
+						g_Motion.AbsMove(AXIS_Y, dStartY - nRow*g_IniFile.m_dRowPitch);
+					}
+					break;
+				case 2:
+					if (nFront)
+					{
+						g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dFrontUpperMoveLocX[nIndex][0]);
+						g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dFrontUpperMoveLocY[nIndex][0]);
+					}
+					else
+					{
+						g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dRearUpperMoveLocX[nIndex][0]);
+						g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dRearUpperMoveLocY[nIndex][0]);
+					}
+					break;
+				case 3:
+					if (nFront)
+					{
+						g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dFrontDownMoveLocX[nIndex][0]);
+						g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dFrontDownMoveLocY[nIndex][0]);
+					}
+					else
+					{
+						g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dRearDownMoveLocX[nIndex][0]);
+						g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dRearDownMoveLocY[nIndex][0]);
+					}
+					break;
+				}
 
-                /*
+				/*
 				if (nCol<g_IniFile.m_nCols && nRow< g_IniFile.m_nRows)
 				{
-					g_Motion.AbsMove(AXIS_X, dStartX + nCol*g_IniFile.m_dColPitch);
-					g_Motion.AbsMove(AXIS_Y, dStartY - nRow*g_IniFile.m_dRowPitch);
+				g_Motion.AbsMove(AXIS_X, dStartX + nCol*g_IniFile.m_dColPitch);
+				g_Motion.AbsMove(AXIS_Y, dStartY - nRow*g_IniFile.m_dRowPitch);
 				}
-                */
+				*/
 				break;
 			}
 			else if (radioPosOption->ItemIndex == 4)
@@ -3084,106 +3181,106 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 {
 	if (g_pMainThread->m_bIsAutoMode) return;
 	if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
-        || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
-    {
-        Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
-        return;
-    }
+		|| (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+	{
+		Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
+		return;
+	}
 
-    TSpeedButton *pBtn = (TSpeedButton *)Sender;
+	TSpeedButton *pBtn = (TSpeedButton *)Sender;
 
-    //Select if PressCal from 1st location
-    bool bFrom1st = false;
-    AnsiString pString;
-    if (g_IniFile.m_nLanguageMode>0) pString = "PressCal From 1st Location?";
-    else pString = "是否重頭開始校正?";
-    if (g_pMainThread->m_bAutoRetry && pBtn->Down == true)
-    {
-        switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
-        {
-        case IDYES: { bFrom1st = true; pBtn->Down = true; break; }
-        case IDNO: { bFrom1st = false; pBtn->Down = true; break; }
-        case IDCANCEL: { return; break;}
-        }
-    }
-    
+	//Select if PressCal from 1st location
+	bool bFrom1st = false;
+	AnsiString pString;
+	if (g_IniFile.m_nLanguageMode>0) pString = "PressCal From 1st Location?";
+	else pString = "是否重頭開始校正?";
+	if (g_pMainThread->m_bAutoRetry && pBtn->Down == true)
+	{
+		switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
+		{
+		case IDYES: { bFrom1st = true; pBtn->Down = true; break; }
+		case IDNO: { bFrom1st = false; pBtn->Down = true; break; }
+		case IDCANCEL: { return; break; }
+		}
+	}
+
 	checkMonitor->Checked = false;
-    g_pMainThread->m_bIsManualFinish = false;
+	g_pMainThread->m_bIsManualFinish = false;
 
-    //Privilege Set
+	//Privilege Set
 	if (btnStartPressCal0->Down || btnStartPressCal1->Down ||
 		btnLaserUp1->Down || btnLaserUp0->Down ||
 		btnLaserDown1->Down || btnLaserDown0->Down)
 	{
 		MotorTest1->Enabled = false;
-        N10->Enabled = false;
+		N10->Enabled = false;
 	}
 	else SetPrivilege(m_nUserLevel);
 
-    //block function switch within one is running
-    if (pBtn->Down == true)
-    {
-        btnStartPressCal0->Enabled = false;
-        btnLaserUp0 ->Enabled = false;
-        btnLaserDown0->Enabled = false;
-        btnStartPressCal1->Enabled = false;
-        btnLaserUp1->Enabled = false;
-        btnLaserDown1->Enabled = false;
-    }
-    else
-    {
-        btnStartPressCal0->Enabled = true;
-        btnLaserUp0->Enabled = true;
-        btnLaserDown0->Enabled = true;
-        btnStartPressCal1->Enabled = true;
-        btnLaserUp1->Enabled = true;
-        btnLaserDown1->Enabled = true;
-    }
-    pBtn->Enabled = true;
+	//block function switch within one is running
+	if (pBtn->Down == true)
+	{
+		btnStartPressCal0->Enabled = false;
+		btnLaserUp0->Enabled = false;
+		btnLaserDown0->Enabled = false;
+		btnStartPressCal1->Enabled = false;
+		btnLaserUp1->Enabled = false;
+		btnLaserDown1->Enabled = false;
+	}
+	else
+	{
+		btnStartPressCal0->Enabled = true;
+		btnLaserUp0->Enabled = true;
+		btnLaserDown0->Enabled = true;
+		btnStartPressCal1->Enabled = true;
+		btnLaserUp1->Enabled = true;
+		btnLaserDown1->Enabled = true;
+	}
+	pBtn->Enabled = true;
 
-    //if PressCal SetAllDevice
+	//if PressCal SetAllDevice
 	if (g_pMainThread->m_bStartPressCal[0] || g_pMainThread->m_bStartPressCal[1]) SetAllDevice();
 
-    //Protect LoadCell
-	g_DIO.SetDO(DO::LoadCellValve,false);
+	//Protect LoadCell
+	g_DIO.SetDO(DO::LoadCellValve, false);
 
-    //if btn down 
+	//if btn down 
 	if (checkRestartCal->Checked && pBtn->Down)
 	{
-	    g_pMainThread->m_nPressCalMoveIndex[0] = -1;
-	    g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
+		g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+		g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
 
-	    g_pMainThread->m_nPressCalMoveIndex[1] = -1;
-	    g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
+		g_pMainThread->m_nPressCalMoveIndex[1] = -1;
+		g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
 
 		if (checkAutoRetry->Checked && cmbRange->ItemIndex == 0 && cmbFirstLoc->ItemIndex == 0 && (pBtn->Tag == 0 || pBtn->Tag == 3))
 		{
-            //Not Reset
-            if (bFrom1st)
-            {
-			    if (btnStartPressCal1->Down) {for (int nI = 0; nI<50; nI++) { g_pMainThread->m_arrybDoPressCal[1][nI] = true; }}
-                if (btnStartPressCal0->Down) {for (int nI = 0; nI<50; nI++) { g_pMainThread->m_arrybDoPressCal[0][nI] = true; }}
-            }
+			//Not Reset
+			if (bFrom1st)
+			{
+				if (btnStartPressCal1->Down) { for (int nI = 0; nI<50; nI++) { g_pMainThread->m_arrybDoPressCal[1][nI] = true; } }
+				if (btnStartPressCal0->Down) { for (int nI = 0; nI<50; nI++) { g_pMainThread->m_arrybDoPressCal[0][nI] = true; } }
+			}
 		}
-    }
-    if (cmbRange->ItemIndex==1)
-    {
-        g_pMainThread->m_nPressCalMoveIndex[0] = -1;
-	    g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
+	}
+	if (cmbRange->ItemIndex == 1)
+	{
+		g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+		g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
 
-	    g_pMainThread->m_nPressCalMoveIndex[1] = -1;
-	    g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
+		g_pMainThread->m_nPressCalMoveIndex[1] = -1;
+		g_pMainThread->m_nLaserCalMoveIndex[1] = -1;
 
-        //start the btn also update the value of cmb
-        g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
-        g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
-        g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
-    }
-    // update AutoRetry
-    g_pMainThread->m_bAutoRetry = checkAutoRetry->Checked;
+		//start the btn also update the value of cmb
+		g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
+		g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
+		g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
+	}
+	// update AutoRetry
+	g_pMainThread->m_bAutoRetry = checkAutoRetry->Checked;
 
 
-    g_pMainThread->m_bStartPressCal[0] = btnStartPressCal0->Down;
+	g_pMainThread->m_bStartPressCal[0] = btnStartPressCal0->Down;
 	g_pMainThread->m_bStartPressCal[1] = btnStartPressCal1->Down;
 	g_pMainThread->m_bStartLaserUpCal[1] = btnLaserUp1->Down;
 	g_pMainThread->m_bStartLaserUpCal[0] = btnLaserUp0->Down;
@@ -3228,11 +3325,11 @@ void __fastcall TfrmMain::btnHomingClick(TObject *Sender)
 		}
 	}
 
-    //------------------------------------------------------------------------------------------------------------------------
-    //For Test
+	//------------------------------------------------------------------------------------------------------------------------
+	//For Test
 
 
-    //g_pMainThread->m_bIsWriteOffsetToDB_F = true;
+	//g_pMainThread->m_bIsWriteOffsetToDB_F = true;
 
 
 }
@@ -3305,73 +3402,73 @@ void __fastcall TfrmMain::btnStartMotor1Click(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnClearEject0Click(TObject *Sender)
 {
-    if (Application->MessageBoxA("確定手動排除 後排除流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
-    if (g_DIO.ReadDIBit(DI::EjectEntry2) || g_DIO.ReadDIBit(DI::EjectInp2) || g_DIO.ReadDIBit(DI::EjectExit2))
-    {
-        g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
-        return;
-    }
-    g_pMainThread->nThreadIndex[5] = 0;
-    g_DIO.SetDO(DO::ReadyOutR, false);
-    g_DIO.SetDO(DO::EjectMotorStart2, false);
-    g_DIO.SetDO(DO::EjectStop2, true);
+	if (Application->MessageBoxA("確定手動排除 後排除流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+	if (g_DIO.ReadDIBit(DI::EjectEntry2) || g_DIO.ReadDIBit(DI::EjectInp2) || g_DIO.ReadDIBit(DI::EjectExit2))
+	{
+		g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
+		return;
+	}
+	g_pMainThread->nThreadIndex[5] = 0;
+	g_DIO.SetDO(DO::ReadyOutR, false);
+	g_DIO.SetDO(DO::EjectMotorStart2, false);
+	g_DIO.SetDO(DO::EjectStop2, true);
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnClearEject1Click(TObject *Sender)
 {
-    if (Application->MessageBoxA("確定手動排除 前排除流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
-    if (g_DIO.ReadDIBit(DI::EjectEntry1) || g_DIO.ReadDIBit(DI::EjectInp1) || g_DIO.ReadDIBit(DI::EjectExit1))
-    {
-        g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
-        return;
-    }
-    g_pMainThread->nThreadIndex[4] = 0;
-    g_DIO.SetDO(DO::ReadyOutF, false);
-    g_DIO.SetDO(DO::EjectMotorStart1, false);
-    g_DIO.SetDO(DO::EjectStop1, true);
+	if (Application->MessageBoxA("確定手動排除 前排除流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+	if (g_DIO.ReadDIBit(DI::EjectEntry1) || g_DIO.ReadDIBit(DI::EjectInp1) || g_DIO.ReadDIBit(DI::EjectExit1))
+	{
+		g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
+		return;
+	}
+	g_pMainThread->nThreadIndex[4] = 0;
+	g_DIO.SetDO(DO::ReadyOutF, false);
+	g_DIO.SetDO(DO::EjectMotorStart1, false);
+	g_DIO.SetDO(DO::EjectStop1, true);
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnClearLCClick(TObject *Sender)
 {
-    if (Application->MessageBoxA("確定手動排除 LC流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
-    if (g_DIO.ReadDIBit(DI::LCInp) || g_DIO.ReadDIBit(DI::LamEntry2) || g_DIO.ReadDIBit(DI::LamEntry1))
-    {
-        g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
-        return;
-    }
-    g_pMainThread->nThreadIndex[1] = 0;
-    g_DIO.SetDO(DO::LCMotorStart, false);
-    g_DIO.SetDO(DO::LCStop, true);
+	if (Application->MessageBoxA("確定手動排除 LC流道?", "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+	if (g_DIO.ReadDIBit(DI::LCInp) || g_DIO.ReadDIBit(DI::LamEntry2) || g_DIO.ReadDIBit(DI::LamEntry1))
+	{
+		g_pMainThread->m_listLog.push_back("請確實排除流道上的 Boat");
+		return;
+	}
+	g_pMainThread->nThreadIndex[1] = 0;
+	g_DIO.SetDO(DO::LCMotorStart, false);
+	g_DIO.SetDO(DO::LCStop, true);
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
 {
-    if (g_pMainThread->m_bIsAutoMode) return;
-    if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
-        || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
-    {
-        Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
-        return;
-    }
+	if (g_pMainThread->m_bIsAutoMode) return;
+	if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+		|| (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+	{
+		Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
+		return;
+	}
 
 	C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
 
-    TSpeedButton *pBtn = (TSpeedButton *)Sender;
-    bool bIsStart = pBtn->Down;
+	TSpeedButton *pBtn = (TSpeedButton *)Sender;
+	bool bIsStart = pBtn->Down;
 
-    bool bIsContinue = false;
-    if (bIsStart)                   //Strat
-    {
+	bool bIsContinue = false;
+	if (bIsStart)                   //Strat
+	{
 		AnsiString pString;
 		if (g_IniFile.m_nLanguageMode>0) pString = "OneStepCal Restrat?";
 		else pString = "一鍵量測校正 是否重新開始?";
 		switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
 		{
-		    case IDYES: { bIsContinue = false; break; }
-		    case IDNO: { bIsContinue = true; break; }
-		    case IDCANCEL: { return; }
+		case IDYES: { bIsContinue = false; break; }
+		case IDNO: { bIsContinue = true; break; }
+		case IDCANCEL: { return; }
 		}
-    }
+	}
 	else						//Stop
 	{
 		g_pMainThread->m_bStartPressCal[0] = false;
@@ -3381,7 +3478,7 @@ void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
 		g_pMainThread->m_bStartLaserDownCal[1] = false;
 		g_pMainThread->m_bStartLaserDownCal[0] = false;
 
-        g_pMainThread->m_bStartOneStepCal = false;
+		g_pMainThread->m_bStartOneStepCal = false;
 	}
 
 
@@ -3389,9 +3486,9 @@ void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
 
 	g_DIO.SetDO(DO::LoadCellValve, false);
 
-    if (bIsStart && bIsContinue)
-    {
-        g_pMainThread->m_nPressCalMoveIndex[0] = -1;
+	if (bIsStart && bIsContinue)
+	{
+		g_pMainThread->m_nPressCalMoveIndex[0] = -1;
 		g_pMainThread->m_nLaserCalMoveIndex[0] = -1;
 
 		g_pMainThread->m_nPressCalMoveIndex[1] = -1;
@@ -3401,8 +3498,8 @@ void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
 		g_pMainThread->m_nManualRange = cmbRange->ItemIndex;
 		g_pMainThread->m_nManualFirstLoc = cmbFirstLoc->ItemIndex;
 		g_pMainThread->m_nManualTimes = cmbTimes->Text.ToInt();
-    }
-    else if (bIsStart && !bIsContinue)
+	}
+	else if (bIsStart && !bIsContinue)
 	{
 		g_pMainThread->nThreadIndex[6] = 0;
 		g_pMainThread->nThreadIndex[7] = 0;
@@ -3437,54 +3534,44 @@ void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
 
 	}
 
-    g_pMainThread->m_bStartOneStepCal = bIsStart;
-    btnStartOneStepPressCal->Down = bIsStart;
+	g_pMainThread->m_bStartOneStepCal = bIsStart;
+	btnStartOneStepPressCal->Down = bIsStart;
 
 
-    if (btnStartOneStepPressCal->Down)
+	if (btnStartOneStepPressCal->Down)
 	{
 		MotorTest1->Enabled = false;
-        N10->Enabled = false;
+		N10->Enabled = false;
 	}
 	else  SetPrivilege(m_nUserLevel);
 
-    //block function switch within one is running
-    if (bIsStart)
-    {
-        btnStartPressCal0->Enabled = false;
-        btnLaserUp0 ->Enabled = false;
-        btnLaserDown0->Enabled = false;
-        btnStartPressCal1->Enabled = false;
-        btnLaserUp1->Enabled = false;
-        btnLaserDown1->Enabled = false;
+	//block function switch within one is running
+	if (bIsStart)
+	{
+		btnStartPressCal0->Enabled = false;
+		btnLaserUp0->Enabled = false;
+		btnLaserDown0->Enabled = false;
+		btnStartPressCal1->Enabled = false;
+		btnLaserUp1->Enabled = false;
+		btnLaserDown1->Enabled = false;
 		btnStartOneStepPressCal->Enabled = false;
-    }
-    else
-    {
-        btnStartPressCal0->Enabled = true;
-        btnLaserUp0->Enabled = true;
-        btnLaserDown0->Enabled = true;
-        btnStartPressCal1->Enabled = true;
-        btnLaserUp1->Enabled = true;
-        btnLaserDown1->Enabled = true;
+	}
+	else
+	{
+		btnStartPressCal0->Enabled = true;
+		btnLaserUp0->Enabled = true;
+		btnLaserDown0->Enabled = true;
+		btnStartPressCal1->Enabled = true;
+		btnLaserUp1->Enabled = true;
+		btnLaserDown1->Enabled = true;
 		btnStartOneStepPressCal->Enabled = true;
-    }
-    pBtn->Enabled = true;
+	}
+	pBtn->Enabled = true;
 
 }
 //---------------------------------------------------------------------------
 
 #pragma endregion
-
-
-
-
-
-
-
-
-
-
 
 
 

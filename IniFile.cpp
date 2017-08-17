@@ -232,6 +232,7 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nHeadType",m_nHeadType,0);
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strHeadScal",m_strHeadScal,0);
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strModuleScal",m_strModuleScal,0);
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nUseLamCorrectBoard",m_nUseLamCorrectBoard,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nVacummOn",m_nVacummOn,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nPressCheck",m_nPressCheck,0);
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nDummyCheck",m_nDummyCheck,0);
@@ -272,6 +273,8 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTempOffsetF",m_dTempOffsetF,0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTempOffsetR",m_dTempOffsetR,0.0);
+
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamCorrBoardHeight",m_dLamCorrBoardHeight,0.0);
 
   delete pIniFile;
 }
