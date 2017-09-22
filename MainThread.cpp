@@ -104,6 +104,10 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
     m_bIsNeedReLoadProductParam = false;
     m_bIsWriteOffsetToDB_F = false;
     m_bIsWriteOffsetToDB_R = false;
+	m_bIsCheckParamModuleNum = false;
+	m_bIsCheckParamModuleNumF_OK = false;
+	m_bIsCheckParamModuleNumR_OK = false;
+    m_bIsStopCheckParamModuleNum = false;
 
 	m_bIsAutoCalPressOverAllowF = true;
 	m_bIsAutoCalPressOverAllowR = true;
@@ -133,6 +137,9 @@ void __fastcall CMainThread::Execute()
 
     tmAgain.timeStart(800);
 	g_bStopMainThread = false;
+
+	bool bPreAuto = false;
+	bool bPreAutoFinish = false;
 
 	bool bLastStart = false;
 	bool bLastReset = false;
@@ -198,6 +205,7 @@ void __fastcall CMainThread::Execute()
                         m_bInitalAgain = false;
 						nThreadIndex[0] = 0;
                     }
+                    if (g_IniFile.m_nErrorCode != 0) m_bIsHomingFromBtn = false;
 				}
 				else if (m_nIsFullHoming == 0)
 				{
@@ -261,6 +269,8 @@ void __fastcall CMainThread::Execute()
                     m_nPassBoatCount0 = 0;
                     m_nPassBoatCount1 = 0;
 
+                    m_bIsAutoCalLocked = false;
+
                     g_pMainThread->m_dLamTimer[0] = 0.0;
                     g_pMainThread->m_dLamTimer[1] = 0.0;
 				}
@@ -276,6 +286,8 @@ void __fastcall CMainThread::Execute()
 		if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)
 		{
 			bStartMachineInit = false;
+            bPreAuto = false;
+            m_nIsFullHoming = -1;
 			m_bIsAutoMode = false;
             m_bInitalAgain = true;
 
@@ -301,8 +313,8 @@ void __fastcall CMainThread::Execute()
 			g_Motion.Stop(1);
 			g_Motion.Stop(2);
 			g_Motion.Stop(3);
-			if (g_IniFile.m_nErrorCode == 35) g_Motion.Stop(4);
-			if (g_IniFile.m_nErrorCode == 35) g_Motion.Stop(5);
+			if (g_IniFile.m_nErrorCode == 35 || g_IniFile.m_nErrorCode == 904) g_Motion.Stop(4);
+			if (g_IniFile.m_nErrorCode == 35 || g_IniFile.m_nErrorCode == 905) g_Motion.Stop(5);
 			g_Motion.Stop(6);
 			g_Motion.Stop(7);
 
@@ -312,6 +324,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::EjectMotorStart1, false);
 			g_DIO.SetDO(DO::EjectMotorStart2, false);
             g_DIO.SetDO(DO::ReadyIn1, false);
+			g_DIO.SetDO(DO::LoadCellValve, false);		//20170908 self protect
 
 			nThreadIndex[6] = 0;	//insure DoPressCal() start from Index = 0;
 			nThreadIndex[7] = 0;	//insure DoPressCal() start from Index = 0;
@@ -379,6 +392,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::EjectMotorStart1, false);
 			g_DIO.SetDO(DO::EjectMotorStart2, false);
             g_DIO.SetDO(DO::ReadyIn1, false);
+			g_DIO.SetDO(DO::LoadCellValve, false);		//20170908 self protect
             if (m_bStopAgain == true)
             {
                 m_listLog.push_back("機台停止");
@@ -418,7 +432,6 @@ void __fastcall CMainThread::Execute()
 
 				bStartMachineInit = false;
                 m_bInitalAgain = true;
-				m_nIsFullHoming = -1;
 
                 g_Motion.SetSoftLimit(0, 293.0, -1.99);
                 g_Motion.SetSoftLimit(1, 584.0, -8.0);
@@ -516,85 +529,23 @@ void __fastcall CMainThread::Execute()
                 if (m_bIsStartProcessbyDIO == true) m_ActionLog.push_back(AddTimeString("[Execute]由DIO啟動"));
                 else if (m_bIsStartProcessbyCIM == true) m_ActionLog.push_back(AddTimeString("[Execute]由CIM啟動"));
 
-                //Check Product Param ModuleNum
-                if (g_IniFile.m_nRailOption == 0 && (g_IniFile.m_strModuleNum[1] == "" || g_IniFile.m_strModuleNum[0] == "")) g_IniFile.m_nErrorCode = 26;
-                else if (g_IniFile.m_nRailOption == 1 && g_IniFile.m_strModuleNum[1] == "") g_IniFile.m_nErrorCode = 26;
-                else if (g_IniFile.m_nRailOption == 2 && g_IniFile.m_strModuleNum[0] == "") g_IniFile.m_nErrorCode = 26;
-
-                //Check LoadCell Safe
-                if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 70;
-                if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;
-
-				//Check LC no Function
-                if (m_bStopLC == true && g_IniFile.m_nRailOption == 0
-                    && !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
-                    && !g_DIO.ReadDIBit(DI::EjectInp1) && !g_DIO.ReadDIBit(DI::EjectEntry1) && !g_DIO.ReadDIBit(DI::EjectExit1)
-                    && !g_DIO.ReadDIBit(DI::LamInp2) && !g_DIO.ReadDIBit(DI::LamEntry2) && !g_DIO.ReadDIBit(DI::LamWarp2)
-                    && !g_DIO.ReadDIBit(DI::EjectInp2) && !g_DIO.ReadDIBit(DI::EjectEntry2) && !g_DIO.ReadDIBit(DI::EjectExit2))
-                {
-                    g_IniFile.m_nErrorCode = 23;
-                }
-                else if (m_bStopLC == true && g_IniFile.m_nRailOption == 1
-                        && !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
-                        && !g_DIO.ReadDIBit(DI::EjectInp1) && !g_DIO.ReadDIBit(DI::EjectEntry1) && !g_DIO.ReadDIBit(DI::EjectExit1))
-                {
-                    g_IniFile.m_nErrorCode = 23;
-                }
-                else if (m_bStopLC == true && g_IniFile.m_nRailOption == 2
-                        && !g_DIO.ReadDIBit(DI::LamInp2) && !g_DIO.ReadDIBit(DI::LamEntry2) && !g_DIO.ReadDIBit(DI::LamWarp2)
-                        && !g_DIO.ReadDIBit(DI::EjectInp2) && !g_DIO.ReadDIBit(DI::EjectEntry2) && !g_DIO.ReadDIBit(DI::EjectExit2))
-                {
-                    g_IniFile.m_nErrorCode = 23;
-                }
-
-                //Check LamCorrectBoard
-				if (g_IniFile.m_nUseLamCorrectBoard)
-				{
-					if (g_IniFile.m_nRailOption == 0)
-					{
-						if (!g_DIO.ReadDIBit(DI::LamCorrectionExist1)) g_IniFile.m_nErrorCode = 102;
-						if (!g_DIO.ReadDIBit(DI::LamCorrectionExist2)) g_IniFile.m_nErrorCode = 103;
-					}
-					else if (g_IniFile.m_nRailOption == 1) { if (!g_DIO.ReadDIBit(DI::LamCorrectionExist1)) g_IniFile.m_nErrorCode = 102; }
-					else if (g_IniFile.m_nRailOption == 2) { if (!g_DIO.ReadDIBit(DI::LamCorrectionExist2)) g_IniFile.m_nErrorCode = 103; }
-				}
-                else
-                {
-                    if (g_IniFile.m_nRailOption == 0)
-					{
-						if (g_DIO.ReadDIBit(DI::LamCorrectionExist1)) g_IniFile.m_nErrorCode = 104;
-						if (g_DIO.ReadDIBit(DI::LamCorrectionExist2)) g_IniFile.m_nErrorCode = 105;
-					}
-					else if (g_IniFile.m_nRailOption == 1) { if (g_DIO.ReadDIBit(DI::LamCorrectionExist1)) g_IniFile.m_nErrorCode = 104; }
-					else if (g_IniFile.m_nRailOption == 2) { if (g_DIO.ReadDIBit(DI::LamCorrectionExist2)) g_IniFile.m_nErrorCode = 105; }
-                }
-
-				//Check Press Check Tag (m_bIsAutoCalPressOverAllow F&R)
-				if (!g_IniFile.m_bNotLam && (m_bIsAutoCalPressOverAllowF == true || m_bIsAutoCalPressOverAllowR == true))
-				{
-					if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && m_bIsAutoCalPressOverAllowF == true) g_IniFile.m_nErrorCode = 24;
-					else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bIsAutoCalPressOverAllowR == true) g_IniFile.m_nErrorCode = 25;
-				}
-
-                //Check UpperMoldCheck //20170309 When Start Not Check this
-                /*
-                if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
-                    || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
-                {
-                    g_IniFile.m_nErrorCode = 30;
-                }*/
-
                 //nThreadIndex[1]=0;       //some thread need to start from zero
-                m_bIsAutoMode = true;
+                //m_bIsAutoMode = true;
+				nThreadIndex[19] = 0;
+				bPreAutoFinish = false;
+				bPreAuto = true;
 
                 //m_nPassBoatCount0 = m_nPassBoatStart;                           //If auto 從0開始
                 //m_nPassBoatCount1 = m_nPassBoatStart;
-                m_nPassBoatCount0 = 0;
-                m_nPassBoatCount1 = 0;
+                //m_nPassBoatCount0 = 0;                                            //20170914 CHC: Not Rest
+                //m_nPassBoatCount1 = 0;
 
                 //g_Motion.AbsMove(AXIS_X,g_Motion.m_dLastTargetPos[AXIS_X]);
                 //g_Motion.AbsMove(AXIS_Y,g_Motion.m_dLastTargetPos[AXIS_Y]);
-                g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
+				if (!g_Motion.IsPosDone(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]))	//20170906 若已在上次位置上就不需要 PerAuto移動
+				{
+					if (CheckSafeAbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC])) g_Motion.AbsMove(AXIS_LC, g_Motion.m_dLastTargetPos[AXIS_LC]);
+				}
                 //g_Motion.AbsMove(AXIS_FL, g_Motion.m_dLastTargetPos[AXIS_FL]);   //20160722 Need Test for Safe Protect//由手動轉自動過程禁止FL,RL軸回到之前的位置 (這樣會再壓一次)
                 //g_Motion.AbsMove(AXIS_RL, g_Motion.m_dLastTargetPos[AXIS_RL]);
                 ::Sleep(300);
@@ -608,6 +559,20 @@ void __fastcall CMainThread::Execute()
 
 				m_bIsStartProcessbyCIM = false;
 				m_bIsStartProcessbyDIO = false;
+			}
+
+			if (bPreAuto)
+			{
+				g_DIO.SetDO(DO::StopBtnLamp, true);
+				g_DIO.SetDO(DO::StartBtnLamp, true);
+				g_DIO.SetDO(DO::GreenLamp, true);
+				g_DIO.SetDO(DO::YellowLamp, false);
+				g_DIO.SetDO(DO::RedLamp, false);
+
+				if (!bPreAutoFinish) bPreAutoFinish = doPreAuto(nThreadIndex[19]);
+
+				if (bPreAutoFinish) m_bIsAutoMode = true;
+				bPreAuto = !m_bIsAutoMode;
 			}
 
             //if (m_bStartPressCal[1] || m_bStartPressCal[0] || m_bStartLaserUpCal[1] || m_bStartLaserUpCal[0] || m_bStartLaserDownCal[1] || m_bStartLaserDownCal[0] || m_bStartOneStepCal) CheckAlarm();
@@ -849,7 +814,10 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 			g_Motion.m_dLastTargetPos[7] = 0.0;
 
 			// to default position
-			g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+			if (CheckSafeAbsMove(AXIS_Y, g_IniFile.m_dSafePos))
+			{
+				g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+			}
 
 			nThreadIndex++;
 		}
@@ -994,6 +962,118 @@ AnsiString CMainThread::AddTimeString(bool bFront,AnsiString Input)
     return strDateTime;
 }
 //---------------------------------------------------------------------------
+bool __fastcall CMainThread::CheckSafeAbsMove(unsigned short nAxis, double dMoveTo)
+{
+	bool bCheckOK = false;
+
+	if (!m_bIsHomeDone) return true;
+	if (g_IniFile.m_bIsMochineTestMode) return true;
+
+	if (nAxis == AXIS_X)
+	{
+		if (!g_DIO.ReadDIBit(DI::LoadCellDown)) { g_IniFile.m_nErrorCode = 901; m_listLog.push_back("安全機制: LoadCell沒有在下位"); }
+		else bCheckOK = true;
+	}
+	else if (nAxis == AXIS_Y)
+	{
+		if (!g_DIO.ReadDIBit(DI::LoadCellDown)) { g_IniFile.m_nErrorCode = 902; m_listLog.push_back("安全機制: LoadCell沒有在下位"); }
+		else if ((!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) && g_Motion.GetActualPos(AXIS_Y) > g_IniFile.m_dSafePos)	//In Front Area
+		{
+			if ((dMoveTo > g_IniFile.m_dSafePos) || (dMoveTo == g_IniFile.m_dSafePos))																	//To Front Area and To Safe Pos
+			{
+				if (g_Motion.GetActualPos(AXIS_FL) > g_IniFile.m_dLamStop[1] + 1)
+				{
+					g_IniFile.m_nErrorCode = 902;
+					m_listLog.push_back("安全機制: FL 高度 > 前壓合流道接片高度");
+				}
+				else bCheckOK = true;
+			}
+			else if (dMoveTo < g_IniFile.m_dSafePos)																									//Cross Over Safe Pos
+			{
+				if ((g_Motion.GetActualPos(AXIS_FL) > g_IniFile.m_dLamStop[1] + 1) || (g_Motion.GetActualPos(AXIS_RL) > g_IniFile.m_dLamStop[0] + 1))
+				{
+					g_IniFile.m_nErrorCode = 902;
+					m_listLog.push_back("安全機制: FL 高度 > 前壓合流道接片高度 Or RL 高度 > 後壓合流道接片高度");
+				}
+				else bCheckOK = true;
+			}
+		}
+		else if ((!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) && g_Motion.GetActualPos(AXIS_Y) < g_IniFile.m_dSafePos)	//In Rear Area
+		{
+			if (dMoveTo > g_IniFile.m_dSafePos)																											//Cross Over Safe Pos
+			{
+				if ((g_Motion.GetActualPos(AXIS_FL) > g_IniFile.m_dLamStop[1] + 1) || (g_Motion.GetActualPos(AXIS_RL) > g_IniFile.m_dLamStop[0] + 1))
+				{
+					g_IniFile.m_nErrorCode = 902;
+					m_listLog.push_back("安全機制: FL 高度 > 前壓合流道接片高度 Or RL 高度 > 後壓合流道接片高度");
+				}
+				else bCheckOK = true;
+			}
+			else if ((dMoveTo < g_IniFile.m_dSafePos) || (dMoveTo == g_IniFile.m_dSafePos))																//To Rear Area and To Safe Pos
+			{
+				if (g_Motion.GetActualPos(AXIS_RL) > g_IniFile.m_dLamStop[0] + 1)
+				{
+					g_IniFile.m_nErrorCode = 902;
+					m_listLog.push_back("安全機制: RL 高度 > 後壓合流道接片高度");
+				}
+				else bCheckOK = true;
+			}
+		}
+		else if (g_DIO.ReadDIBit(DI::YAxisSafePosA) && g_DIO.ReadDIBit(DI::YAxisSafePosB)) bCheckOK = true;												//At Safe Pos
+	}
+	else if (nAxis == AXIS_LC)
+	{
+		if (g_DIO.ReadDIBit(DI::LCEntry) || g_DIO.ReadDIBit(DI::LamEntry1) || g_DIO.ReadDIBit(DI::LamEntry2))
+		{
+			g_IniFile.m_nErrorCode = 903;
+			m_listLog.push_back("安全機制: LC 即將夾料");
+		}
+		else bCheckOK = true;
+	}
+	else if (nAxis == AXIS_FL)
+	{
+		if (g_DIO.ReadDIBit(DI::LamEntry1) || g_DIO.ReadDIBit(DI::EjectEntry1))
+        {
+            m_bStartLamSub[1] = false;
+            g_IniFile.m_nErrorCode = 904;
+            m_listLog.push_back("安全機制: FL 即將夾料. (壓合流程已被鎖定)");
+        }
+		else if ((!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) && g_Motion.GetActualPos(AXIS_Y) > g_IniFile.m_dSafePos)
+		{
+            if (dMoveTo > g_IniFile.m_dLamStop[1] + 1)
+            {
+                m_bStartLamSub[1] = false;
+			    g_IniFile.m_nErrorCode = 904;
+			    m_listLog.push_back("安全機制: Y軸 在前壓合撞擊 區間, (壓合流程已被鎖定)");
+            }
+            else bCheckOK = true;
+		}
+		else bCheckOK = true;
+	}
+	else if (nAxis == AXIS_RL)
+	{
+		if (g_DIO.ReadDIBit(DI::LamEntry2) || g_DIO.ReadDIBit(DI::EjectEntry2))
+        {
+            m_bStartLamSub[0] = false;
+            g_IniFile.m_nErrorCode = 905;
+            m_listLog.push_back("安全機制: RL 即將夾料, (壓合流程已被鎖定)");
+        }
+		else if ((!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) && g_Motion.GetActualPos(AXIS_Y) < g_IniFile.m_dSafePos)
+		{
+            if (dMoveTo > g_IniFile.m_dLamStop[0] + 1)
+            {
+                m_bStartLamSub[0] = false;
+			    g_IniFile.m_nErrorCode = 905;
+			    m_listLog.push_back("安全機制: Y軸 在後壓合撞擊 區間, (壓合流程已被鎖定)");
+            }
+            else bCheckOK = true;
+		}
+		else bCheckOK = true;
+	}
+
+	return bCheckOK;
+}
+//---------------------------------------------------------------------------
 
 //AutoMode+Manual
 void __fastcall CMainThread::SetWorkSpeed()
@@ -1009,6 +1089,155 @@ void __fastcall CMainThread::SetManualSpeed()
 {
 	for (int nIndex = 0; nIndex<8; nIndex++)
 		g_Motion.SetSpeed(nIndex, g_IniFile.m_dACCSpeed[nIndex], g_IniFile.m_dDECSpeed[nIndex], g_IniFile.m_dJogSpeed[nIndex]);
+}
+//---------------------------------------------------------------------------
+
+//PerAuto
+//---------------------------------------------------------------------------
+bool __fastcall CMainThread::doPreAuto(int &nThreadIndex)
+{
+	static C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
+    static C_GetTime tm2MS(EX_SCALE::TIME_1MS, false);
+
+	const int nTagCheck = 1000;
+	const int nTagWork = 2000;
+	const int nTagFinished = 3000;
+
+	switch (nThreadIndex)
+	{
+	case 0:
+	case nTagCheck:nThreadIndex = 0;
+		//Check Product Param ModuleNum
+		if (g_IniFile.m_nRailOption == 0 && (g_IniFile.m_strModuleNum[1] == "" || g_IniFile.m_strModuleNum[0] == "")) g_IniFile.m_nErrorCode = 26;
+		else if (g_IniFile.m_nRailOption == 1 && g_IniFile.m_strModuleNum[1] == "") g_IniFile.m_nErrorCode = 26;
+		else if (g_IniFile.m_nRailOption == 2 && g_IniFile.m_strModuleNum[0] == "") g_IniFile.m_nErrorCode = 26;
+
+		//Check LoadCell Safe
+		if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 70;
+		if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB)) g_IniFile.m_nErrorCode = 51;		
+
+		//Check LC no Function
+		if (m_bStopLC == true && g_IniFile.m_nRailOption == 0
+			&& !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
+			&& !g_DIO.ReadDIBit(DI::EjectInp1) && !g_DIO.ReadDIBit(DI::EjectEntry1) && !g_DIO.ReadDIBit(DI::EjectExit1)
+			&& !g_DIO.ReadDIBit(DI::LamInp2) && !g_DIO.ReadDIBit(DI::LamEntry2) && !g_DIO.ReadDIBit(DI::LamWarp2)
+			&& !g_DIO.ReadDIBit(DI::EjectInp2) && !g_DIO.ReadDIBit(DI::EjectEntry2) && !g_DIO.ReadDIBit(DI::EjectExit2))
+		{
+			g_IniFile.m_nErrorCode = 23;
+		}
+		else if (m_bStopLC == true && g_IniFile.m_nRailOption == 1
+			&& !g_DIO.ReadDIBit(DI::LamInp1) && !g_DIO.ReadDIBit(DI::LamEntry1) && !g_DIO.ReadDIBit(DI::LamWarp1)
+			&& !g_DIO.ReadDIBit(DI::EjectInp1) && !g_DIO.ReadDIBit(DI::EjectEntry1) && !g_DIO.ReadDIBit(DI::EjectExit1))
+		{
+			g_IniFile.m_nErrorCode = 23;
+		}
+		else if (m_bStopLC == true && g_IniFile.m_nRailOption == 2
+			&& !g_DIO.ReadDIBit(DI::LamInp2) && !g_DIO.ReadDIBit(DI::LamEntry2) && !g_DIO.ReadDIBit(DI::LamWarp2)
+			&& !g_DIO.ReadDIBit(DI::EjectInp2) && !g_DIO.ReadDIBit(DI::EjectEntry2) && !g_DIO.ReadDIBit(DI::EjectExit2))
+		{
+			g_IniFile.m_nErrorCode = 23;
+		}
+
+		//Check LamCorrectBoard
+		if (g_IniFile.m_nUseLamCorrectBoard)
+		{
+			if (g_IniFile.m_dLamCorrBoardHeight == 0) g_IniFile.m_nErrorCode = 107;
+			if (g_IniFile.m_nRailOption == 0)
+			{
+				if (!g_DIO.ReadDIBit(DI::LamCorrectionExist1)) g_IniFile.m_nErrorCode = 102;
+				if (!g_DIO.ReadDIBit(DI::LamCorrectionExist2)) g_IniFile.m_nErrorCode = 103;
+			}
+			else if (g_IniFile.m_nRailOption == 1) { if (!g_DIO.ReadDIBit(DI::LamCorrectionExist1)) g_IniFile.m_nErrorCode = 102; }
+			else if (g_IniFile.m_nRailOption == 2) { if (!g_DIO.ReadDIBit(DI::LamCorrectionExist2)) g_IniFile.m_nErrorCode = 103; }
+		}
+		else
+		{
+			if (g_IniFile.m_nRailOption == 0)
+			{
+				if (g_DIO.ReadDIBit(DI::LamCorrectionExist1)) g_IniFile.m_nErrorCode = 104;
+				if (g_DIO.ReadDIBit(DI::LamCorrectionExist2)) g_IniFile.m_nErrorCode = 105;
+			}
+			else if (g_IniFile.m_nRailOption == 1) { if (g_DIO.ReadDIBit(DI::LamCorrectionExist1)) g_IniFile.m_nErrorCode = 104; }
+			else if (g_IniFile.m_nRailOption == 2) { if (g_DIO.ReadDIBit(DI::LamCorrectionExist2)) g_IniFile.m_nErrorCode = 105; }
+		}
+
+		//Check Press Check Tag (m_bIsAutoCalPressOverAllow F&R)
+		if (!g_IniFile.m_bNotLam && (m_bIsAutoCalPressOverAllowF == true || m_bIsAutoCalPressOverAllowR == true))
+		{
+			if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 1) && m_bIsAutoCalPressOverAllowF == true) g_IniFile.m_nErrorCode = 24;
+			else if ((g_IniFile.m_nRailOption == 0 || g_IniFile.m_nRailOption == 2) && m_bIsAutoCalPressOverAllowR == true) g_IniFile.m_nErrorCode = 25;
+		}
+
+		//Check UpperMoldCheck //20170309 When Start Not Check this
+		/*
+		if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+		|| (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+		{
+		g_IniFile.m_nErrorCode = 30;
+		}*/
+
+		nThreadIndex++;
+		break;
+	case 1:
+		if (!g_IniFile.m_bNotLam)
+		{
+			//Check Param ModuleNum Correct
+			m_bIsCheckParamModuleNum = true;
+			m_bIsCheckParamModuleNumF_OK = false;
+			m_bIsCheckParamModuleNumR_OK = false;
+			tm1MS.timeStart(10000);
+            tm2MS.timeStart(3000);
+			nThreadIndex++;
+		}
+		else nThreadIndex = nTagWork;
+		break;
+	case 2:
+		if (tm2MS.timeUp() && g_IniFile.m_nRailOption == 0 && m_bIsCheckParamModuleNumF_OK && m_bIsCheckParamModuleNumR_OK) nThreadIndex++;
+		else if (tm2MS.timeUp() && g_IniFile.m_nRailOption == 1 && m_bIsCheckParamModuleNumF_OK) nThreadIndex++;
+		else if (tm2MS.timeUp() && g_IniFile.m_nRailOption == 2 && m_bIsCheckParamModuleNumR_OK) nThreadIndex++;
+		else if (tm1MS.timeUp() && tm2MS.timeUp())
+		{
+			if (!m_bIsCheckParamModuleNumF_OK) g_IniFile.m_nErrorCode = 27;
+			if (!m_bIsCheckParamModuleNumR_OK) g_IniFile.m_nErrorCode = 28;
+            m_bIsStopCheckParamModuleNum = true;
+		}
+		break;
+	case 3:
+	case nTagWork:nThreadIndex = 3;
+		//if (g_DIO.ReadDIBit(DI::YAxisSafePosA) && g_DIO.ReadDIBit(DI::YAxisSafePosB)) nThreadIndex = nTagFinished;	//20170908 No need Quickly
+		if (true) nThreadIndex = nTagFinished;
+		else nThreadIndex++;
+		break;
+	case 4:
+		if (true)
+		{
+			g_Motion.SetSpeed(AXIS_Y, 0.1, 0.1, 20);
+			if (CheckSafeAbsMove(AXIS_Y, g_IniFile.m_dSafePos))
+			{
+				g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+			}
+            tm1MS.timeStart(60000);
+			nThreadIndex++;
+		}
+		break;
+	case 5:
+		if (g_Motion.IsPosDone(AXIS_Y, g_IniFile.m_dSafePos))
+		{
+			nThreadIndex++;
+		}
+        else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 51;
+		break;
+	case 6:
+	case nTagFinished:nThreadIndex = 6;
+		nThreadIndex++;
+		break;
+	default:
+		nThreadIndex = 0;
+		return true;
+		break;
+	}
+
+	return false;
 }
 //---------------------------------------------------------------------------
 
@@ -1029,7 +1258,10 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
 		else if (!g_DIO.ReadDIBit(DI::LCStopUp)) g_IniFile.m_nErrorCode = 17;
 		else
 		{
-			g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCEntryPos);
+			if (CheckSafeAbsMove(AXIS_LC, g_IniFile.m_dLCEntryPos))
+			{
+				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCEntryPos);
+			}
             m_ActionLog.push_back(AddTimeString("[DoLaneChanger][0]LC 移動至接料區"));
 			nThreadIndex++;
 		}
@@ -1089,7 +1321,10 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
                 && fabs(g_Motion.GetActualPos(AXIS_FL) - g_IniFile.m_dLamStop[1])<=1)
 			{
                 m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 前出料區Ready"));
-				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCFrontPos);
+				if (CheckSafeAbsMove(AXIS_LC, g_IniFile.m_dLCFrontPos))
+				{
+					g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCFrontPos);
+				}	
 				nLamInp = DI::LamInp1;
 				nLamEntry = DI::LamEntry1;
                 nThreadIndex++;
@@ -1098,7 +1333,10 @@ void __fastcall CMainThread::DoLaneChanger(int &nThreadIndex)
                 && fabs(g_Motion.GetActualPos(AXIS_RL) - g_IniFile.m_dLamStop[0])<=1)
 			{
                 m_ActionLog.push_back(AddTimeString("[DoLaneChanger][5]LC 後出料區Ready"));
-				g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCRearPos);
+				if (CheckSafeAbsMove(AXIS_LC, g_IniFile.m_dLCRearPos))
+				{
+					g_Motion.AbsMove(AXIS_LC, g_IniFile.m_dLCRearPos);
+				}
 				nLamInp = DI::LamInp2;
 				nLamEntry = DI::LamEntry2;
                 nThreadIndex++;
@@ -1238,7 +1476,10 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
         else if (g_IniFile.m_nUseLamCorrectBoard && !g_DIO.ReadDIBit(nLamCorrectionExist)) bFront ? g_IniFile.m_nErrorCode = 102 : g_IniFile.m_nErrorCode = 103;
 		else
 		{
-			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]);
+			if (CheckSafeAbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]))
+			{
+				g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]);
+			}
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamination][0]Lane Lifter上升到接片高度"));
             g_DIO.SetDO(nLamMotorStart, true);
             tm1MS->timeStart(2000);
@@ -1249,6 +1490,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		if (g_Motion.IsLastPosDone(nAxisLifter) && tm1MS->timeUp())
 		{
             g_DIO.SetDO(nLamMotorStart, false);
+            tm1MS->timeStart(10000);
 			nThreadIndex++;
 		}
 		break;
@@ -1263,8 +1505,9 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 		    {
                 m_bIsLamCorrCheckLock = true;
 			    if (!g_IniFile.m_bNotLam && g_IniFile.m_nUseLamCorrectBoard) nThreadIndex = nTagLamCorrCheck;
-			    else nThreadIndex = nTagToWork;
+			    else nThreadIndex = nTagLamCorrCheckUnlock;
             }
+            else if (tm1MS->timeUp()) g_IniFile.m_nErrorCode = 106;
 		}
 		break;
 	case 3:
@@ -1457,7 +1700,10 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
 	case 14:
 		if (tm1MS->timeUp())
 		{
-			g_Motion.AbsMove(nAxisLifter, 0.0);
+			if (CheckSafeAbsMove(nAxisLifter, 0.0))
+			{
+				g_Motion.AbsMove(nAxisLifter, 0.0);
+			}
 			nThreadIndex++;
 		}
 		break;
@@ -1574,7 +1820,7 @@ void __fastcall CMainThread::DoLamination(bool bFront, int &nThreadIndex)
     case nTagFinished:nThreadIndex = 21;
         if (tm1MS->timeUp())
         {
-			if (!g_IniFile.m_bNotLam && !m_bStartLamSub[1] && !m_bStartLamSub[0])
+			if (!g_IniFile.m_bNotLam && !m_bStartLamSub[1] && !m_bStartLamSub[0] && !m_bIsDoAutoCal[1] && !m_bIsDoAutoCal[0])   //20170908 CHC Add Wait AutoDoAutoCal Finished.
 			{
                 if (g_IniFile.m_nRailOption == 0)
 				{
@@ -1712,8 +1958,10 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		{
 			m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][0]LamSub 壓合開始移動至LamHeight"));
 			g_DIO.SetDO(nLamMotorStart, false);
-			if (g_IniFile.m_nUseLamCorrectBoard) g_Motion.AbsMove(nAxisLifter, (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight) - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]);
-			else g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]);
+			double dMoveTo = 0.0;
+			if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight) - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront];
+			else dMoveTo = g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront];
+			if (CheckSafeAbsMove(nAxisLifter, dMoveTo)) g_Motion.AbsMove(nAxisLifter, dMoveTo);
 			
 			nThreadIndex++;
 		}
@@ -1808,8 +2056,10 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
             if ((*nGoUpIndex) >= g_IniFile.m_dLamSecondCorrectTimes)
 			{
 				m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][5]LamSub 第二段壓合上下修正結束"));
-				if (g_IniFile.m_nUseLamCorrectBoard) g_Motion.AbsMove(nAxisLifter, (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight));
-				else g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamHeight[bFront]);
+				double dMoveTo = 0.0;
+				if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight);
+				else dMoveTo = (g_IniFile.m_dLamHeight[bFront]);
+				if (CheckSafeAbsMove(nAxisLifter, dMoveTo)) g_Motion.AbsMove(nAxisLifter, dMoveTo);
 				nThreadIndex++;
 			}
             else
@@ -1834,8 +2084,10 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		{
             g_Motion.SetSpeed(nAxisLifter, g_IniFile.m_dACCSpeed[nAxisLifter], g_IniFile.m_dDECSpeed[nAxisLifter], g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
 			m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][5]LamSub 不使用第二段壓合上下修正"));
-			if (g_IniFile.m_nUseLamCorrectBoard) g_Motion.AbsMove(nAxisLifter, (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight));
-			else g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamHeight[bFront]);
+			double dMoveTo = 0.0;
+			if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight);
+			else dMoveTo = g_IniFile.m_dLamHeight[bFront];
+			if (CheckSafeAbsMove(nAxisLifter, dMoveTo)) g_Motion.AbsMove(nAxisLifter, dMoveTo);
 			bLamSecondTimeError = false;
 			tm1MSLamSecondTime.timeDevStart();
 			nThreadIndex++;
@@ -1950,7 +2202,10 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 10: //是否停下
 		if (g_Motion.IsMotionDone(nAxisLifter))
 		{
-			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]);
+			if (CheckSafeAbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]))
+			{
+				g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]);
+			}
 			g_Motion.ChangeSpeed(nAxisLifter, 10.0);
 			m_dLamTimer[bFront] = 0.0;
 			nThreadIndex++;
@@ -1972,7 +2227,10 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 	case 12:
 		if (tm1MS->timeUp())
 		{
-			g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]);
+			if (CheckSafeAbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]))
+			{
+				g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamGetPos[bFront]);
+			}
 			m_dLamTimer[bFront] = 0.0;
 			nThreadIndex++;
 		}
@@ -2083,7 +2341,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
         if (g_DIO.ReadDIBit(nEjectInp)) bFront ? g_IniFile.m_nErrorCode = 58 : g_IniFile.m_nErrorCode = 59;
 		else if (g_DIO.ReadDIBit(nEjectEntry)) bFront ? g_IniFile.m_nErrorCode = 60 : g_IniFile.m_nErrorCode = 61;
 		else if (g_DIO.ReadDIBit(nEjectExit)) bFront ? g_IniFile.m_nErrorCode = 62 : g_IniFile.m_nErrorCode = 63;
-		//else if(g_DIO.ReadDIBit(nEjectExist)) bFront ? g_IniFile.m_nErrorCode=65: g_IniFile.m_nErrorCode=64;
+		else if(g_DIO.ReadDIBit(nEjectExist)) bFront ? g_IniFile.m_nErrorCode=65: g_IniFile.m_nErrorCode=64;
 		else if (!g_DIO.ReadDIBit(nEjectStopUp)) bFront ? g_IniFile.m_nErrorCode = 13 : g_IniFile.m_nErrorCode = 14;
         else
         {
@@ -2094,7 +2352,7 @@ void __fastcall CMainThread::DoEject(bool bFront, int &nThreadIndex)
 		if (g_DIO.ReadDIBit(nEjectInp)) bFront ? g_IniFile.m_nErrorCode = 58 : g_IniFile.m_nErrorCode = 59;
 		else if (g_DIO.ReadDIBit(nEjectEntry)) bFront ? g_IniFile.m_nErrorCode = 60 : g_IniFile.m_nErrorCode = 61;
 		else if (g_DIO.ReadDIBit(nEjectExit)) bFront ? g_IniFile.m_nErrorCode = 62 : g_IniFile.m_nErrorCode = 63;
-		//else if(g_DIO.ReadDIBit(nEjectExist)) bFront ? g_IniFile.m_nErrorCode=65: g_IniFile.m_nErrorCode=64;
+		else if(g_DIO.ReadDIBit(nEjectExist)) bFront ? g_IniFile.m_nErrorCode=65: g_IniFile.m_nErrorCode=64;
 		else if (!g_DIO.ReadDIBit(nEjectStopUp)) bFront ? g_IniFile.m_nErrorCode = 13 : g_IniFile.m_nErrorCode = 14;
 		else
 		{
@@ -2356,8 +2614,11 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 						if (nTryTimes == 0) dNewValue = pOffset[nMoveIndex] + g_IniFile.m_dLamPress[bFront];
 					}
 
-					g_Motion.AbsMove(AXIS_X, dStartX + m_nCalCol*g_IniFile.m_dColPitch);
-					g_Motion.AbsMove(AXIS_Y, dStartY - m_nCalRow*g_IniFile.m_dRowPitch);
+					if (CheckSafeAbsMove(AXIS_X, dStartX + m_nCalCol*g_IniFile.m_dColPitch) && CheckSafeAbsMove(AXIS_Y, dStartY - m_nCalRow*g_IniFile.m_dRowPitch))
+					{
+						g_Motion.AbsMove(AXIS_X, dStartX + m_nCalCol*g_IniFile.m_dColPitch);
+						g_Motion.AbsMove(AXIS_Y, dStartY - m_nCalRow*g_IniFile.m_dRowPitch);
+					}
 
 					nThreadIndex++;
 				}
@@ -2407,7 +2668,7 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 70;
 		break;
 	case 3:
-		if (tm1MS.timeUp())
+		if (g_DIO.ReadDIBit(DI::LoadCellUp) && tm1MS.timeUp())
 		{
             //Get Load Cell Value
             double dLoadCellValue = 0;
@@ -2575,6 +2836,11 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 				}
 			}
 		}
+        else if (!g_DIO.ReadDOBit(DO::LoadCellValve))
+        {
+            nThreadIndex--;
+        }
+		//else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 70;
 		break;
 	case 4:
 	case nTagA: nThreadIndex = 4;
@@ -2624,7 +2890,10 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 		else if (tm1MS.timeUp()) g_IniFile.m_nErrorCode = 10;
 		break;
 	case 6:
-		g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+		if (CheckSafeAbsMove(AXIS_Y, g_IniFile.m_dSafePos))
+		{
+			g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+		}
 		nThreadIndex++;
 		break;
 	case 7:
@@ -2636,10 +2905,13 @@ void __fastcall CMainThread::DoPressCal(bool bFront, int &nThreadIndex,
 			if (!m_bIsAutoMode)
 			{
 				//Manual Reset here
-				if (bFront) m_bIsAutoCalPressOverAllowF = false;
-				else m_bIsAutoCalPressOverAllowR = false;
-                if (bFront) m_bIsAutoCalTimesOver25F = false;
-                else m_bIsAutoCalTimesOver25R = false;
+                if (m_bPrassNeedReCal == false)
+                {
+				    if (bFront) m_bIsAutoCalPressOverAllowF = false;
+				    else m_bIsAutoCalPressOverAllowR = false;
+                    if (bFront) m_bIsAutoCalTimesOver25F = false;
+                    else m_bIsAutoCalTimesOver25R = false;
+                }
 				if (!m_bStartOneStepCal) g_IniFile.m_nErrorCode = 72;
 			}
 			if (m_bAutoRetry == true)
@@ -2691,7 +2963,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	const int nTagA = 1000;
 
 
-	int nLaserChannel;
+	int nLaserChannel, nAxisLifter;
 	double *p_dLaserValue;
     double *p_dLaserValueDiff;
     double *p_dLaserValueDiffTotal;
@@ -2717,7 +2989,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 
 	if (bFront)
 	{
-
+		nAxisLifter = AXIS_FL;
 		if (bUp)
 		{
 			nLaserChannel = 0;
@@ -2737,6 +3009,7 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 	}
 	else
 	{
+		nAxisLifter = AXIS_RL;
 		if (bUp)
 		{
 			nLaserChannel = 0;
@@ -2764,8 +3037,10 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 		else if (!g_DIO.ReadDIBit(DI::LoadCellDown)) g_IniFile.m_nErrorCode = 10;
 		//else if(g_DIO.ReadDIBit(DI::LaserCheck)) g_IniFile.m_nErrorCode=9;      //don't need
 		{
-			if (bFront) g_Motion.AbsMove(AXIS_FL, g_IniFile.m_dLamStop[1]);
-			else g_Motion.AbsMove(AXIS_RL, g_IniFile.m_dLamStop[0]);
+			if (CheckSafeAbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]))
+			{
+				g_Motion.AbsMove(nAxisLifter, g_IniFile.m_dLamStop[bFront]);
+			}
 
 			m_nCalCol = nMoveIndex % 10;
 			m_nCalRow = nMoveIndex / 10;
@@ -2817,9 +3092,12 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 						dMoveLocY = m_dRearDownMoveLocY[nMoveIndex][nMoveIndexSub];
 					}
 				}
-				g_Motion.AbsMove(AXIS_X, dMoveLocX);
-				g_Motion.AbsMove(AXIS_Y, dMoveLocY);
-
+				if (CheckSafeAbsMove(AXIS_X, dMoveLocX) && CheckSafeAbsMove(AXIS_Y, dMoveLocY))
+				{
+					g_Motion.AbsMove(AXIS_X, dMoveLocX);
+					g_Motion.AbsMove(AXIS_Y, dMoveLocY);
+				}
+				
 				nThreadIndex++;
 			}
 			else nThreadIndex = nTagA;
@@ -3138,7 +3416,10 @@ void __fastcall CMainThread::DoLaserCal(bool bFront, bool bUp, int &nThreadIndex
 		}
 		break;
 	case 4:
-		g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+		if (CheckSafeAbsMove(AXIS_X, g_IniFile.m_dSafePos))
+		{
+			g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+		}
 		nThreadIndex++;
 		break;
 	case 5:
@@ -3191,8 +3472,11 @@ void __fastcall CMainThread::DoOneStepCal(int &nThreadIndex)
 		else
 		{	
 			m_bStopLC = true;
-			g_Motion.AbsMove(AXIS_FL, g_IniFile.m_dLamStop[1]);
-			g_Motion.AbsMove(AXIS_RL, g_IniFile.m_dLamStop[0]);
+			if (CheckSafeAbsMove(AXIS_FL, g_IniFile.m_dLamStop[1]) && CheckSafeAbsMove(AXIS_RL, g_IniFile.m_dLamStop[0]))
+			{
+				g_Motion.AbsMove(AXIS_FL, g_IniFile.m_dLamStop[1]);
+				g_Motion.AbsMove(AXIS_RL, g_IniFile.m_dLamStop[0]);
+			}
 			nThreadIndex++;
 		}
 		break;
@@ -3497,7 +3781,10 @@ void __fastcall CMainThread::DoOneStepCal(int &nThreadIndex)
 	case 16:
 		if (true)
 		{
-			g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+			if (CheckSafeAbsMove(AXIS_Y, g_IniFile.m_dSafePos))
+			{
+				g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+			}
 			nThreadIndex++;
 		}
 		break;
@@ -3589,7 +3876,10 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		{
 			m_bIsAutoCalLocked = true;
             m_bStopLC = true;
-			g_Motion.AbsMove(nAxisLifter, 0.0);
+			if (CheckSafeAbsMove(nAxisLifter, 0.0))
+			{
+				g_Motion.AbsMove(nAxisLifter, 0.0);
+			}
 			tm1MS->timeStart(3000);
 			nThreadIndex++;
 		}
@@ -3604,7 +3894,10 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		}
         else if (g_Motion.GetStatus(nAxisLifter,PCIM114::INP))
         {
-            g_Motion.AbsMove(nAxisLifter, 0.0);
+			if (CheckSafeAbsMove(nAxisLifter, 0.0))
+			{
+				g_Motion.AbsMove(nAxisLifter, 0.0);
+			}
 			tm1MS->timeStart(3000);
         }
 		else if (tm1MS->timeUp())  bFront ? g_IniFile.m_nErrorCode = 21 : g_IniFile.m_nErrorCode = 21;
@@ -3767,7 +4060,10 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		break;
 	case 9:
 	case nTagA: nThreadIndex = 9;
-		g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+		if (CheckSafeAbsMove(AXIS_Y, g_IniFile.m_dSafePos))
+		{
+			g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+		}
 		nThreadIndex++;
 		break;
 	case 10:
@@ -3799,20 +4095,6 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		//m_bStopLC = false;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

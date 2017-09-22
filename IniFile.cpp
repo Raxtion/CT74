@@ -514,6 +514,7 @@ void __fastcall CIniFile::AddLog(char *pRx,int nSize)
  __fastcall CIniFile::CIniFile()
  {
         mkdir("C:\\C74 Log");
+        if (!FileExists(PARA_LOG_PATH)) _mkdir(PARA_LOG_PATH);
         m_strApplicationPath = ExtractFilePath(Application->ExeName);
  }
  //---------------------------------------------------------------------------

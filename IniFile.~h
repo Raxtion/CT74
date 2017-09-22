@@ -153,6 +153,7 @@ public:
   double m_dTempOffsetF;
   double m_dTempOffsetR;
 
+  double m_dLamCorrBoardHeight;
 
 //Function
 public:

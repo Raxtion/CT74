@@ -7,6 +7,8 @@
 #include "keyboard.h"
 //#include "fmBusy.h"
 //#include "MotionControlDlg.h"
+#include "time.h"
+#include <stdio.h>
 
 #include "math.h"
 //#include "Inifile.h"
@@ -138,55 +140,131 @@ void GetXYCenter(DPoint &ptA,DPoint &ptB,double dDeltaAngle,DPoint &ptCenter,DPo
 void DDX_Float(bool bRead,double &dParameter,TEdit *pEdit,double dUnit)
 {
   if(bRead) pEdit->Text=dParameter/dUnit;
-  else dParameter=pEdit->Text.ToDouble()*dUnit;
+  else
+  {
+	  double dValue = pEdit->Text.ToDouble()*dUnit;
+	  if (dParameter != dValue)
+	  {
+		  AnsiString strLog = pEdit->HelpKeyword + " Change: From " + FormatFloat("0.00000", dParameter) + " to " + FormatFloat("0.00000", dValue);
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  dParameter = pEdit->Text.ToDouble()*dUnit;
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_Int(bool bRead,int &nParameter,TEdit *pEdit,double dUnit)
 {
   if(bRead) pEdit->Text=floor((nParameter/dUnit)*1000.0)/1000.0;
-  else nParameter=ceil(pEdit->Text.ToDouble()*dUnit);
+  else
+  {
+	  double dValue = ceil(pEdit->Text.ToDouble()*dUnit);
+	  if (nParameter != dValue)
+	  {
+		  AnsiString strLog = pEdit->HelpKeyword + " Change: From " + FormatFloat("0.00000", nParameter) + " to " + FormatFloat("0.00000", dValue);
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  nParameter = ceil(pEdit->Text.ToDouble()*dUnit);
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_Check(bool bRead,bool &bParameter,TCheckBox *pCheckBox)
 {
   if(bRead) pCheckBox->Checked=bParameter;
-  else bParameter=pCheckBox->Checked;
+  else
+  {
+	  if (bParameter != pCheckBox->Checked)
+	  {
+		  AnsiString strLog = pCheckBox->Caption + " Change: From " + IntToStr(bParameter) + " to " + IntToStr(pCheckBox->Checked);
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  bParameter = pCheckBox->Checked;
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_Radio(bool bRead,bool &bParameter,TRadioGroup *pRadio)
 {
   if(bRead) pRadio->ItemIndex=bParameter;
-  else bParameter=pRadio->ItemIndex;
+  else
+  {
+	  if (bParameter != pRadio->ItemIndex)
+	  {
+		  AnsiString strLog = pRadio->Caption + " Change: From " + IntToStr(bParameter) + " to " + IntToStr(pRadio->ItemIndex);
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  bParameter = pRadio->ItemIndex;
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_Radio(bool bRead,int &nParameter,TRadioGroup *pRadio)
 {
   if(bRead) pRadio->ItemIndex=nParameter;
-  else nParameter=pRadio->ItemIndex;
+  else
+  {
+	  if (nParameter != pRadio->ItemIndex)
+	  {
+		  AnsiString strLog = pRadio->Caption + " Change: From " + IntToStr(nParameter) + " to " + IntToStr(pRadio->ItemIndex);
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  nParameter = pRadio->ItemIndex;
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_TrackBar(bool bRead,int &nParameter,TTrackBar *pTrackBar)
 {
   if(bRead) pTrackBar->Position=nParameter;
-  else nParameter=pTrackBar->Position;
+  else
+  {
+	  if (nParameter != pTrackBar->Position)
+	  {
+		  AnsiString strLog = pTrackBar->HelpKeyword + " Change: From " + IntToStr(nParameter) + " to " + IntToStr(pTrackBar->Position);
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  nParameter = pTrackBar->Position;
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_ComboBox(bool bRead,int &nParameter, TComboBox *pComboBox)
 {
   if(bRead) pComboBox->ItemIndex=nParameter;
-  else nParameter=pComboBox->ItemIndex;
+  else
+  {
+	  int dValue = pComboBox->ItemIndex;
+	  if (nParameter != dValue)
+	  {
+		  AnsiString strLog = pComboBox->HelpKeyword + " Change: From " + IntToStr(nParameter) + " to " + IntToStr(pComboBox->ItemIndex);
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  nParameter = pComboBox->ItemIndex;
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_TrackBarFloat(bool bRead,double &dParameter,TTrackBar *pTrackBar,double dScale)
 {
   if(bRead) pTrackBar->Position=dParameter*dScale;
-  else dParameter=pTrackBar->Position/dScale;
+  else
+  {
+	  double dValue = pTrackBar->Position / dScale;
+	  if (dParameter != dValue)
+	  {
+		  AnsiString strLog = pTrackBar->HelpKeyword + " Change: From " + FormatFloat("0.00000", dParameter) + " to " + FormatFloat("0.00000", dValue);
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  dParameter = pTrackBar->Position / dScale;
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_String(bool bRead,AnsiString &strParameter,TEdit *pEdit)
 {
   if(bRead) pEdit->Text=strParameter;
-  else strParameter=pEdit->Text;
+  else
+  {
+	  if (strParameter != pEdit->Text)
+	  {
+		  AnsiString strLog = pEdit->HelpKeyword + " Change: From " + strParameter + " to " + pEdit->Text;
+		  AddChangeLog(strLog.c_str(), strLog.Length());
+	  }
+	  strParameter = pEdit->Text;
+  }
 }
 //---------------------------------------------------------------------------
 void DDX_String(bool bRead,AnsiString &strParameter, TComboBox *pComboBox, AnsiString &CmbDataSource)
@@ -487,3 +565,42 @@ void DirExplore(AnsiString path, std::list<AnsiString> &g_liststrForderName, std
 	}
     FindClose(sr2);
 }
+//---------------------------------------------------------------------------
+
+
+void AddChangeLog(char *pRx, int nSize)
+{
+	AnsiString strTime;
+	time_t timer;
+	struct tm *tblock;
+
+	timer = time(NULL);
+	tblock = localtime(&timer);
+
+	try
+	{
+		FILE *pFile;
+
+		strTime.sprintf("%s\\%04d_%02d_%02d.txt", PARA_LOG_PATH, tblock->tm_year + 1900, tblock->tm_mon + 1, tblock->tm_mday);
+
+		pFile = fopen(strTime.c_str(), "a+");
+
+		if (pFile != NULL)
+		{
+			fprintf(pFile, "\n[%2d:%02d:%02d] ", tblock->tm_hour, tblock->tm_min, tblock->tm_sec);
+
+			int nIndex = 0;
+			while (nIndex<nSize)
+			{
+				fprintf(pFile, "%c", pRx[nIndex]);
+				nIndex++;
+			}
+			fclose(pFile);
+		}
+	}
+	catch (const EAccessViolation &e)
+	{
+		//Application->MessageBox(e.Message.c_str(), "AddLog Exception",MB_OK);
+	}
+}
+//---------------------------------------------------------------------------

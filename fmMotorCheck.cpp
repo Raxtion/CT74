@@ -24,6 +24,10 @@ __fastcall TfrmMotorCheck::TfrmMotorCheck(TComponent* Owner)
     m_nActiveAxis=0;
     m_nMoveMode=0;
     m_nSpeedMode=3;
+
+    //Manual Logging
+    AnsiString strShow = "¤â°Ê±±¨î: Motor Test. m_nActiveAxis=" + IntToStr(m_nActiveAxis);
+    AddChangeLog(strShow.c_str(), strShow.Length());
 }
 //---------------------------------------------------------------------------
 
@@ -93,7 +97,10 @@ void __fastcall TfrmMotorCheck::btnHomeClick(TObject *Sender)
     }
     else if (g_pMainThread->m_bIsHomeDone == true)
     {
-        g_Motion.AbsMove(m_nActiveAxis, 0);
+        if (g_pMainThread->CheckSafeAbsMove(m_nActiveAxis, 0.0))
+        {
+            g_Motion.AbsMove(m_nActiveAxis, 0.0);
+        }
     }
 }
 //---------------------------------------------------------------------------
@@ -127,8 +134,17 @@ void __fastcall TfrmMotorCheck::btnFWDMouseDown(TObject *Sender,
         if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB))g_IniFile.m_nErrorCode = 51;
         else
         {
-            if(dMovePitch==0) g_Motion.JogStart(m_nActiveAxis,true);
-            else g_Motion.RelMove(m_nActiveAxis,dMovePitch);
+            if(dMovePitch==0)
+            {
+                if (g_pMainThread->CheckSafeAbsMove(m_nActiveAxis, g_Motion.GetActualPos(m_nActiveAxis) + 10.0))
+                {
+                    g_Motion.JogStart(m_nActiveAxis,true);
+                }
+            }
+            else
+            {
+                g_Motion.RelMove(m_nActiveAxis,dMovePitch);
+            }
         }
     }
     else if (m_nActiveAxis == 1)
@@ -137,14 +153,32 @@ void __fastcall TfrmMotorCheck::btnFWDMouseDown(TObject *Sender,
         else if (g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[0]+1) g_IniFile.m_nErrorCode = 99;
         else
         {
-            if(dMovePitch==0) g_Motion.JogStart(m_nActiveAxis,true);
-            else g_Motion.RelMove(m_nActiveAxis,dMovePitch);
+            if(dMovePitch==0)
+            {
+                if (g_pMainThread->CheckSafeAbsMove(m_nActiveAxis, g_Motion.GetActualPos(m_nActiveAxis) + 10.0))
+                {
+                    g_Motion.JogStart(m_nActiveAxis,true);
+                }
+            }
+            else
+            {
+                g_Motion.RelMove(m_nActiveAxis,dMovePitch);
+            }
         }
     }
     else
     {
-        if(dMovePitch==0) g_Motion.JogStart(m_nActiveAxis,true);
-        else g_Motion.RelMove(m_nActiveAxis,dMovePitch);
+        if(dMovePitch==0)
+        {
+            if (g_pMainThread->CheckSafeAbsMove(m_nActiveAxis, g_Motion.GetActualPos(m_nActiveAxis) + 10.0))
+            {
+                g_Motion.JogStart(m_nActiveAxis,true);
+            }
+        }
+        else
+        {
+            g_Motion.RelMove(m_nActiveAxis,dMovePitch);
+        }
     }
 }
 //---------------------------------------------------------------------------
@@ -177,8 +211,17 @@ void __fastcall TfrmMotorCheck::btnRWDMouseDown(TObject *Sender,
         if (!g_DIO.ReadDIBit(DI::YAxisSafePosA) || !g_DIO.ReadDIBit(DI::YAxisSafePosB))g_IniFile.m_nErrorCode = 51;
         else
         {
-            if(dMovePitch==0) g_Motion.JogStart(m_nActiveAxis,false);
-            else g_Motion.RelMove(m_nActiveAxis,-dMovePitch);
+            if(dMovePitch==0)
+            {
+                if (g_pMainThread->CheckSafeAbsMove(m_nActiveAxis, g_Motion.GetActualPos(m_nActiveAxis) - 10.0))
+                {
+                    g_Motion.JogStart(m_nActiveAxis,false);
+                }
+            }
+            else
+            {
+                g_Motion.RelMove(m_nActiveAxis,-dMovePitch);
+            }
         }
     }
     else if (m_nActiveAxis == 1)
@@ -187,14 +230,32 @@ void __fastcall TfrmMotorCheck::btnRWDMouseDown(TObject *Sender,
         else if (g_Motion.GetActualPos(AXIS_RL)>g_IniFile.m_dLamStop[0]+1) g_IniFile.m_nErrorCode = 99;
         else
         {
-            if(dMovePitch==0) g_Motion.JogStart(m_nActiveAxis,false);
-            else g_Motion.RelMove(m_nActiveAxis,-dMovePitch);
+            if(dMovePitch==0)
+            {
+                if (g_pMainThread->CheckSafeAbsMove(m_nActiveAxis, g_Motion.GetActualPos(m_nActiveAxis) - 10.0))
+                {
+                    g_Motion.JogStart(m_nActiveAxis,false);
+                }
+            }
+            else
+            {
+                g_Motion.RelMove(m_nActiveAxis,-dMovePitch);
+            }
         }
     }
     else
     {
-        if(dMovePitch==0) g_Motion.JogStart(m_nActiveAxis,false);
-        else g_Motion.RelMove(m_nActiveAxis,-dMovePitch);
+        if(dMovePitch==0)
+        {
+            if (g_pMainThread->CheckSafeAbsMove(m_nActiveAxis, g_Motion.GetActualPos(m_nActiveAxis) - 10.0))
+            {
+                g_Motion.JogStart(m_nActiveAxis,false);
+            }
+        }
+        else
+        {
+            g_Motion.RelMove(m_nActiveAxis,-dMovePitch);
+        }
     }
 }
 //---------------------------------------------------------------------------
@@ -257,6 +318,7 @@ void __fastcall TfrmMotorCheck::BitBtn1Click(TObject *Sender)
     g_Motion.ServoOn(m_nActiveAxis,true);
 }
 //---------------------------------------------------------------------------
+
 
 
 

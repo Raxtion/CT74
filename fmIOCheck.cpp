@@ -4,7 +4,7 @@
 
 #include "fmIOCheck.h"
 #include "math.h"
-//#include "iniFile.h"
+#include "iniFile.h"
 #include "MyPISODIO.h"
 
 #define MAX_IN 64
@@ -72,8 +72,11 @@ void __fastcall TIOCheckDlg::OutputButton0Click(TObject *Sender)
   else
     bSetValue=false;
 
-  g_DIO.SetDO(pOutputButton->GroupIndex-1,bSetValue);  
+  g_DIO.SetDO(pOutputButton->GroupIndex-1,bSetValue);
 
+    //Manual Logging
+    AnsiString strShow = "手動控制: DIO控制 Y" + IntToStr(pOutputButton->GroupIndex-1) + " Set " + IntToStr(bSetValue);
+    AddChangeLog(strShow.c_str(), strShow.Length());
 }
 //---------------------------------------------------------------------------
 void __fastcall TIOCheckDlg::SetOutputCaption()

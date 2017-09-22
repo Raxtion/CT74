@@ -97,11 +97,18 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     //Set param for SVID
     TStringList *strList = SplitString(g_IniFile.m_strLastFileName, "\\");
     AnsiString strLastFilePath = "";
-    for (int i=0;i<strList->Count-1;i++)
+    for (int i=2;i<strList->Count-1;i++)
     {
         strLastFilePath += strList->Strings[i] + "\\";
     }
     delete strList;
+	AnsiString strSubFileName = "";
+	TStringList* strlistSubFileName = SplitString(g_IniFile.m_strLastFileName, ".");
+	if (strlistSubFileName->Count != 1)
+	{
+		strSubFileName = strlistSubFileName->operator[](0).SubString(17, g_IniFile.m_strLastFileName.Length());
+	}
+	delete strlistSubFileName;
 
     AnsiString strHeadType; (g_IniFile.m_nHeadType == 0) ? strHeadType = "SOLID" : strHeadType = "HOLLOW";
     AnsiString strVacummOn; (g_IniFile.m_nVacummOn == 0) ? strVacummOn = "FAIL" : strVacummOn = "TRUE";
@@ -163,7 +170,7 @@ void __fastcall CEQPXML::doQueryVID(char *pRx)
     strcpy(SVID[17], "01");
     strcpy(SVID[18], "0.0.0.1");
     strcpy(SVID[19], "OP_ID");
-    strcpy(SVID[20], g_IniFile.m_strLastFileName.c_str());
+    strcpy(SVID[20], strSubFileName.c_str());
     strcpy(SVID[21], m_EqpStatus.c_str());                           //Equipment process state (I=Idle, R=Run, D=Down)
     strcpy(SVID[22], m_CIMStatus.c_str());                           //CIM control state (0=Offline, 1=Online/Local, 2=Online/Remote)
     strcpy(SVID[23], strHeadType.c_str());
@@ -421,13 +428,21 @@ void __fastcall CEQPXML::doQueryPPIDFullPath(char *pRx)
         }
 
         TStringList* strSplitPath = SplitString(m_liststrFileName.front(), "\\");
-        if (strSplitPath->operator [](2) != "Error Message" && strSplitPath->Count != 3)
+        TStringList* strSubFileName = SplitString(m_liststrFileName.front(), ".");
+        if (strSubFileName->Count != 1)
         {
-            pIDE = new TiXmlElement("PPID");
-            pIDE->LinkEndChild(new TiXmlText(m_liststrFileName.front().c_str()));
-            pRoot->LinkEndChild(pIDE);
+            if (strSplitPath->operator [](2) != "Error Message" && strSplitPath->operator[](2) == "3601"
+                && strSplitPath->Count != 3 && strSubFileName->operator [](1) == "ini")
+            {
+                AnsiString xx = strSubFileName->operator[](0).SubString(17,m_liststrFileName.front().Length());
+
+                pIDE = new TiXmlElement("PPID");
+                pIDE->LinkEndChild(new TiXmlText(xx.c_str()));
+                pRoot->LinkEndChild(pIDE);
+            }
         }
         delete strSplitPath;
+        delete strSubFileName;
         m_liststrFileName.pop_front();
 
         if (m_liststrFileName.size()==0) break;
@@ -448,7 +463,8 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 	AnsiString strSxFx=pData1->Attribute("SxFy");
 
 	//TIniFile *pIniFile = new TIniFile("C:\\Product_Data\\"+strData+"\\"+strData+".ini");
-    TIniFile *pIniFile = new TIniFile(strData);
+    //TIniFile *pIniFile = new TIniFile(strData);
+    TIniFile *pIniFile = new TIniFile("C:\\Product_Data\\" + strData + ".ini");
 
 	TiXmlDocument doc;
 	TiXmlElement* pRoot;
@@ -464,7 +480,8 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
 
 	AnsiString strTmp;
 	pData=new TiXmlElement("DATA");
-	pData->SetAttribute("PPID",strData.c_str());
+	//pData->SetAttribute("PPID",strData.c_str());
+    pData->SetAttribute("PPID",strData.c_str());
 	pData->SetAttribute("SxFy",strSxFx.c_str());
 
 	char *ParamItem[]={
@@ -570,7 +587,7 @@ void __fastcall CEQPXML::doQueryPPBody(char *pRx)
         "m_strLogInENGAccount","NULL","A","NULL","NULL",  //機台當下 登入者
 		"END"};                                      //E:End
 
-    if (FileExists(strData))
+    if (FileExists("C:\\Product_Data\\" + strData + ".ini"))
 	{
 	    int nX=0;
 	    while(1)
@@ -1043,7 +1060,7 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
     if (bResult == true)
     {
         //If there is no following path, to add new folder
-        TStringList* strSplitPath = SplitString(strData, "\\");
+        TStringList* strSplitPath = SplitString("C:\\Product_Data\\" + strData + ".ini", "\\");
         AnsiString strPath = strSplitPath->operator [](0) + "\\";
         for (int nX=0;nX<strSplitPath->Count-2;nX++)
         {
@@ -1053,7 +1070,7 @@ void __fastcall CEQPXML::doSetPPBody(char *pRx)
         delete strSplitPath;
 
         //new IniFile
-        TIniFile *pIniFile = new TIniFile(strData);
+        TIniFile *pIniFile = new TIniFile("C:\\Product_Data\\" + strData + ".ini");
 
         TiXmlElement *pParam = pData1->FirstChildElement("PARAMETER");
 
@@ -1569,3 +1586,4 @@ void __fastcall CEQPXML::generateLaserDiff(LaserDiff &Inp)
     Inp.strRULD = strRULD;
     Inp.strFULD = strFULD;
 }
+

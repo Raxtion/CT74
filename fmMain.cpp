@@ -36,7 +36,7 @@
 TfrmMain *frmMain;
 SQLITE3IF g_TempLog(0, "C:\\C74 Log\\TempLog");
 SQLITE3IF g_ActionLog(1, "C:\\C74 Log\\ActionLog");
-SQLITE3IF g_ChangeLog(3, "C:\\C74 Log\\ChangeLog");
+//SQLITE3IF g_ChangeLog(3, "C:\\C74 Log\\ChangeLog");
 extern CIniFile g_IniFile;
 
 extern CPCIM114 g_Motion;
@@ -185,7 +185,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 
 	g_TempLog.open(0);
 	g_ActionLog.open(1);
-	g_ChangeLog.open(3);
+	//g_ChangeLog.open(3);
 	time_t timer = time(NULL);
 	struct tm *tblock = localtime(&timer);
 	m_strDate.sprintf("%04d_%02d_%02d", tblock->tm_year + 1900, tblock->tm_mon + 1, tblock->tm_mday);
@@ -273,12 +273,12 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 	::Sleep(50);
 	g_TempLog.free();
 	g_ActionLog.free();
-	g_ChangeLog.free();
+	//g_ChangeLog.free();
 	g_TempLog.close();
 	::Sleep(50);
 	g_ActionLog.close();
 	::Sleep(50);
-	g_ChangeLog.close();
+	//g_ChangeLog.close();
 	::Sleep(50);
 }
 //---------------------------------------------------------------------------
@@ -466,7 +466,7 @@ bool TfrmMain::StartProcess(bool bStart)
 //---------------------------------------------------------------------------
 bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 {
-	if (FileExists(strFileName))
+	if (FileExists("C:\\Product_Data\\" + strFileName + ".ini"))
 	{
 		//g_IniFile.MachineFile(true);  //not reopen the MachineFile, because may off the bIsUseCIM. 
 
@@ -478,10 +478,10 @@ bool TfrmMain::OpenFilebyCIM(AnsiString strFileName)
 		::Sleep(2000);
 
 		//再寫入產品參數
-		frmMain->Caption = strFileName;
-		g_IniFile.m_strLastFileName = strFileName;
+		frmMain->Caption = "C:\\Product_Data\\" + strFileName + ".ini";
+		g_IniFile.m_strLastFileName = "C:\\Product_Data\\" + strFileName + ".ini";
 
-		g_IniFile.ProductFile(strFileName.c_str(), true);
+		g_IniFile.ProductFile(g_IniFile.m_strLastFileName.c_str(), true);
 		if (g_IniFile.m_bIsUseDBOffset) frmMain->ImportOffsetFromDB();
 
 		frmMain->SetAllDevice();
@@ -763,7 +763,7 @@ void __fastcall TfrmMain::CheckParamChange(TfmProduct *pWnd, TfmProduct *pWndRec
 	{
 		AnsiString strLog = "";
 		strLog.sprintf("流道數據修改: From %s To %s (%s)", FormatFloat("0", m_nRailOptionRecord->ItemIndex), FormatFloat("0", m_nRailOption->ItemIndex), SetupEE);
-		g_ChangeLog->insertChange(strLog);
+		//g_ChangeLog->insertChange(strLog);
 		AddList(strLog);      //if compare more param,this can delete. And Log it in database only.
 	}
 
@@ -1243,6 +1243,7 @@ void __fastcall TfrmMain::client1DFRead(TObject *Sender,
 	{
 		AddList("Front 1D Reader:" + strR);
 		str1DReaderData[1] = strR;
+        if (str1DReaderData[1] == g_IniFile.m_strModuleNum[1]) g_pMainThread->m_bIsCheckParamModuleNumF_OK = true;
 	}
 }
 //---------------------------------------------------------------------------
@@ -1278,6 +1279,7 @@ void __fastcall TfrmMain::client1DRRead(TObject *Sender,
 	{
 		AddList("Rear 1D Reader:" + strR);
 		str1DReaderData[0] = strR;
+        if (str1DReaderData[0] == g_IniFile.m_strModuleNum[0]) g_pMainThread->m_bIsCheckParamModuleNumR_OK = true;
 	}
 }
 //---------------------------------------------------------------------------
@@ -1510,7 +1512,7 @@ void __fastcall TfrmMain::Timer1Timer(TObject *Sender)
 			g_eqpXML.m_EqpStatus = 'D';
 			g_eqpXML.SendEventReport("1");
 		}
-		else if (g_DIO.ReadDOBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus != 'R')
+		else if (g_DIO.ReadDOBit(DO::StartBtnLamp) && g_eqpXML.m_EqpStatus != 'R' && !g_DIO.ReadDOBit(DO::StopBtnLamp))
 		{
 			g_eqpXML.m_EqpStatus = 'R';
 			g_eqpXML.SendEventReport("1");
@@ -1690,6 +1692,24 @@ void __fastcall TfrmMain::Timer2Timer(TObject *Sender)
 		}
 	}
 
+    //---Make sure Param ModuleNum Correct
+    if (g_pMainThread->m_bIsCheckParamModuleNum)
+    {
+        g_pMainThread->m_bIsCheckParamModuleNum = false;
+        str1DReaderData[1] = "";
+        str1DReaderData[0] = "";
+        client1DF->Socket->SendText("LON\r\n");
+        client1DR->Socket->SendText("LON\r\n");
+        g_pMainThread->m_bIsCheckParamModuleNumF_OK = false;
+        g_pMainThread->m_bIsCheckParamModuleNumR_OK = false;
+    }
+    if (g_pMainThread->m_bIsStopCheckParamModuleNum)
+    {
+        g_pMainThread->m_bIsStopCheckParamModuleNum = false;
+        client1DF->Socket->SendText("LOFF\r\n");
+        client1DR->Socket->SendText("LOFF\r\n");
+    }
+
 
 	Timer2->Enabled = true;
 }
@@ -1706,13 +1726,13 @@ void __fastcall TfrmMain::Timer3Timer(TObject *Sender)
 	{
 		g_TempLog.free();
 		g_ActionLog.free();
-		g_ChangeLog.free();
+		//g_ChangeLog.free();
 		g_TempLog.close();
 		g_ActionLog.close();
-		g_ChangeLog.close();
+		//g_ChangeLog.close();
 		g_TempLog.open(0);
 		g_ActionLog.open(1);
-		g_ChangeLog.open(3);
+		//g_ChangeLog.open(3);
 		m_strDate = "";
 		time_t timer = time(NULL);
 		struct tm *tblock = localtime(&timer);
@@ -2112,7 +2132,7 @@ void __fastcall TfrmMain::N7Click(TObject *Sender)
 void __fastcall TfrmMain::N8Click(TObject *Sender)
 {
 	TfmProduct *pWnd = new TfmProduct(this);
-	TfmProduct *pWndRecord = new TfmProduct(this);
+	//TfmProduct *pWndRecord = new TfmProduct(this);
 
 	//CreateCaptionFile(pWnd);
 	ReadCaptionFile(pWnd, g_IniFile.m_nLanguageMode);
@@ -2120,6 +2140,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	AnsiString strCtl;
 	bool bRead = true;
 
+    /*
 	//---------------------------------------------------------------------------
 	//pWndRecord ready for CheckParamChange
 	DDX_Int(bRead, g_IniFile.m_nCols, pWndRecord->m_nCols);
@@ -2235,7 +2256,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWndRecord->m_dTempOffsetR);
 
     DDX_Float(bRead, g_IniFile.m_dLamCorrBoardHeight, pWndRecord->m_dLamCorrBoardHeight);
-
+    */
 	//---------------------------------------------------------------------------
 	//pWnd ready to show for user
 	DDX_Int(bRead, g_IniFile.m_nCols, pWnd->m_nCols);
@@ -2392,6 +2413,13 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 			{
 				Application->MessageBoxA("上下修正次數 不可以 < 1", "Confirm", MB_OK);
 			}
+            else if (!pWnd->m_bNotLam->Checked
+                    && ((pWnd->m_nRailOption->ItemIndex == 0 && (pWnd->m_strModuleNum1->Text == "" || pWnd->m_strModuleNum0->Text == ""))
+                        || (pWnd->m_nRailOption->ItemIndex == 1 && pWnd->m_strModuleNum1->Text == "")
+                        || (pWnd->m_nRailOption->ItemIndex == 2 && pWnd->m_strModuleNum0->Text == "")))
+            {
+                Application->MessageBoxA("請輸入 模具編號", "Confirm", MB_OK);
+            }
 			else
 			{
 				bRead = false;
@@ -2407,7 +2435,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	//if (pWnd->ShowModal() == mrOk)
 	if (bRead == false)
 	{
-		CheckParamChange(pWnd, pWndRecord, &g_ChangeLog, g_IniFile.m_strLogInENGAccount);
+		//CheckParamChange(pWnd, pWndRecord, &g_ChangeLog, g_IniFile.m_strLogInENGAccount);
 
 		bRead = false;
 
@@ -2580,7 +2608,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 
 	SetAllDevice();
 	RefreshImage();
-	delete pWndRecord;
+	//delete pWndRecord;
 	delete pWnd;
 }
 //---------------------------------------------------------------------------
@@ -2734,7 +2762,9 @@ void __fastcall TfrmMain::OP1Click(TObject *Sender)
 {
 	SetPrivilege(0);
 	g_IniFile.m_strLogInENGAccount = "OP";
-	g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount + " 登入.");
+    AnsiString strShow = g_IniFile.m_strLogInENGAccount + " 登入.";
+	g_pMainThread->m_listLog.push_back(strShow);
+    AddChangeLog(strShow.c_str(),strShow.Length());
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
@@ -2770,7 +2800,9 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
 				Application->MessageBox("登入成功!!", "認證", MB_OK);
 				g_IniFile.m_strLogInENGAccount = pPwdDlg->editAccount->Text;
 				m_nUserLevel = 1;
-				g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount + " 登入.");
+                AnsiString strShow = g_IniFile.m_strLogInENGAccount + " 登入.";
+				g_pMainThread->m_listLog.push_back(strShow);
+                AddChangeLog(strShow.c_str(),strShow.Length());
 				//unlock RestetButton
 				g_pMainThread->m_bIsResetAlarmLocked = false;
 				break;
@@ -2779,7 +2811,9 @@ void __fastcall TfrmMain::Engineer1Click(TObject *Sender)
 		else
 		{
 			g_IniFile.m_strLogInENGAccount = "OP";
-			g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount + " 登入.");
+            AnsiString strShow = g_IniFile.m_strLogInENGAccount + " 登入.";
+			g_pMainThread->m_listLog.push_back(strShow);
+            AddChangeLog(strShow.c_str(),strShow.Length());
 			m_nUserLevel = 0;
 			break;
 		}
@@ -2835,7 +2869,9 @@ void __fastcall TfrmMain::Admin1Click(TObject *Sender)
 		if (pPwdDlg->editOldPassword->Text == g_IniFile.m_strARTPassword)
 		{
 			g_IniFile.m_strLogInENGAccount = "Admin";
-			g_pMainThread->m_listLog.push_back(g_IniFile.m_strLogInENGAccount + " 登入.");
+            AnsiString strShow = g_IniFile.m_strLogInENGAccount + " 登入.";
+			g_pMainThread->m_listLog.push_back(strShow);
+            AddChangeLog(strShow.c_str(),strShow.Length());
 			//unlock RestetButton
 			g_pMainThread->m_bIsResetAlarmLocked = false;
 			m_nUserLevel = 2;
@@ -2860,23 +2896,24 @@ void __fastcall TfrmMain::N15Click(TObject *Sender)
 	{
 		AnsiString Result = g_AccountLog->updateAccountPass(pAccountManual->Memo1->Text);
 		Application->MessageBox(Result.c_str(), "認證", MB_OK);
-
-        //For Debug
-	    if (g_pMainThread->m_bIsHomeDone)
-	    {
-		    AnsiString strShowThreadIndex = "";
-		    for (int nIndex = 0; nIndex<MAX_PROCESS; nIndex++)
-		    {
-			    strShowThreadIndex += IntToStr(g_pMainThread->nThreadIndex[nIndex]) + ',';
-		    }
-		    for (int nAxis = 0; nAxis<6; nAxis++)
-		    {
-			    strShowThreadIndex += FormatFloat("0.000", g_Motion.GetActualPos(nAxis)) + ',';
-		    }
-
-		    AddList(strShowThreadIndex);
-	    }
 	}
+    
+    //For Debug
+    if (g_pMainThread->m_bIsHomeDone)
+    {
+        AnsiString strShowThreadIndex = "";
+        for (int nIndex = 0; nIndex<MAX_PROCESS; nIndex++)
+        {
+            strShowThreadIndex += IntToStr(g_pMainThread->nThreadIndex[nIndex]) + ',';
+        }
+        for (int nAxis = 0; nAxis<6; nAxis++)
+        {
+            strShowThreadIndex += FormatFloat("0.000", g_Motion.GetActualPos(nAxis)) + ',';
+        }
+
+        AddList(strShowThreadIndex);
+    }
+
 	delete pAccountManual;
 	delete g_AccountLog;
 }
@@ -3108,6 +3145,10 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 				if (MessageDlg(pString + IntToStr(nIndex + 1),
 					mtInformation, TMsgDlgButtons() << mbOK << mbCancel, 0) == mrCancel) return;
 
+                //Manual Logging
+                AnsiString strShow = "手動控制: 控制項=" + IntToStr(radioPosOption->ItemIndex) + " Index=" + IntToStr(nIndex);
+                AddChangeLog(strShow.c_str(), strShow.Length());
+
 				int nCol = nIndex % 10;
 				int nRow = nIndex / 10;
 
@@ -3116,33 +3157,48 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 				case 1:
 					if (nCol<g_IniFile.m_nCols && nRow< g_IniFile.m_nRows)
 					{
-						g_Motion.AbsMove(AXIS_X, dStartX + nCol*g_IniFile.m_dColPitch);
-						g_Motion.AbsMove(AXIS_Y, dStartY - nRow*g_IniFile.m_dRowPitch);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_X, dStartX + nCol*g_IniFile.m_dColPitch) && g_pMainThread->CheckSafeAbsMove(AXIS_Y, dStartY - nRow*g_IniFile.m_dRowPitch))
+                        {
+						    g_Motion.AbsMove(AXIS_X, dStartX + nCol*g_IniFile.m_dColPitch);
+						    g_Motion.AbsMove(AXIS_Y, dStartY - nRow*g_IniFile.m_dRowPitch);
+                        }
 					}
 					break;
 				case 2:
 					if (nFront)
 					{
-						g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dFrontUpperMoveLocX[nIndex][0]);
-						g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dFrontUpperMoveLocY[nIndex][0]);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_X, g_pMainThread->m_dFrontUpperMoveLocX[nIndex][0]) && g_pMainThread->CheckSafeAbsMove(AXIS_Y, g_pMainThread->m_dFrontUpperMoveLocY[nIndex][0]))
+                        {
+						    g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dFrontUpperMoveLocX[nIndex][0]);
+						    g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dFrontUpperMoveLocY[nIndex][0]);
+                        }
 					}
 					else
 					{
-						g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dRearUpperMoveLocX[nIndex][0]);
-						g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dRearUpperMoveLocY[nIndex][0]);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_X, g_pMainThread->m_dRearUpperMoveLocX[nIndex][0]) && g_pMainThread->CheckSafeAbsMove(AXIS_Y, g_pMainThread->m_dRearUpperMoveLocY[nIndex][0]))
+                        {
+						    g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dRearUpperMoveLocX[nIndex][0]);
+						    g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dRearUpperMoveLocY[nIndex][0]);
+                        }
 					}
 					break;
 				case 3:
 					if (nFront)
 					{
-						g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dFrontDownMoveLocX[nIndex][0]);
-						g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dFrontDownMoveLocY[nIndex][0]);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_X, g_pMainThread->m_dFrontDownMoveLocX[nIndex][0]) && g_pMainThread->CheckSafeAbsMove(AXIS_Y, g_pMainThread->m_dFrontDownMoveLocY[nIndex][0]))
+                        {
+                            g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dFrontDownMoveLocX[nIndex][0]);
+						    g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dFrontDownMoveLocY[nIndex][0]);
+                        }
 					}
 					else
 					{
-						g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dRearDownMoveLocX[nIndex][0]);
-						g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dRearDownMoveLocY[nIndex][0]);
-					}
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_X, g_pMainThread->m_dFrontDownMoveLocX[nIndex][0]) && g_pMainThread->CheckSafeAbsMove(AXIS_Y, g_pMainThread->m_dFrontDownMoveLocY[nIndex][0]))
+                        {
+						    g_Motion.AbsMove(AXIS_X, g_pMainThread->m_dRearDownMoveLocX[nIndex][0]);
+						    g_Motion.AbsMove(AXIS_Y, g_pMainThread->m_dRearDownMoveLocY[nIndex][0]);
+                        }
+                    }
 					break;
 				}
 
@@ -3179,15 +3235,27 @@ void __fastcall TfrmMain::PaintBox1MouseDown(TObject *Sender, TMouseButton Butto
 #pragma region MainManual
 void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 {
+    TSpeedButton *pBtn = (TSpeedButton *)Sender;
+
 	if (g_pMainThread->m_bIsAutoMode) return;
-	if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
-		|| (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+    if (!g_pMainThread->m_bIsHomeDone)
+	{
+		if (g_IniFile.m_nLanguageMode>0) ShowMessage("Please Reset Machine");
+		else ShowMessage("請先執行機台原點復歸");
+		return;
+	}
+	if (pBtn->Down == true
+        && ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+		    || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2))))
 	{
 		Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
+        pBtn->Down = false;
 		return;
 	}
 
-	TSpeedButton *pBtn = (TSpeedButton *)Sender;
+    //Manual Logging
+    AnsiString strShow = "手動控制: 按下 主畫面六個控制項 (" + pBtn->HelpKeyword + ")";
+    AddChangeLog(strShow.c_str(), strShow.Length());
 
 	//Select if PressCal from 1st location
 	bool bFrom1st = false;
@@ -3198,9 +3266,23 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 	{
 		switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
 		{
-		case IDYES: { bFrom1st = true; pBtn->Down = true; break; }
-		case IDNO: { bFrom1st = false; pBtn->Down = true; break; }
-		case IDCANCEL: { return; break; }
+		case IDYES:
+            {
+                bFrom1st = true;
+                pBtn->Down = true;
+            }
+            break;
+		case IDNO:
+            {
+                bFrom1st = false;
+                pBtn->Down = true;
+            }
+            break;
+		case IDCANCEL:
+            {
+                return;
+            }
+            break;
 		}
 	}
 
@@ -3244,7 +3326,7 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 	//Protect LoadCell
 	g_DIO.SetDO(DO::LoadCellValve, false);
 
-	//if btn down 
+	//if btn down
 	if (checkRestartCal->Checked && pBtn->Down)
 	{
 		g_pMainThread->m_nPressCalMoveIndex[0] = -1;
@@ -3286,18 +3368,28 @@ void __fastcall TfrmMain::btnStartPressCal0Click(TObject *Sender)
 	g_pMainThread->m_bStartLaserUpCal[0] = btnLaserUp0->Down;
 	g_pMainThread->m_bStartLaserDownCal[1] = btnLaserDown1->Down;
 	g_pMainThread->m_bStartLaserDownCal[0] = btnLaserDown0->Down;
-
+    
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::SpeedButton1Click(TObject *Sender)
 {
 	if (g_pMainThread->m_bIsAutoMode) return;
+    AnsiString pString;
+    if (g_IniFile.m_nLanguageMode>0) pString = "Make sure LoadCell UP??";
+    else pString = "是否 上升LoadCell??";
+    if (Application->MessageBoxA(pString.c_str(), "Confirm", MB_ICONQUESTION | MB_OKCANCEL) != IDOK) return;
+    //Manual Logging
+    AnsiString strShow = "手動控制: LoadCell Up.";
+    AddChangeLog(strShow.c_str(), strShow.Length());
 	g_DIO.SetDO(DO::LoadCellValve, true);
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::SpeedButton2Click(TObject *Sender)
 {
 	if (g_pMainThread->m_bIsAutoMode) return;
+    //Manual Logging
+    AnsiString strShow = "手動控制: LoadCell Down.";
+    AddChangeLog(strShow.c_str(), strShow.Length());
 	g_DIO.SetDO(DO::LoadCellValve, false);
 }
 //---------------------------------------------------------------------------
@@ -3319,9 +3411,30 @@ void __fastcall TfrmMain::btnHomingClick(TObject *Sender)
 		else pString = "確實全機復歸";
 		switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
 		{
-		case IDYES: {g_pMainThread->m_nIsFullHoming = 1; break; }
-		case IDNO: {g_pMainThread->m_nIsFullHoming = 0; break; }
-		case IDCANCEL: {g_pMainThread->m_nIsFullHoming = 2; break; }
+		case IDYES:
+            {
+            g_pMainThread->m_nIsFullHoming = 1;
+            AnsiString strShow = "手動控制: 按下 主畫面 是 全機復歸.";
+            AddChangeLog(strShow.c_str(), strShow.Length());
+
+            }
+            break;
+		case IDNO:
+            {
+            g_pMainThread->m_nIsFullHoming = 0;
+            AnsiString strShow = "手動控制: 按下 主畫面 否 全機復歸.";
+            AddChangeLog(strShow.c_str(), strShow.Length());
+
+            }
+            break;
+		case IDCANCEL:
+            {
+            g_pMainThread->m_nIsFullHoming = 2;
+            AnsiString strShow = "手動控制: 按下 主畫面 取消 全機復歸.";
+            AddChangeLog(strShow.c_str(), strShow.Length());
+
+            }
+            break;
 		}
 	}
 
@@ -3330,7 +3443,6 @@ void __fastcall TfrmMain::btnHomingClick(TObject *Sender)
 
 
 	//g_pMainThread->m_bIsWriteOffsetToDB_F = true;
-
 
 }
 //---------------------------------------------------------------------------
@@ -3412,6 +3524,9 @@ void __fastcall TfrmMain::btnClearEject0Click(TObject *Sender)
 	g_DIO.SetDO(DO::ReadyOutR, false);
 	g_DIO.SetDO(DO::EjectMotorStart2, false);
 	g_DIO.SetDO(DO::EjectStop2, true);
+    //Manual Logging
+    AnsiString strShow = "手動控制: 按下 主畫面 後排除流道 步驟清除";
+    AddChangeLog(strShow.c_str(), strShow.Length());
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnClearEject1Click(TObject *Sender)
@@ -3426,6 +3541,9 @@ void __fastcall TfrmMain::btnClearEject1Click(TObject *Sender)
 	g_DIO.SetDO(DO::ReadyOutF, false);
 	g_DIO.SetDO(DO::EjectMotorStart1, false);
 	g_DIO.SetDO(DO::EjectStop1, true);
+    //Manual Logging
+    AnsiString strShow = "手動控制: 按下 主畫面前 排除流道 步驟清除";
+    AddChangeLog(strShow.c_str(), strShow.Length());
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnClearLCClick(TObject *Sender)
@@ -3439,33 +3557,85 @@ void __fastcall TfrmMain::btnClearLCClick(TObject *Sender)
 	g_pMainThread->nThreadIndex[1] = 0;
 	g_DIO.SetDO(DO::LCMotorStart, false);
 	g_DIO.SetDO(DO::LCStop, true);
+    //Manual Logging
+    AnsiString strShow = "手動控制: 按下 主畫面LC 步驟清除";
+    AddChangeLog(strShow.c_str(), strShow.Length());
 }
 //---------------------------------------------------------------------------
 void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
 {
+    C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
+    TSpeedButton *pBtn = (TSpeedButton *)Sender;
+
+    //Manual Logging
+    AnsiString strShow = "手動控制: 按下 主畫面一鍵量測校正";
+    AddChangeLog(strShow.c_str(), strShow.Length());
+
 	if (g_pMainThread->m_bIsAutoMode) return;
-	if ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
-		|| (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2)))
+    if (!g_pMainThread->m_bIsHomeDone)
+	{
+		if (g_IniFile.m_nLanguageMode>0) ShowMessage("Please Reset Machine");
+		else ShowMessage("請先執行機台原點復歸");
+		return;
+	}
+    if (pBtn->Down == true
+	    && ((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
+		    || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2))))
 	{
 		Application->MessageBoxA("請確認 前後上模具護蓋已卸除!!", "Confirm", MB_OK);
+        pBtn->Down = false;
 		return;
 	}
 
-	C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
-
-	TSpeedButton *pBtn = (TSpeedButton *)Sender;
 	bool bIsStart = pBtn->Down;
 
 	bool bIsContinue = false;
 	if (bIsStart)                   //Strat
-	{
+    {
+        //Make sure Param ModuleNum Correct
+        g_pMainThread->m_bIsCheckParamModuleNum = true;
+
+        tm1MS.timeStart(10000);
+        while (1)
+        {
+            if (g_IniFile.m_nRailOption == 0 && g_pMainThread->m_bIsCheckParamModuleNumF_OK && g_pMainThread->m_bIsCheckParamModuleNumR_OK) break;
+            else if (g_IniFile.m_nRailOption == 1 && g_pMainThread->m_bIsCheckParamModuleNumF_OK) break;
+            else if (g_IniFile.m_nRailOption == 2 && g_pMainThread->m_bIsCheckParamModuleNumR_OK) break;
+            else if (tm1MS.timeUp())
+            {
+                g_pMainThread->m_bIsStopCheckParamModuleNum = true;
+                //Application->MessageBoxA("請確認 Reader TimeOut!!", "Confirm", MB_OK);
+                break;
+            }
+            Application->ProcessMessages();
+        }
+        if (!g_pMainThread->m_bIsCheckParamModuleNumF_OK)
+        {
+            Application->MessageBoxA("請確認 前 上模具編號與產品參數設定相同!!", "Confirm", MB_OK);
+		    return;
+        }
+        if (!g_pMainThread->m_bIsCheckParamModuleNumR_OK)
+        {
+            Application->MessageBoxA("請確認 後 上模具編號與產品參數設定相同!!", "Confirm", MB_OK);
+		    return;
+        }
+
+
 		AnsiString pString;
 		if (g_IniFile.m_nLanguageMode>0) pString = "OneStepCal Restrat?";
 		else pString = "一鍵量測校正 是否重新開始?";
 		switch (Application->MessageBoxA(pString.c_str(), "Confirm", MB_YESNOCANCEL))
 		{
-		case IDYES: { bIsContinue = false; break; }
-		case IDNO: { bIsContinue = true; break; }
+		case IDYES:
+            {
+                bIsContinue = false;
+            }
+            break;
+		case IDNO:
+            {
+                bIsContinue = true;
+            }
+            break;
 		case IDCANCEL: { return; }
 		}
 	}
@@ -3522,7 +3692,10 @@ void __fastcall TfrmMain::btnStartOneStepPressCalClick(TObject *Sender)
 
 		g_DIO.SetDO(DO::LoadCellValve, false);
 		::Sleep(500);
-		g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+        if (g_pMainThread->CheckSafeAbsMove(AXIS_X, g_IniFile.m_dSafePos))
+        {
+		    g_Motion.AbsMove(AXIS_Y, g_IniFile.m_dSafePos);
+        }
 
 		tm1MS.timeStart(10000);
 		while (true)

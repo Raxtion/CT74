@@ -194,6 +194,9 @@ __published:	// IDE-managed Components
     TLabel *Label2;
     TLabel *Label10;
     TEdit *m_dDeVacDelayTime;
+    TLabel *Label11;
+    TEdit *m_nPressCalRecheckTimes;
+    TLabel *Label12;
     void __fastcall m_bIsUseCIMClick(TObject *Sender);
     void __fastcall m_dLamHeightDblClick(TObject *Sender);
 private:	// User declarations

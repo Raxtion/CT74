@@ -1,5 +1,5 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 384
+  Left = 330
   Top = 214
   Width = 1105
   Height = 615
@@ -133,6 +133,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 58
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'X'#21152#36895#26178#38291
       TabOrder = 0
       Text = 'editAcc1'
     end
@@ -141,6 +143,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 85
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'X'#28187#36895#26178#38291
       TabOrder = 1
       Text = 'Edit1'
     end
@@ -149,6 +153,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 112
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'X'#25163#21205#36895#24230
       TabOrder = 2
       Text = 'Edit1'
     end
@@ -157,6 +163,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 139
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'X'#24037#20316#36895#24230
       TabOrder = 3
       Text = 'Edit1'
     end
@@ -165,6 +173,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 58
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'Y'#21152#36895#26178#38291
       TabOrder = 4
       Text = 'Edit1'
     end
@@ -173,6 +183,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 85
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'Y'#28187#36895#26178#38291
       TabOrder = 5
       Text = 'Edit1'
     end
@@ -181,6 +193,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 112
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'Y'#25163#21205#36895#24230
       TabOrder = 6
       Text = 'Edit1'
     end
@@ -189,6 +203,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 139
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'Y'#24037#20316#36895#24230
       TabOrder = 7
       Text = 'Edit1'
     end
@@ -197,6 +213,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 58
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'LC'#21152#36895#26178#38291
       TabOrder = 8
       Text = 'Edit1'
     end
@@ -205,6 +223,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 85
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'LC'#28187#36895#26178#38291
       TabOrder = 9
       Text = 'Edit1'
     end
@@ -213,6 +233,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 112
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'LC'#25163#21205#36895#24230
       TabOrder = 10
       Text = 'Edit1'
     end
@@ -221,6 +243,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 139
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'LC'#24037#20316#36895#24230
       TabOrder = 11
       Text = 'Edit1'
     end
@@ -477,6 +501,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 58
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'FL'#21152#36895#26178#38291
       TabOrder = 30
       Text = 'editAcc5'
     end
@@ -485,6 +511,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 85
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'FL'#28187#36895#26178#38291
       TabOrder = 31
       Text = 'Edit1'
     end
@@ -493,6 +521,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 112
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'FL'#25163#21205#36895#24230
       TabOrder = 32
       Text = 'Edit1'
     end
@@ -501,6 +531,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 139
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'FL'#24037#20316#36895#24230
       TabOrder = 33
       Text = 'Edit1'
     end
@@ -525,6 +557,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 58
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'RL'#21152#36895#26178#38291
       TabOrder = 35
       Text = 'Edit1'
     end
@@ -533,6 +567,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 85
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'RL'#28187#36895#26178#38291
       TabOrder = 36
       Text = 'Edit1'
     end
@@ -541,6 +577,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 112
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'RL'#25163#21205#36895#24230
       TabOrder = 37
       Text = 'Edit1'
     end
@@ -549,6 +587,8 @@ object frmMachineParam: TfrmMachineParam
       Top = 139
       Width = 65
       Height = 24
+      HelpType = htKeyword
+      HelpKeyword = 'RL'#24037#20316#36895#24230
       TabOrder = 38
       Text = 'Edit1'
     end

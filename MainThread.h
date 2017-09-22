@@ -53,6 +53,10 @@ public:
 	bool m_bIsNeedReLoadProductParam;		//Machine Test Mode Change, Need To ReLoad ProductParam
     bool m_bIsWriteOffsetToDB_F;            //When PressCal Finished turn true, to Synchronize the OffsetTable.db3 by UI. (front)
     bool m_bIsWriteOffsetToDB_R;            //When PressCal Finished turn true, to Synchronize the OffsetTable.db3 by UI. (rear)
+    bool m_bIsCheckParamModuleNum;			//From MainThread triger UI Check Param ModuleNum Correct
+	bool m_bIsCheckParamModuleNumF_OK;		//From MainThread triger UI Check Param ModuleNum Correct, Front return Check OK.
+	bool m_bIsCheckParamModuleNumR_OK;		//From MainThread triger UI Check Param ModuleNum Correct, Rear return Check OK.
+    bool m_bIsStopCheckParamModuleNum;      //From MainThread triger Stop UI Check Param ModuleNum Correct.
 
 	//Error Tag
     bool m_bIsAutoCalPressOverAllowF;		//Record for Need Shutdown in AutoCal Processing, when Front Lane Press detection over ErrorAllow.
@@ -157,6 +161,10 @@ public:
 
 	//Homing
 	bool __fastcall InitialMachine(int &nThreadIndex);
+
+    //PreAuto
+	bool __fastcall doPreAuto(int &nThreadIndex);
+
 	//Auto Mode
 	void __fastcall DoLaneChanger(int &nThreadIndex);
 	void __fastcall DoLamination(bool bFront,int &nThreadIndex);
@@ -171,6 +179,7 @@ public:
 	void __fastcall DoAutoCal(bool bFront, int &nThreadIndex);
 
 	void __fastcall CheckAlarm();
+    bool __fastcall CheckSafeAbsMove(unsigned short nAxis, double dMoveTo);
 	AnsiString AddTimeString(AnsiString Input);
 	AnsiString AddTimeString(bool bFront, AnsiString Input);
 };

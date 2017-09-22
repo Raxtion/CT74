@@ -265,6 +265,10 @@ __published:	// IDE-managed Components
     TButton *btnRead1DRear;
     TComboBox *m_cmbUseLamCorrectBoard;
     TButton *btn1DReaderReconnect;
+    TGroupBox *GroupBox3;
+    TLabel *Label8;
+    TLabel *Label9;
+    TEdit *m_dLamCorrBoardHeight;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbScal(AnsiString Hint);

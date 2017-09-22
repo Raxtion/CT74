@@ -31,10 +31,10 @@ object IOCheckDlg: TIOCheckDlg
       Top = 5
       Width = 1006
       Height = 581
-      ActivePage = TabSheet1
+      ActivePage = TabSheet5
       Align = alClient
       Style = tsFlatButtons
-      TabIndex = 0
+      TabIndex = 2
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'X300'

@@ -8,6 +8,8 @@
 #include <IniFiles.hpp>
 #include <list>
 
+#define PARA_LOG_PATH "C:\\ParameterChangeLog"
+
 enum {LoaderSection=0,FluxToolSection,BallToolSection,
   LifterSection,InspecSection,LaneChangeSection,RailSection,BallPoolSection};
 //---------------------------------------------------------------------------
@@ -67,5 +69,5 @@ void ReplaceString(AnsiString *Original, AnsiString OldStr, AnsiString NewStr);
 //std::list<AnsiString> g_liststrForderName;
 //std::list<AnsiString> g_liststrFileName;
 void DirExplore(AnsiString path,std::list<AnsiString> &g_liststrForderName,std::list<AnsiString> &g_liststrFileName);
-
+void AddChangeLog(char *pRx, int nSize);
 #endif

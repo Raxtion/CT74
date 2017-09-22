@@ -9,6 +9,7 @@
 #include "PCIM114.h"
 #include "IniFile.h"
 #include "CPIC9114.h"
+#include "MainThread.h"
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -18,6 +19,7 @@
 extern CMyPISODIO g_DIO;
 extern CPCIM114 g_Motion;
 extern CIniFile g_IniFile;
+extern CMainThread *g_pMainThread;
 
 //---------------------------------------------------------------------------
 __fastcall TfrmManual::TfrmManual(TComponent* Owner)
@@ -90,27 +92,52 @@ void __fastcall TfrmManual::SpeedButton1Click(TObject *Sender)
         else if((!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassF) && !g_DIO.ReadDIBit(DI::UpperMoldCheck1))
             || (!g_DIO.ReadDOBit(DO::UpperMoldCheckByPassR) && !g_DIO.ReadDIBit(DI::UpperMoldCheck2))) g_IniFile.m_nErrorCode = 30;
         else
-        switch(pBtn->Tag)
         {
+            switch(pBtn->Tag)
+            {
                 case 0:
-                        g_Motion.AbsMove(AXIS_Y,dPos[pBtn->Tag]);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_Y, dPos[pBtn->Tag]))
+                        {
+                            //Manual Logging
+                            AnsiString strShow = "も笆北: " + FormatFloat("Y absMove to: 0.000", dPos[pBtn->Tag]);
+                            AddChangeLog(strShow.c_str(), strShow.Length());
+                            g_Motion.AbsMove(AXIS_Y,dPos[pBtn->Tag]);
+                        }
                         break;
                 case 1:
                 case 2:
                 case 3:
-                        g_Motion.AbsMove(AXIS_LC,dPos[pBtn->Tag]);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_LC, dPos[pBtn->Tag]))
+                        {
+                            //Manual Logging
+                            AnsiString strShow = "も笆北: " + FormatFloat("LC absMove to: 0.000", dPos[pBtn->Tag]);
+                            AddChangeLog(strShow.c_str(), strShow.Length());
+                            g_Motion.AbsMove(AXIS_LC,dPos[pBtn->Tag]);
+                        }
                         break;
                 case 4:
                 case 5:
                 case 6:
                 case 7:
-                        g_Motion.AbsMove(AXIS_RL,dPos[pBtn->Tag]);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_RL, dPos[pBtn->Tag]))
+                        {
+                            //Manual Logging
+                            AnsiString strShow = "も笆北: " + FormatFloat("RL absMove to: 0.000", dPos[pBtn->Tag]);
+                            AddChangeLog(strShow.c_str(), strShow.Length());
+                            g_Motion.AbsMove(AXIS_RL,dPos[pBtn->Tag]);
+                        }
                         break;
                 case 8:
                 case 9:
                 case 10:
                 case 11:
-                        g_Motion.AbsMove(AXIS_FL,dPos[pBtn->Tag]);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_FL, dPos[pBtn->Tag]))
+                        {
+                            //Manual Logging
+                            AnsiString strShow = "も笆北: " + FormatFloat("FL absMove to: 0.000", dPos[pBtn->Tag]);
+                            AddChangeLog(strShow.c_str(), strShow.Length());
+                            g_Motion.AbsMove(AXIS_FL,dPos[pBtn->Tag]);
+                        }
                         break;
                 case 12:
                 case 14:
@@ -118,15 +145,24 @@ void __fastcall TfrmManual::SpeedButton1Click(TObject *Sender)
                 case 18:
                 case 20:
                 case 22:
-                        g_Motion.AbsMove(AXIS_X,dPos[pBtn->Tag]);
-                        g_Motion.AbsMove(AXIS_Y,dPos[pBtn->Tag+1]);
+                        if (g_pMainThread->CheckSafeAbsMove(AXIS_X, dPos[pBtn->Tag]) && g_pMainThread->CheckSafeAbsMove(AXIS_Y, dPos[pBtn->Tag+1]))
+                        {
+                            //Manual Logging
+                            AnsiString strShow = "";
+                            strShow = "も笆北: " + FormatFloat("X absMove to: 0.000", dPos[pBtn->Tag]);
+                            AddChangeLog(strShow.c_str(), strShow.Length());
+                            strShow = "も笆北: " + FormatFloat("Y absMove to: 0.000", dPos[pBtn->Tag+1]);
+                            AddChangeLog(strShow.c_str(), strShow.Length());
+                            g_Motion.AbsMove(AXIS_X,dPos[pBtn->Tag]);
+                            g_Motion.AbsMove(AXIS_Y,dPos[pBtn->Tag+1]);
+                        }
                         break;
                 case 24:
                         break;
                 default:
                         break;
+            }
         }
-
         //
         while(1)
         {
