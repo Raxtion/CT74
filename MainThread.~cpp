@@ -269,6 +269,8 @@ void __fastcall CMainThread::Execute()
                     m_nPassBoatCount0 = 0;
                     m_nPassBoatCount1 = 0;
 
+                    m_bIsAutoCalLocked = false;
+
                     g_pMainThread->m_dLamTimer[0] = 0.0;
                     g_pMainThread->m_dLamTimer[1] = 0.0;
 				}

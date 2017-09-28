@@ -51,8 +51,8 @@ object fmProduct: TfmProduct
     Top = 0
     Width = 1073
     Height = 401
-    ActivePage = TabSheet1
-    TabIndex = 0
+    ActivePage = TabSheet2
+    TabIndex = 1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Common Page'
@@ -898,6 +898,7 @@ object fmProduct: TfmProduct
           Style = csDropDownList
           ItemHeight = 16
           TabOrder = 12
+          OnClick = m_cmbUseLamCorrectBoardClick
           Items.Strings = (
             'Fail'
             'True')
@@ -10536,7 +10537,7 @@ object fmProduct: TfmProduct
       end
       object GroupBox3: TGroupBox
         Left = 8
-        Top = 192
+        Top = 264
         Width = 241
         Height = 73
         Caption = #20351#29992#26657#27491#26495
@@ -10556,6 +10557,39 @@ object fmProduct: TfmProduct
           Caption = 'mm'
         end
         object m_dLamCorrBoardHeight: TEdit
+          Tag = 1
+          Left = 128
+          Top = 32
+          Width = 73
+          Height = 24
+          HelpType = htKeyword
+          HelpKeyword = #26657#27491#26495#36864#32302#21402#24230
+          TabOrder = 0
+          Text = 'Edit1'
+        end
+      end
+      object GroupBox7: TGroupBox
+        Left = 8
+        Top = 184
+        Width = 241
+        Height = 73
+        Caption = #29305#27530#29986#21697#21443#25976
+        TabOrder = 5
+        object Label15: TLabel
+          Left = 8
+          Top = 37
+          Width = 96
+          Height = 16
+          Caption = #22739#21512#36864#32302#21402#24230
+        end
+        object Label16: TLabel
+          Left = 206
+          Top = 36
+          Width = 24
+          Height = 16
+          Caption = 'mm'
+        end
+        object m_dLamProductHeight: TEdit
           Tag = 1
           Left = 128
           Top = 32

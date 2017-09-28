@@ -269,6 +269,10 @@ __published:	// IDE-managed Components
     TLabel *Label8;
     TLabel *Label9;
     TEdit *m_dLamCorrBoardHeight;
+    TGroupBox *GroupBox7;
+    TLabel *Label15;
+    TLabel *Label16;
+    TEdit *m_dLamProductHeight;
         void __fastcall FormCreate(TObject *Sender);
         void __fastcall RenewRadioGroup();
         void __fastcall RenewCmbScal(AnsiString Hint);
@@ -278,6 +282,7 @@ __published:	// IDE-managed Components
     void __fastcall btnRead1DFrontClick(TObject *Sender);
     void __fastcall btnRead1DRearClick(TObject *Sender);
     void __fastcall btn1DReaderReconnectClick(TObject *Sender);
+    void __fastcall m_cmbUseLamCorrectBoardClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TfmProduct(TComponent* Owner);

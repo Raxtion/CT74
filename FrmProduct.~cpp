@@ -357,3 +357,19 @@ void __fastcall TfmProduct::btn1DReaderReconnectClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfmProduct::m_cmbUseLamCorrectBoardClick(TObject *Sender)
+{
+    TComboBox *pBtn = (TComboBox *)Sender;
+    if (pBtn->ItemIndex == 1)
+    {
+        m_dLamCorrBoardHeight->Enabled = false;
+        m_dLamCorrBoardHeight->Color = clGray;
+    }
+    else
+    {
+        m_dLamCorrBoardHeight->Enabled = true;
+        m_dLamCorrBoardHeight->Color = clWindow;
+    }
+}
+//---------------------------------------------------------------------------
+

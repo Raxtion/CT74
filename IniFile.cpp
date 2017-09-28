@@ -275,6 +275,7 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTempOffsetR",m_dTempOffsetR,0.0);
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamCorrBoardHeight",m_dLamCorrBoardHeight,0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dLamProductHeight",m_dLamProductHeight,0.0);
 
   delete pIniFile;
 }

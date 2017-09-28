@@ -1959,8 +1959,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][0]LamSub 壓合開始移動至LamHeight"));
 			g_DIO.SetDO(nLamMotorStart, false);
 			double dMoveTo = 0.0;
-			if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight) - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront];
-			else dMoveTo = g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront];
+			if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight - g_IniFile.m_dLamProductHeight) - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront];
+			else dMoveTo = g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamProductHeight - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront];
 			if (CheckSafeAbsMove(nAxisLifter, dMoveTo)) g_Motion.AbsMove(nAxisLifter, dMoveTo);
 			
 			nThreadIndex++;
@@ -2057,8 +2057,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 			{
 				m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][5]LamSub 第二段壓合上下修正結束"));
 				double dMoveTo = 0.0;
-				if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight);
-				else dMoveTo = (g_IniFile.m_dLamHeight[bFront]);
+				if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight - g_IniFile.m_dLamProductHeight);
+				else dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamProductHeight);
 				if (CheckSafeAbsMove(nAxisLifter, dMoveTo)) g_Motion.AbsMove(nAxisLifter, dMoveTo);
 				nThreadIndex++;
 			}
@@ -2085,8 +2085,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
             g_Motion.SetSpeed(nAxisLifter, g_IniFile.m_dACCSpeed[nAxisLifter], g_IniFile.m_dDECSpeed[nAxisLifter], g_IniFile.m_dLamSecondHeight[bFront] / g_IniFile.m_dLamSecondTime[bFront]);
 			m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][5]LamSub 不使用第二段壓合上下修正"));
 			double dMoveTo = 0.0;
-			if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight);
-			else dMoveTo = g_IniFile.m_dLamHeight[bFront];
+			if (g_IniFile.m_nUseLamCorrectBoard) dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight - g_IniFile.m_dLamProductHeight);
+			else dMoveTo = (g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamProductHeight);
 			if (CheckSafeAbsMove(nAxisLifter, dMoveTo)) g_Motion.AbsMove(nAxisLifter, dMoveTo);
 			bLamSecondTimeError = false;
 			tm1MSLamSecondTime.timeDevStart();
@@ -2095,8 +2095,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		break;
 	case 6: //20150721 加入上升第三段變速  小於1mm就降速為1mm跑完需要60秒
 		//20150803 加入進入第三段 開始倒數壓合、Buzzer OFF、VacDelayTimeStart
-		if ((!g_IniFile.m_nUseLamCorrectBoard && g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]))
-			|| (g_IniFile.m_nUseLamCorrectBoard && g_Motion.GetActualPos(nAxisLifter)>((g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight) - g_IniFile.m_dLamThirdHeight[bFront])))
+		if ((!g_IniFile.m_nUseLamCorrectBoard && g_Motion.GetActualPos(nAxisLifter)>(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront] - g_IniFile.m_dLamProductHeight))
+			|| (g_IniFile.m_nUseLamCorrectBoard && g_Motion.GetActualPos(nAxisLifter)>((g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight - g_IniFile.m_dLamProductHeight) - g_IniFile.m_dLamThirdHeight[bFront])))
 		{
             g_DIO.SetDO(nLifterVac, g_IniFile.m_nVacummOn);
             g_DIO.SetDO(nLifterDeVac, !g_IniFile.m_nVacummOn);
@@ -2212,8 +2212,8 @@ void __fastcall CMainThread::DoLamSub(bool bFront, int &nThreadIndex)
 		}
 		break;
 	case 11:
-		if ((!g_IniFile.m_nUseLamCorrectBoard && g_Motion.GetActualPos(nAxisLifter)<(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]))
-			|| (g_IniFile.m_nUseLamCorrectBoard && g_Motion.GetActualPos(nAxisLifter)<((g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight) - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront])))
+		if ((!g_IniFile.m_nUseLamCorrectBoard && g_Motion.GetActualPos(nAxisLifter)<(g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamProductHeight - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront]))
+			|| (g_IniFile.m_nUseLamCorrectBoard && g_Motion.GetActualPos(nAxisLifter)<((g_IniFile.m_dLamHeight[bFront] - g_IniFile.m_dLamCorrBoardHeight - g_IniFile.m_dLamProductHeight) - g_IniFile.m_dLamSecondHeight[bFront] - g_IniFile.m_dLamThirdHeight[bFront])))
 		{
             m_ActionLog.push_back(AddTimeString(bFront, "[DoLamSub][11]LamSub lifter進入第一段真空關閉"));
 			g_Motion.ChangeSpeed(nAxisLifter, g_IniFile.m_dWorkSpeed[nAxisLifter]);
@@ -4095,6 +4095,7 @@ void __fastcall CMainThread::DoAutoCal(bool bFront, int &nThreadIndex)
 		//m_bStopLC = false;
 	}
 }
+
 
 
 

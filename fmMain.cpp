@@ -2147,115 +2147,10 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Int(bRead, g_IniFile.m_nRows, pWndRecord->m_nRows);
 	DDX_Float(bRead, g_IniFile.m_dColPitch, pWndRecord->m_dColPitch);
 	DDX_Float(bRead, g_IniFile.m_dRowPitch, pWndRecord->m_dRowPitch);
+    ...
+    ...
+    ...
 
-	DDX_Float(bRead, g_IniFile.m_dLamTime[0], pWndRecord->m_dLamTime0);
-	DDX_Float(bRead, g_IniFile.m_dLamTemp[0], pWndRecord->m_dLamTemp0);
-	DDX_Float(bRead, g_IniFile.m_dLamPress[0], pWndRecord->m_dLamPress0);
-	DDX_Float(bRead, g_IniFile.m_dLamTime[1], pWndRecord->m_dLamTime1);
-	DDX_Float(bRead, g_IniFile.m_dLamTemp[1], pWndRecord->m_dLamTemp1);
-	DDX_Float(bRead, g_IniFile.m_dLamPress[1], pWndRecord->m_dLamPress1);
-
-	DDX_Float(bRead, g_IniFile.m_dLoadCellPosX[0], pWndRecord->m_dLoadCellPosX0);
-	DDX_Float(bRead, g_IniFile.m_dLoadCellPosY[0], pWndRecord->m_dLoadCellPosY0);
-
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][0], pWndRecord->m_dLaserUpPosX00);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][0], pWndRecord->m_dLaserUpPosY00);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][1], pWndRecord->m_dLaserUpPosX01);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][1], pWndRecord->m_dLaserUpPosY01);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][2], pWndRecord->m_dLaserUpPosX02);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][2], pWndRecord->m_dLaserUpPosY02);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[0][3], pWndRecord->m_dLaserUpPosX03);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[0][3], pWndRecord->m_dLaserUpPosY03);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][0], pWndRecord->m_dLaserUpPosEndX00);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][0], pWndRecord->m_dLaserUpPosEndY00);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][1], pWndRecord->m_dLaserUpPosEndX01);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][1], pWndRecord->m_dLaserUpPosEndY01);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][2], pWndRecord->m_dLaserUpPosEndX02);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][2], pWndRecord->m_dLaserUpPosEndY02);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[0][3], pWndRecord->m_dLaserUpPosEndX03);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[0][3], pWndRecord->m_dLaserUpPosEndY03);
-
-	DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[0], pWndRecord->m_dLaserDownPosX0);
-	DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[0], pWndRecord->m_dLaserDownPosY0);
-	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[0], pWndRecord->m_dLaserDownPosEndX0);
-	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndY[0], pWndRecord->m_dLaserDownPosEndY0);
-
-	DDX_Float(bRead, g_IniFile.m_dLoadCellPosX[1], pWndRecord->m_dLoadCellPosX1);
-	DDX_Float(bRead, g_IniFile.m_dLoadCellPosY[1], pWndRecord->m_dLoadCellPosY1);
-
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][0], pWndRecord->m_dLaserUpPosX10);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][0], pWndRecord->m_dLaserUpPosY10);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][1], pWndRecord->m_dLaserUpPosX11);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][1], pWndRecord->m_dLaserUpPosY11);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][2], pWndRecord->m_dLaserUpPosX12);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][2], pWndRecord->m_dLaserUpPosY12);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosX[1][3], pWndRecord->m_dLaserUpPosX13);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosY[1][3], pWndRecord->m_dLaserUpPosY13);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][0], pWndRecord->m_dLaserUpPosEndX10);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][0], pWndRecord->m_dLaserUpPosEndY10);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][1], pWndRecord->m_dLaserUpPosEndX11);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][1], pWndRecord->m_dLaserUpPosEndY11);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][2], pWndRecord->m_dLaserUpPosEndX12);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][2], pWndRecord->m_dLaserUpPosEndY12);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndX[1][3], pWndRecord->m_dLaserUpPosEndX13);
-	DDX_Float(bRead, g_IniFile.m_dLaserUpPosEndY[1][3], pWndRecord->m_dLaserUpPosEndY13);
-
-	DDX_Float(bRead, g_IniFile.m_dLaserDownPosX[1], pWndRecord->m_dLaserDownPosX1);
-	DDX_Float(bRead, g_IniFile.m_dLaserDownPosY[1], pWndRecord->m_dLaserDownPosY1);
-	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndX[1], pWndRecord->m_dLaserDownPosEndX1);
-	DDX_Float(bRead, g_IniFile.m_dLaserDownPosEndY[1], pWndRecord->m_dLaserDownPosEndY1);
-
-	DDX_Radio(bRead, g_IniFile.m_nRailOption, pWndRecord->m_nRailOption);
-	DDX_Check(bRead, g_IniFile.m_bNotLam, pWndRecord->m_bNotLam);
-
-	DDX_ComboBox(bRead, g_IniFile.m_nBoatType, pWndRecord->m_cmbBoatType);
-	DDX_ComboBox(bRead, g_IniFile.m_nHeadType, pWndRecord->m_cmbHeadType);
-	DDX_String(bRead, g_IniFile.m_strHeadScal, pWndRecord->m_cmbHeadScal, g_IniFile.m_strHeadScals);
-	DDX_String(bRead, g_IniFile.m_strModuleScal, pWndRecord->m_cmbModuleScal, g_IniFile.m_strModuleScals);
-	DDX_ComboBox(bRead, g_IniFile.m_nUseLamCorrectBoard, pWndRecord->m_cmbUseLamCorrectBoard);
-	DDX_ComboBox(bRead, g_IniFile.m_nVacummOn, pWndRecord->m_cmbVacummOn);
-	DDX_ComboBox(bRead, g_IniFile.m_nPressCheck, pWndRecord->m_cmbPressCheck);
-	DDX_ComboBox(bRead, g_IniFile.m_nDummyCheck, pWndRecord->m_cmbDummyCheck);
-	g_IniFile.m_strModuleNum[0] = g_IniFile.m_strModuleNum[0].UpperCase();
-	g_IniFile.m_strModuleNum[1] = g_IniFile.m_strModuleNum[1].UpperCase();
-	DDX_String(bRead, g_IniFile.m_strModuleNum[0], pWndRecord->m_strModuleNum0);
-	DDX_String(bRead, g_IniFile.m_strModuleNum[1], pWndRecord->m_strModuleNum1);
-
-	DDX_Float(bRead, g_IniFile.m_dBLT[0], pWndRecord->m_dBLT1);
-	DDX_Float(bRead, g_IniFile.m_dBLT[1], pWndRecord->m_dBLT2);
-	DDX_Float(bRead, g_IniFile.m_dBLT[2], pWndRecord->m_dBLT3);
-	DDX_Float(bRead, g_IniFile.m_dBLT[3], pWndRecord->m_dBLT4);
-	DDX_Float(bRead, g_IniFile.m_dBLT[4], pWndRecord->m_dBLT5);
-	DDX_Float(bRead, g_IniFile.m_dTilt[0], pWndRecord->m_dTilt1);
-	DDX_Float(bRead, g_IniFile.m_dTilt[1], pWndRecord->m_dTilt2);
-	DDX_Float(bRead, g_IniFile.m_dTilt[2], pWndRecord->m_dTilt3);
-	DDX_Float(bRead, g_IniFile.m_dTilt[3], pWndRecord->m_dTilt4);
-	DDX_Float(bRead, g_IniFile.m_dTilt[4], pWndRecord->m_dTilt5);
-	DDX_Float(bRead, g_IniFile.m_dGap[0], pWndRecord->m_dGap1);
-	DDX_Float(bRead, g_IniFile.m_dGap[1], pWndRecord->m_dGap2);
-	DDX_Float(bRead, g_IniFile.m_dGap[2], pWndRecord->m_dGap3);
-	DDX_Float(bRead, g_IniFile.m_dGap[3], pWndRecord->m_dGap4);
-	DDX_Float(bRead, g_IniFile.m_dGap[4], pWndRecord->m_dGap5);
-
-	DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][0], pWndRecord->m_dKeyTemp01);
-	DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][1], pWndRecord->m_dKeyTemp02);
-	DDX_Float(bRead, g_IniFile.m_dKeyTemp[0][2], pWndRecord->m_dKeyTemp03);
-	DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][0], pWndRecord->m_dKeyTemp11);
-	DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][1], pWndRecord->m_dKeyTemp12);
-	DDX_Float(bRead, g_IniFile.m_dKeyTemp[1][2], pWndRecord->m_dKeyTemp13);
-
-	DDX_Float(bRead, g_IniFile.m_dCoolDownTimeF, pWndRecord->m_dCoolDownTimeF);
-	DDX_Float(bRead, g_IniFile.m_dCoolDownTimeR, pWndRecord->m_dCoolDownTimeR);
-
-	DDX_Float(bRead, g_IniFile.m_dLamSecondKeepTime, pWndRecord->m_dLamSecondKeepTime);
-	DDX_Check(bRead, g_IniFile.m_bIsLamSecondStop, pWndRecord->m_bIsLamSecondStop);
-	DDX_Float(bRead, g_IniFile.m_dLamSecondCorrectTimes, pWndRecord->m_dLamSecondCorrectTimes);
-	DDX_Check(bRead, g_IniFile.m_bIsLamUpDownCorrect, pWndRecord->m_bIsLamUpDownCorrect);
-
-	DDX_Float(bRead, g_IniFile.m_dTempOffsetF, pWndRecord->m_dTempOffsetF);
-	DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWndRecord->m_dTempOffsetR);
-
-    DDX_Float(bRead, g_IniFile.m_dLamCorrBoardHeight, pWndRecord->m_dLamCorrBoardHeight);
     */
 	//---------------------------------------------------------------------------
 	//pWnd ready to show for user
@@ -2372,6 +2267,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWnd->m_dTempOffsetR);
 
     DDX_Float(bRead, g_IniFile.m_dLamCorrBoardHeight, pWnd->m_dLamCorrBoardHeight);
+    DDX_Float(bRead, g_IniFile.m_dLamProductHeight, pWnd->m_dLamProductHeight);
 
 	pWnd->m_strSetupEENum->Text = g_IniFile.m_strLogInENGAccount;
 
@@ -2384,6 +2280,12 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 	pWnd->m_cmbHeadType->Enabled = false;
 	pWnd->m_cmbHeadScal->Enabled = false;
 	pWnd->m_cmbModuleScal->Enabled = false;
+
+    if (g_IniFile.m_nUseLamCorrectBoard)
+    {
+        pWnd->m_dLamCorrBoardHeight->Enabled = false;
+        pWnd->m_dLamCorrBoardHeight->Color = clGray;
+    }
 
 	while (1)
 	{
@@ -2419,6 +2321,10 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
                         || (pWnd->m_nRailOption->ItemIndex == 2 && pWnd->m_strModuleNum0->Text == "")))
             {
                 Application->MessageBoxA("請輸入 模具編號", "Confirm", MB_OK);
+            }
+            else if (pWnd->m_dLamCorrBoardHeight->Text.ToDouble() < 0 || pWnd->m_dLamCorrBoardHeight->Text.ToDouble() < 0)
+            {
+                Application->MessageBoxA("退縮厚度 不可以 < 0", "Confirm", MB_OK);
             }
 			else
 			{
@@ -2550,6 +2456,7 @@ void __fastcall TfrmMain::N8Click(TObject *Sender)
 		DDX_Float(bRead, g_IniFile.m_dTempOffsetR, pWnd->m_dTempOffsetR);
 
         DDX_Float(bRead, g_IniFile.m_dLamCorrBoardHeight, pWnd->m_dLamCorrBoardHeight);
+        DDX_Float(bRead, g_IniFile.m_dLamProductHeight, pWnd->m_dLamProductHeight);
 
 		//Count MoveLocX, MoveLocY
 		int nColum = 0;
